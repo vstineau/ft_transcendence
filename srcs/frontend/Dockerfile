@@ -1,0 +1,3 @@
+#FRONTEND DOCKERFILE
+
+FROM debian:bullseye

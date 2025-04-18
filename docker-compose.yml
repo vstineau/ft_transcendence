@@ -1,0 +1,9 @@
+services:
+ backend:
+  depends_on: "?"
+  container_name: backend
+  build: srcs/backend/ 
+ frontend:
+  depends_on: "?" 
+  container_name: frontend
+  build: srcs/frontend/ 
