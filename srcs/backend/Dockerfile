@@ -1,11 +1,12 @@
 #BACKEND DOCKERFILE
 
-FROM debian:bullseye
+FROM node:latest
 
 WORKDIR /app
  #package*.json
-COPY package.json package-lock.json ./
+
+COPY . /app/
 
 RUN npm install
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]

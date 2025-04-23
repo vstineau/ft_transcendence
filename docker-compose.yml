@@ -1,16 +1,19 @@
 services:
  backend:
-  depends_on: "?" #database
+    #depends_on: #"?" #database
   container_name: backend
   build: srcs/backend/ 
   develop:
    watch:
      - action: sync
-       path: srcs/backend
+       path: srcs/backend/
+       target: app/
        ignore:
         - node_modules/
      - action: rebuild
        path: srcs/backend/package.json
+  ports: 
+   - 8080:8080
   # frontend:
   #  depends_on: "?" #backend 
   #  container_name: frontend
