@@ -20,6 +20,7 @@
     "fastify": "^3.29.5"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "typescript": "^5.8.3"
   }
 }
