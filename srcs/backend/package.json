@@ -4,7 +4,8 @@
   "description": "ft_transcendence final commun core 42 project",
   "main": "main.js",
   "scripts": {
-    "start": "nodemon main.js"
+	"build": "tsc -p tsconfig.json",
+    "start": "nodemon index.ts"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,9 @@
     "fastify": "^3.29.5"
   },
   "devDependencies": {
+    "@types/node": "^22.15.2",
     "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }
 }
