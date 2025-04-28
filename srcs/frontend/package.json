@@ -1,0 +1,29 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "frontend for transcendence",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "nodemon index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vstineau/ft_transcendence.git"
+  },
+  "author": "vstineau",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vstineau/ft_transcendence/issues"
+  },
+  "homepage": "https://github.com/vstineau/ft_transcendence#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.4",
+    "tailwindcss": "^4.1.4"
+  }
+}

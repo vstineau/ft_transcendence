@@ -2,6 +2,8 @@ services:
  backend:
     #depends_on: #"?" #database
   container_name: backend
+  network :
+    - transcendence
   build: srcs/backend/ 
   develop:
    watch:
@@ -12,18 +14,28 @@ services:
         - node_modules/
      - action: rebuild
        path: srcs/backend/package.json
+  restart: always
   ports: 
    - 8080:8080
-  # frontend:
-  #  depends_on: "?" #backend 
-  #  container_name: frontend
-  #  build: srcs/frontend/ 
-  #  develop:
-  #   watch:
-  #     - action: sync
-  #       path: srcs/frontend
-  #       ignore:
-  #        - node_modules/
-  #     - action: rebuild
-  #       path: srcs/frontend/package.json
-  # database:
+ frontend:
+    #depends_on: "?" #backend 
+  container_name: frontend
+  network :
+    - transcendence
+  build: srcs/frontend/ 
+  develop:
+   watch:
+     - action: sync
+       path: srcs/frontend
+       ignore:
+        - node_modules/
+     - action: rebuild
+       path: srcs/frontend/package.json
+  restart: always
+  ports: 
+   - 3000:3000
+ database:
+
+networks:
+ transcendence:
+  driver: bridge
