@@ -2,7 +2,7 @@ services:
  backend:
     #depends_on: #"?" #database
   container_name: backend
-  network :
+  networks:
     - transcendence
   build: srcs/backend/ 
   develop:
@@ -15,18 +15,21 @@ services:
      - action: rebuild
        path: srcs/backend/package.json
   restart: always
+  volumes:
+      - sqlite:/app/db
   ports: 
    - 8080:8080
  frontend:
     #depends_on: "?" #backend 
   container_name: frontend
-  network :
+  networks:
     - transcendence
   build: srcs/frontend/ 
   develop:
    watch:
      - action: sync
        path: srcs/frontend
+       target: app/
        ignore:
         - node_modules/
      - action: rebuild
@@ -34,8 +37,16 @@ services:
   restart: always
   ports: 
    - 3000:3000
- database:
 
 networks:
  transcendence:
   driver: bridge
+
+volumes:
+ sqlite:
+  driver: local
+  driver_opts:
+    type: none
+    o: bind
+    device: ./srcs/backend/db
+

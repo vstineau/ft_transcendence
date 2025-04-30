@@ -1,5 +1,9 @@
 import fastify from 'fastify'
 
+await fastify.register(cors, {
+  origin: 'http://localhost:3000',
+});
+
 interface IQuerystring {
   username: string;
   password: string;
