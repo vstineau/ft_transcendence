@@ -1,3 +1,5 @@
+#REVERSE PROXY DOCKERFILE
+
 FROM nginx:1.27.0-alpine
 
 EXPOSE 443
@@ -12,4 +14,3 @@ RUN mkdir -p /etc/nginx/ssl && openssl req  -x509 -new -newkey rsa:4096 -nodes -
 		-subj "/C=FR/ST=/L=Paris/O=42/CN=vstineau.42.fr" \
 		&& chmod +rwx /etc/nginx/ssl/certificate.pem
 
-CMD ["nginx", "-g", "daemon off;"]

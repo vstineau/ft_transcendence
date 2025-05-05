@@ -1,9 +1,8 @@
 services:
  backend:
-    #depends_on: #"?" #database
+  depends_on: 
+   - reverse_proxy
   container_name: backend
-    #  networks:
-    #    - transcendence
   build: srcs/backend/ 
   develop:
    watch:
@@ -16,14 +15,13 @@ services:
        path: srcs/backend/package.json
   restart: always
   volumes:
-      - sqlite:/app/db
+   - ./srcs/backend/db:/app/db
   ports: 
    - 8080:8080
  frontend:
-    #depends_on: "?" #backend 
+  depends_on:
+   - backend 
   container_name: frontend
-    #  networks:
-    #    - transcendence
   build: srcs/frontend/ 
   develop:
    watch:
@@ -37,23 +35,9 @@ services:
   restart: always
   ports: 
    - 3000:3000
- server:
-  container_name: nginx
-  build: srcs/nginx
+ reverse_proxy:
+  container_name: reverse_proxy
+  build: srcs/reverse_proxy
   ports: 
       - 443:443
   restart: always
-
-
-#networks:
-# transcendence:
-#  driver: bridge
-
-volumes:
- sqlite:
-  driver: local
-  driver_opts:
-    type: none
-    o: bind
-    device: ./srcs/backend/db
-
