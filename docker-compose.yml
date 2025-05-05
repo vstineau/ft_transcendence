@@ -39,5 +39,5 @@ services:
   container_name: reverse_proxy
   build: srcs/reverse_proxy
   ports: 
-      - 443:443
+      - 8443:443
   restart: always

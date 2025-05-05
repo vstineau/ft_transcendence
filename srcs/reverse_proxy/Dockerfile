@@ -8,6 +8,8 @@ RUN apk add openssl
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
+COPY mimes.types /etc/nginx/mimes.types
+
 RUN mkdir -p /etc/nginx/ssl && openssl req  -x509 -new -newkey rsa:4096 -nodes -days 3650 \
 		-out /etc/nginx/ssl/certificate.pem \
 		-keyout /etc/nginx/ssl/key.pem \
