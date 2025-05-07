@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "frontend for transcendence",
   "main": "index.ts",
+  "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "nodemon index.ts"
@@ -18,12 +19,12 @@
   },
   "homepage": "https://github.com/vstineau/ft_transcendence#readme",
   "devDependencies": {
-    "nodemon": "^3.1.10",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "nodemon": "^3.1.10"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.4",
-    "tailwindcss": "^4.1.4"
+    "tailwindcss": "^4.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }

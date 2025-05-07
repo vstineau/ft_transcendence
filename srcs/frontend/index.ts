@@ -1,4 +1,4 @@
-
+export {};
 const response = await fetch('https://localhost:8080/ping');
 const data = await response.json();
 console.log(data.message);
