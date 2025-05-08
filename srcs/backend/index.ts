@@ -1,27 +1,29 @@
-import fastify from 'fastify'
+//https://github.com/matschik/fastify-typescript-starter
+import Fastify from 'fastify'
+import cors from '@fastify/cors'
 
-await fastify.register(cors, {
+const server = Fastify()
+
+await server.register(cors, {
   origin: 'http://localhost:3000',
 });
 
-interface IQuerystring {
-  username: string;
-  password: string;
-}
-
-interface IHeaders {
-  'h-Custom': string;
-}
-
-interface IReply {
-  200: { success: boolean };
-  302: { url: string };
-  '4xx': { error: string };
-}
-
-const server = fastify()
-
-server.get('/ping', async (request, reply) => {
+//interface IQuerystring {
+//  username: string;
+//  password: string;
+//}
+//
+//interface IHeaders {
+//  'h-Custom': string;
+//}
+//
+//interface IReply {
+//  200: { success: boolean };
+//  302: { url: string };
+//  '4xx': { error: string };
+//}
+//
+server.get('/ping', async (_request, _reply) => {
   return 'pong\n'
 })
 
