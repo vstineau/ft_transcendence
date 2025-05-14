@@ -1,68 +1,8 @@
-export {};
-const response = await fetch('https://localhost:8080/ping');
-const data = await response.json();
-console.log(data.message);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+fetch('http://backend:8080/api/message')
+  .then(response => response.text())
+  .then(data => {
+    console.log('backend :', data);
+  })
+  .catch(err => {
+    console.error('Erreur lors de la requête vers le backend :', err);
+  });

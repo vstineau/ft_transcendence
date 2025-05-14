@@ -23,7 +23,7 @@ await server.register(cors, {
 //  '4xx': { error: string };
 //}
 //
-server.get('/ping', async (_request, _reply) => {
+server.get('/*', async (_request, _reply) => {
   return 'pong\n'
 })
 
@@ -34,3 +34,5 @@ server.listen({ port: 8080, host: '0.0.0.0' }, (err, address) => {
   }
   console.log(`Server listening at ${address}`)
 })
+
+
