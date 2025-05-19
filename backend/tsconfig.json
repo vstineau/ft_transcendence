@@ -1,7 +1,9 @@
 {
   "extends": "fastify-tsconfig",
   "compilerOptions": {
+    "module": "NodeNext",
     "sourceMap": true,
+    "rootDir": ".",
     "outDir": "./dist",
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -15,9 +17,10 @@
     "experimentalDecorators": true
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+	"dist"
   ],
   "include": [
-    "./**/**/*.ts"
+    "**/*.ts"
   ]
 }
