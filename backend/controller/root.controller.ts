@@ -1,12 +1,8 @@
-import { FastifyInstance, FastifyRequest, FastifyReply, FastifyPluginCallback, FastifyPluginOptions } from "fastify";
+import { FastifyRequest, FastifyReply } from 'fastify';
 
-const rootController: FastifyPluginCallback = (fastify: FastifyInstance, _options: FastifyPluginOptions, done) => {
-	fastify.get('/', (_req: FastifyRequest, reply: FastifyReply) => {
-		reply.send({
-			message: "hello root\n"
-		});
-	});
-	done();
-};
-
-export default rootController;
+export async function rootController(
+  _request: FastifyRequest,
+  reply: FastifyReply
+) {
+  reply.send({ message: 'Welcome to the Fastify API!' });
+}

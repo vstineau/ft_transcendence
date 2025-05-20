@@ -1,13 +1,13 @@
 //https://github.com/matschik/fastify-typescript-starter
 import Fastify from 'fastify'
-//import rootController from './controller/root.controller'
+//import rootController from 'controller/root.controller'
 import cors from '@fastify/cors'
-import {FastifyRequest, FastifyReply} from 'fastify';
 //import path from 'path'
 
 const fastify = Fastify({
 	logger: true,
 	trustProxy: true,
+	ignoreTrailingSlash: true,
 });
 
 await fastify.register(cors, {
@@ -18,12 +18,7 @@ await fastify.register(cors, {
 //  root: path.join(__dirname, 'public'),
 //})
 
-
-fastify.get('/', async (_request: FastifyRequest, reply: FastifyReply) => {
-	return reply.code(200).send("backend??????")
-}),
-
-//fastify.register(rootController, {prefix: '/'})
+fastify.register(import('./routes/root.route.js'))
 
 fastify.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
   if (err) {
