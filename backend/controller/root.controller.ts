@@ -4,5 +4,5 @@ export async function rootController(
   _request: FastifyRequest,
   reply: FastifyReply
 ) {
-  reply.send({ message: 'Welcome to the Fastify API!' });
+  reply.send({ message: 'backend!' });
 }

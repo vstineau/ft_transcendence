@@ -8,6 +8,7 @@ const fastify = Fastify({
 	logger: true,
 	trustProxy: true,
 	ignoreTrailingSlash: true,
+	ignoreDuplicateSlashes: true
 });
 
 await fastify.register(cors, {
@@ -23,7 +24,7 @@ fastify.register(import('./routes/root.route.js'))
 fastify.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
   if (err) {
     console.error(err)
-    process.exit(1)
+    //process.exit(1)
   }
   console.log(`Server listening at ${address}`)
 })
