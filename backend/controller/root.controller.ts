@@ -4,5 +4,5 @@ export async function rootController(
   _request: FastifyRequest,
   reply: FastifyReply
 ) {
-  reply.send({ message: 'backend!' });
+  reply.send({ message: 'this is backend!' });
 }
