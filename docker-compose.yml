@@ -17,7 +17,7 @@ services:
         - tsconfig.json
      - action: rebuild
        path: backend/package.json
-  restart: always
+    #  restart: always
   volumes:
    - ./backend/db:/app/db
  frontend:
@@ -37,7 +37,7 @@ services:
         - Dockerfile
      - action: rebuild
        path: frontend/package.json
-  restart: always
+  #restart: always
  reverse_proxy:
   container_name: reverse_proxy
   networks:
@@ -45,7 +45,7 @@ services:
   build: reverse_proxy
   ports: 
     - 8080:443
-  restart: always
+  #restart: always
 
 networks:
  transcendence:

@@ -20,6 +20,7 @@ await fastify.register(cors, {
 //})
 
 fastify.register(import('./routes/root.route.js'))
+fastify.register(import('./db.js'))
 
 fastify.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
   if (err) {
