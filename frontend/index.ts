@@ -1,7 +1,7 @@
 
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
-import {createReadStream} from "fs"
+import {createReadStream, existsSync} from "fs"
 import path from 'path';
 import { fileURLToPath } from "url";
 
@@ -19,12 +19,19 @@ await fastify.register(cors, {
   origin: 'http://backend:3000',
 });
 
-fastify.get('/src/*', async (_request, reply) => {
-	return reply.code(200).type("text/javascript").send(createReadStream(path.join(__dirname, "/src/index.js"))); 
-})
+fastify.get('/src/*', async (request, reply) => {
+  const filePath = path.join(__dirname, request.url);
+  if (!filePath.startsWith(path.join(__dirname, 'src'))) {
+    return reply.code(403).send('Forbidden');
+  }
+  if (!existsSync(filePath)) {
+    return reply.code(404).send('Not found');
+  }
+  return reply.code(200).type("text/javascript").send(createReadStream(filePath));
+});
 
 fastify.get('/*', async (_request, reply) => {
-	return reply.code(200).type("text/html").send(createReadStream(path.join(__dirname, "../public/index.html"))); 
+	return reply.code(200).type("text/html").send(createReadStream(path.normalize(path.join(__dirname, "../public/index.html")))); 
 })
 
 fastify.listen({port: 5000, host: '0.0.0.0'}, (err, address) => {

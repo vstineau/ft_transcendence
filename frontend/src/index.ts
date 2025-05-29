@@ -1,30 +1,36 @@
+import { Rootview } from "./views/root.views.js";
+
 // 1. Déclaration des routes
-const routes: { [key: string]: () => string } = {
-  "/": () => "<h1>Dashboard</h1>",
-  "/pong": () => "<h1>Posts</h1>", // Remplace par le vrai contenu ou composant
-  "/register": () => "<h1>Settings</h1>"
+const routes: { [key: string]: () => Promise<string> } = {
+  "/": Rootview,
+  //"/": async () => "<h1>AAAAAAAAAAAAAA</h1>",
+  "/pong": async () => "<h1>Posts</h1>", // Remplace par le vrai contenu ou composant
+  "/login": async () => "<h1>LOGIN</h1>",
+  "/logout": async () => "<h1>LOOGOUT</h1>",
+  "/register": async () => "<h1>REGISTER</h1>",
 };
 
 // 2. Fonction pour naviguer
-function navigateTo(url: string) {
+async function navigateTo(url: string) {
   history.pushState(null, "", url);
-  renderPage();
+  await renderPage();
 }
 
 // 3. Rendu de la page selon l’URL courante
-function renderPage() {
+async function renderPage() {
   const path = window.location.pathname;
-  const view = routes[path] ? routes[path]() : "<h1>404 Not Found</h1>";
+  const view = routes[path] ? await routes[path]() :"<h1>404 Not Found</h1>";
+	console.log(view);
   document.getElementById("root")!.innerHTML = view;
 }
 
 // 4. Interception des liens (SPA navigation)
-document.addEventListener("DOMContentLoaded", () => {
-  document.body.addEventListener("click", (e) => {
+document.addEventListener("DOMContentLoaded", async () => {
+  document.body.addEventListener("click", async (e) => {
     const target = e.target as HTMLElement;
-    if (target.matches("[data-link]")) {
+    if (target instanceof HTMLAnchorElement) {
       e.preventDefault();
-      navigateTo((target as HTMLAnchorElement).getAttribute("href")!);
+      await navigateTo((target as HTMLAnchorElement).getAttribute("href")!);
     }
   });
 
@@ -32,5 +38,5 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("popstate", renderPage);
 
   // 6. Rendu initial
-  renderPage();
+  await renderPage();
 });
