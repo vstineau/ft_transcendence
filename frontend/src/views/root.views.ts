@@ -1,4 +1,4 @@
 
 export async function Rootview() {
-	return "<h1>TEST</h1>"
+	return '<h1 class="text-3xl font-bold underline">    Hello !  </h1>'
 }

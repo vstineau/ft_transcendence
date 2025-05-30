@@ -15,7 +15,7 @@ services:
         - tsconfig.json
      - action: rebuild
        path: backend/package.json
-    #  restart: always
+  restart: always
   volumes:
    - ./backend/db:/app/db
  frontend:
@@ -27,7 +27,7 @@ services:
   build: frontend/ 
   develop:
    watch:
-     - action: sync
+     - action: rebuild
        path: frontend
        target: /usr/share/nginx/html
        ignore:
@@ -35,10 +35,9 @@ services:
         - Dockerfile
      - action: rebuild
        path: frontend/package.json
-  #restart: always
+  restart: always
   ports: 
     - 8080:443
-  #restart: always
 
 networks:
  transcendence:
