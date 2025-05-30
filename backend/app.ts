@@ -4,14 +4,14 @@ import Fastify from 'fastify'
 import cors from '@fastify/cors'
 //import path from 'path'
 
-const fastify = Fastify({
+const app = Fastify({
 	logger: true,
 	trustProxy: true,
 	ignoreTrailingSlash: true,
 	ignoreDuplicateSlashes: true
 });
 
-await fastify.register(cors, {
+await app.register(cors, {
   origin: 'http://frontend:5000',
 });
 
@@ -19,10 +19,10 @@ await fastify.register(cors, {
 //  root: path.join(__dirname, 'public'),
 //})
 
-fastify.register(import('./routes/root.route.js'))
-fastify.register(import('./db.js'))
+app.register(import('./routes/root.route.js'))
+app.register(import('./db.js'))
 
-fastify.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
+app.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
   if (err) {
     console.error(err)
     //process.exit(1)
