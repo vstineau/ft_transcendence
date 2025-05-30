@@ -1,13 +1,18 @@
-import { Rootview } from "./views/root.views.js";
+import {
+  LoginView,
+  PongView,
+  RegisterView,
+  RootView,
+} from "./views/root.views.js";
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
-  "/": Rootview,
+  "/": RootView,
   //"/": async () => "<h1>AAAAAAAAAAAAAA</h1>",
-  "/pong": async () => "<h1>Posts</h1>", // Remplace par le vrai contenu ou composant
-  "/login": async () => "<h1>LOGIN</h1>",
-  "/logout": async () => "<h1>LOOGOUT</h1>",
-  "/register": async () => "<h1>REGISTER</h1>",
+  "/pong": PongView, // Remplace par le vrai contenu ou composant
+  "/login": LoginView,
+  "/logout": async () => "<h1>LOGOUT</h1>",
+  "/register": RegisterView,
 };
 
 // 2. Fonction pour naviguer
@@ -19,8 +24,8 @@ async function navigateTo(url: string) {
 // 3. Rendu de la page selon l’URL courante
 async function renderPage() {
   const path = window.location.pathname;
-  const view = routes[path] ? await routes[path]() :"<h1>404 Not Found</h1>";
-	console.log(view);
+  const view = routes[path] ? await routes[path]() : "<h1>404 Not Found</h1>";
+  console.log(view);
   document.getElementById("root")!.innerHTML = view;
 }
 
