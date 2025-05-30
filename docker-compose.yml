@@ -1,7 +1,5 @@
 services:
  backend:
-  depends_on: 
-   - reverse_proxy
   container_name: backend
   networks:
    - transcendence 
@@ -31,18 +29,13 @@ services:
    watch:
      - action: sync
        path: frontend
-       target: /app/
+       target: /usr/share/nginx/html
        ignore:
         - node_modules/
         - Dockerfile
      - action: rebuild
        path: frontend/package.json
   #restart: always
- reverse_proxy:
-  container_name: reverse_proxy
-  networks:
-   - transcendence 
-  build: reverse_proxy
   ports: 
     - 8080:443
   #restart: always
