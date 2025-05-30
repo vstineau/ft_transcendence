@@ -1,19 +1,24 @@
 //SIZE 1000 X 1000
-//
-//
-//
-//
-//
+
+const io = new Server();
+
+class Pos {
+	x:number;
+	y:number;
+	constructor(x: number, y: number) {
+		this.x = x;
+		this.y = y;
+	};
+};
+
 class Ball {
-	posX: number;
-	posY: number;
+	pos: Pos;
 	speed: number;
 	dirX: number;
 	dirY: number;
 
 	constructor() {
-		this.posX = 500;
-		this.posY = 500;
+		this.pos = new Pos(500, 500);
 		this.speed = 1;
 		this.dirX = 1;
 		this.dirY = 1;
@@ -21,13 +26,11 @@ class Ball {
 };
 
 class PongBar {
-	posX: number;
-	posY: number;
+	pos: Pos;
 	speed: number;
 
 	constructor(x: number, y: number) {
-		this.posX = x;
-		this.posY = y;
+		this.pos = new Pos(x, y);
 		this.speed = 1;
 	}
 };
@@ -51,11 +54,11 @@ class Game {
 
 
 async function up(bar : PongBar) {
-	bar.posY++;
+	bar.pos.y++;
 }
 
 async function down(bar : PongBar) {
-	bar.posY--;
+	bar.pos.x--;
 }
 
 async function launchGame() {
@@ -63,10 +66,17 @@ async function launchGame() {
 
 	up(game.leftBar);
 	down(game.rightBar);
-	console.log(game.ball.posX);
-	console.log(game.ball.posY);
-	console.log(game.leftBar.posY);
-	console.log(game.rightBar.posY);
+	console.log(game.ball.pos.x);
+	console.log(game.ball.pos.y);
+	console.log(game.leftBar.pos.y);
+	console.log(game.rightBar.pos.y);
+	while (!game.endgame)
+	{
+
+	}
 }
+
+
+
 
 await launchGame();
