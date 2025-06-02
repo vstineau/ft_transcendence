@@ -17,7 +17,7 @@ services:
        path: backend/package.json
   restart: always
   volumes:
-   - ./backend/db:/app/db
+   - ./backend/app/db:/app/db
  frontend:
   depends_on:
    - backend 

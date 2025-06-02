@@ -9,7 +9,7 @@ EXPOSE 3000
 
 COPY package.json package-lock.json ./
 
-RUN npm install
+RUN npm install --force
 
 COPY . /app
 

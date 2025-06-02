@@ -16,10 +16,12 @@ const rootControllerOptions: RouteShorthandOptions = {
   }
 };
 
+
 export default async function rootRoutes(fastify: FastifyInstance) {
   fastify.route({
     method: ['GET', 'POST'],
     url: '/',
+	preValidation: fastify.auth([verifyJWT, verifyPermissions]),
     handler: rootController,
     ...rootControllerOptions
   });
