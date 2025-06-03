@@ -1,4 +1,6 @@
 // import { register } from 'ts-node';
+import { registerUser } from './register.js';
+import { logUser } from './login.js';
 import { LoginView, PongView, RegisterView, RootView } from './views/root.views.js';
 
 // 1. Déclaration des routes
@@ -12,7 +14,7 @@ const routes: { [key: string]: () => Promise<string> } = {
 };
 
 // 2. Fonction pour naviguer
-async function navigateTo(url: string) {
+export async function navigateTo(url: string) {
 	history.pushState(null, '', url);
 	await renderPage();
 }
@@ -24,41 +26,40 @@ async function renderPage() {
 	console.log(view);
 	document.getElementById('root')!.innerHTML = view;
 	console.log(path);
-	if (path === '/register') {
-		registerUser();
-	}
+	if (path === '/register') registerUser();
+	if (path === '/login') logUser();
+
 }
 
-async function registerUser() {
-	const form = document.getElementById('register-form') as HTMLFormElement;
-	form.addEventListener('submit', async e => {
-		e.preventDefault();
-		const test = new FormData(form);
-		const login = test.get('login');
-		const email = test.get('email');
-		const password = test.get('password');
-		const body = {
-			login: login,
-			email: email,
-			password: password,
-		};
-		const response = await fetch('http://localhost:3000/register', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(body),
-		});
-		if(!response.ok){
-
-		}
-		console.log(test.get('login'));
-		console.log(test.get('email'));
-		console.log(test.get('password'));
-		navigateTo('/');
-		// console.log();
-	});
-}
+// async function registerUser(){
+// 	const form = document.getElementById('register-form') as HTMLFormElement;
+// 	form.addEventListener('submit', async e => {
+// 		e.preventDefault();
+// 		const test = new FormData(form);
+// 		const login = test.get('login');
+// 		const email = test.get('email');
+// 		const password = test.get('password');
+// 		const body = {
+// 			login: login,
+// 			email: email,
+// 			password: password,
+// 		};
+// 		const response = await fetch('http://localhost:3000/register', {
+// 			method: 'POST',
+// 			headers: {
+// 				'Content-Type': 'application/json',
+// 			},
+// 			body: JSON.stringify(body),
+// 		});
+// 		if (!response.ok) {
+// 		}
+// 		console.log(test.get('login'));
+// 		console.log(test.get('email'));
+// 		console.log(test.get('password'));
+// 		// navigateTo('/');
+// 		// console.log();
+// 	});
+// }
 // 4. Interception des liens (SPA navigation)
 document.addEventListener('DOMContentLoaded', async () => {
 	document.body.addEventListener('click', async e => {
