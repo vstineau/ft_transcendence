@@ -28,13 +28,15 @@ export async function LoginView() {
 	return /* HTML */ `
 		<div class="max-w-md mx-auto bg-black p-6 rounded-lg shadow-lg animate-slide-up">
 			<h2 class="text-2xl font-bold mb-4 text-center text-blue-700">Connexion</h2>
-			<form class="space-y-4">
+			<form id="login-form" class="space-y-4">
 				<input
-					type="email"
-					placeholder="Email"
+					name="login"
+					type="text"
+					placeholder="Login"
 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 				/>
 				<input
+					name="password"
 					type="password"
 					placeholder="Mot de passe"
 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
