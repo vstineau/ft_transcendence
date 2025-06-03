@@ -50,6 +50,7 @@ await app.register(cors, {
 //app.register(import('socket.fastify-socket.io'))
 app.register(fastifyAuth)
 app.register(import('./routes/root.route.js'))
+app.register(import('./routes/register.route.js'))
 app.register(import('./db.js'))
 
 app.listen({ port: config.port, host: '0.0.0.0' }, (err, address) => {
@@ -60,7 +61,7 @@ app.listen({ port: config.port, host: '0.0.0.0' }, (err, address) => {
   console.log(`Server listening at ${address}`)
 })
 
-//fetch('http://frontend:5000/')
+//fetch('http://localhost:8080/api/register')
 //  .then(response => response.text())
 //  .then(data => {
 //    console.log('backend :', data);

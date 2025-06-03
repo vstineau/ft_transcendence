@@ -1,23 +1,69 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique } from "typeorm"
-import { IsEmail, } from 'class-validator' 
+import { IsEmail, Length, Matches } from 'class-validator' 
+import { getIsInvalidMessage } from "./utils/errorMessages.js";
 
+type UserJson = {
+	firstName: string,
+	lastName: string,
+	nickName: string,
+	password: string,
+	email: string,
+};
+
+//https://github.com/typestack/class-validator
 @Entity()
 @Unique(['email'])
+@Unique(['nickname'])
 export default class User extends BaseEntity {
 
 	@PrimaryGeneratedColumn()
-	id: number;
+	id!: number;
 
 	@Column()
-	firstName: string;
+	@Length(1, 30)
+	//Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
+	@Matches(/^[A-Za-z]+$/, {message: getIsInvalidMessage("firstname", "please only use alpabetic characters")})
+	firstName!: string;
 
 	@Column()
-	lastName: string;
+	@Length(1, 30)
+	@Matches(/^[A-Za-z]+$/, {message: getIsInvalidMessage("lastname", "please only use alpabetic characters")})
+	lastName!: string;
 
 	@Column()
-	password: string;
+	@Length(1, 30)
+	nickName!: string;
 
 	@Column()
-	mail: string;
+	@Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, {message : getIsInvalidMessage("password", "please use  password with at least 8 characters, one uppercase, one lowercase, one number and one special character")})
+	password!: string;
 
+	@Column()
+	@IsEmail(undefined, {message: getIsInvalidMessage('Email')})
+	email!: string;
+
+	static async create(data: string) {
+		const obj: UserJson = JSON.parse(data);
+
+		return new User(obj);
+
+
+	}
+
+	constructor(obj: UserJson)
+	{
+		super();
+		this.firstName = obj.firstName;
+		this.lastName = obj.lastName;
+		this.nickName = obj.nickName;
+		this.password = obj.password;
+		this.email = obj.email;
+	}
+	//@Column()
+	//gameHistory: History> = new History;
+
+	//avatar
 }
+
+
+//export default class History{}
