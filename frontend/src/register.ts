@@ -4,9 +4,7 @@
 //   RegisterView,
 //   RootView,
 // } from "./views/root.views.js";
-import{
-	navigateTo,
-} from "./main.js";
+import { navigateTo } from './main.js';
 
 // interface User {
 // 	login: string;
@@ -44,27 +42,27 @@ export async function registerUser() {
 		};
 		// sending token to backend then wait response
 		// try {
-		const response = 1;//= await fetch('http://localhost:3000/register', {
+		const response = 1; //= await fetch('http://localhost:3000/register', {
 		// 	method: 'POST',
 		// 	headers: {
 		// 		'Content-Type': 'application/json',
 		// 	},
 		// 	body: JSON.stringify(body),
 		// });
-		if (!response) { // error handle = staying on register page
-			navigateTo('/register')
-			return ;
+		if (!response) {
+			// error handle = staying on register page
+			navigateTo('/register');
+			return;
 		}
-		JSON.parse
+		JSON.parse;
 		console.log(test.get('login'));
 		console.log(test.get('email'));
 		console.log(test.get('password'));
-		navigateTo('/')
+		navigateTo('/');
 		// } catch (err) {
 		// console.error('error = ', err);
 		// }
 		// navigateTo('/');
 		// console.log();
 	});
-	
 }

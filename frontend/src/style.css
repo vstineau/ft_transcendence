@@ -1,37 +1,117 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @keyframes wiggle {
-  0%,
-  100% {
-    transform: rotate(-3deg);
-  }
-  50% {
-    transform: rotate(3deg);
-  }
+	0%,
+	100% {
+		transform: rotate(-3deg);
+	}
+	50% {
+		transform: rotate(3deg);
+	}
 }
 
 .text-center.customclass {
-  animation: wiggle 0.5s linear infinite;
-  /* background-color: red; */
-  position:static;
-  top: 50%;
-  right: 50%;
+	animation: wiggle 0.5s linear infinite;
+	position: static;
+	top: 50%;
+	right: 50%;
 }
 
-
 .container-fluid {
-	top:auto;
+	top: auto;
 }
 
 .container-fluid.login-container {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100%;
-    /* background-image: url("/img/login/Amadeus-Secondary.png");
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	width: 100%;
+	/* background-image: url("/img/login/Amadeus-Secondary.png");
 	 */
-	background-color: red;
-    background-size: cover;
+	background-size: cover;
+}
+
+@keyframes play {
+	0% {
+		top: 0;
+		left: 0;
+	}
+	25% {
+		top: 80%;
+		left: 90%;
+	}
+	50% {
+		top: 0%;
+		left: 0%;
+	}
+	75% {
+		top: 80%;
+		left: 90%;
+	}
+	100% {
+		top: 0;
+		left: 0;
+	}
+}
+
+.pong-ball {
+	animation: play 4s linear infinite;
+}
+
+@import url('https://fonts.googleapis.com/css?family=Raleway:400,400i,700');
+
+.dashboard {
+	display: flex;
+	height: 100vh;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	background: #1a1e23;
+	position: relative;
+	overflow: hidden;
+}
+
+.dashboard > ul {
+	display: flex;
+	flex-direction: column;
+	align-items: start;
+	list-style-type: none;
+}
+
+.dashboard > ul > li {
+	padding: 6px 0;
+}
+
+.dashboard > ul > li > a {
+	--fill-color: #198ce6;
+	position: relative;
+	display: block;
+	padding: 4px 0;
+	font: 700 3rem Raleway, sans-serif;
+	text-decoration: none;
+	text-transform: uppercase;
+	-webkit-text-stroke: 2px var(--fill-color);
+	background: linear-gradient(var(--fill-color) 0 100%) left / 0 no-repeat;
+	color: transparent;
+	background-clip: text;
+	-webkit-background-clip: text;
+	transition: 0.2s linear;
+}
+
+.dashboard > ul > li > a:hover {
+	background-size: 100%;
+}
+
+.dashboard::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: url("https://i.gifer.com/QgxJ.gif") no-repeat center center;
+	background-size: cover;
+	filter: blur(50px);
 }

@@ -1,32 +1,33 @@
 export async function RootView() {
 	return /* HTML */ `
-		<div class="text-center space-y-6 animate-fade-in">
-			<h1 class="text-4xl font-bold text-blue-600">Bienvenue 👋</h1>
-			<p class="text-gray-600">Choisis une page :</p>
-
-			<div class="flex flex-col items-center space-y-3">
-				<a href="/pong" data-link class="text-blue-500 hover:underline transition">➡️ Aller à Pong</a>
-				<a href="/login" data-link class="text-green-500 hover:underline transition">🔐 Se connecter</a>
-				<a href="/register" data-link class="text-purple-500 hover:underline transition">📝 S'inscrire</a>
-				<a href="/logout" data-link class="text-red-500 hover:underline transition">🚪 Se déconnecter</a>
-			</div>
+		<div class="dashboard">
+			<ul>
+				<li><a href="/pong">Play</a></li>
+				<li><a href="/login">Login</a></li>
+				<li><a href="/register">Register</a></li>
+				<li><a href="/logout">Logout</a></li>
+			</ul>
 		</div>
 	`;
 }
 
+// <img src="https://i.gifer.com/QgxJ.gif" alt="pong" />
 export async function PongView() {
 	return /* HTML */ `
-		<div class="text-center customclass">
-			<h1 class="text-4xl font-extrabold text-green-600">🏓 Pong !</h1>
-			<p class="text-gray-600 mt-4">Réponse du serveur : tout fonctionne !</p>
+		<div class="dashboard">
+			<ul>
+				<li><a href="/pong/matchmaking">Quick match</a></li>	
+				<li><a href="/pong/tournament">Tournament</a></li>
+				<li><a href="/pong/stats">Stats</a></li>
+				<li><a href="/pong/leaderboard">Leaderboard</a></li>
+			</ul>
 		</div>
-		<div class="container-fluid login-container"></div>
 	`;
 }
 
 export async function LoginView() {
 	return /* HTML */ `
-		<div class="max-w-md mx-auto bg-black p-6 rounded-lg shadow-lg animate-slide-up">
+		<div class="max-w-md mx-auto p-6 rounded-lg shadow-lg animate-slide-up">
 			<h2 class="text-2xl font-bold mb-4 text-center text-blue-700">Connexion</h2>
 			<form id="login-form" class="space-y-4">
 				<input
@@ -54,7 +55,7 @@ export async function LoginView() {
 
 export async function RegisterView() {
 	return /* HTML */ `
-		<div class="max-w-md mx-auto bg-black p-6 rounded-lg shadow-lg animate-fade-in">
+		<div class="max-w-md mx-auto p-6 rounded-lg shadow-lg animate-fade-in">
 			<h2 class="text-2xl font-bold mb-4 text-center text-purple-700">Créer un compte</h2>
 			<form id="register-form" class="space-y-4">
 				<input
