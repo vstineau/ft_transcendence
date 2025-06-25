@@ -17,6 +17,7 @@ async function dbConnector(fastify: FastifyInstance, _option: FastifyPluginOptio
 	console.log("database created")
 	const sqlite = {db};
 	sqlite.db = db;
+	console.log(db)
 
 	fastify.decorate('sqlite', sqlite);
 }

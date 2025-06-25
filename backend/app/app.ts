@@ -23,7 +23,7 @@ import cors from '@fastify/cors';
 //   age: number;
 // }
 
-const app = Fastify({
+export const app = Fastify({
 	logger: true,
 	trustProxy: true,
 	ignoreTrailingSlash: true,
@@ -47,8 +47,9 @@ await app.register(cors, {
 
 // app.register(import('socket.fastify-socket.io'))
 app.register(import('./routes/root.route.js'))
-app.register(import('./routes/register.route.js'))
+app.register(import('./routes/user.route.js'))
 app.register(import('./db.js'))
+
 
 // app.listen({ port: config.port, host: '0.0.0.0' }, (err, address) => {
 //   if (err) {

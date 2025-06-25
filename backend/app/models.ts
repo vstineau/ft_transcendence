@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique } from "type
 import { IsEmail, Length, Matches } from 'class-validator' 
 import { getIsInvalidMessage } from "./utils/errorMessages.js";
 
-type UserJson = {
+export type UserJson = {
 	firstName: string,
 	lastName: string,
 	nickName: string,
@@ -14,27 +14,27 @@ type UserJson = {
 @Entity()
 @Unique(['email'])
 @Unique(['nickname'])
-export default class User extends BaseEntity {
+export class User extends BaseEntity {
 
 	@PrimaryGeneratedColumn()
 	id!: number;
 
 	@Column()
-	@Length(1, 30)
-	//Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
+	@Length(1, 50)
 	@Matches(/^[A-Za-z]+$/, {message: getIsInvalidMessage("firstname", "please only use alpabetic characters")})
 	firstName!: string;
 
 	@Column()
-	@Length(1, 30)
+	@Length(1, 50)
 	@Matches(/^[A-Za-z]+$/, {message: getIsInvalidMessage("lastname", "please only use alpabetic characters")})
 	lastName!: string;
 
 	@Column()
-	@Length(1, 30)
+	@Length(1, 50)
 	nickName!: string;
 
 	@Column()
+	//Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
 	@Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, {message : getIsInvalidMessage("password", "please use  password with at least 8 characters, one uppercase, one lowercase, one number and one special character")})
 	password!: string;
 
@@ -42,12 +42,8 @@ export default class User extends BaseEntity {
 	@IsEmail(undefined, {message: getIsInvalidMessage('Email')})
 	email!: string;
 
-	static async create(data: string) {
-		const obj: UserJson = JSON.parse(data);
-
-		return new User(obj);
-
-
+	static async createUser(data: UserJson): Promise<User> {
+		return new User(data);
 	}
 
 	constructor(obj: UserJson)

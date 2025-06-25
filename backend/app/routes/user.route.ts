@@ -1,6 +1,6 @@
 
 import { FastifyInstance, RouteShorthandOptions } from 'fastify';
-import { rootController } from '../controller/root.controller.js';
+import { userController } from '../controller/user.controller.js';
 
 //https://fastify.dev/docs/latest/Reference/Routes/
 
@@ -18,12 +18,12 @@ const registerControllerOptions: RouteShorthandOptions = {
 };
 
 
-export default async function rootRoutes(fastify: FastifyInstance) {
+export default async function userRoute(fastify: FastifyInstance) {
   fastify.route({
     method: ['GET', 'POST'],
-    url: '/register',
+    url: '/user/',
 	//preValidation: fastify.auth([verifyJWT, verifyPermissions]),
-    handler: rootController,
+    handler: userController,
     ...registerControllerOptions
   });
 }

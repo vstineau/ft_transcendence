@@ -16,6 +16,8 @@ services:
      - action: rebuild
        path: backend/package.json
   restart: always
+  ports: 
+    - 3000:3000
   volumes:
    - ./backend/app/db:/app/db
  frontend:
