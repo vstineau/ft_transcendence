@@ -1,27 +1,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
-// import {Server} from 'socket.io';
-//import rootController from 'controller/root.controller'
-//import path from 'path'
-
-// interface ServerToClientEvents {
-//   noArg: () => void;
-//   basicEmit: (a: number, b: string, c: Buffer) => void;
-//   withAck: (d: string, callback: (e: number) => void) => void;
-// }
-
-// interface ClientToServerEvents {
-//   hello: () => void;
-// }
-
-// interface InterServerEvents {
-//   ping: () => void;
-// }
-
-// interface SocketData {
-//   name: string;
-//   age: number;
-// }
+import { SqliteDataSource } from './dataSource.js'
+import {User} from './models.js'
 
 export const app = Fastify({
 	logger: true,
@@ -48,23 +28,14 @@ await app.register(cors, {
 // app.register(import('socket.fastify-socket.io'))
 app.register(import('./routes/root.route.js'))
 app.register(import('./routes/user.route.js'))
-app.register(import('./db.js'))
 
-
-// app.listen({ port: config.port, host: '0.0.0.0' }, (err, address) => {
-//   if (err) {
-//     console.error(err)
-//     //process.exit(1)
-//   }
-//   console.log(`Server listening at ${address}`)
-// })
-
-//fetch('http://localhost:8080/api/register')
-//  .then(response => response.text())
-//  .then(data => {
-//    console.log('backend :', data);
-//  })
-//  .catch(err => {
-//    console.error('Erreur lors de la requête vers le backend :', err);
-//  });
-//
+await SqliteDataSource.initialize()
+    .then(() => {
+        console.log("Data Source has been initialized!")
+    })
+    .catch((err) => {
+        console.error("Error during Data Source initialization", err)
+    })
+const userTest = await User.createUser({firstName: 'aa', lastName: 'bb', email: 'aa@aa.com',nickName: 'ouioui', password: 'aaabbb123**'});
+await userTest.save();
+//app.register(import('./db.js'))

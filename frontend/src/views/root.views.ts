@@ -77,6 +77,14 @@ export async function RegisterView() {
 					required
 				/>
 				<input
+					type="nickname"
+					name="nickname"
+					id="nickname"
+					placeholder="nickname"
+					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+					required
+				/>
+				<input
 					type="password"
 					name="password"
 					id="password"

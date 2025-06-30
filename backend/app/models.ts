@@ -1,20 +1,22 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique } from "typeorm"
-import { IsEmail, Length, Matches } from 'class-validator' 
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique, BeforeInsert, BeforeUpdate } from "typeorm"
+import { IsEmail, Length, Matches, validateOrReject } from 'class-validator' 
 import { getIsInvalidMessage } from "./utils/errorMessages.js";
-
-export type UserJson = {
-	firstName: string,
-	lastName: string,
-	nickName: string,
-	password: string,
-	email: string,
-};
+import type { UserJson } from './types/userTypes.js'
 
 //https://github.com/typestack/class-validator
 @Entity()
-@Unique(['email'])
-@Unique(['nickname'])
+@Unique(['email', 'nickName'])
 export class User extends BaseEntity {
+
+	@BeforeInsert()
+	async validateInsert() {
+		await validateOrReject(this);
+	}
+
+	@BeforeUpdate()
+	async validateUpdate() {
+		await validateOrReject(this, {skipMissingProperties: true});
+	}
 
 	@PrimaryGeneratedColumn()
 	id!: number;
@@ -49,11 +51,11 @@ export class User extends BaseEntity {
 	constructor(obj: UserJson)
 	{
 		super();
-		this.firstName = obj.firstName;
-		this.lastName = obj.lastName;
-		this.nickName = obj.nickName;
-		this.password = obj.password;
-		this.email = obj.email;
+		this.firstName = obj?.firstName ?? '';
+		this.lastName = obj?.lastName ?? '';
+		this.nickName = obj?.nickName ?? '';
+		this.password = obj?.password ?? '';
+		this.email = obj?.email ?? '';
 	}
 	//@Column()
 	//gameHistory: History> = new History;

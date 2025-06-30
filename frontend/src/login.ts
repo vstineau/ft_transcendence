@@ -15,27 +15,27 @@ export async function logUser() {
 			password: password,
 		};
 		// sending token to backend then wait response
-		// try {
-		const response = 1; //= await fetch('http://localhost:3000/register', {
-		// 	method: 'POST',
-		// 	headers: {
-		// 		'Content-Type': 'application/json',
-		// 	},
-		// 	body: JSON.stringify(body),
-		// });
-		// if (response) {
-		// 	// error handle = staying on register page
-		// 	// navigateTo('/login');
-		// 	return;
-		// }
-		// JSON.parse;
-		// console.log(test.get('login'));
-		// console.log(test.get('email'));
-		// navigateTo('/');
-		// } catch (err) {
-		// console.error('error = ', err);
-		// }
-		// navigateTo('/');
-		// console.log();
+		try {
+		const response = await fetch('http://localhost:3000/register', {
+		 	method: 'POST',
+		 	headers: {
+		 		'Content-Type': 'application/json',
+		 	},
+		 	body: JSON.stringify(body),
+		 });
+		 if (response) {
+		 	// error handle = staying on register page
+		 	// navigateTo('/login');
+		 	return;
+		 }
+		 JSON.parse;
+		 console.log(test.get('login'));
+		 console.log(test.get('email'));
+		 navigateTo('/');
+		 } catch (err) {
+		 console.error('error = ', err);
+		 }
+		 navigateTo('/');
+		 console.log();
 	});
 }

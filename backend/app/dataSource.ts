@@ -16,10 +16,3 @@ export const SqliteDataSource = new DataSource({
 	synchronize: true, //a passer a false une fois en prod pour utiliser les migrations
 })
 
-SqliteDataSource.initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!")
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization", err)
-    })
