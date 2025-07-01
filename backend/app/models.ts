@@ -24,12 +24,7 @@ export class User extends BaseEntity {
 	@Column()
 	@Length(1, 50)
 	@Matches(/^[A-Za-z]+$/, {message: getIsInvalidMessage("firstname", "please only use alpabetic characters")})
-	firstName!: string;
-
-	@Column()
-	@Length(1, 50)
-	@Matches(/^[A-Za-z]+$/, {message: getIsInvalidMessage("lastname", "please only use alpabetic characters")})
-	lastName!: string;
+	login!: string;
 
 	@Column()
 	@Length(1, 50)
@@ -51,8 +46,7 @@ export class User extends BaseEntity {
 	constructor(obj: UserJson)
 	{
 		super();
-		this.firstName = obj?.firstName ?? '';
-		this.lastName = obj?.lastName ?? '';
+		this.login = obj?.login ?? '';
 		this.nickName = obj?.nickName ?? '';
 		this.password = obj?.password ?? '';
 		this.email = obj?.email ?? '';

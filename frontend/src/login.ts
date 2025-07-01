@@ -7,16 +7,19 @@ export async function logUser() {
 		e.preventDefault();
 		const test = new FormData(form);
 		const login = test.get('login');
+		const lastname = test.get('login');
 		const password = test.get('password');
-		console.log(login);
-		console.log(password);
+		const nickname = test.get('nickname');
+		const email = test.get('email');
 		const body = {
 			login: login,
+			nickName: nickname,
 			password: password,
+			email: email,
 		};
 		// sending token to backend then wait response
 		try {
-		const response = await fetch('http://localhost:3000/register', {
+		const response = await fetch('https://localhost:8080/api/register', {
 		 	method: 'POST',
 		 	headers: {
 		 		'Content-Type': 'application/json',
@@ -28,7 +31,7 @@ export async function logUser() {
 		 	// navigateTo('/login');
 		 	return;
 		 }
-		 JSON.parse;
+		 //JSON.parse;
 		 console.log(test.get('login'));
 		 console.log(test.get('email'));
 		 navigateTo('/');

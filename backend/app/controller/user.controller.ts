@@ -8,8 +8,10 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 	server.post<{
 		Reply: IUserReply,
 		Body: UserJson
-	}>('/resgister', async (request, reply) => {
+	}>('/register', async (request, reply) => {
 		try {
+			console.log("fetch from front worked");
+			console.log(request.body);
 			const user = await User.createUser(request.body); 
 			await user.save();
 			reply.code(200).send({ success: true });
@@ -22,8 +24,6 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 			reply.code(500).send({ success: false, error: errorMessage});
 		}
 	})		
-	
-
 //	server.post<{
 //		Reply: FastifyReply,
 //		Body: UserJson

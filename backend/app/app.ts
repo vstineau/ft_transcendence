@@ -1,7 +1,6 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { SqliteDataSource } from './dataSource.js'
-import {User} from './models.js'
 
 export const app = Fastify({
 	logger: true,
@@ -18,7 +17,8 @@ export const app = Fastify({
 // >();
 
 await app.register(cors, {
-  origin: 'http://frontend:5000',
+	origin: ['https://localhost:8080', 'http://localhost:8080'],
+	credentials: true,
 });
 
 //fastify.register(require('@fastify/static'), {
@@ -28,6 +28,7 @@ await app.register(cors, {
 // app.register(import('socket.fastify-socket.io'))
 app.register(import('./routes/root.route.js'))
 app.register(import('./routes/user.route.js'))
+app.listen({port: 3000, host: '0.0.0.0'});
 
 await SqliteDataSource.initialize()
     .then(() => {
@@ -36,6 +37,3 @@ await SqliteDataSource.initialize()
     .catch((err) => {
         console.error("Error during Data Source initialization", err)
     })
-const userTest = await User.createUser({firstName: 'aa', lastName: 'bb', email: 'aa@aa.com',nickName: 'ouioui', password: 'aaabbb123**'});
-await userTest.save();
-//app.register(import('./db.js'))

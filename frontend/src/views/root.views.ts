@@ -63,7 +63,7 @@ export async function RegisterView() {
 					type="text"
 					name="login"
 					id="login"
-					placeholder="Login"
+					placeholder="login"
 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
 					required
 				/>

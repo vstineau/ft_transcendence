@@ -6,8 +6,7 @@ export interface IUserReply {
 }
 
 export type UserJson = {
-	firstName: string,
-	lastName: string,
+	login: string,
 	nickName: string,
 	password: string,
 	email: string,
