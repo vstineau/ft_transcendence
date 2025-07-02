@@ -43,7 +43,12 @@ export class User extends BaseEntity {
 		return new User(data);
 	}
 
-	constructor(obj: UserJson)
+	//bcrypt here?
+	async comparePassword(password: string): Promise<boolean> {
+		return this.password.localeCompare(password) == 0;
+	}
+
+	constructor(obj?: UserJson)
 	{
 		super();
 		this.login = obj?.login ?? '';

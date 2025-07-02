@@ -1,3 +1,4 @@
+import { User } from '../models.js'
 
 export interface IUserReply {
 	200: { success: boolean };
@@ -10,4 +11,9 @@ export type UserJson = {
 	nickName: string,
 	password: string,
 	email: string,
+};
+
+export interface ILoginReply {
+	token: string;
+	user: Partial<User>;
 };

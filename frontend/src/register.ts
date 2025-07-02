@@ -33,36 +33,34 @@ export async function registerUser() {
 		e.preventDefault();
 		const test = new FormData(form);
 		const login = test.get('login');
-		const email = test.get('email');
 		const password = test.get('password');
+		const nickname = test.get('nickname');
+		const email = test.get('email');
 		const body = {
 			login: login,
-			email: email,
+			nickName: nickname,
 			password: password,
+			email: email,
 		};
 		// sending token to backend then wait response
-		// try {
-		const response = 1; //= await fetch('http://localhost:3000/register', {
-		// 	method: 'POST',
-		// 	headers: {
-		// 		'Content-Type': 'application/json',
-		// 	},
-		// 	body: JSON.stringify(body),
-		// });
-		if (!response) {
-			// error handle = staying on register page
-			navigateTo('/register');
-			return;
-		}
-		JSON.parse;
-		console.log(test.get('login'));
-		console.log(test.get('email'));
-		console.log(test.get('password'));
+		try {
+		const response = await fetch('https://localhost:8080/api/register', {
+		 	method: 'POST',
+		 	headers: {
+		 		'Content-Type': 'application/json',
+		 	},
+		 	body: JSON.stringify(body),
+		 });
+		 if (response) {
+		 	// error handle = staying on register page
+		 	navigateTo('/login');
+		 	return;
+		 }
+		//JSON.parse;
 		navigateTo('/');
-		// } catch (err) {
-		// console.error('error = ', err);
-		// }
-		// navigateTo('/');
-		// console.log();
+		} catch (err) {
+		navigateTo('/');
+		console.error('error = ', err);
+		}
 	});
 }
