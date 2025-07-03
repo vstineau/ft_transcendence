@@ -1,6 +1,8 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { SqliteDataSource } from './dataSource.js'
+import { authJwt } from './auth/auth.js'
+import config from './config.js'
 
 export const app = Fastify({
 	logger: true,
@@ -26,14 +28,15 @@ await app.register(cors, {
 //})
 
 // app.register(import('socket.fastify-socket.io'))
-app.register(import('./routes/root.route.js'))
-app.register(import('./routes/user.route.js'))
+app.register(import('./routes/root.route.js'));
+app.register(import('./routes/user.route.js'));
 app.listen({port: 3000, host: '0.0.0.0'});
+app.register(authJwt, {jwtSecret: config.jwt.secret});
 
 await SqliteDataSource.initialize()
     .then(() => {
-        console.log("Data Source has been initialized!")
+        console.log("Data Source has been initialized!");
     })
     .catch((err) => {
-        console.error("Error during Data Source initialization", err)
+        console.error("Error during Data Source initialization", err);
     })

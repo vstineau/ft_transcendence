@@ -4,6 +4,9 @@ import { User} from '../models.js'
 
 import { IUserReply, UserJson, ILoginReply } from '../types/userTypes.js'
 
+//pas oublier de changer le nom des images de profils 
+
+
 export const userController: FastifyPluginCallback = (server, _opts, done) => {
 	server.post<{
 		Reply: IUserReply,
@@ -28,13 +31,14 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 		Body: UserJson
 	}>('/login', async (request, reply) => {
 		try {
-			//const invalidInfoError = "the provided user details are invalid";
-			const user = await User.findOneBy({email: request.body.email}); 
-			if (!user) {
-				// invalidInfoError;
-				}
+			const invalidInfoError = "the provided user details are invalid";
 			console.log(request.body);
-			//reply.code(200).send({ success: true });
+			const user = await User.findOneBy({email: request.body.email}); 
+			if (!user || !user.comparePassword(request.body.password)) {
+				throw invalidInfoError;
+				}
+			const token = server.jwt.sign(request.body, { expiresIn: '4h'});
+			reply.code(200).send({ success: true, token: token});
 		}
 		catch (error) { 
 			let errorMessage = 'unknown error';
