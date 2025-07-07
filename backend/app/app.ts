@@ -11,23 +11,10 @@ export const app = Fastify({
 	ignoreDuplicateSlashes: true
 });
 
-// const io = new Server<
-//   ClientToServerEvents,
-//   ServerToClientEvents,
-//   InterServerEvents,
-//   SocketData
-// >();
-
 await app.register(cors, {
 	origin: ['https://localhost:8080', 'http://localhost:8080'],
 	credentials: true,
 });
-
-//fastify.register(require('@fastify/static'), {
-//  root: path.join(__dirname, 'public'),
-//})
-
-// app.register(import('socket.fastify-socket.io'))
 authJwt(app, {jwtSecret: config.jwt.secret});
 app.register(import('./routes/root.route.js'));
 app.register(import('./routes/user.route.js'));

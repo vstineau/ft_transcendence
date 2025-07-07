@@ -22,7 +22,9 @@ export async function logUser() {
 		 	body: JSON.stringify(body),
 		 });
 		 if (response) {
+				const data =  await response.json();
 				console.log(response);
+				console.log(data);
 		 	// error handle = staying on register page
 		 	// navigateTo('/login');
 			navigateTo('/');

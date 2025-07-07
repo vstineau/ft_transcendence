@@ -1,7 +1,19 @@
 //SIZE 1000 X 1000
-//import {Server, Socket} from 'socket.io';
-//
-//const io = new Server();
+import { app } from '../app.js'
+import {Server, Socket} from 'socket.io';
+import  fastifySocketIO from 'fastify-socket.io'
+
+const fastifySocketIOModule = fastifySocketIO.default || fastifySocketIO;
+app.register(fastifySocketIOModule);
+
+const io = new Server(app.server);
+
+io.on('connection', (_socket: Socket) => {
+  console.log('a user connected');
+});
+
+io.emit("message", "Hello everyone!");
+
 //
 //export class Pos {
 //	x:number;
