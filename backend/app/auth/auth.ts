@@ -7,8 +7,9 @@ import fastifyJwt from '@fastify/jwt'
 export async function authJwt(fastify: FastifyInstance, opts: any) {
   // Enregistrement du support JWT
   fastify.register(fastifyJwt, {
-    secret: opts.jwtSecret // || 'secret_par_defaut' //jamais en prod
+    secret: opts.jwtSecret  || 'secret_par_defaut' //jamais en prod
   })
+	console.log("jwt registered");
 
   // Décorateur d'authentification
   fastify.decorate('authenticate', async function(request: FastifyRequest, reply: FastifyReply) {

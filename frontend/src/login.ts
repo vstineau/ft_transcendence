@@ -14,7 +14,7 @@ export async function logUser() {
 		};
 		// sending token to backend then wait response
 		try {
-		const response = await fetch('https://localhost:8080/api/register', {
+		const response = await fetch('https://localhost:8080/api/login', {
 		 	method: 'POST',
 		 	headers: {
 		 		'Content-Type': 'application/json',
@@ -22,8 +22,10 @@ export async function logUser() {
 		 	body: JSON.stringify(body),
 		 });
 		 if (response) {
+				console.log(response);
 		 	// error handle = staying on register page
 		 	// navigateTo('/login');
+			navigateTo('/');
 		 	return;
 		 }
 		 //JSON.parse;

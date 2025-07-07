@@ -28,10 +28,10 @@ await app.register(cors, {
 //})
 
 // app.register(import('socket.fastify-socket.io'))
+authJwt(app, {jwtSecret: config.jwt.secret});
 app.register(import('./routes/root.route.js'));
 app.register(import('./routes/user.route.js'));
 app.listen({port: 3000, host: '0.0.0.0'});
-app.register(authJwt, {jwtSecret: config.jwt.secret});
 
 await SqliteDataSource.initialize()
     .then(() => {

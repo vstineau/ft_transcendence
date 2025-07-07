@@ -33,11 +33,16 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 		try {
 			const invalidInfoError = "the provided user details are invalid";
 			console.log(request.body);
-			const user = await User.findOneBy({email: request.body.email}); 
+			console.log("jusqu'ici tout va bien");
+			const user = await User.findOneBy({login: request.body.login}); 
+			if (!user) { console.log("user")}
+			if (user && !user.comparePassword(request.body.password)) { console.log("compare password")}
 			if (!user || !user.comparePassword(request.body.password)) {
+				console.log("authentification failed !");
 				throw invalidInfoError;
 				}
 			const token = server.jwt.sign(request.body, { expiresIn: '4h'});
+			console.log("authentification succeed !");
 			reply.code(200).send({ success: true, token: token});
 		}
 		catch (error) { 
