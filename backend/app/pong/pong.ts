@@ -1,18 +1,30 @@
 //SIZE 1000 X 1000
 import { app } from '../app.js'
-import {Server, Socket} from 'socket.io';
+import {Server, Socket } from 'socket.io';
 import  fastifySocketIO from 'fastify-socket.io'
+import { FastifyRequest, FastifyReply } from 'fastify';
+
+declare module 'fastify' {
+  interface FastifyInstance {
+    io: Server
+  }
+}
+
+const io = new Server(app.server);
 
 const fastifySocketIOModule = fastifySocketIO.default || fastifySocketIO;
 app.register(fastifySocketIOModule);
-
-const io = new Server(app.server);
 
 io.on('connection', (_socket: Socket) => {
   console.log('a user connected');
 });
 
-io.emit("message", "Hello everyone!");
+
+app.get("/pong", (_req: FastifyRequest, _reply: FastifyReply) => {
+  app.io.emit("hello");
+});
+
+
 
 //
 //export class Pos {
