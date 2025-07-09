@@ -5,8 +5,8 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "dev": "tsc -p tsconfig.json --watch"
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development --watch --stats-error-details"
   },
   "repository": {
     "type": "git",
@@ -19,15 +19,19 @@
   },
   "homepage": "https://github.com/vstineau/ft_transcendence#readme",
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "ts-loader": "^9.5.2",
+    "webpack": "^5.100.0",
+    "webpack-cli": "^6.0.1"
   },
   "dependencies": {
-    "@fastify/cors": "^11.0.1",
     "@tailwindcss/cli": "^4.1.8",
     "fastify": "^5.3.3",
+    "socket.io-client": "^4.8.1",
     "tailwindcss": "^4.1.8",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "uninstall": "^0.0.0"
   }
 }

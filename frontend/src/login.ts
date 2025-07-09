@@ -1,4 +1,4 @@
-import { navigateTo } from './main.js';
+import { navigateTo } from './main';
 
 export async function logUser() {
 	const form = document.getElementById('login-form') as HTMLFormElement | null;
@@ -23,8 +23,8 @@ export async function logUser() {
 		 });
 		 if (response) {
 				const data =  await response.json();
-				console.log(response);
-				console.log(data);
+				//console.log(response);
+				//console.log(data);
 		 	// error handle = staying on register page
 		 	// navigateTo('/login');
 			navigateTo('/');

@@ -15,8 +15,9 @@ const io = new Server(app.server);
 const fastifySocketIOModule = fastifySocketIO.default || fastifySocketIO;
 app.register(fastifySocketIOModule);
 
-io.on('connection', (_socket: Socket) => {
+io.on('connection', (socket: Socket) => {
   console.log('a user connected');
+	console.log(socket.id);
 });
 
 

@@ -26,6 +26,6 @@ RUN npm install
 COPY . ./ 
 
 RUN npm run build
-#start build dev watch
-#CMD ["npm", "run", "dev"] 
+#start build dev 
+
 CMD ["nginx", "-g", "daemon off;"]

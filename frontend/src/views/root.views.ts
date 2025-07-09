@@ -1,3 +1,5 @@
+import { pongGame } from "../pong";
+
 export async function RootView() {
 	return /* HTML */ `
 		<div class="dashboard">
@@ -16,10 +18,11 @@ export async function PongView() {
 	return /* HTML */ `
 		<div class="dashboard">
 			<ul>
-				<li><a href="/pong/matchmaking">Quick match</a></li>	
+				<li><a href="/pong/matchmaking">Quick match</a></li>
 				<li><a href="/pong/tournament">Tournament</a></li>
 				<li><a href="/pong/stats">Stats</a></li>
 				<li><a href="/pong/leaderboard">Leaderboard</a></li>
+				<li><a href="/">Main Menu</a></li>
 			</ul>
 		</div>
 	`;
@@ -35,12 +38,15 @@ export async function LoginView() {
 					type="text"
 					placeholder="Login"
 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+					autocomplete="off"
+					required
 				/>
 				<input
 					name="password"
 					type="password"
 					placeholder="Mot de passe"
 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+					required
 				/>
 				<button
 					type="submit"
@@ -63,7 +69,7 @@ export async function RegisterView() {
 					type="text"
 					name="login"
 					id="login"
-					placeholder="login"
+					placeholder="Login"
 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
 					required
 				/>
@@ -73,14 +79,6 @@ export async function RegisterView() {
 					name="email"
 					id="mail"
 					placeholder="Email"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-					required
-				/>
-				<input
-					type="nickname"
-					name="nickname"
-					id="nickname"
-					placeholder="nickname"
 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
 					required
 				/>
@@ -100,5 +98,22 @@ export async function RegisterView() {
 				</button>
 			</form>
 		</div>
+	`;
+}
+
+export async function PongMatchMakingView() {
+	return /* HTML */ `
+		<div class="dashboard">
+			<ul>
+				<li><a href="/pong/matchmaking/game">Find Match</a></li>
+			</ul>
+		</div>
+	`;
+}
+
+export async function PongCanvas(){
+	// await pongGame();
+	return /* HTML */ `
+	<canvas id="gameCanvas" width="1920" height="930">pong</canvas>
 	`;
 }

@@ -4,7 +4,7 @@
 //   RegisterView,
 //   RootView,
 // } from "./views/root.views.js";
-import { navigateTo } from './main.js';
+import { navigateTo } from './main';
 
 // interface User {
 // 	login: string;

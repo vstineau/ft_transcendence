@@ -1,14 +1,16 @@
 // import { register } from 'ts-node';
-import { registerUser } from './register.js';
-import { logUser } from './login.js';
-import { LoginView, PongView, RegisterView, RootView } from './views/root.views.js';
+import { registerUser } from './register';
+import { logUser } from './login';
+import { LoginView, PongView, RegisterView, RootView, PongMatchMakingView, PongCanvas } from './views/root.views';
+import { pongGame } from './pong';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
 	'/': RootView,
 	//"/": async () => "<h1>AAAAAAAAAAAAAA</h1>",
 	'/pong': PongView, // Remplace par le vrai contenu ou composant
-	'/pong/matchmaking': async () => '<h1>matchmaking</h1>',
+	'/pong/matchmaking': PongMatchMakingView,
+	'/pong/matchmaking/game': PongCanvas,
 	'/pong/leaderboard': async () => '<h1>leaderboard</h1>',
 	'/pong/stats': async () => '<h1>stats</h1>',
 	'/pong/tournament': async () => '<h1>tournament</h1>',
@@ -37,6 +39,9 @@ async function renderPage() {
 	if (path === '/login') {
 		logUser();
 	}
+	if (path === '/pong/matchmaking/game') {
+		pongGame();
+	}
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -47,10 +52,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 			await navigateTo((target as HTMLAnchorElement).getAttribute('href')!);
 		}
 	});
-
+	
 	// 5. Gère le bouton "Retour" du navigateur
 	window.addEventListener('popstate', renderPage);
-
+	
 	// 6. Rendu initial
 	await renderPage();
+	// pongGame();
+
 });

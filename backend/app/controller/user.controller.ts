@@ -13,7 +13,7 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 		Body: UserJson
 	}>('/register', async (request, reply) => {
 		try {
-			console.log(request.body);
+			//console.log(request.body);
 			const user = await User.createUser(request.body); 
 			await user.save();
 			reply.code(200).send({ success: true });
@@ -32,10 +32,10 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 	}>('/login', async (request, reply) => {
 		try {
 			const invalidInfoError = "the provided user details are invalid";
-			console.log(request.body);
-			console.log("jusqu'ici tout va bien");
+			//console.log(request.body);
+			//console.log("jusqu'ici tout va bien");
 			const user = await User.findOneBy({login: request.body.login}); 
-			if (!user) { console.log("user")}
+			if (!user) { }//console.log("user")}
 			if (user && !user.comparePassword(request.body.password)) { console.log("compare password")}
 			if (!user || !user.comparePassword(request.body.password)) {
 				console.log("authentification failed !");
