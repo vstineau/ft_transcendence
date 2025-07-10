@@ -1,29 +1,41 @@
 //SIZE 1000 X 1000
 import { app } from '../app.js'
 import {Server, Socket } from 'socket.io';
-import  fastifySocketIO from 'fastify-socket.io'
+//import  fastifySocketIO from 'fastify-socket.io'
 import { FastifyRequest, FastifyReply } from 'fastify';
+import socketioServer from '../plugins/socketIo.js'
 
+console.log("AAAAAAAAAAAAAAAAAAAAAAAA");
 declare module 'fastify' {
   interface FastifyInstance {
     io: Server
   }
 }
+console.log("AAAAAAAAAAAAAAAAAAAAAAAA");
+await app.register(socketioServer);
+//const fastifySocketIOModule = fastifySocketIO.default || fastifySocketIO;
+//app.register(fastifySocketIOModule);
 
-const io = new Server(app.server);
-
-const fastifySocketIOModule = fastifySocketIO.default || fastifySocketIO;
-app.register(fastifySocketIOModule);
-
-io.on('connection', (socket: Socket) => {
-  console.log('a user connected');
-	console.log(socket.id);
+try {
+	console.log("AAAAAAAAAAAAAAAAAAAAAAAA");
+await app.ready()
+ .then(() => {
+  app.io.on('connection', (socket: Socket) => {
+    console.log('a user connected');
+    console.log(socket.id);
+  })
 });
+} catch (error) {console.error(error);}
 
+
+app.get("/test", (_req: FastifyRequest, reply: FastifyReply) => {
+  reply.send({ io: !!app.io });
+});
 
 app.get("/pong", (_req: FastifyRequest, _reply: FastifyReply) => {
   app.io.emit("hello");
 });
+
 
 
 

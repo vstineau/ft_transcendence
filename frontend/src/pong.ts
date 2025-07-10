@@ -1,5 +1,10 @@
 import  io  from  'socket.io-client';
 
+const socket = io('https://localhost:8080/pong');
+
+socket.on("connect", () => {
+  console.log(socket.id); 
+});
 
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D | null;
@@ -199,11 +204,6 @@ export function pongGame() {
 
 	const initGame = () => {
 
-		const socket = io('https://localhost:8080/api/pong');
-		
-		socket.on("connect", () => {
-		  console.log(socket.id); 
-		});
 		canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
 		if (!canvas) {
 			console.error("Canvas 'game' not found");
