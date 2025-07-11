@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique, BeforeInsert, BeforeUpdate } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique, BeforeInsert, BeforeUpdate, ManyToOne, OneToMany } from "typeorm"
 import { IsEmail, Length, Matches, validateOrReject } from 'class-validator' 
 import { getIsInvalidMessage } from "./utils/errorMessages.js";
 import type { UserJson } from './types/userTypes.js'
@@ -56,11 +56,26 @@ export class User extends BaseEntity {
 		this.password = obj?.password ?? '';
 		this.email = obj?.email ?? '';
 	}
-	//@Column()
-	//gameHistory: History> = new History;
 
+//	@OneToMany(() => History, (history: History) => history.user, { cascade: true })
+//    history: History[];
 	//avatar
-}
+};
 
-
-//export default class History{}
+//@Entity()
+//export class History {
+//	@Column()
+//	date!: string;
+//
+//	@Column()
+//	opponentNickname!: string;
+//
+//	@Column()
+//	score!: string;
+//
+//	@Column()
+//	win!: boolean;
+//
+//	@ManyToOne(() => User, (user: User) => user.history)
+//    user: User;
+//};

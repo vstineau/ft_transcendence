@@ -1,40 +1,33 @@
 //SIZE 1000 X 1000
-import { app } from '../app.js'
+//import { app } from '../app.js'
 import {Server, Socket } from 'socket.io';
 //import  fastifySocketIO from 'fastify-socket.io'
-import { FastifyRequest, FastifyReply } from 'fastify';
-import socketioServer from '../plugins/socketIo.js'
+import { FastifyInstance } from 'fastify';
 
-console.log("AAAAAAAAAAAAAAAAAAAAAAAA");
+
 declare module 'fastify' {
   interface FastifyInstance {
     io: Server
   }
 }
-console.log("AAAAAAAAAAAAAAAAAAAAAAAA");
-await app.register(socketioServer);
-//const fastifySocketIOModule = fastifySocketIO.default || fastifySocketIO;
-//app.register(fastifySocketIOModule);
 
-try {
-	console.log("AAAAAAAAAAAAAAAAAAAAAAAA");
-await app.ready()
- .then(() => {
-  app.io.on('connection', (socket: Socket) => {
-    console.log('a user connected');
-    console.log(socket.id);
-  })
-});
-} catch (error) {console.error(error);}
+export function startPongGame(app: FastifyInstance) {
+		app.ready().then(() => {
+		app.io.on('connection', (socket: Socket) => {
+			socket.on('joinGame', (gameId: string) => {
+				console.log(gameId);
+				socket.join(gameId);
+				socket.emit("gamestate", "info")
+			});
+		socket.on('playerAction', ({gameId, action}) => {
+			console.log(gameId);
+			console.log(action);
+		});
+	});
+	});
+}
 
 
-app.get("/test", (_req: FastifyRequest, reply: FastifyReply) => {
-  reply.send({ io: !!app.io });
-});
-
-app.get("/pong", (_req: FastifyRequest, _reply: FastifyReply) => {
-  app.io.emit("hello");
-});
 
 
 

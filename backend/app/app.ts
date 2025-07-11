@@ -4,6 +4,7 @@ import { SqliteDataSource } from './dataSource.js'
 import { authJwt } from './auth/auth.js'
 import config from './config.js'
 import socketioServer from './plugins/socketIo.js'
+import {startPongGame} from './pong/pong.js'
 
 export const app = Fastify({
 	logger: true,
@@ -13,15 +14,17 @@ export const app = Fastify({
 });
 
 await app.register(cors, {
-	origin: ['https://localhost:8080', 'http://localhost:8080'],
+	origin: ['https://localhost:8080'],
 	credentials: true,
 });
 
 await app.register(socketioServer);
 authJwt(app, {jwtSecret: config.jwt.secret});
-//app.register(import('./routes/root.route.js'));
-app.register(import('./routes/user.route.js'));
+await app.register(import('./routes/root.route.js'));
+await app.register(import('./routes/user.route.js'));
 app.listen({port: 3000, host: '0.0.0.0'});
+
+startPongGame(app);
 
 await SqliteDataSource.initialize()
     .then(() => {

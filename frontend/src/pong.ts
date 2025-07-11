@@ -1,10 +1,15 @@
 import  io  from  'socket.io-client';
 
-const socket = io('https://localhost:8080/pong');
+export function createPongSocket(): any {
+	const socket = io('https://localhost:8080');
 
-socket.on("connect", () => {
-  console.log(socket.id); 
-});
+	socket.emit('joinGame', 'game1');
+	
+	socket.on("gamestate", (state) => {
+	  console.log(state); 
+	});
+	return socket;
+}
 
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D | null;
@@ -24,7 +29,7 @@ let key_w = false,
 	key_up = false,
 	key_down = false;
 
-export function gameLoop() {
+export function gameLoop(_socket: any) {
 	requestAnimationFrame(gameLoop);
 	ctx!.fillStyle = 'black';
 	ctx!.fillRect(0, 0, win_width, win_height);
@@ -214,7 +219,7 @@ export function pongGame() {
 		ball.vy = (Math.random() < 0.5 ? -1 : 1) * 6;
 		ball.x = win_width / 2;
 		ball.y = win_height / 2;
-		gameLoop();
+		gameLoop(createPongSocket());
 	};
 	initGame();
 }
