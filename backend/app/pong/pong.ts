@@ -13,7 +13,10 @@ declare module 'fastify' {
 
 export function startPongGame(app: FastifyInstance) {
 		app.ready().then(() => {
+		console.log('LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+		try {
 		app.io.on('connection', (socket: Socket) => {
+		console.log('ICIIIIIIIIIIIIIIIIIIIIIIIII');
 			socket.on('joinGame', (gameId: string) => {
 				console.log(gameId);
 				socket.join(gameId);
@@ -24,6 +27,7 @@ export function startPongGame(app: FastifyInstance) {
 			console.log(action);
 		});
 	});
+		} catch (err) {console.log(err);}
 	});
 }
 

@@ -3,8 +3,13 @@ import  io  from  'socket.io-client';
 export function createPongSocket(): any {
 	const socket = io('https://localhost:8080');
 
+	socket.on('connection', () => {
+	  console.log('Socket connected!');
+	});
+
 	socket.emit('joinGame', 'game1');
 	
+
 	socket.on("gamestate", (state) => {
 	  console.log(state); 
 	});

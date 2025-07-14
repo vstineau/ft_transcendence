@@ -12,10 +12,19 @@ const fastifySocketIO: FastifyPluginAsync<FastifySocketioOptions> = fp(
       (fastify as any).io.local.disconnectSockets(true)
       done()
     }
-    fastify.decorate('io', new Server(fastify.server, opts))
+    const { preClose, ...socketIoOpts } = opts;
+    fastify.decorate('io', new Server(fastify.server, {
+      path: '/socket.io',
+      cors: {
+        origin: ['https://localhost:8080'],
+        methods: ['GET', 'POST'],
+        credentials: true
+      },
+      ...socketIoOpts
+    }))
     fastify.addHook('preClose', (done) => {
-      if (opts.preClose) {
-        return opts.preClose(done)
+      if (preClose) {
+        return preClose(done)
       }
       return defaultPreClose(done)
     })
@@ -26,5 +35,5 @@ const fastifySocketIO: FastifyPluginAsync<FastifySocketioOptions> = fp(
   },
   { fastify: '>=4.0.0', name: 'fastify-socket.io' },
 )
-
 export default fastifySocketIO
+
