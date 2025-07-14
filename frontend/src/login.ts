@@ -24,7 +24,14 @@ export async function logUser() {
 		 if (response) {
 				const data =  await response.json();
 				//console.log(response);
-				//console.log(data);
+				const token = data.token
+				if(token){
+					localStorage.setItem('token', token)
+					console.log('token :', token)
+				}
+				console.log('aaaaaaaaaaaaa');
+				console.log(data);
+				console.log(JSON.stringify(data))
 		 	// error handle = staying on register page
 		 	// navigateTo('/login');
 			navigateTo('/');

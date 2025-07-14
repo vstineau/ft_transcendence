@@ -114,6 +114,6 @@ export async function PongMatchMakingView() {
 export async function PongCanvas(){
 	// await pongGame();
 	return /* HTML */ `
-	<canvas id="gameCanvas" width="1920" height="930">pong</canvas>
+	<canvas id="gameCanvas">pong</canvas>
 	`;
 }
