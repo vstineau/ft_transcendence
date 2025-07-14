@@ -1,26 +1,29 @@
 import io from 'socket.io-client';
 
-export function createPongSocket(): any {
-	const socket = io('https://localhost:8080');
-
-	socket.on('connection', () => {
-	  console.log('Socket connected!');
-	});
-
-	socket.emit('joinGame', 'game1');
-	
-
-	socket.on("gamestate", (state) => {
-	  console.log(state); 
-	});
-	return socket;
-}
 
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D | null;
 
 let win_width = window.innerWidth;
 let win_height = window.innerHeight;
+
+export function createPongSocket(): any {
+	const socket = io('https://localhost:8080');
+
+	socket.on('connection', () => {
+		console.log('Socket connected!');
+	});
+	
+	socket.emit('initGame', window.innerHeight, window.innerWidth);
+	// socket.emit('joinGame', 'game1');
+
+	socket.on('gamestate', gameState => {
+		
+		console.log(gameState);
+	});
+	return socket;
+}
+
 
 let p1 = {
 	name: 'player 1',
@@ -135,15 +138,15 @@ function checkWin() {
 
 function handlePaddleCollisionP1() {
 	const collision =
-	ball.x > p1.x && ball.x < p1.x + p1.length && ball.y + ball.radius > p1.y && ball.y - ball.radius < p1.y + p1.height;
-	
+		ball.x > p1.x && ball.x < p1.x + p1.length && ball.y + ball.radius > p1.y && ball.y - ball.radius < p1.y + p1.height;
+
 	if (collision) {
 		ball.vx = -ball.vx;
-		
+
 		const impactPoint = (ball.y - (p1.y + p1.height / 2)) / (p1.height / 2);
 		ball.vy += impactPoint * 3;
 		console.log(ball.vy);
-		
+
 		if (Math.abs(ball.vx) < 40) ball.vx += ball.vx > 0 ? 1.5 : -1.5;
 	}
 }

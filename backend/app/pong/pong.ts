@@ -1,115 +1,77 @@
 //SIZE 1000 X 1000
 //import { app } from '../app.js'
-import {Server, Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
+import { Game } from '../types/pongTypes.js';
 //import  fastifySocketIO from 'fastify-socket.io'
 import { FastifyInstance } from 'fastify';
-
+// import { Game, Key } from '../types/pongTypes';
+// import { GameState } from 'type';
 
 declare module 'fastify' {
-  interface FastifyInstance {
-    io: Server
-  }
+	interface FastifyInstance {
+		io: Server;
+	}
 }
 
-export function startPongGame(app: FastifyInstance) {
-		app.ready().then(() => {
+let gameState: Game;
+
+function initGame(height: number, width: number) {
+	gameState = {
+    win: {
+      w: width,
+      h: height,
+    },
+		p1: {
+			name: 'player 1',
+			y: height / 2,
+			x: 20,
+			height: height / 9,
+			length: width / 90,
+			vy: height / 150,
+			score: 0,
+		},
+		p2: {
+			name: 'player 2',
+			y: height / 2,
+			x: width * 0.98,
+			height: height / 9,
+			length: width / 90,
+			vy: height / 150,
+			score: 0,
+		},
+		ball: {
+			x: width / 2,
+			y: height / 2,
+			radius: (height * width) / 80000,
+			vx: 0,
+			vy: 0,
+		},
+		key: {
+			w: false,
+			s: false,
+			up: false,
+			down: false,
+		},
+	};
+}
+
+export async function startPongGame(app: FastifyInstance) {
+	app.ready().then(() => {
 		console.log('LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
 		try {
-		app.io.on('connection', (socket: Socket) => {
-		console.log('ICIIIIIIIIIIIIIIIIIIIIIIIII');
-			socket.on('joinGame', (gameId: string) => {
-				console.log(gameId);
-				socket.join(gameId);
-				socket.emit("gamestate", "info")
+			app.io.on('connection', (socket: Socket) => {
+				console.log('ICIIIIIIIIIIIIIIIIIIIIIIIII');
+				socket.on('initGame', (height: number, width: number) => {
+          initGame(height, width);
+					socket.emit('gamestate', gameState);
+				});
+				socket.on('playerAction', ({ gameId, action }) => {
+					console.log(gameId);
+					console.log(action);
+				});
 			});
-		socket.on('playerAction', ({gameId, action}) => {
-			console.log(gameId);
-			console.log(action);
-		});
-	});
-		} catch (err) {console.log(err);}
+		} catch (err) {
+			console.log(err);
+		}
 	});
 }
-
-
-
-
-
-
-//
-//export class Pos {
-//	x:number;
-//	y:number;
-//	constructor(x: number, y: number) {
-//		this.x = x;
-//		this.y = y;
-//	};
-//};
-//
-//export class Ball {
-//	pos: Pos;
-//	speed: number;
-//	dir: Pos;
-//
-//	constructor() {
-//		this.pos = new Pos(500, 500);
-//		this.speed = 1;
-//		this.dir = new Pos(1, 1);
-//	}
-//};
-//
-//export class PongBar {
-//	pos: Pos;
-//	speed: number;
-//
-//	constructor(x: number, y: number) {
-//		this.pos = new Pos(x, y);
-//		this.speed = 1;
-//	}
-//};
-//
-//export class Game {
-//	private ball: Ball;
-//	private leftBar: PongBar;
-//	private rightBar: PongBar;
-//	public leftScore: number;
-//	public rightScore: number;
-//	public endgame: boolean;
-//	constructor(/*server: Server*/) {
-//		this.ball = new Ball();
-//		this.rightBar = new PongBar(0, 500);
-//		this.leftBar = new PongBar(999, 500);
-//		this.leftScore = 0;
-//		this.rightScore = 0;
-//		this.endgame = false;
-//	}
-//};
-//
-//
-//async function up(bar : PongBar) {
-//	bar.pos.y++;
-//}
-//
-//async function down(bar : PongBar) {
-//	bar.pos.x--;
-//}
-//
-//async function launchGame() {
-//	let game = new Game();
-//
-//	up(game.leftBar);
-//	down(game.rightBar);
-//	console.log(game.ball.pos.x);
-//	console.log(game.ball.pos.y);
-//	console.log(game.leftBar.pos.y);
-//	console.log(game.rightBar.pos.y);
-//	while (!game.endgame)
-//	{
-//
-//	}
-//}
-
-
-
-
-//await launchGame();

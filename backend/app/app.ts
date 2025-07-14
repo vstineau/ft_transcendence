@@ -21,7 +21,7 @@ await app.register(cors, {
 
 await app.register(socketioServer);
 
-startPongGame(app);
+await startPongGame(app);
 authJwt(app, {jwtSecret: config.jwt.secret});
 await app.register(import('./routes/root.route.js'));
 await app.register(import('./routes/user.route.js'));
