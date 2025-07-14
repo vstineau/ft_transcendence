@@ -6,7 +6,7 @@ WORKDIR /usr/share/nginx/html
 
  #package*.json
 
-RUN apk add --no-cache nginx openssl
+RUN apk add --no-cache nginx openssl curl
 
 RUN mkdir -p /etc/nginx/ssl && openssl req  -x509 -new -newkey rsa:4096 -nodes -days 3650 \
 		-out /etc/nginx/ssl/certificate.pem \

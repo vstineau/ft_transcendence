@@ -20,3 +20,10 @@ export interface ILoginReply {
 	error?: string ;
 	user?: Partial<UserJson>;
 };
+
+export type HistoryJson = {
+	date: string,
+	opponentNickname: string,
+	score: string,
+	win: boolean,
+};

@@ -1,10 +1,20 @@
 import io from 'socket.io-client';
 
-const socket = io('https://localhost:8080/pong');
+export function createPongSocket(): any {
+	const socket = io('https://localhost:8080');
 
-socket.on('connect', () => {
-	console.log(socket.id);
-});
+	socket.on('connection', () => {
+	  console.log('Socket connected!');
+	});
+
+	socket.emit('joinGame', 'game1');
+	
+
+	socket.on("gamestate", (state) => {
+	  console.log(state); 
+	});
+	return socket;
+}
 
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D | null;
