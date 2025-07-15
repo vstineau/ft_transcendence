@@ -1,7 +1,7 @@
 import { FastifyPluginCallback } from 'fastify';
 //import { FastifyRequest, FastifyReply } from 'fastify';
 import { User} from '../models.js'
-
+import { ValidationError } from 'class-validator';
 import { IUserReply, UserJson, ILoginReply } from '../types/userTypes.js'
 
 //pas oublier de changer le nom des images de profils 
@@ -13,15 +13,25 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 		Body: UserJson
 	}>('/register', async (request, reply) => {
 		try {
-			//console.log(request.body);
 			const user = await User.createUser(request.body); 
 			await user.save();
 			reply.code(200).send({ success: true });
 		}
 		catch (error) { 
+			console.log(error);
 			let errorMessage = 'unknown error';
-			if (error instanceof Error) {
-					errorMessage = error.message;
+			if (Array.isArray(error)) {
+				error.forEach((err) => {
+					if (err instanceof ValidationError) {
+					    if (err.constraints && err.constraints.matches) {
+					        errorMessage = err.constraints.matches;
+					    } else if (err.constraints && err.constraints.isEmail) {
+								errorMessage = err.constraints.isEmail;
+						} else {
+					        errorMessage = "Validation error";
+					    }
+					}
+				});	
 			}
 			reply.code(500).send({ success: false, error: errorMessage});
 		}
@@ -32,8 +42,6 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 	}>('/login', async (request, reply) => {
 		try {
 			const invalidInfoError = "the provided user details are invalid";
-			//console.log(request.body);
-			//console.log("jusqu'ici tout va bien");
 			const user = await User.findOneBy({login: request.body.login}); 
 			if (!user) { }//console.log("user")}
 			if (user && !user.comparePassword(request.body.password)) { console.log("compare password")}

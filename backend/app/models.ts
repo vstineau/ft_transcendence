@@ -1,7 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique, BeforeInsert, BeforeUpdate/*, ManyToOne, OneToMany*/ } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique, BeforeInsert, BeforeUpdate, ManyToOne, OneToMany } from "typeorm"
 import { IsEmail, Length, Matches, validateOrReject } from 'class-validator' 
 import { getIsInvalidMessage } from "./utils/errorMessages.js";
-import type { UserJson } from './types/userTypes.js'
+import type { UserJson , UserHistory } from './types/userTypes.js'
 
 //https://github.com/typestack/class-validator
 @Entity()
@@ -57,25 +57,40 @@ export class User extends BaseEntity {
 		this.email = obj?.email ?? '';
 	}
 
-//	@OneToMany(() => History, (history: History) => history.user, { cascade: true })
-//    history: History[];
+	@OneToMany(() => History, (history: History) => history.user, { cascade: true })
+    history?: History[];
 	//avatar
 };
 
-//@Entity()
-//export class History {
-//	@Column()
-//	date!: string;
-//
-//	@Column()
-//	opponentNickname!: string;
-//
-//	@Column()
-//	score!: string;
-//
-//	@Column()
-//	win!: boolean;
-//
-//	@ManyToOne(() => User, (user: User) => user.history)
-//    user: User;
-//};
+@Entity()
+export class History {
+
+	@PrimaryGeneratedColumn()
+	gamecount?: number;
+
+	@Column()
+	date?: string;
+
+	@Column()
+	opponent?: string;
+
+	@Column()
+	score?: string;
+
+	@Column()
+	win?: boolean;
+
+	@ManyToOne(() => User, (user: User) => user.history)
+    user: User;
+
+	constructor(user: User , data?: UserHistory)
+	{
+		if (data) {
+			this.date = data.date;
+			this.opponent = data.opponent;
+			this.score = data.score;
+			this.win = data.win;
+		}
+		this.user = user;
+	}
+};

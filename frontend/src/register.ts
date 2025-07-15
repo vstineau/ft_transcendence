@@ -1,41 +1,18 @@
-// import {
-//   LoginView,
-//   PongView,
-//   RegisterView,
-//   RootView,
-// } from "./views/root.views.js";
 import { navigateTo } from './main';
-
-// interface User {
-// 	login: string;
-// 	password: string;
-// 	email: string;
-// }
-
-// const form = document.getElementById('register-form') as HTMLFormElement;
-
-// form.addEventListener('submit', async event => {
-// 	event.preventDefault();
-
-// 	const login = (document.getElementById('login') as HTMLFormElement).value;
-// 	const mail = (document.getElementById('mail') as HTMLFormElement).value;
-// 	const password = (document.getElementById('password') as HTMLFormElement).value;
-
-// 	console.log(login);
-// 	console.log(mail);
-// 	console.log(password);
-// });
+import { displayError } from './utils/error'
 
 export async function registerUser() {
 	const form = document.getElementById('register-form') as HTMLFormElement | null;
 	if (!form) return true;
 	form?.addEventListener('submit', async e => {
 		e.preventDefault();
+		displayError('');
 		const test = new FormData(form);
-		const login = test.get('login');
-		const password = test.get('password');
-		const nickname = test.get('nickname');
-		const email = test.get('email');
+		const login = test.get('login')?.toString().trim(); //toSring to prevent if someone try to input an object and trim to remove whitespaces at the end/begining
+		const password = test.get('password')?.toString().trim();
+		const nickname = test.get('nickname')?.toString().trim();
+		const email = test.get('email')?.toString().trim();
+
 		const body = {
 			login: login,
 			nickName: nickname,
@@ -51,16 +28,17 @@ export async function registerUser() {
 		 	},
 		 	body: JSON.stringify(body),
 		 });
-		 if (response) {
-		 	// error handle = staying on register page
+		 const reply = await response.json();
+		 if (reply.success) {
 		 	navigateTo('/login');
-		 	return;
 		 }
+		 else {
+			displayError(reply.error || "registration failed please try again");
+		}
 		//JSON.parse;
-		navigateTo('/');
 		} catch (err) {
-		navigateTo('/');
-		console.error('error = ', err);
+			console.log(err);
+			navigateTo('/');
 		}
 	});
 }

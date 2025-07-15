@@ -75,6 +75,15 @@ export async function RegisterView() {
 				/>
 				<input
 					autocomplete="off"
+					type="text"
+					name="nickname"
+					id="nickname"
+					placeholder="Nickname"
+					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+					required
+				/>
+				<input
+					autocomplete="off"
 					type="email"
 					name="email"
 					id="mail"
@@ -97,6 +106,12 @@ export async function RegisterView() {
 					S'inscrire
 				</button>
 			</form>
+			<div
+				id="error-message"
+				class="w-full px-4 hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative z-20"
+				style="display: none;"
+				role="alert"
+			></div>
 		</div>
 	`;
 }

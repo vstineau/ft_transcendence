@@ -21,9 +21,9 @@ export interface ILoginReply {
 	user?: Partial<UserJson>;
 };
 
-export type HistoryJson = {
+export type UserHistory = {
 	date: string,
-	opponentNickname: string,
+	opponent: string,
 	score: string,
 	win: boolean,
 };
