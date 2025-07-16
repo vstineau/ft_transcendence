@@ -5,6 +5,7 @@ import { authJwt } from './auth/auth.js'
 import config from './config.js'
 import socketioServer from './plugins/socketIo.js'
 import {startPongGame} from './pong/pong.js'
+import fastifyCookie from '@fastify/cookie';
 
 export const app = Fastify({
 	logger: true,
@@ -18,6 +19,8 @@ await app.register(cors, {
 	methods: ['GET', 'POST'],
 	credentials: true,
 });
+
+await app.register(fastifyCookie);
 
 await app.register(socketioServer);
 

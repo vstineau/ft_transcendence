@@ -5,7 +5,8 @@ import type { UserJson , UserHistory } from './types/userTypes.js'
 
 //https://github.com/typestack/class-validator
 @Entity()
-@Unique(['email', 'nickName'])
+@Unique(['email'])
+@Unique(['login'])
 export class User extends BaseEntity {
 
 	@BeforeInsert()

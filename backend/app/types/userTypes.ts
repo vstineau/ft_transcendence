@@ -3,6 +3,7 @@
 export interface IUserReply {
 	200: { success: boolean };
 	302: { success: boolean, url: string };
+	400: { success: boolean, error: string };
 	500: { success: boolean, error: string };
 }
 
@@ -15,10 +16,9 @@ export type UserJson = {
 };
 
 export interface ILoginReply {
-	token?: string;
-	success: boolean;
-	error?: string ;
-	user?: Partial<UserJson>;
+	200: { success: boolean};
+	400: { success: boolean, error: string};
+	500: { success: boolean, error: string};
 };
 
 export type UserHistory = {
@@ -27,3 +27,4 @@ export type UserHistory = {
 	score: string,
 	win: boolean,
 };
+

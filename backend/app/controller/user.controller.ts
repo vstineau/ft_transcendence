@@ -2,6 +2,7 @@ import { FastifyPluginCallback } from 'fastify';
 //import { FastifyRequest, FastifyReply } from 'fastify';
 import { User} from '../models.js'
 import { ValidationError } from 'class-validator';
+import { QueryFailedError } from 'typeorm'
 import { IUserReply, UserJson, ILoginReply } from '../types/userTypes.js'
 
 //pas oublier de changer le nom des images de profils 
@@ -27,15 +28,26 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 					        errorMessage = err.constraints.matches;
 					    } else if (err.constraints && err.constraints.isEmail) {
 								errorMessage = err.constraints.isEmail;
+					    } else if (err.constraints && err.constraints.isLength) {
+								errorMessage = err.constraints.isLength;
 						} else {
 					        errorMessage = "Validation error";
 					    }
 					}
 				});	
 			}
-			reply.code(500).send({ success: false, error: errorMessage});
+			else if (error instanceof QueryFailedError && error.driverError?.code === 'SQLITE_CONSTRAINT') {
+					if (String(error.driverError?.message).includes('UNIQUE constraint failed: user.email')) {
+						errorMessage = 'this email is already used';
+					}
+					else if (String(error.driverError?.message).includes('UNIQUE constraint failed: user.login')) {
+						errorMessage = 'this login is already used';
+					}
+			}
+			reply.code(400).send({ success: false, error: errorMessage});
 		}
 	})		
+
 	server.post<{
 		Reply: ILoginReply,
 		Body: UserJson
@@ -51,16 +63,21 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 				}
 			const token = server.jwt.sign(request.body, { expiresIn: '4h'});
 			console.log("authentification succeed !");
-			reply.code(200).send({ success: true, token: token});
+			reply.setCookie('token', token, {
+					httpOnly: true,
+					secure: true,
+					maxAge: 4 * 60 * 60	
+				}).code(200).send({ success: true});
 		}
 		catch (error) { 
 			let errorMessage = 'unknown error';
 			if (error instanceof Error) {
 					errorMessage = error.message;
 			}
-			reply.code(500).send({ success: false, error: errorMessage});
+			reply.code(400).send({ success: false, error: errorMessage});
 		}
 	})		
+
 //	server.post<{
 //		Reply: FastifyReply,
 //		Body: UserJson

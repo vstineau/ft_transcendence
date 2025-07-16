@@ -29,7 +29,6 @@ export async function logUser() {
 					localStorage.setItem('token', token)
 					console.log('token :', token)
 				}
-				console.log('aaaaaaaaaaaaa');
 				console.log(data);
 				console.log(JSON.stringify(data))
 		 	// error handle = staying on register page
