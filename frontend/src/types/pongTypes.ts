@@ -3,6 +3,7 @@ export interface Game {
     p1: Player;
     p2: Player;
     ball: Ball;
+    key: Key
 }
 
 export interface Player {
@@ -13,8 +14,6 @@ export interface Player {
     length: number;
     vy: number;
     score: number;
-    key_up: boolean;
-    key_down: boolean;
 }
 
 export interface Ball {
@@ -23,6 +22,13 @@ export interface Ball {
     radius: number;
     vx: number;
     vy: number;
+}
+
+export interface Key {
+    w: boolean;
+    s: boolean;
+    up: boolean;
+    down: boolean;
 }
 
 export interface Window {

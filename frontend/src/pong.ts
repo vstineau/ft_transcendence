@@ -1,11 +1,12 @@
-import io from 'socket.io-client';
-
+import io, { Socket } from 'socket.io-client';
+import { Game } from '../src/types/pongTypes';
 
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D | null;
 
 let win_width = window.innerWidth;
 let win_height = window.innerHeight;
+let stats: Game;
 
 export function createPongSocket(): any {
 	const socket = io('https://localhost:8080');
@@ -14,10 +15,12 @@ export function createPongSocket(): any {
 		console.log('Socket connected!');
 	});
 	
-	socket.emit('initGame', window.innerHeight, window.innerWidth);
+	socket.emit('initGame');
 	// socket.emit('joinGame', 'game1');
 
 	socket.on('gamestate', gameState => {
+		
+		stats = gameState;
 		
 		console.log(gameState);
 	});
@@ -88,12 +91,12 @@ function drawGame() {
 	ctx!.beginPath();
 	ctx!.lineWidth = 5;
 	ctx!.fillStyle = 'white';
-	ctx!.fillRect(ball.x, ball.y, ball.radius, ball.radius);
+	ctx!.fillRect(stats.ball.x, stats.ball.y, stats.ball.radius, stats.ball.radius);
 	ctx!.fill();
 	ctx!.lineWidth = 4;
 	ctx!.stroke();
-	ctx!.fillRect(p1.x, p1.y, p1.length, p1.height);
-	ctx!.fillRect(p2.x, p2.y, p2.length, p2.height);
+	ctx!.fillRect(stats.p1.x, stats.p1.y, stats.p1.length, stats.p1.height);
+	ctx!.fillRect(stats.p2.x, stats.p2.y, stats.p2.length, stats.p2.height);
 	ctx!.stroke();
 	for (let height = 0; height < win_height; height += 0) {
 		ctx!.fillRect(win_width / 2, height, 5, 10);
@@ -101,8 +104,8 @@ function drawGame() {
 		ctx!.stroke();
 	}
 	ctx!.font = '50px Arial';
-	ctx!.fillText(p1.score.toString(), win_width * 0.25, win_height * 0.1, (win_height * win_height) / 100000);
-	ctx!.fillText(p2.score.toString(), win_width * 0.75, win_height * 0.1, (win_height * win_height) / 100000);
+	ctx!.fillText(stats.p1.score.toString(), win_width * 0.25, win_height * 0.1, (win_height * win_height) / 100000);
+	ctx!.fillText(stats.p2.score.toString(), win_width * 0.75, win_height * 0.1, (win_height * win_height) / 100000);
 	ctx!.fillStyle = 'white';
 	ctx!.textAlign = 'center';
 }
@@ -169,7 +172,7 @@ function handlePaddleCollisionP2() {
 	}
 }
 
-export function gameLoop(_socket: any) {
+export function gameLoop() {
 	requestAnimationFrame(gameLoop);
 	win_width = window.innerWidth;
 	win_height = window.innerHeight;
@@ -203,22 +206,24 @@ export function gameLoop(_socket: any) {
 }
 
 export function pongGame() {
+	const sock: Socket = createPongSocket();
 	window.addEventListener('keydown', e => {
-		if (e.key === 'w' || e.key === 'W') key_w = true;
-		if (e.key === 's' || e.key === 'S') key_s = true;
+		if (e.key === 'w' || e.key === 'W') sock.emit('keydown_w');
+		if (e.key === 's' || e.key === 'S') sock.emit('keydown_s');
 		if (e.key === 'ArrowUp') {
 			e.preventDefault();
-			key_up = true;
+			sock.emit('keydown_up')
 		}
 		if (e.key === 'ArrowDown') {
 			e.preventDefault();
-			key_down = true;
+			sock.emit('keydown_down')
 		}
 	});
 
 	window.addEventListener('keypress', e => {
 		if (e.key === ' ') {
 			e.preventDefault();
+			sock.emit('keypress_space');
 			p1.score = 0;
 			p2.score = 0;
 			updateInfos();
@@ -226,19 +231,22 @@ export function pongGame() {
 	});
 
 	window.addEventListener('keyup', e => {
-		if (e.key === 'w' || e.key === 'W') key_w = false;
-		if (e.key === 's' || e.key === 'S') key_s = false;
+		if (e.key === 'w' || e.key === 'W') sock.emit('keyup_w');
+		if (e.key === 's' || e.key === 'S') sock.emit('keyup_w');
 		if (e.key === 'ArrowUp') {
 			e.preventDefault();
-			key_up = false;
+			// key_up = false;
+			sock.emit('keyup_w')
 		}
 		if (e.key === 'ArrowDown') {
 			e.preventDefault();
-			key_down = false;
+			// key_down = false;
+			sock.emit('keyup_w')
 		}
 	});
 
 	window.addEventListener('resize', () => {
+		sock.emit('resize');
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
 		win_width = window.innerWidth;
@@ -247,7 +255,7 @@ export function pongGame() {
 		updateInfos();
 	});
 
-	const initGame = () => {
+	const startGame = () => {
 		canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
@@ -257,7 +265,7 @@ export function pongGame() {
 		}
 		ctx = canvas.getContext('2d');
 		updateInfos();
-		gameLoop(canvas);
+		gameLoop();
 	};
-	initGame();
+	startGame();
 }
