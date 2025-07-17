@@ -45,8 +45,8 @@ function initGame(): Game {
 			x: WIN_WIDTH / 2,
 			y: WIN_HEIGHT / 2,
 			radius: (WIN_HEIGHT * WIN_WIDTH) / 80000,
-			vx: 0,
-			vy: 0,
+			vx: (Math.random() < 0.5 ? -1 : 1) * (WIN_WIDTH / 280),
+			vy: (Math.random() < 0.5 ? -1 : 1) * (WIN_HEIGHT / 180),
 		},
 		win: {
 			width: WIN_WIDTH,
@@ -57,10 +57,11 @@ function initGame(): Game {
 }
 
 export async function startPongGame(app: FastifyInstance) {
+	let game = initGame();
 	app.ready().then(() => {
 		console.log('Pong backend is ready');
 		
-		let game = initGame();
+		resetGame(game);
 		app.io.on('connection', (socket: Socket) => {
 			console.log('Client connected:', socket.id);
 
@@ -82,6 +83,9 @@ export async function startPongGame(app: FastifyInstance) {
 }
 
 function getInputs(socket: Socket, game: Game) {
+	socket.on('beforeunload', () => {
+		resetGame(game);
+	});
 	socket.on('keydown', (key: any) => {
 		// console.log(key);
 		if (key.key === 'w' || key.key === 'W') {
@@ -136,7 +140,7 @@ function movePlayer(game: Game) {
 }
 
 function checkWin(game: Game) {
-	if (game.p1.score === 1 || game.p2.score === 1) {
+	if (game.p1.score === -1 || game.p2.score === -1) {
 		game.ball.vx = 0;
 		game.ball.vy = 0;
 		game.ball.x = WIN_WIDTH / 2;
@@ -208,7 +212,17 @@ function gameLoop(game: Game) {
 	}
 }
 
+function resetGame(game: Game) {
+	resetBall(game);
+	game.p1.score = 0;
+	game.p2.score = 0;
+}
+
 function resetBall(game: Game) {
+	// game.p1.score = 0;
+	// game.p2.score = 0;
+	game.p1.y = WIN_HEIGHT / 2;
+	game.p2.y = WIN_HEIGHT / 2;
 	game.ball.x = WIN_WIDTH / 2;
 	game.ball.y = WIN_HEIGHT / 2;
 	game.ball.vx = (Math.random() < 0.5 ? -1 : 1) * (WIN_WIDTH / 280);

@@ -343,6 +343,9 @@ export function pongGame() {
 	initCanvas();
 
 	// Key controls
+	window.addEventListener('beforeunload', () => {
+		socket.emit('beforeunload');
+	});
 	window.addEventListener('keydown', e => {
 		socket.emit('keydown', { key: e.key });
 		if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === ' ') {
