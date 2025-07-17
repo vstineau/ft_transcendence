@@ -1,4 +1,5 @@
 import { navigateTo } from './main';
+import { displayError } from './utils/error'
 
 export async function logUser() {
 	const form = document.getElementById('login-form') as HTMLFormElement | null;
@@ -12,7 +13,6 @@ export async function logUser() {
 			login: login,
 			password: password,
 		};
-		// sending token to backend then wait response
 		try {
 		const response = await fetch('https://localhost:8080/api/login', {
 		 	method: 'POST',
@@ -20,28 +20,17 @@ export async function logUser() {
 		 		'Content-Type': 'application/json',
 		 	},
 		 	body: JSON.stringify(body),
-		 });
-		 if (response) {
-				const data =  await response.json();
-				//console.log(response);
-				const token = data.token
-				if(token){
-					localStorage.setItem('token', token)
-					console.log('token :', token)
-				}
-				console.log(data);
-				console.log(JSON.stringify(data))
-		 	// error handle = staying on register page
-		 	// navigateTo('/login');
-			navigateTo('/');
-		 	return;
+			credentials: 'include',
+			 });
+		const data = await response.json();
+		      if (data.success) {
+		        navigateTo('/');
+		      } else {
+		        displayError(data.error || "Erreur inconnue");
+		   }
 		 }
-		 //JSON.parse;
-		 navigateTo('/');
-		 } catch (err) {
+		 catch (err) {
 		 console.error('error = ', err);
 		 }
-		 navigateTo('/');
-		 console.log();
 	});
 }

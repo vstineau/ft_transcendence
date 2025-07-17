@@ -1,14 +1,13 @@
 import { FastifyPluginCallback } from 'fastify';
-//import { FastifyRequest, FastifyReply } from 'fastify';
 import { User} from '../models.js'
 import { ValidationError } from 'class-validator';
 import { QueryFailedError } from 'typeorm'
-import { IUserReply, UserJson, ILoginReply } from '../types/userTypes.js'
+import { IUserReply, UserJson } from '../types/userTypes.js'
 
-//pas oublier de changer le nom des images de profils 
-
+//pas oublier de changer le nom des images de profils pour eviter les injection de code bizarre
 
 export const userController: FastifyPluginCallback = (server, _opts, done) => {
+//REGISTER CONTROLLER
 	server.post<{
 		Reply: IUserReply,
 		Body: UserJson
@@ -47,9 +46,9 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 			reply.code(400).send({ success: false, error: errorMessage});
 		}
 	})		
-
+//LOGIN CONTROLLER
 	server.post<{
-		Reply: ILoginReply,
+		Reply: IUserReply,
 		Body: UserJson
 	}>('/login', async (request, reply) => {
 		try {
@@ -66,6 +65,8 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 			reply.setCookie('token', token, {
 					httpOnly: true,
 					secure: true,
+					path: '/',
+					sameSite: 'lax',
 					maxAge: 4 * 60 * 60	
 				}).code(200).send({ success: true});
 		}
@@ -77,24 +78,30 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 			reply.code(400).send({ success: false, error: errorMessage});
 		}
 	})		
+//LOGOUT CONTROLLER
+	server.get<{
+		Reply: IUserReply,
+		Body: UserJson
+	}>('/logout', async (_request, reply) => {
+		try {
+			console.log("authentification succeed !");
+			reply.clearCookie('token', {
+					httpOnly: true,
+					secure: true,
+					path: '/',
+					sameSite: 'lax',
+					maxAge: 4 * 60 *60
+				}).code(200).send({ success: true});
+		}
+		catch (error) { 
+			let errorMessage = 'unknown error';
+			if (error instanceof Error) {
+					errorMessage = error.message;
+			}
+			reply.code(400).send({ success: false, error: errorMessage});
+		}
+	})		
 
-//	server.post<{
-//		Reply: FastifyReply,
-//		Body: UserJson
-//	}>('/logout', async (request, reply) => {
-//	  const { username, password } = request.query
-//	  const customerHeader = request.headers['h-Custom']
-//	  // do something with request data
-//	
-//	  // chaining .statusCode/.code calls with .send allows type narrowing. For example:
-//	  // this works
-//	  reply.code(200).send({ success: true });
-//	  // but this gives a type error
-//	  reply.code(200).send('uh-oh');
-//	  // it even works for wildcards
-//	  reply.code(404).send({ error: 'Not found' });
-//	  return `logged in!`
-//	})		
 //	server.post<{
 //		Reply: FastifyReply,
 //		Body: UserJson
