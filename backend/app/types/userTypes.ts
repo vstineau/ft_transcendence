@@ -2,9 +2,17 @@
 
 export interface IUserReply {
 	200: { success: boolean };
+	401: { success: boolean, error: string };
 	400: { success: boolean, error: string };
 	500: { success: boolean, error: string };
 }
+
+export type JwtPayload = {
+	login: string,
+	password: string,
+	iat: string,
+	exp: string,
+};
 
 export type UserJson = {
 	id: number,

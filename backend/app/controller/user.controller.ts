@@ -2,7 +2,7 @@ import { FastifyPluginCallback } from 'fastify';
 import { User} from '../models.js'
 import { ValidationError } from 'class-validator';
 import { QueryFailedError } from 'typeorm'
-import { IUserReply, UserJson } from '../types/userTypes.js'
+import { IUserReply, UserJson, JwtPayload } from '../types/userTypes.js'
 
 //pas oublier de changer le nom des images de profils pour eviter les injection de code bizarre
 
@@ -84,7 +84,7 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 		Body: UserJson
 	}>('/logout', async (_request, reply) => {
 		try {
-			console.log("authentification succeed !");
+			console.log("logout successfully");
 			reply.clearCookie('token', {
 					httpOnly: true,
 					secure: true,
@@ -101,25 +101,34 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 			reply.code(400).send({ success: false, error: errorMessage});
 		}
 	})		
-
-//	server.post<{
-//		Reply: FastifyReply,
-//		Body: UserJson
-//	}>('/deleteAccount', async (request, reply) => {
-//	  const { username, password } = request.query
-//	  const customerHeader = request.headers['h-Custom']
-//	  // do something with request data
-//	
-//	  // chaining .statusCode/.code calls with .send allows type narrowing. For example:
-//	  // this works
-//	  reply.code(200).send({ success: true });
-//	  // but this gives a type error
-//	  reply.code(200).send('uh-oh');
-//	  // it even works for wildcards
-//	  reply.code(404).send({ error: 'Not found' });
-//	  return `logged in!`
-//	})		
-		done();
+//DELETE ACCCOUNT CONTROLLER
+	server.get<{
+		Reply: IUserReply,
+		Body: UserJson
+	}>('/deleteAccount', async (request, reply) => {
+		try {
+			if (request.cookies.token) {
+				const payload = server.jwt.verify<JwtPayload>(request.cookies.token);
+				console.log(payload);
+				const user = await User.findOneBy({login: payload.login});
+				if (user) {
+						user.remove();
+						reply.clearCookie('token', {
+								httpOnly: true,
+								secure: true,
+								path: '/',
+								sameSite: 'lax',
+								maxAge: 4 * 60 *60
+							}).code(200).send({ success: true});
+						console.log("user successfully deleted");
+				} 
+			}
+		}
+		catch (error) { 
+			reply.code(401).send({ success: false, error: "invalid JWT"});
+		}
+	})		
+	done();
 }
   //request: FastifyRequest<{ Body: UserJson}>,
   //reply: FastifyReply
