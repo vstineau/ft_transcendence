@@ -1,13 +1,13 @@
 // import { register } from 'ts-node';
 import { registerUser } from './register';
 import { logUser } from './login';
+import { rootUser } from './root';
 import { LoginView, PongView, RegisterView, RootView, PongMatchMakingView, PongCanvas } from './views/root.views';
 import { pongGame } from './pong';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
 	'/': RootView,
-	//"/": async () => "<h1>AAAAAAAAAAAAAA</h1>",
 	'/pong': PongView, // Remplace par le vrai contenu ou composant
 	'/pong/matchmaking': PongMatchMakingView,
 	'/pong/matchmaking/game': PongCanvas,
@@ -17,7 +17,6 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/login': LoginView,
 	'/logout': async () => '<h1>LOGOUT</h1>',
 	'/register': RegisterView,
-	// '/pong/': RegisterView,
 };
 
 // 2. Fonction pour naviguer
@@ -33,6 +32,9 @@ async function renderPage() {
 	console.log(view);
 	document.getElementById('root')!.innerHTML = view;
 	console.log(path);
+	if (path === '/') {
+		rootUser();
+	}
 	if (path === '/register') {
 		registerUser();
 	}

@@ -2,7 +2,7 @@ import { navigateTo } from './main';
 import { displayError } from './utils/error'
 
 export async function delogUser() {
-	const button = document.getElementById('logout-button') as HTMLFormElement | null;
+	const button = document.getElementById('logout') as HTMLFormElement | null;
 	if (!button) return true;
 	button?.addEventListener('click', async e => {
 		e.preventDefault();

@@ -1,4 +1,4 @@
-import { pongGame } from "../pong";
+//import { pongGame } from "../pong";
 
 export async function RootView() {
 	return /* HTML */ `
@@ -10,6 +10,14 @@ export async function RootView() {
 				<li><a href="/logout">Logout</a></li>
 			</ul>
 		</div>
+		<button
+		    type="logout"
+			id="logout"
+			class="fixed top-4 right-4 z-50 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
+			    style="display: none;"
+			>
+			    Logout
+		</button>
 	`;
 }
 

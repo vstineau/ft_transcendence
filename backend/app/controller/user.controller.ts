@@ -109,7 +109,6 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 		try {
 			if (request.cookies.token) {
 				const payload = server.jwt.verify<JwtPayload>(request.cookies.token);
-				console.log(payload);
 				const user = await User.findOneBy({login: payload.login});
 				if (user) {
 						user.remove();
