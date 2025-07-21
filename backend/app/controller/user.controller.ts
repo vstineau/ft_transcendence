@@ -18,7 +18,6 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 			reply.code(200).send({ success: true });
 		}
 		catch (error) { 
-			console.log(error);
 			let errorMessage = 'unknown error';
 			if (Array.isArray(error)) {
 				error.forEach((err) => {
@@ -55,8 +54,8 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 			const invalidInfoError = "the provided user details are invalid";
 			const user = await User.findOneBy({login: request.body.login}); 
 			if (!user) { }//console.log("user")}
-			if (user && !user.comparePassword(request.body.password)) { console.log("compare password")}
-			if (!user || !user.comparePassword(request.body.password)) {
+			if (user && request.body.password && !user.comparePassword(request.body.password)) { console.log("compare password")}
+			if (!user || (request.body.password && !user.comparePassword(request.body.password))) {
 				console.log("authentification failed !");
 				throw invalidInfoError;
 				}
@@ -104,7 +103,6 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 //DELETE ACCCOUNT CONTROLLER
 	server.get<{
 		Reply: IUserReply,
-		Body: UserJson
 	}>('/deleteAccount', async (request, reply) => {
 		try {
 			if (request.cookies.token) {
@@ -127,7 +125,89 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 			reply.code(401).send({ success: false, error: "invalid JWT"});
 		}
 	})		
+//UPDATE USER INFO
+	server.get<{
+		Reply: IUserReply,
+	}>('/updateInfos', async (request, reply) => {
+		try {
+			if (request.cookies.token) {
+				const payload = server.jwt.verify<JwtPayload>(request.cookies.token);
+				const user = await User.findOneBy({login: payload.login});
+				if (user) {
+						reply.code(200).send({ success: true,
+							user: {	
+								id: user.id,
+								login: user.login,
+								nickName: user.nickName,
+								email: user.email,
+						}});
+				} 
+			}
+		}
+		catch (error) { 
+			reply.code(401).send({ success: false, error: "invalid JWT"});
+		}
+	})		
+	server.post<{
+		Reply: IUserReply,
+		Body: UserJson
+	}>('/updateInfos', async (request, reply) => {
+		try {
+			if (request.cookies.token) {
+				const payload = server.jwt.verify<JwtPayload>(request.cookies.token);
+				const user = await User.findOneBy({login: payload.login});
+				if (user) {
+						request.body.login ? user.login = request.body.login : 0;
+						request.body.nickName ? user.nickName = request.body.nickName : 0;
+						request.body.email ? user.email = request.body.email : 0;
+						if (request.body.password && request.body.newPassword 
+							&& await user.comparePassword(request.body.password)) {
+							user.password = request.body.newPassword;
+						}
+						console.log(user.getInfos());
+						console.log('________________')
+						await user.save();
+						console.log(await user.getInfos());
+						const token = server.jwt.sign(await user.getInfos(), { expiresIn: '4h'});
+						console.log("JWT updated");
+						reply.setCookie('token', token, {
+								httpOnly: true,
+								secure: true,
+								path: '/',
+								sameSite: 'lax',
+								maxAge: 4 * 60 * 60	
+							}).code(200).send({ success: true});
+						console.log("user infos successfully updated");
+				} 
+			}
+		}
+		catch (error) { 
+			let errorMessage = 'unknown error';
+			if (Array.isArray(error)) {
+				error.forEach((err) => {
+					if (err instanceof ValidationError) {
+					    if (err.constraints && err.constraints.matches) {
+					        errorMessage = err.constraints.matches;
+					    } else if (err.constraints && err.constraints.isEmail) {
+								errorMessage = err.constraints.isEmail;
+					    } else if (err.constraints && err.constraints.isLength) {
+								errorMessage = err.constraints.isLength;
+						} else {
+					        errorMessage = "Validation error";
+					    }
+					}
+				});	
+			}
+			else if (error instanceof QueryFailedError && error.driverError?.code === 'SQLITE_CONSTRAINT') {
+					if (String(error.driverError?.message).includes('UNIQUE constraint failed: user.email')) {
+						errorMessage = 'this email is already used';
+					}
+					else if (String(error.driverError?.message).includes('UNIQUE constraint failed: user.login')) {
+						errorMessage = 'this login is already used';
+					}
+			}
+			reply.code(400).send({ success: false, error: errorMessage});
+		}
+	})		
 	done();
 }
-  //request: FastifyRequest<{ Body: UserJson}>,
-  //reply: FastifyReply

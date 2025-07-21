@@ -1,6 +1,6 @@
 //import { navigateTo } from './main';
 import { delogUser } from './logout'
-import { displayLogout } from './utils/userInfo'
+import { displayLogout } from '../utils/userInfo'
 
 
 export async function rootUser() {

@@ -44,6 +44,16 @@ export class User extends BaseEntity {
 		return new User(data);
 	}
 
+	async getInfos(): Promise<UserJson> {
+		return {
+			id: this.id,
+			login: this.login,
+			nickName: this.nickName,
+			password: this.password,
+			email: this.email,
+		};
+	}
+
 	//bcrypt here?
 	async comparePassword(password: string): Promise<boolean> {
 		return this.password.localeCompare(password) == 0;

@@ -1,9 +1,10 @@
 // import { register } from 'ts-node';
-import { registerUser } from './register';
-import { logUser } from './login';
-import { rootUser } from './root';
-import { LoginView, PongView, RegisterView, RootView, PongMatchMakingView, PongCanvas } from './views/root.views';
-import { pongGame } from './pong';
+import { registerUser } from './user/register';
+import { logUser } from './user/login';
+import { rootUser } from './user/root';
+import { updateInfos } from './user/updateInfos'
+import { LoginView, PongView, RegisterView, UpdateInfosview, RootView, PongMatchMakingView, PongCanvas } from './views/root.views';
+import { pongGame } from './pong/pong';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -17,6 +18,7 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/login': LoginView,
 	'/logout': async () => '<h1>LOGOUT</h1>',
 	'/register': RegisterView,
+	'/updateInfos': UpdateInfosview,
 };
 
 // 2. Fonction pour naviguer
@@ -32,18 +34,11 @@ async function renderPage() {
 	console.log(view);
 	document.getElementById('root')!.innerHTML = view;
 	console.log(path);
-	if (path === '/') {
-		rootUser();
-	}
-	if (path === '/register') {
-		registerUser();
-	}
-	if (path === '/login') {
-		logUser();
-	}
-	if (path === '/pong/matchmaking/game') {
-		pongGame();
-	}
+	path === '/' ? rootUser() : 0;
+	path === '/updateInfos' ? updateInfos() : 0;
+	path === '/register' ? registerUser() : 0;
+	path === '/login' ? logUser() : 0;
+	path === '/pong/matchmaking/game' ? pongGame() : 0;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
