@@ -72,7 +72,7 @@ export async function startPongGame(app: FastifyInstance) {
 				if (!intervalStarted) {
 					intervalStarted = true;
 					setInterval(() => {
-						gameLoop(game);
+						gameLoop(game, socket);
 						// console.log('emiting gameState');
 						app.io.emit('gameState', game);
 					}, 1000 / 60);
@@ -126,13 +126,19 @@ function movePlayer(game: Game) {
 	}
 }
 
-function checkWin(game: Game) {
-	if (game.p1.score === -1 || game.p2.score === -1) {
+function checkWin(game: Game, socket: Socket) : boolean {
+	if (game.p1.score === 1 || game.p2.score === 1) {
 		game.ball.vx = 0;
 		game.ball.vy = 0;
 		game.ball.x = WIN_WIDTH / 2;
 		game.ball.y = WIN_HEIGHT / 2;
+		// Reset scores
+		// game.p1.score = 0;
+		// game.p2.score = 0;
+		socket.emit('playerWin', game.p1.score > game.p2.score ? game.p1 : game.p2);
+		return true;
 	}
+	return false;
 }
 
 function handlePaddleCollisionP1(game: Game) {
@@ -169,11 +175,11 @@ function handlePaddleCollisionP2(game: Game) {
 	}
 }
 
-function gameLoop(game: Game) {
+function gameLoop(game: Game, socket: Socket) {
 	// console.log('game is gaming');
 	// getInputs(socket, game);
 	movePlayer(game);
-	checkWin(game);
+	checkWin(game, socket)
 
 	// Move ball
 	game.ball.x += game.ball.vx;

@@ -46,13 +46,11 @@ function initCanvas() {
 	}
 }
 
-let scale_x: number;
-let scale_y: number;
 
-function drawGame(stats: Game) {
+function drawGame(stats: Game, socket: Socket) {
 	if (!ctx) return;
-	scale_x = canvas.width / stats.win.width;
-	scale_y = canvas.height / stats.win.height;
+	let scale_x = canvas.width / stats.win.width;
+	let scale_y = canvas.height / stats.win.height;
 
 	ctx.clearRect(0, 0, stats.win.width * scale_x, stats.win.height * scale_y);
 
@@ -80,6 +78,19 @@ function drawGame(stats: Game) {
 	ctx.textAlign = 'center';
 	ctx.fillText(stats.p1.score.toString(), stats.win.width * scale_x * 0.25, 60);
 	ctx.fillText(stats.p2.score.toString(), stats.win.width * scale_x * 0.75, 60);
+	
+	socket.on('playerWin', (winner) => {
+		//winner announcement
+		if(ctx){
+			ctx.fillStyle = 'white';
+			ctx.fillRect(win_width * 0.1, win_height * 0.25, win_width * 0.8, win_height * 0.12);
+			ctx.fillStyle = 'black';
+			ctx.fillRect(win_width * 0.105, win_height * 0.26, win_width * 0.79, win_height * 0.1);
+			ctx.fillStyle = 'white';
+			ctx.textAlign = 'center';
+			ctx.fillText(winner.name + ' wins', stats.win.width * scale_x * 0.5, stats.win.height * scale_y * 0.33);
+		}
+	})
 }
 
 export function pongGame() {
@@ -114,6 +125,6 @@ export function pongGame() {
 
 	// Main game loop (frame update)
 	socket.on('gameState', (stats: Game) => {
-		drawGame(stats);
+		drawGame(stats, socket);
 	});
 }
