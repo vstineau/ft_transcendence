@@ -51,7 +51,7 @@ function initGame(): Game {
 		win: {
 			width: WIN_WIDTH,
 			height: WIN_HEIGHT,
-		}
+		},
 	};
 	return game;
 }
@@ -60,13 +60,13 @@ export async function startPongGame(app: FastifyInstance) {
 	let game = initGame();
 	app.ready().then(() => {
 		console.log('Pong backend is ready');
-		
+
 		resetGame(game);
 		app.io.on('connection', (socket: Socket) => {
 			console.log('Client connected:', socket.id);
 
 			// getInputs(socket, game);
-			
+
 			getInputs(socket, game);
 			socket.on('initGame', () => {
 				if (!intervalStarted) {
@@ -87,23 +87,10 @@ function getInputs(socket: Socket, game: Game) {
 		resetGame(game);
 	});
 	socket.on('keydown', (key: any) => {
-		// console.log(key);
-		if (key.key === 'w' || key.key === 'W') {
-			// console.log('player keydown 1 up');
-			game.p1.key_up = true;
-		}
-		if (key.key === 's' || key.key === 'S') {
-			// console.log('player keydown 1 down');
-			game.p1.key_down = true;
-		}
-		if (key.key === 'ArrowUp') {
-			// console.log('player keydown 2 up');
-			game.p2.key_up = true;
-		}
-		if (key.key === 'ArrowDown') {
-			// console.log('player keydown 2 down');
-			game.p2.key_down = true;
-		}
+		if (key.key === 'w' || key.key === 'W') game.p1.key_up = true;
+		if (key.key === 's' || key.key === 'S') game.p1.key_down = true;
+		if (key.key === 'ArrowUp') game.p2.key_up = true;
+		if (key.key === 'ArrowDown') game.p2.key_down = true;
 	});
 	socket.on('keyup', (key: any) => {
 		// console.log(key);

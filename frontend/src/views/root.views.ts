@@ -1,4 +1,4 @@
-import { pongGame } from "../pong";
+import { pongGame } from '../pong/pong';
 
 export async function RootView() {
 	return /* HTML */ `
@@ -111,9 +111,7 @@ export async function PongMatchMakingView() {
 	`;
 }
 
-export async function PongCanvas(){
+export async function PongCanvas() {
 	// await pongGame();
-	return /* HTML */ `
-	<canvas id="gameCanvas">pong</canvas>
-	`;
+	return /* HTML */ ` <canvas id="gameCanvas">pong</canvas> `;
 }

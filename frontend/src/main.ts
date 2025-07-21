@@ -2,7 +2,7 @@
 import { registerUser } from './register';
 import { logUser } from './login';
 import { LoginView, PongView, RegisterView, RootView, PongMatchMakingView, PongCanvas } from './views/root.views';
-import { pongGame } from './pong';
+import { pongGame } from './pong/pong';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -52,12 +52,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 			await navigateTo((target as HTMLAnchorElement).getAttribute('href')!);
 		}
 	});
-	
+
 	// 5. Gère le bouton "Retour" du navigateur
 	window.addEventListener('popstate', renderPage);
-	
+
 	// 6. Rendu initial
 	await renderPage();
 	// pongGame();
-
 });
