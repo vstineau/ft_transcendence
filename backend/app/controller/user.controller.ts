@@ -2,7 +2,9 @@ import { FastifyPluginCallback } from 'fastify';
 import { User} from '../models.js'
 import { ValidationError } from 'class-validator';
 import { QueryFailedError } from 'typeorm'
-import { IUserReply, UserJson, JwtPayload } from '../types/userTypes.js'
+import { IUserReply, UserJson, JwtPayload, defaultAvatars, mimeTypes } from '../types/userTypes.js'
+import { extname } from 'path'
+import { readFile } from 'fs/promises'
 
 //pas oublier de changer le nom des images de profils pour eviter les injection de code bizarre
 
@@ -14,6 +16,16 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 	}>('/register', async (request, reply) => {
 		try {
 			const user = await User.createUser(request.body); 
+			if (request.body.avatar) {
+				user.avatar = request.body.avatar;
+			}
+			else {
+				const file = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)]; // choose randomly a default avatar
+				const buffer = await readFile(file);
+				const ext = extname(file).toLowerCase();
+				const mime = mimeTypes[ext] || 'application/octet-stream';
+				user.avatar = `data:${mime};base64,${buffer.toString("base64")}`;
+			}
 			await user.save();
 			reply.code(200).send({ success: true });
 		}

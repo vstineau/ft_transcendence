@@ -107,6 +107,14 @@ export async function RegisterView() {
 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
 					required
 				/>
+				<input
+					type="file"
+					name="avata"
+					id="avatar"
+					placeholder="inserer avatar"
+					accept="image/jpeg, image/png, image/jgp, image/gif"
+					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+				/>
 				<button
 					type="submit"
 					class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
@@ -175,6 +183,14 @@ export async function UpdateInfosview() {
 					name="newPassword"
 					id="newPassword"
 					placeholder="Nouveau Mot de passe"
+					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+				/>
+				<input
+					type="file"
+					name="avatar"
+					id="avatar"
+					placeholder="inserer avatar"
+					accept="image/jpeg, image/png, image/jgp, image/gif"
 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
 				/>
 				<button

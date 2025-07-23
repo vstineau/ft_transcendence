@@ -21,6 +21,15 @@ export class User extends BaseEntity {
 
 	@PrimaryGeneratedColumn()
 	id!: number;
+	
+	//blob for binary large object
+	@Column({
+    transformer: {
+		to: (value: string) => Buffer.from(value), //convert string to buffer to store in db
+		from: (value: Buffer) => value.toString() //convert buffer to string when read out from db
+		}
+	})
+	avatar?: string;
 
 	@Column()
 	@Length(1, 50)
@@ -70,7 +79,6 @@ export class User extends BaseEntity {
 
 	@OneToMany(() => History, (history: History) => history.user, { cascade: true })
     history?: History[];
-	//avatar
 };
 
 @Entity()
