@@ -30,6 +30,7 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 			reply.code(200).send({ success: true });
 		}
 		catch (error) { 
+			console.log(error);
 			let errorMessage = 'unknown error';
 			if (Array.isArray(error)) {
 				error.forEach((err) => {
@@ -176,10 +177,23 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 							&& await user.comparePassword(request.body.password)) {
 							user.password = request.body.newPassword;
 						}
-						console.log(user.getInfos());
-						console.log('________________')
+						if (request.body.avatar) {
+							const buffer = request.body.avatar;
+							const ext = request.body.ext;
+							if (ext) {
+								const mime = mimeTypes[ext] || 'application/octet-stream';
+								user.avatar = `data:${mime};base64,${buffer.toString()}`;
+							}
+						}
+						else if (request.body.noAvatar) {
+							const file = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)]; // choose randomly a default avatar
+							const buffer = await readFile(file);
+							const ext = extname(file).toLowerCase();
+							const mime = mimeTypes[ext] || 'application/octet-stream';
+							user.avatar = `data:${mime};base64,${buffer.toString("base64")}`;
+						}
 						await user.save();
-						console.log(await user.getInfos());
+						//console.log(await user.getInfos());
 						const token = server.jwt.sign(await user.getInfos(), { expiresIn: '4h'});
 						console.log("JWT updated");
 						reply.setCookie('token', token, {

@@ -200,6 +200,12 @@ export async function UpdateInfosview() {
 				Save updates
 				</button>
 			</form>
+			<button
+				id="noAvatar"
+				class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
+			>
+			No avatar
+			</button>
 			<div
 				id="error-message"
 				class="w-full px-4 hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative z-20"

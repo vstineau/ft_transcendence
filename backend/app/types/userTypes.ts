@@ -22,6 +22,8 @@ export type UserJson = {
 	newPassword?: string,
 	email: string,
 	avatar?: string,
+	noAvatar?: boolean;
+	ext?: string;
 };
 
 export type UserHistory = {
@@ -32,8 +34,8 @@ export type UserHistory = {
 };
 
 export const defaultAvatars: Array<string> = [
-	'../avatar/dog-meme.gif',
-	'../avatar/singe_rio_de_janeiro.jpg'
+	'/app/app/avatar/dog-meme.gif',
+	'/app/app/avatar/singe_rio_de_janeiro.jpg'
 ];
 
 export const mimeTypes: { [key: string]: string } = {

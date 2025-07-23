@@ -1,5 +1,6 @@
 import { navigateTo } from '../main';
 import { displayError } from '../utils/error'
+import { readFileAsBase64 } from '../utils/userInfo'
 
 export async function updateInfos() {
 	const form = document.getElementById('register-form') as HTMLFormElement | null;
@@ -25,14 +26,43 @@ export async function updateInfos() {
 		const newPassword = newform.get('newPassword')?.toString().trim();
 		const nickname = newform.get('nickname')?.toString().trim();
 		const email = newform.get('email')?.toString().trim();
-
+		const file_input = document.getElementById('avatar') as HTMLInputElement | null;
+		const file = file_input?.files?.[0];
+		let state: boolean = false;
+		const noAvatar = document.getElementById('noAvatar') as HTMLElement || null;
+		noAvatar.addEventListener('click', () => {
+			state? state = false: state = true;
+			if(noAvatar.classList.contains('bg-purple-600')) {
+			      noAvatar.classList.remove('bg-purple-600');
+			      noAvatar.classList.add('bg-green-600');
+			} else {
+				noAvatar.classList.remove('bg-green-600');
+				noAvatar.classList.add('bg-purple-600');
+			}
+		});
 		const body = {
 			login: login,
 			nickName: nickname,
 			password: password,
 			newPassword: newPassword,
 			email: email,
+			avatar: '',
+			noAvatar: state,
+			ext: '',
 		};
+		if (file) {
+			try {
+				const base64 = await readFileAsBase64(file);
+				body.avatar = base64;
+				const fileName = file.name;
+				const lastDot = fileName.lastIndexOf('.');
+				if (lastDot !== -1) {
+					body.ext = fileName.slice(lastDot + 1).toLowerCase();
+				}
+			} catch (err) {
+				displayError('error with avatar');
+			}
+		}
 		// sending token to backend then wait response
 		try {
 		const response = await fetch('https://localhost:8080/api/updateInfos', {
