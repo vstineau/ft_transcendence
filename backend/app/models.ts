@@ -1,11 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique, BeforeInsert, BeforeUpdate/*, ManyToOne, OneToMany*/ } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique, BeforeInsert, BeforeUpdate, ManyToOne, OneToMany } from "typeorm"
 import { IsEmail, Length, Matches, validateOrReject } from 'class-validator' 
 import { getIsInvalidMessage } from "./utils/errorMessages.js";
-import type { UserJson } from './types/userTypes.js'
+import type { UserJson , UserHistory } from './types/userTypes.js'
 
 //https://github.com/typestack/class-validator
 @Entity()
-@Unique(['email', 'nickName'])
+@Unique(['email'])
+@Unique(['login'])
 export class User extends BaseEntity {
 
 	@BeforeInsert()
@@ -20,6 +21,15 @@ export class User extends BaseEntity {
 
 	@PrimaryGeneratedColumn()
 	id!: number;
+	
+	//blob for binary large object
+	@Column({
+    transformer: {
+		to: (value: string) => Buffer.from(value), //convert string to buffer to store in db
+		from: (value: Buffer) => value.toString() //convert buffer to string when read out from db
+		}
+	})
+	avatar?: string;
 
 	@Column()
 	@Length(1, 50)
@@ -43,6 +53,16 @@ export class User extends BaseEntity {
 		return new User(data);
 	}
 
+	async getInfos(): Promise<UserJson> {
+		return {
+			id: this.id,
+			login: this.login,
+			nickName: this.nickName,
+			password: this.password,
+			email: this.email,
+		};
+	}
+
 	//bcrypt here?
 	async comparePassword(password: string): Promise<boolean> {
 		return this.password.localeCompare(password) == 0;
@@ -57,25 +77,39 @@ export class User extends BaseEntity {
 		this.email = obj?.email ?? '';
 	}
 
-//	@OneToMany(() => History, (history: History) => history.user, { cascade: true })
-//    history: History[];
-	//avatar
+	@OneToMany(() => History, (history: History) => history.user, { cascade: true })
+    history?: History[];
 };
 
-//@Entity()
-//export class History {
-//	@Column()
-//	date!: string;
-//
-//	@Column()
-//	opponentNickname!: string;
-//
-//	@Column()
-//	score!: string;
-//
-//	@Column()
-//	win!: boolean;
-//
-//	@ManyToOne(() => User, (user: User) => user.history)
-//    user: User;
-//};
+@Entity()
+export class History {
+
+	@PrimaryGeneratedColumn()
+	gamecount?: number;
+
+	@Column()
+	date?: string;
+
+	@Column()
+	opponent?: string;
+
+	@Column()
+	score?: string;
+
+	@Column()
+	win?: boolean;
+
+	@ManyToOne(() => User, (user: User) => user.history)
+    user: User;
+
+	constructor(user: User , data?: UserHistory)
+	{
+		if (data) {
+			this.date = data.date;
+			this.opponent = data.opponent;
+			this.score = data.score;
+			this.win = data.win;
+		}
+		this.user = user;
+	}
+};

@@ -1,93 +1,239 @@
 import { FastifyPluginCallback } from 'fastify';
-//import { FastifyRequest, FastifyReply } from 'fastify';
 import { User} from '../models.js'
+import { ValidationError } from 'class-validator';
+import { QueryFailedError } from 'typeorm'
+import { IUserReply, UserJson, JwtPayload, defaultAvatars, mimeTypes } from '../types/userTypes.js'
+import { extname } from 'path'
+import { readFile } from 'fs/promises'
 
-import { IUserReply, UserJson, ILoginReply } from '../types/userTypes.js'
-
-//pas oublier de changer le nom des images de profils 
-
+//pas oublier de changer le nom des images de profils pour eviter les injection de code bizarre
 
 export const userController: FastifyPluginCallback = (server, _opts, done) => {
+//REGISTER CONTROLLER
 	server.post<{
 		Reply: IUserReply,
 		Body: UserJson
 	}>('/register', async (request, reply) => {
 		try {
-			//console.log(request.body);
 			const user = await User.createUser(request.body); 
+			if (request.body.avatar) {
+				user.avatar = request.body.avatar;
+			}
+			else {
+				const file = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)]; // choose randomly a default avatar
+				const buffer = await readFile(file);
+				const ext = extname(file).toLowerCase();
+				const mime = mimeTypes[ext] || 'application/octet-stream';
+				user.avatar = `data:${mime};base64,${buffer.toString("base64")}`;
+			}
 			await user.save();
 			reply.code(200).send({ success: true });
 		}
 		catch (error) { 
+			console.log(error);
 			let errorMessage = 'unknown error';
-			if (error instanceof Error) {
-					errorMessage = error.message;
+			if (Array.isArray(error)) {
+				error.forEach((err) => {
+					if (err instanceof ValidationError) {
+					    if (err.constraints && err.constraints.matches) {
+					        errorMessage = err.constraints.matches;
+					    } else if (err.constraints && err.constraints.isEmail) {
+								errorMessage = err.constraints.isEmail;
+					    } else if (err.constraints && err.constraints.isLength) {
+								errorMessage = err.constraints.isLength;
+						} else {
+					        errorMessage = "Validation error";
+					    }
+					}
+				});	
 			}
-			reply.code(500).send({ success: false, error: errorMessage});
+			else if (error instanceof QueryFailedError && error.driverError?.code === 'SQLITE_CONSTRAINT') {
+					if (String(error.driverError?.message).includes('UNIQUE constraint failed: user.email')) {
+						errorMessage = 'this email is already used';
+					}
+					else if (String(error.driverError?.message).includes('UNIQUE constraint failed: user.login')) {
+						errorMessage = 'this login is already used';
+					}
+			}
+			reply.code(400).send({ success: false, error: errorMessage});
 		}
 	})		
+//LOGIN CONTROLLER
 	server.post<{
-		Reply: ILoginReply,
+		Reply: IUserReply,
 		Body: UserJson
 	}>('/login', async (request, reply) => {
 		try {
 			const invalidInfoError = "the provided user details are invalid";
-			//console.log(request.body);
-			//console.log("jusqu'ici tout va bien");
 			const user = await User.findOneBy({login: request.body.login}); 
 			if (!user) { }//console.log("user")}
-			if (user && !user.comparePassword(request.body.password)) { console.log("compare password")}
-			if (!user || !user.comparePassword(request.body.password)) {
+			if (user && request.body.password && !user.comparePassword(request.body.password)) { console.log("compare password")}
+			if (!user || (request.body.password && !user.comparePassword(request.body.password))) {
 				console.log("authentification failed !");
 				throw invalidInfoError;
 				}
 			const token = server.jwt.sign(request.body, { expiresIn: '4h'});
 			console.log("authentification succeed !");
-			reply.code(200).send({ success: true, token: token});
+			reply.setCookie('token', token, {
+					httpOnly: true,
+					secure: true,
+					path: '/',
+					sameSite: 'lax',
+					maxAge: 4 * 60 * 60	
+				}).code(200).send({ success: true});
 		}
 		catch (error) { 
 			let errorMessage = 'unknown error';
 			if (error instanceof Error) {
 					errorMessage = error.message;
 			}
-			reply.code(500).send({ success: false, error: errorMessage});
+			reply.code(400).send({ success: false, error: errorMessage});
 		}
 	})		
-//	server.post<{
-//		Reply: FastifyReply,
-//		Body: UserJson
-//	}>('/logout', async (request, reply) => {
-//	  const { username, password } = request.query
-//	  const customerHeader = request.headers['h-Custom']
-//	  // do something with request data
-//	
-//	  // chaining .statusCode/.code calls with .send allows type narrowing. For example:
-//	  // this works
-//	  reply.code(200).send({ success: true });
-//	  // but this gives a type error
-//	  reply.code(200).send('uh-oh');
-//	  // it even works for wildcards
-//	  reply.code(404).send({ error: 'Not found' });
-//	  return `logged in!`
-//	})		
-//	server.post<{
-//		Reply: FastifyReply,
-//		Body: UserJson
-//	}>('/deleteAccount', async (request, reply) => {
-//	  const { username, password } = request.query
-//	  const customerHeader = request.headers['h-Custom']
-//	  // do something with request data
-//	
-//	  // chaining .statusCode/.code calls with .send allows type narrowing. For example:
-//	  // this works
-//	  reply.code(200).send({ success: true });
-//	  // but this gives a type error
-//	  reply.code(200).send('uh-oh');
-//	  // it even works for wildcards
-//	  reply.code(404).send({ error: 'Not found' });
-//	  return `logged in!`
-//	})		
-		done();
+//LOGOUT CONTROLLER
+	server.get<{
+		Reply: IUserReply,
+		Body: UserJson
+	}>('/logout', async (_request, reply) => {
+		try {
+			console.log("logout successfully");
+			reply.clearCookie('token', {
+					httpOnly: true,
+					secure: true,
+					path: '/',
+					sameSite: 'lax',
+					maxAge: 4 * 60 *60
+				}).code(200).send({ success: true});
+		}
+		catch (error) { 
+			let errorMessage = 'unknown error';
+			if (error instanceof Error) {
+					errorMessage = error.message;
+			}
+			reply.code(400).send({ success: false, error: errorMessage});
+		}
+	})		
+//DELETE ACCCOUNT CONTROLLER
+	server.get<{
+		Reply: IUserReply,
+	}>('/deleteAccount', async (request, reply) => {
+		try {
+			if (request.cookies.token) {
+				const payload = server.jwt.verify<JwtPayload>(request.cookies.token);
+				const user = await User.findOneBy({login: payload.login});
+				if (user) {
+						user.remove();
+						reply.clearCookie('token', {
+								httpOnly: true,
+								secure: true,
+								path: '/',
+								sameSite: 'lax',
+								maxAge: 4 * 60 *60
+							}).code(200).send({ success: true});
+						console.log("user successfully deleted");
+				} 
+			}
+		}
+		catch (error) { 
+			reply.code(401).send({ success: false, error: "invalid JWT"});
+		}
+	})		
+//UPDATE USER INFO
+	server.get<{
+		Reply: IUserReply,
+	}>('/updateInfos', async (request, reply) => {
+		try {
+			if (request.cookies.token) {
+				const payload = server.jwt.verify<JwtPayload>(request.cookies.token);
+				const user = await User.findOneBy({login: payload.login});
+				if (user) {
+						reply.code(200).send({ success: true,
+							user: {	
+								id: user.id,
+								login: user.login,
+								nickName: user.nickName,
+								email: user.email,
+						}});
+				} 
+			}
+		}
+		catch (error) { 
+			reply.code(401).send({ success: false, error: "invalid JWT"});
+		}
+	})		
+	server.post<{
+		Reply: IUserReply,
+		Body: UserJson
+	}>('/updateInfos', async (request, reply) => {
+		try {
+			if (request.cookies.token) {
+				const payload = server.jwt.verify<JwtPayload>(request.cookies.token);
+				const user = await User.findOneBy({login: payload.login});
+				if (user) {
+						request.body.login ? user.login = request.body.login : 0;
+						request.body.nickName ? user.nickName = request.body.nickName : 0;
+						request.body.email ? user.email = request.body.email : 0;
+						if (request.body.password && request.body.newPassword 
+							&& await user.comparePassword(request.body.password)) {
+							user.password = request.body.newPassword;
+						}
+						if (request.body.avatar) {
+							const buffer = request.body.avatar;
+							const ext = request.body.ext;
+							if (ext) {
+								const mime = mimeTypes[ext] || 'application/octet-stream';
+								user.avatar = `data:${mime};base64,${buffer.toString()}`;
+							}
+						}
+						else if (request.body.noAvatar) {
+							const file = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)]; // choose randomly a default avatar
+							const buffer = await readFile(file);
+							const ext = extname(file).toLowerCase();
+							const mime = mimeTypes[ext] || 'application/octet-stream';
+							user.avatar = `data:${mime};base64,${buffer.toString("base64")}`;
+						}
+						await user.save();
+						//console.log(await user.getInfos());
+						const token = server.jwt.sign(await user.getInfos(), { expiresIn: '4h'});
+						console.log("JWT updated");
+						reply.setCookie('token', token, {
+								httpOnly: true,
+								secure: true,
+								path: '/',
+								sameSite: 'lax',
+								maxAge: 4 * 60 * 60	
+							}).code(200).send({ success: true});
+						console.log("user infos successfully updated");
+				} 
+			}
+		}
+		catch (error) { 
+			let errorMessage = 'unknown error';
+			if (Array.isArray(error)) {
+				error.forEach((err) => {
+					if (err instanceof ValidationError) {
+					    if (err.constraints && err.constraints.matches) {
+					        errorMessage = err.constraints.matches;
+					    } else if (err.constraints && err.constraints.isEmail) {
+								errorMessage = err.constraints.isEmail;
+					    } else if (err.constraints && err.constraints.isLength) {
+								errorMessage = err.constraints.isLength;
+						} else {
+					        errorMessage = "Validation error";
+					    }
+					}
+				});	
+			}
+			else if (error instanceof QueryFailedError && error.driverError?.code === 'SQLITE_CONSTRAINT') {
+					if (String(error.driverError?.message).includes('UNIQUE constraint failed: user.email')) {
+						errorMessage = 'this email is already used';
+					}
+					else if (String(error.driverError?.message).includes('UNIQUE constraint failed: user.login')) {
+						errorMessage = 'this login is already used';
+					}
+			}
+			reply.code(400).send({ success: false, error: errorMessage});
+		}
+	})		
+	done();
 }
-  //request: FastifyRequest<{ Body: UserJson}>,
-  //reply: FastifyReply
