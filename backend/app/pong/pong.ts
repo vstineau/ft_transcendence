@@ -1,8 +1,11 @@
 import { Server, Socket } from 'socket.io';
 import { EventEmitter } from 'events';
-import { Game } from '../types/pongTypes.js';
+import { Game, Player } from '../types/pongTypes.js';
 import { FastifyInstance } from 'fastify';
+// import { Any } from 'typeorm';
 // import { Socket from 'socket.io-client';
+// import { Game } from '../../../frontend/src/types/pongTypes';
+// import { pongGame } from '../../../frontend/src/pong/pong';
 
 EventEmitter.defaultMaxListeners = 30;
 declare module 'fastify' {
@@ -67,7 +70,7 @@ export async function startPongGame(app: FastifyInstance) {
 
 			// getInputs(socket, game);
 
-			getInputs(socket, game);
+			getInputs(socket, game, app);
 			socket.on('initGame', () => {
 				if (!intervalStarted) {
 					intervalStarted = true;
@@ -82,51 +85,52 @@ export async function startPongGame(app: FastifyInstance) {
 	});
 }
 
-function getInputs(socket: Socket, game: Game) {
-	socket.on('beforeunload', () => {
-		resetGame(game);
+function getInputs(sock: Socket, game: Game, app: FastifyInstance) {
+	sock.on('beforeunload', () => {
+		// game = initGame();
+
+		sock.emit('playerWin', game.p1.score >= game.p2.score ? game.p1 : game.p2 as Player, game as Game);
+
+		// sock.disconnect();
+		startPongGame(app);
 	});
-	socket.on('keydown', (key: any) => {
+	sock.on('keydown', (key: any) => {
 		if (key.key === 'w' || key.key === 'W') game.p1.key_up = true;
 		if (key.key === 's' || key.key === 'S') game.p1.key_down = true;
 		if (key.key === 'ArrowUp') game.p2.key_up = true;
 		if (key.key === 'ArrowDown') game.p2.key_down = true;
 	});
-	socket.on('keyup', (key: any) => {
+	sock.on('keyup', (key: any) => {
 		// console.log(key);
 		if (key.key === 'w' || key.key === 'W') game.p1.key_up = false;
 		if (key.key === 's' || key.key === 'S') game.p1.key_down = false;
 		if (key.key === 'ArrowUp') game.p2.key_up = false;
 		if (key.key === 'ArrowDown') game.p2.key_down = false;
 	});
-	socket.on('keypress', (key: any) => {
-		if (key === ' ') {
-			game.p1.score = 0;
-			game.p2.score = 0;
+	sock.on('keypress', (key: any) => {
+		console.log(key.key);
+		if (key.key === ' ') {
+			resetGame(game);
 		}
 	});
 }
 
 function movePlayer(game: Game) {
 	if (game.p1.key_up === true && game.p1.y - game.p1.vy >= -10) {
-		// console.log(game.p1.vy);
 		game.p1.y -= game.p1.vy;
 	}
 	if (game.p1.key_down === true && game.p1.y + game.p1.vy <= WIN_HEIGHT - game.p1.height) {
-		// console.log(game.p1.vy);
 		game.p1.y += game.p1.vy;
 	}
 	if (game.p2.key_up === true && game.p2.y - game.p2.vy >= -10) {
-		// console.log(game.p2.vy);
 		game.p2.y -= game.p2.vy;
 	}
 	if (game.p2.key_down === true && game.p2.y + game.p2.vy <= WIN_HEIGHT - game.p2.height) {
-		// console.log(game.p2.vy);
 		game.p2.y += game.p2.vy;
 	}
 }
 
-function checkWin(game: Game, socket: Socket) : boolean {
+function checkWin(game: Game, socket: Socket) {
 	if (game.p1.score === 1 || game.p2.score === 1) {
 		game.ball.vx = 0;
 		game.ball.vy = 0;
@@ -135,10 +139,8 @@ function checkWin(game: Game, socket: Socket) : boolean {
 		// Reset scores
 		// game.p1.score = 0;
 		// game.p2.score = 0;
-		socket.emit('playerWin', game.p1.score > game.p2.score ? game.p1 : game.p2);
-		return true;
+		socket.emit('playerWin', game.p1.score > game.p2.score ? game.p1 : game.p2 as Player, game as Game);
 	}
-	return false;
 }
 
 function handlePaddleCollisionP1(game: Game) {
@@ -179,7 +181,7 @@ function gameLoop(game: Game, socket: Socket) {
 	// console.log('game is gaming');
 	// getInputs(socket, game);
 	movePlayer(game);
-	checkWin(game, socket)
+	checkWin(game, socket);
 
 	// Move ball
 	game.ball.x += game.ball.vx;
