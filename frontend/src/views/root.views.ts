@@ -1,4 +1,3 @@
-//import { pongGame } from "../pong";
 
 export async function RootView() {
 	return /* HTML */ `
@@ -201,7 +200,7 @@ export async function UpdateInfosview() {
 				</button>
 			</form>
 			<button
-				id="noAvatar"
+				id="defaultAvatars"
 				class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
 			>
 			No avatar

@@ -5,6 +5,23 @@ import { readFileAsBase64 } from '../utils/userInfo'
 export async function updateInfos() {
 	const form = document.getElementById('register-form') as HTMLFormElement | null;
 	if (!form) return true;
+
+	let state: boolean = false;
+	const noAvatar = document.getElementById('defaultAvatars') as HTMLElement | null;
+	if (noAvatar) {
+		noAvatar.addEventListener('click', (e) => {
+			e.preventDefault(); // Pour éviter tout comportement natif éventuel
+			state = !state;
+			if (noAvatar.classList.contains('bg-purple-600')) {
+				noAvatar.classList.remove('bg-purple-600');
+				noAvatar.classList.add('bg-green-600');
+			} else {
+				noAvatar.classList.remove('bg-green-600');
+				noAvatar.classList.add('bg-purple-600');
+			}
+		});
+	}
+
 	try {
 		const response = await fetch('https://localhost:8080/api/updateInfos', {
 			method: 'GET',
@@ -28,18 +45,6 @@ export async function updateInfos() {
 		const email = newform.get('email')?.toString().trim();
 		const file_input = document.getElementById('avatar') as HTMLInputElement | null;
 		const file = file_input?.files?.[0];
-		let state: boolean = false;
-		const noAvatar = document.getElementById('noAvatar') as HTMLElement || null;
-		noAvatar.addEventListener('click', () => {
-			state? state = false: state = true;
-			if(noAvatar.classList.contains('bg-purple-600')) {
-			      noAvatar.classList.remove('bg-purple-600');
-			      noAvatar.classList.add('bg-green-600');
-			} else {
-				noAvatar.classList.remove('bg-green-600');
-				noAvatar.classList.add('bg-purple-600');
-			}
-		});
 		const body = {
 			login: login,
 			nickName: nickname,
