@@ -2,6 +2,7 @@
 
 export interface IUserReply {
 	200: { success: boolean, user?: UserJson };
+	302: { success: boolean, message?: string ,user?: UserJson };
 	401: { success: boolean, error: string };
 	400: { success: boolean, error: string };
 	500: { success: boolean, error: string };

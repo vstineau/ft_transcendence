@@ -15,6 +15,7 @@ services:
         - tsconfig.json
      - action: rebuild
        path: backend/package.json
+    #env_file: .env
   restart: always
   ports: 
     - 3000:3000
@@ -37,6 +38,7 @@ services:
         - Dockerfile
      - action: rebuild
        path: frontend/package.json
+    #env_file: .env
   restart: always
   ports: 
     - 8080:443

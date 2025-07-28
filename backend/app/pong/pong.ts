@@ -108,7 +108,7 @@ function getInputs(sock: Socket, game: Game, app: FastifyInstance) {
 		if (key.key === 'ArrowDown') game.p2.key_down = false;
 	});
 	sock.on('keypress', (key: any) => {
-		console.log(key.key);
+		//console.log(key.key);
 		if (key.key === ' ') {
 			resetGame(game);
 		}

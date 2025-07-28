@@ -6,6 +6,7 @@ import config from './config.js'
 import socketioServer from './plugins/socketIo.js'
 import {startPongGame} from './pong/pong.js'
 import fastifyCookie from '@fastify/cookie';
+import fastifyOauth2 from '@fastify/oauth2';
 
 export const app = Fastify({
 	logger: true,
@@ -24,10 +25,31 @@ await app.register(fastifyCookie);
 
 await app.register(socketioServer);
 
+await app.register(fastifyOauth2, {
+  name: 'githubOAuth2',
+  scope: ['user:email'],
+  credentials: {
+    client: {
+      id: '<GITHUB_CLIENT_ID>',
+      secret: '<GITHUB_CLIENT_SECRET>',
+    },
+    auth: {
+      authorizeHost: 'https://github.com',
+      authorizePath: '/login/oauth/authorize',
+      tokenHost: 'https://github.com',
+      tokenPath: '/login/oauth/access_token'
+    },
+  },
+  startRedirectPath: '/login/github',
+  callbackUri: 'https://10.11.1.13:8080/api/login/github/callback'
+});
+
+
 await startPongGame(app);
 authJwt(app, {jwtSecret: config.jwt.secret});
 await app.register(import('./routes/root.route.js'));
 await app.register(import('./routes/user.route.js'));
+await app.register(import('./routes/oauth2.route.js'));
 app.listen({port: 3000, host: '0.0.0.0'});
 
 

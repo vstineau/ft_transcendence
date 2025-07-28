@@ -10,6 +10,20 @@ import { readFile } from 'fs/promises'
 
 export const userController: FastifyPluginCallback = (server, _opts, done) => {
 //REGISTER CONTROLLER
+	server.get<{
+		Reply: IUserReply,
+	}>('/register', async (request, reply) => {
+		try {
+			if (request.cookies.token) {
+				server.jwt.verify(request.cookies.token);
+				reply.code(302).send({success: true, message: 'user already connected'});
+			} else {
+				reply.code(401).send({success: false, error: "user not connected"});
+			}
+		} catch {
+			reply.code(401).send({success: false, error: "user not connected"});
+		}
+	})		
 	server.post<{
 		Reply: IUserReply,
 		Body: UserJson

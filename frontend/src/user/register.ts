@@ -3,6 +3,13 @@ import { displayError } from '../utils/error'
 import { readFileAsBase64 } from '../utils/userInfo'
 
 export async function registerUser() {
+	const response = await fetch('https://localhost:8080/api/', {
+		method: 'GET',
+	});
+	const reply = await response.json();
+	if (reply.success) {
+		navigateTo('/');
+	}
 	const form = document.getElementById('register-form') as HTMLFormElement | null;
 	if (!form) return true;
 	form?.addEventListener('submit', async e => {

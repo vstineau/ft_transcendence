@@ -1,0 +1,5 @@
+IP=hostname -I | awk '{print $1}'
+JWT_SECRET='jwtsecret'
+
+OAUTH_SECRET='oauthsecret'
+
