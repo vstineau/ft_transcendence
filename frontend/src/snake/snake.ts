@@ -110,5 +110,24 @@ export function snakeGame() {
 	initCanvas();
 
 	listenUserInputs(socket);
+	socket.on('playerWin', (winner, game) => {
+		if (ctx) {
+		gameOver = true;
+		let scale_x = canvas.width / game.win.width;
+		let scale_y = canvas.height / game.win.height;
+		//winner announcement
+			ctx.fillStyle = 'white';
+			ctx.fillRect(win_width * 0.1, win_height * 0.25, win_width * 0.8, win_height * 0.12);
+			ctx.fillStyle = 'black';
+			ctx.fillRect(win_width * 0.105, win_height * 0.26, win_width * 0.79, win_height * 0.1);
+			ctx.fillStyle = 'white';
+			ctx.textAlign = 'center';
+			ctx.fillText(winner.name + ' wins', game.winSize * scale_x * 0.5, game.winSize * scale_y * 0.33);
+		}
+	});
+	// Main game loop (frame update)
+	socket.on('gameState', (game: Game) => {
+		drawGame(game, socket);
+	});
 
 }

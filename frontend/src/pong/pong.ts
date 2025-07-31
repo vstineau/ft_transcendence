@@ -119,7 +119,6 @@ export function pongGame() {
 	listenUserInputs(socket);
 	socket.on('playerWin', (winner, game) => {
 		if (ctx) {
-		console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', winner, game)
 		gameOver = true;
 		let scale_x = canvas.width / game.win.width;
 		let scale_y = canvas.height / game.win.height;
