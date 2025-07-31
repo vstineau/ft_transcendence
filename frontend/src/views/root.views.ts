@@ -218,3 +218,8 @@ export async function PongCanvas(){
 	// await pongGame();
 	return /* HTML */ ` <canvas id="gameCanvas">pong</canvas> `;
 }
+
+export async function SnakeCanvas(){
+	// await pongGame();
+	return /* HTML */ ` <canvas id="gameCanvas">snake</canvas> `;
+}

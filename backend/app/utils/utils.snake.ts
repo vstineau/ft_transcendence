@@ -1,6 +1,6 @@
 import { pos, Game, Snake} from '../types/snakeTypes.js'
 import { Socket } from 'socket.io';
-import { FastifyInstance } from 'fastify';
+//import { FastifyInstance } from 'fastify';
 
 const WIN = 600;
 
@@ -104,14 +104,14 @@ export function initGame(): Game {
 	return game;
 }
 
-function getInputs(sock: Socket, game: Game, app: FastifyInstance) {
-	sock.on('beforeunload', () => {
-		// game = initGame();
+export function getInputs(sock: Socket, game: Game) {
+	//sock.on('beforeunload', () => {
+	//	// game = initGame();
 
 
-		// sock.disconnect();
-		startPongGame(app);
-	});
+	//	// sock.disconnect();
+	//	startPongGame(app);
+	//});
 	sock.on('keydown', (key: any) => {
 		if (key.key === 'w' || key.key === 'W') game.p1.key_up = true;
 		if (key.key === 's' || key.key === 'S') game.p1.key_down = true;

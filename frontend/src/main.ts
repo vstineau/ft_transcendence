@@ -3,8 +3,9 @@ import { registerUser } from './user/register';
 import { logUser } from './user/login';
 import { rootUser } from './user/root';
 import { updateInfos } from './user/updateInfos'
-import { LoginView, PongView, RegisterView, UpdateInfosview, RootView, PongMatchMakingView, PongCanvas } from './views/root.views';
+import { LoginView, PongView, RegisterView, UpdateInfosview, RootView, PongMatchMakingView, PongCanvas, SnakeCanvas } from './views/root.views';
 import { pongGame } from './pong/pong';
+import { snakeGame } from './snake/snake'
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -17,6 +18,7 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/pong/tournament': async () => '<h1>tournament</h1>',
 	'/login': LoginView,
 	'/logout': async () => '<h1>LOGOUT</h1>',
+	'/snake': SnakeCanvas,
 	'/register': RegisterView,
 	'/updateInfos': UpdateInfosview,
 };
@@ -39,6 +41,7 @@ async function renderPage() {
 	path === '/register' ? registerUser() : 0;
 	path === '/login' ? logUser() : 0;
 	path === '/pong/matchmaking/game' ? pongGame() : 0;
+	path === '/snake' ? snakeGame() : 0;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
