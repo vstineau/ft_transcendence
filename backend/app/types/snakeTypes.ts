@@ -13,10 +13,6 @@ export interface Snake {
 	segments: pos[];
 	dir: pos;
 	pendingDir: pos;
-    key_up: boolean;
-    key_down: boolean;
-    key_left: boolean;
-    key_right: boolean;
 	color: string;
 }
 

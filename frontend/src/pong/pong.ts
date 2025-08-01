@@ -47,7 +47,7 @@ function initCanvas() {
 	}
 }
 
-function drawGame(game: Game, socket: Socket) {
+function drawGame(game: Game) {
 	if (!ctx || gameOver) return;
 	let scale_x = canvas.width / game.win.width;
 	let scale_y = canvas.height / game.win.height;
@@ -79,7 +79,7 @@ function listenUserInputs(socket: Socket) {
 	// Key controls
 	window.addEventListener('beforeunload', (e) => {
 		socket.emit('beforeunload');
-		// e.preventDefault();
+		 e.preventDefault();
 		gameOver = false;
 	});
 	window.addEventListener('keypress', e => {
@@ -136,6 +136,6 @@ export function pongGame() {
 	});
 	// Main game loop (frame update)
 	socket.on('gameState', (game: Game) => {
-		drawGame(game, socket);
+		drawGame(game);
 	});
 }
