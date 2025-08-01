@@ -15,22 +15,32 @@ export type JwtPayload = {
 };
 
 export type UserJson = {
-	id: number,
-	login: string,
-	nickName: string,
+	id?: number,
+	login?: string,
+	nickName?: string,
 	password?: string,
 	newPassword?: string,
-	email: string,
+	email?: string,
 	avatar?: string,
 	noAvatar?: boolean;
 	ext?: string;
+	stats?: UserStats;
 };
 
 export type UserHistory = {
-	date: string,
-	opponent: string,
-	score: string,
-	win: boolean,
+	date?: string,
+	opponent?: string,
+	score?: string,
+	win?: boolean,
+};
+
+export type UserStats = {
+	gameNb?: number,
+	lose?: number,
+	win?: number,
+	winrate?: number,
+	actualWinStreak?: number,
+	maxWinStreak?: number,
 };
 
 export const defaultAvatars: Array<string> = [

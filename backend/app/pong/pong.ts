@@ -1,13 +1,12 @@
 import { Server, Socket } from 'socket.io';
-import { EventEmitter } from 'events';
+// import { EventEmitter } from 'events';
 import { Game, Player } from '../types/pongTypes.js';
 import { FastifyInstance } from 'fastify';
-// import { Any } from 'typeorm';
-// import { Socket from 'socket.io-client';
-// import { Game } from '../../../frontend/src/types/pongTypes';
-// import { pongGame } from '../../../frontend/src/pong/pong';
+import {User} from "../models.js"
+// import { app } from '../app';
+// import io from 'socket.io-client';
 
-EventEmitter.defaultMaxListeners = 30;
+// EventEmitter.defaultMaxListeners = 30;
 declare module 'fastify' {
 	interface FastifyInstance {
 		io: Server;
@@ -23,7 +22,7 @@ let intervalStarted = false;
 function initGame(): Game {
 	let game = {
 		p1: {
-			name: 'player 1',
+			name: '',
 			y: WIN_HEIGHT / 2,
 			x: 20,
 			height: WIN_HEIGHT / 9,
@@ -34,7 +33,7 @@ function initGame(): Game {
 			key_down: false,
 		},
 		p2: {
-			name: 'player 2',
+			name: '',
 			y: WIN_HEIGHT / 2,
 			x: WIN_WIDTH * 0.98,
 			height: WIN_HEIGHT / 9,
@@ -58,26 +57,71 @@ function initGame(): Game {
 	};
 	return game;
 }
+type Room = {
+	name: string;
+	playersNb: number;
+	game: Game;
+};
+
+let rooms: Room[] = [];
+let roomcount = 0;
+let roomReady: string[] = [];
+
+function getRoom() {
+	// let room = rooms.find(room => room.playersNb < 2);
+	return rooms.find(room => room.playersNb < 2);
+}
+
+function createRoom(socket: Socket): Room {
+
+	let newRoom: Room = {
+		name: `room_${roomcount++}`,
+		playersNb: 1,
+		game: initGame(),
+	};
+	newRoom.game.p1.name = socket.id;
+	rooms.push(newRoom);
+	return newRoom;
+}
+
+function initRoom(socket: Socket){
+	const room = getRoom();
+	if (room) {
+		// room.game.p1.name = socket.id;
+		socket.join(room.name);
+		socket.emit('roomjoined', room.name);
+		room.playersNb = 2;
+		room.game.p2.name = socket.id;
+		roomReady.push(room.name);
+	} else {
+		const newRoom = createRoom(socket);
+		socket.join(newRoom.name);
+		// rooms.push(newRoom);
+	}
+}
+
 
 export async function startPongGame(app: FastifyInstance) {
 	let game = initGame();
 	app.ready().then(() => {
 		console.log('Pong backend is ready');
-
+		
 		resetGame(game);
 		app.io.on('connection', (socket: Socket) => {
 			console.log('Client connected:', socket.id);
-
-			// getInputs(socket, game);
-
-			getInputs(socket, game, app);
+			initRoom(socket);
+			console.log("number of room = " + roomcount);
+			
+			getInputs(socket, game);
 			socket.on('initGame', () => {
 				if (!intervalStarted) {
 					intervalStarted = true;
 					setInterval(() => {
 						gameLoop(game, socket);
 						// console.log('emiting gameState');
+						// if(rooms.)
 						app.io.emit('gameState', game);
+						app.io.to(roomReady).emit('gameState', );
 					}, 1000 / 60);
 				}
 			});
@@ -85,14 +129,15 @@ export async function startPongGame(app: FastifyInstance) {
 	});
 }
 
-function getInputs(sock: Socket, game: Game, app: FastifyInstance) {
+function getInputs(sock: Socket, game: Game) {
 	sock.on('beforeunload', () => {
-		// game = initGame();
+		game = initGame();
+		resetGame(game);
 
-		sock.emit('playerWin', game.p1.score >= game.p2.score ? game.p1 : game.p2 as Player, game as Game);
+		sock.emit('playerWin', game.p1.score >= game.p2.score ? game.p1 : (game.p2 as Player), game as Game);
 
 		// sock.disconnect();
-		startPongGame(app);
+		// startPongGame(app);
 	});
 	sock.on('keydown', (key: any) => {
 		if (key.key === 'w' || key.key === 'W') game.p1.key_up = true;
@@ -139,7 +184,7 @@ function checkWin(game: Game, socket: Socket) {
 		// Reset scores
 		// game.p1.score = 0;
 		// game.p2.score = 0;
-		socket.emit('playerWin', game.p1.score > game.p2.score ? game.p1 : game.p2 as Player, game as Game);
+		socket.emit('playerWin', game.p1.score > game.p2.score ? game.p1 : (game.p2 as Player), game as Game);
 	}
 }
 
