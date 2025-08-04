@@ -40,8 +40,8 @@ function drawGame(game: Game) {
 		return ;
 	let scale = canvas.height / game.winSize;
 
-	//const size = 40; // snake and food size
-
+	// snake and food size
+	const size = Math.floor(Math.min(canvas.width, canvas.height) / game.winSize) * 10;
 	//console.log(game);
 
 	ctx.fillStyle = "black";
@@ -50,7 +50,7 @@ function drawGame(game: Game) {
  	 // Draw foods
  	 for (const food of game.foods) {
  	   ctx.fillStyle = food.side === 'left' ? "#0ff" : "#f00";
- 	   ctx.fillRect(food.pos.x * scale, food.pos.y * scale, scale, scale);
+ 	   ctx.fillRect(food.pos.x * scale, food.pos.y * scale, size, size);
  	 }
 
  	 // Draw snakes
@@ -59,7 +59,7 @@ function drawGame(game: Game) {
 			return ;
  	   ctx.fillStyle = snake.color;
  	   for (const seg of snake.segments) {
- 	     ctx.fillRect(seg.x * scale, seg.y * scale, scale, scale);
+ 	     ctx.fillRect(seg.x * scale, seg.y * scale, size, size);
  	   }
  	 });
 }

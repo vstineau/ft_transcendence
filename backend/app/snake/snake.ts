@@ -133,7 +133,7 @@ export function update(g: Game, sock: Socket) {
   [g.p1, g.p2].forEach(snake => {
     moveSnake(snake, g.winSize);
     if (!eatFood(snake, g)) snake.segments.pop();
-  });
+  }); 
 
   if (checkCollision(g.p1, g.p2)) {
 	sock.emit('playerWin_snake', g.p1.name);
@@ -164,7 +164,7 @@ export async function startSnakeGame(app: FastifyInstance) {
 					setInterval(() => {
 						update(game, socket);
 						app.io.emit('gameState_snake', game);
-					}, 1000 / 160);
+					}, 1000 / 60);
 				}
 			});
 		});
