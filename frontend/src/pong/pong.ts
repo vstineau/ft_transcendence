@@ -77,7 +77,7 @@ function drawGame(game: Game, socket: Socket) {
 
 function listenUserInputs(socket: Socket) {
 	// Key controls
-	window.addEventListener('beforeunload', (e) => {
+	window.addEventListener('beforeunload', e => {
 		socket.emit('beforeunload');
 		// e.preventDefault();
 		gameOver = false;
@@ -112,6 +112,27 @@ function listenUserInputs(socket: Socket) {
 	});
 }
 
+function drawWaitingScreen(game: Game) {
+	if (!ctx) return;
+
+	// On utilise les mêmes scales que dans drawGame
+	const scale_x = canvas.width / game.win.width;
+	const scale_y = canvas.height / game.win.height;
+
+	ctx.clearRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
+
+	// Background
+	ctx.fillStyle = 'black';
+	ctx.fillRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
+
+	// Texte d'attente
+	ctx.font = `${40 * scale_y}px Arial`;
+	ctx.fillStyle = 'white';
+	ctx.textAlign = 'center';
+	ctx.textBaseline = 'middle';
+	ctx.fillText("Waiting for player ... (1 / 2)", (game.win.width * scale_x) / 2, (game.win.height * scale_y) / 2);
+}
+
 export function pongGame() {
 	const socket = createPongSocket();
 	initCanvas();
@@ -119,13 +140,13 @@ export function pongGame() {
 	listenUserInputs(socket);
 	socket.on('playerWin', (winner, game) => {
 		if (ctx) {
-		console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', winner, game)
-		gameOver = true;
-		let scale_x = canvas.width / game.win.width;
-		let scale_y = canvas.height / game.win.height;
-		// console.log('scale_x:', scale_x);
-		// console.log('scale_y:', scale_y);
-		//winner announcement
+			console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', winner, game);
+			gameOver = true;
+			let scale_x = canvas.width / game.win.width;
+			let scale_y = canvas.height / game.win.height;
+			// console.log('scale_x:', scale_x);
+			// console.log('scale_y:', scale_y);
+			//winner announcement
 			ctx.fillStyle = 'white';
 			ctx.fillRect(win_width * 0.1, win_height * 0.25, win_width * 0.8, win_height * 0.12);
 			ctx.fillStyle = 'black';
@@ -136,6 +157,10 @@ export function pongGame() {
 		}
 	});
 	// Main game loop (frame update)
+	socket.on('waiting', (game: Game) => {
+		drawWaitingScreen(game);
+	});
+
 	socket.on('gameState', (game: Game) => {
 		drawGame(game, socket);
 	});
