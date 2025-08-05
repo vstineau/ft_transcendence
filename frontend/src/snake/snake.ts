@@ -64,8 +64,6 @@ function drawGame(game: Game) {
  	 });
 }
 
-
-
 function listenUserInputs(socket: Socket) {
 	// Key controls
 	window.addEventListener('beforeunload_snake', (e) => {

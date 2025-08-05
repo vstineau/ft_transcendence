@@ -36,7 +36,7 @@ export function spawnFoods(g: Game) {
 
 export function eatFood(snake: Snake, g: Game): boolean {
   const head = snake.segments[0];
-  const tolerance = 20; 
+  const tolerance = 15; 
   const idx = g.foods.findIndex(f =>
     Math.abs(f.pos.x - head.x) <= tolerance &&
     Math.abs(f.pos.y - head.y) <= tolerance
@@ -58,11 +58,13 @@ export function wrap(pos: pos, winSize: number): pos {
 
 export function moveSnake(snake: Snake, winSize: number) {
   snake.dir = snake.pendingDir;
-  const head = wrap({
-    x: snake.segments[0].x + snake.dir.x,
-    y: snake.segments[0].y + snake.dir.y
-  }, winSize);
-  snake.segments.unshift(head);
+  for (let i = 0; i < 5; i++) {
+	const head = wrap({
+  	  x: snake.segments[0].x + snake.dir.x,
+  	  y: snake.segments[0].y + snake.dir.y
+  	}, winSize);
+  	snake.segments.unshift(head);
+  }
 }
 
 export function checkCollision(snake: Snake, other: Snake): boolean {
@@ -118,30 +120,45 @@ export function getInputs(sock: Socket, game: Game) {
 	//});
 	sock.on('keydown_snake', (key: any) => {
 		//console.log(key.key);
-		if (key.key === 'w' || key.key === 'W') game.p1.pendingDir = {x:0, y:-1};
-		else if (key.key === 's' || key.key === 'S') game.p1.pendingDir = {x:0, y:1};
-		else if (key.key === 'a' || key.key === 'A') game.p1.pendingDir = {x:-1, y:0};
-		else if (key.key === 'd' || key.key === 'D') game.p1.pendingDir = {x:1, y:0};
-		else if (key.key === 'ArrowUp')    game.p2.pendingDir = {x:0, y:-1};
-		else if (key.key === 'ArrowDown')  game.p2.pendingDir = {x:0, y:1};
-		else if (key.key === 'ArrowLeft')  game.p2.pendingDir = {x:-1, y:0};
-		else if (key.key === 'ArrowRight') game.p2.pendingDir = {x:1, y:0};
+		if ((key.key === 'w' || key.key === 'W') &&
+			(game.p1.pendingDir.x != 0 && game.p1.pendingDir.y != 1))
+			game.p1.pendingDir = {x:0, y:-1};
+		else if ((key.key === 's' || key.key === 'S' )&& 
+				(game.p1.pendingDir.x != 0 && game.p1.pendingDir.y != -1))
+				game.p1.pendingDir = {x:0, y:1};
+		else if ((key.key === 'a' || key.key === 'A') && 
+				(game.p1.pendingDir.x != 1 && game.p1.pendingDir.y != 0))
+				game.p1.pendingDir = {x:-1, y:0};
+		else if (key.key === 'd' || key.key === 'D' &&  
+				(game.p1.pendingDir.x != -1 && game.p1.pendingDir.y != 0))
+				game.p1.pendingDir = {x:1, y:0};
+		else if (key.key === 'ArrowUp' && (game.p2.pendingDir.x != 0 && game.p2.pendingDir.y != 1))
+				game.p2.pendingDir = {x:0, y:-1};
+		else if (key.key === 'ArrowDown'&& (game.p2.pendingDir.x != 0 && game.p2.pendingDir.y != -1))
+				game.p2.pendingDir = {x:0, y:1};
+		else if (key.key === 'ArrowLeft'&& (game.p2.pendingDir.x != 1 && game.p2.pendingDir.y != 0))
+				game.p2.pendingDir = {x:-1, y:0};
+		else if (key.key === 'ArrowRight'&& (game.p2.pendingDir.x != -1 && game.p2.pendingDir.y != 0))
+				game.p2.pendingDir = {x:1, y:0};
 	});
 }
 
 export function update(g: Game, sock: Socket) {
   [g.p1, g.p2].forEach(snake => {
     moveSnake(snake, g.winSize);
-    if (!eatFood(snake, g)) snake.segments.pop();
+    if (!eatFood(snake, g)) {
+		for (let i = 0; i < 5; i++)
+			snake.segments.pop();
+	}
   }); 
 
   if (checkCollision(g.p1, g.p2)) {
-	sock.emit('playerWin_snake', g.p1.name);
+	sock.emit('playerWin_snake', g.p2 as Snake, g as Game);
     resetGame(g);
     return;
   }
   if (checkCollision(g.p2, g.p1)) {
-	sock.emit('playerWin_snake', g.p1.name);
+	sock.emit('playerWin_snake', g.p1 as Snake, g as Game);
     resetGame(g);
     return;
   }
@@ -164,7 +181,7 @@ export async function startSnakeGame(app: FastifyInstance) {
 					setInterval(() => {
 						update(game, socket);
 						app.io.emit('gameState_snake', game);
-					}, 1000 / 60);
+					}, 1000 / 50);
 				}
 			});
 		});
