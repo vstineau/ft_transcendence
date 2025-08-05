@@ -1,23 +1,39 @@
-
 export async function RootView() {
-	return /* HTML */ `
-		<div class="dashboard">
-			<ul>
-				<li><a href="/pong">Play</a></li>
-				<li><a href="/login">Login</a></li>
-				<li><a href="/register">Register</a></li>
-				<li><a href="/logout">Logout</a></li>
-			</ul>
-		</div>
-		<button
-		    type="logout"
-			id="logout"
-			class="fixed top-4 right-4 z-50 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
-			    style="display: none;"
-			>
-			    Logout
-		</button>
-	`;
+    return /* HTML */ `
+        <!-- Section Hero - écran complet avec le titre centré -->
+        <div class="hero-section h-screen flex flex-col justify-center items-center bg-white relative">
+            <div class="hero-content text-center">
+                <h1 id="main-title" class="text-6xl font-bold text-black mb-4">
+                    FT_TRANSCENDENCE
+                </h1>
+                <p class="text-gray-600 text-lg mb-8">This project is a surprise.</p>
+            </div>
+
+            <!-- Indicateur de scroll en bas -->
+            <div class="scroll-indicator absolute bottom-12 left-1/2 transform -translate-x-1/2">
+                <span class="text-gray-500 text-sm block mb-2">scroll</span>
+                <div class="w-px h-8 bg-gray-400 mx-auto animate-pulse"></div>
+            </div>
+        </div>
+
+        <!-- Section vide pour permettre le scroll -->
+        <div class="content-section h-screen bg-gray-100 flex items-center justify-center">
+            <div class="text-center">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Scrollez vers le haut pour voir l'effet</h2>
+                <p class="text-gray-600">Le titre devrait être maintenant en haut de la page</p>
+            </div>
+        </div>
+
+        <!-- Logout button (caché par défaut) -->
+        <button
+            type="button"
+            id="logout"
+            class="fixed top-4 right-4 z-50 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
+            style="display: none;"
+        >
+            Logout
+        </button>
+    `;
 }
 
 // <img src="https://i.gifer.com/QgxJ.gif" alt="pong" />
