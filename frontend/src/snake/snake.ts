@@ -1,6 +1,7 @@
 import io, { Socket } from 'socket.io-client';
 import { Game, Food } from '../types/snakeTypes';
 
+
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D | null = null;
 
@@ -10,13 +11,8 @@ let gameOver = false;
 
 
 export function createSnakeSocket(): Socket {
-	const socket = io('https://localhost:8080');
-
-	socket.on('connect', () => {
-		console.log('Socket connected!');
-		socket.emit('initGame_snake');
-	});
-	return socket;
+    const socket = io('https://localhost:8080');
+    return socket;
 }
 
 
@@ -41,7 +37,7 @@ function drawGame(game: Game) {
 	let scale = canvas.height / game.winSize;
 
 	// snake and food size
-	const size = Math.floor(Math.min(canvas.width, canvas.height) / game.winSize) * 10;
+	const size = Math.floor(Math.min(canvas.width, canvas.height) / game.winSize) * 20;
 	//console.log(game);
 
 	ctx.fillStyle = "black";
@@ -64,7 +60,7 @@ function drawGame(game: Game) {
  	 });
 }
 
-function listenUserInputs(socket: Socket) {
+function listenUserInputs(socket: Socket, roomId: string) {
 	// Key controls
 	window.addEventListener('beforeunload_snake', (e) => {
 		socket.emit('beforeunload_snake');
@@ -72,7 +68,7 @@ function listenUserInputs(socket: Socket) {
 		gameOver = false;
 	});
 	window.addEventListener('keydown', e => {
-		socket.emit('keydown_snake', { key: e.key });
+		socket.emit('keydown_snake', { key: e.key }, roomId);
 		console.log(e.key);
 		if (e.key === 'ArrowUp' ||
 			e.key === 'ArrowDown' ||
@@ -95,9 +91,13 @@ function listenUserInputs(socket: Socket) {
 
 export function snakeGame() {
 	const socket = createSnakeSocket();
+	let roomId: string;
+	 socket.emit('createRoom_snake', (rId: string) => {
+     roomId = rId;
+    });
 	initCanvas();
 
-	listenUserInputs(socket);
+	listenUserInputs(socket, roomId);
 	socket.on('playerWin_snake', (winner, game) => {
 		if (ctx) {
 		gameOver = true;
