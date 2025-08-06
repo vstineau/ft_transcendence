@@ -1,12 +1,15 @@
 export async function RootView() {
     return /* HTML */ `
-        <!-- Section Hero - écran complet avec le titre centré -->
+        <!-- Titre isolé - position absolue dès le départ -->
+		<h1 id="main-title" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl font-bold text-black z-50">
+			FT<span class="text-blue-600">_</span>TRANSCENDENCE
+		</h1>
+
+        <!-- Section Hero - écran complet SANS le titre -->
         <div class="hero-section h-screen flex flex-col justify-center items-center bg-white relative">
-            <div class="hero-content text-center">
-                <h1 id="main-title" class="text-6xl font-bold text-black mb-4">
-                    FT_TRANSCENDENCE
-                </h1>
-                <p class="text-gray-600 text-lg mb-8">This project is a surprise.</p>
+            <div class="hero-content text-center pt-20"> <!-- Padding pour laisser place au titre -->
+                <!-- Le titre n'est plus ici, il est séparé -->
+                <p class="text-gray-600 text-lg mb-8 mt-8">This project is a surprise.</p>
             </div>
 
             <!-- Indicateur de scroll en bas -->
