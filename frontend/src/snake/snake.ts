@@ -12,6 +12,10 @@ let gameOver = false;
 
 export function createSnakeSocket(): Socket {
     const socket = io('https://localhost:8080');
+	socket.on('connect', () => {
+		console.log('Socket connected!');
+		socket.emit('initGame_snake');
+	});
     return socket;
 }
 
@@ -30,6 +34,23 @@ function initCanvas() {
 	}
 }
 
+function drawWaitingScreen(game: Game) {
+    if (!ctx) return;
+
+    // On utilise les mêmes scales que dans drawGame
+    const scale = canvas.width / game.winSize;
+
+    ctx.clearRect(0, 0, game.winSize * scale, game.winSize * scale);
+
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, game.winSize * scale, game.winSize * scale);
+
+    ctx.font = `${40 * scale}px Arial`;
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Waiting for player ... (1 / 2)', (game.winSize * scale) / 2, (game.winSize * scale) / 2);
+}
 
 function drawGame(game: Game) {
 	if (!ctx || gameOver)
@@ -45,7 +66,7 @@ function drawGame(game: Game) {
 
  	 // Draw foods
  	 for (const food of game.foods) {
- 	   ctx.fillStyle = food.side === 'left' ? "#0ff" : "#f00";
+ 	   ctx.fillStyle = food.side === 'left' ? "#0ff" : "#f0f";
  	   ctx.fillRect(food.pos.x * scale, food.pos.y * scale, size, size);
  	 }
 
@@ -60,7 +81,7 @@ function drawGame(game: Game) {
  	 });
 }
 
-function listenUserInputs(socket: Socket, roomId: string) {
+function listenUserInputs(socket: Socket) {
 	// Key controls
 	window.addEventListener('beforeunload_snake', (e) => {
 		socket.emit('beforeunload_snake');
@@ -68,8 +89,7 @@ function listenUserInputs(socket: Socket, roomId: string) {
 		gameOver = false;
 	});
 	window.addEventListener('keydown', e => {
-		socket.emit('keydown_snake', { key: e.key }, roomId);
-		console.log(e.key);
+		socket.emit('keydown_snake', { key: e.key }, socket.id);
 		if (e.key === 'ArrowUp' ||
 			e.key === 'ArrowDown' ||
 			e.key === 'ArrowLeft' ||
@@ -91,18 +111,15 @@ function listenUserInputs(socket: Socket, roomId: string) {
 
 export function snakeGame() {
 	const socket = createSnakeSocket();
-	let roomId: string;
-	 socket.emit('createRoom_snake', (rId: string) => {
-     roomId = rId;
-    });
 	initCanvas();
-
-	listenUserInputs(socket, roomId);
+	listenUserInputs(socket);
+	socket.on('waiting_snake', (game: Game) => {
+		drawWaitingScreen(game);
+	})
 	socket.on('playerWin_snake', (winner, game) => {
 		if (ctx) {
 		gameOver = true;
-		let scale_x = canvas.width / game.winSize;
-		let scale_y = canvas.height / game.winSize;
+		let scale = canvas.width / game.winSize;
 		//winner announcement
 			ctx.fillStyle = 'white';
 			ctx.fillRect(win_width * 0.1, win_height * 0.25, win_width * 0.8, win_height * 0.12);
@@ -110,7 +127,8 @@ export function snakeGame() {
 			ctx.fillRect(win_width * 0.105, win_height * 0.26, win_width * 0.79, win_height * 0.1);
 			ctx.fillStyle = 'white';
 			ctx.textAlign = 'center';
-			ctx.fillText(winner.name + ' wins', game.winSize * scale_x * 0.5, game.winSize * scale_y * 0.33);
+			ctx.fillText(winner.name + ' wins', game.winSize * scale * 0.5, game.winSize * scale * 0.33);
+			return ;
 		}
 	});
 	// Main game loop (frame update)

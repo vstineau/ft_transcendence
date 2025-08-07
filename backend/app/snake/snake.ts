@@ -1,11 +1,68 @@
-import { pos, Game, Snake } from '../types/snakeTypes.js';
-import { Socket, Server } from 'socket.io';
+import { pos, Game, Snake , Room} from '../types/snakeTypes.js';
+import { Socket } from 'socket.io';
 import { FastifyInstance } from 'fastify';
-import { v4 as uuidv4 } from "uuid";
+//import { v4 as uuidv4 } from "uuid";
 
 const WIN = 600;
-const games: Record<string, Game> = {};
-const intervals: Record<string, NodeJS.Timeout> = {};
+let snakeRooms: Room[] = [];
+let roomcount = 0;
+
+function getRoom() {
+    return snakeRooms.find(room => room.playersNb === 1);
+}
+
+function initRoom(socket: Socket) {
+    const room = getRoom();
+    if (room) {
+        socket.join(room.name);
+        room.playersNb = 2;
+        room.game.p2.id = socket.id;
+		return room;
+    } else {
+        const newRoom = createRoom(socket);
+        socket.join(newRoom.name);
+		newRoom.playersNb = 1;
+		return newRoom;
+    }
+}
+
+function createRoom(socket: Socket): Room {
+    let newRoom: Room = {
+        name: `room_${roomcount++}`,
+        playersNb: 1,
+        game: initGame(),
+    };
+    newRoom.game.p1.id = socket.id;
+    snakeRooms.push(newRoom);
+    return newRoom;
+}
+
+function handleDisconnect(app: FastifyInstance, socket: Socket) {
+    void app;
+    socket.on('disconnect', () => {
+       // console.log(`client ${socket.id} disconnected`);
+        const room = snakeRooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
+        if (room) {
+            room.playersNb--;
+           // console.log(`connected players = ${room.playersNb}`);
+            if (room.game.p1.id === socket.id) {
+                room.game.p1.id = ''; // ou null
+            } else if (room.game.p2.id === socket.id) {
+                room.game.p2.id = '';
+            }
+            if (room.playersNb === 0) {
+             //   console.log(`room ${room.name} closed`);
+                snakeRooms = snakeRooms.filter(r => r !== room);
+                roomcount--;
+            } else if (room.playersNb === 1) {
+                // Si un joueur reste
+                app.io.to(room.name).emit('Waiting', room.game);
+            }
+        }
+        socket.off;
+        socket.disconnect;
+    });
+}
 
 export function randomPos(side: 'left' | 'right', winSize: number): pos {
 
@@ -96,6 +153,7 @@ export function initGame(): Game {
 			dir: { x: 0, y: 1},
 			pendingDir: { x: 0, y: 1},
 			color: "blue",
+			id: '',
 		},
 		p2: {
 			name: 'player 2',
@@ -103,6 +161,7 @@ export function initGame(): Game {
 			dir: { x: 0, y: -1},
 			pendingDir: { x: 0, y: -1},
 			color: "red",
+			id: '',
 		},
 		foods: [],
 		winSize: WIN
@@ -112,105 +171,95 @@ export function initGame(): Game {
 }
 
 export function getInputs(sock: Socket, game: Game) {
-	//sock.on('beforeunload', () => {
-	//	// game = initGame();
-
-
-	//	// sock.disconnect();
-	//	startPongGame(app);
-	//});
-	sock.on('keydown_snake', (key: any) => {
-		//console.log(key.key);
-		if ((key.key === 'w' || key.key === 'W') &&
-			(game.p1.pendingDir.x != 0 && game.p1.pendingDir.y != 1))
-			game.p1.pendingDir = {x:0, y:-1};
-		else if ((key.key === 's' || key.key === 'S' )&& 
-				(game.p1.pendingDir.x != 0 && game.p1.pendingDir.y != -1))
-				game.p1.pendingDir = {x:0, y:1};
-		else if ((key.key === 'a' || key.key === 'A') && 
-				(game.p1.pendingDir.x != 1 && game.p1.pendingDir.y != 0))
-				game.p1.pendingDir = {x:-1, y:0};
-		else if (key.key === 'd' || key.key === 'D' &&  
-				(game.p1.pendingDir.x != -1 && game.p1.pendingDir.y != 0))
-				game.p1.pendingDir = {x:1, y:0};
-		else if (key.key === 'ArrowUp' && (game.p2.pendingDir.x != 0 && game.p2.pendingDir.y != 1))
+		sock.on('keydown_snake', (key: any, sockId: string) => {
+		if (sockId === game.p1.id) {
+			console.log(`p1 id  = ${sockId}`);
+			if ((key.key === 'w' || key.key === 'W') &&
+				(game.p1.pendingDir.x != 0 && game.p1.pendingDir.y != 1))
+				game.p1.pendingDir = {x:0, y:-1};
+			else if ((key.key === 's' || key.key === 'S' )&& 
+					(game.p1.pendingDir.x != 0 && game.p1.pendingDir.y != -1))
+					game.p1.pendingDir = {x:0, y:1};
+			else if ((key.key === 'a' || key.key === 'A') && 
+					(game.p1.pendingDir.x != 1 && game.p1.pendingDir.y != 0))
+					game.p1.pendingDir = {x:-1, y:0};
+			else if (key.key === 'd' || key.key === 'D' &&  
+					(game.p1.pendingDir.x != -1 && game.p1.pendingDir.y != 0))
+					game.p1.pendingDir = {x:1, y:0};
+			else if (key.key === 'ArrowUp' && (game.p1.pendingDir.x != 0 && game.p1.pendingDir.y != 1))
+					game.p1.pendingDir = {x:0, y:-1};
+			else if (key.key === 'ArrowDown'&& (game.p1.pendingDir.x != 0 && game.p1.pendingDir.y != -1))
+					game.p1.pendingDir = {x:0, y:1};
+			else if (key.key === 'ArrowLeft'&& (game.p1.pendingDir.x != 1 && game.p1.pendingDir.y != 0))
+					game.p1.pendingDir = {x:-1, y:0};
+			else if (key.key === 'ArrowRight'&& (game.p1.pendingDir.x != -1 && game.p1.pendingDir.y != 0))
+					game.p1.pendingDir = {x:1, y:0};
+		} else if (sockId === game.p2.id) {
+			console.log(`p2 id  = ${sockId}`);
+			if ((key.key === 'w' || key.key === 'W') &&
+				(game.p2.pendingDir.x != 0 && game.p2.pendingDir.y != 1))
 				game.p2.pendingDir = {x:0, y:-1};
-		else if (key.key === 'ArrowDown'&& (game.p2.pendingDir.x != 0 && game.p2.pendingDir.y != -1))
-				game.p2.pendingDir = {x:0, y:1};
-		else if (key.key === 'ArrowLeft'&& (game.p2.pendingDir.x != 1 && game.p2.pendingDir.y != 0))
-				game.p2.pendingDir = {x:-1, y:0};
-		else if (key.key === 'ArrowRight'&& (game.p2.pendingDir.x != -1 && game.p2.pendingDir.y != 0))
-				game.p2.pendingDir = {x:1, y:0};
+			else if ((key.key === 's' || key.key === 'S' )&& 
+					(game.p2.pendingDir.x != 0 && game.p2.pendingDir.y != -1))
+					game.p2.pendingDir = {x:0, y:1};
+			else if ((key.key === 'a' || key.key === 'A') && 
+					(game.p2.pendingDir.x != 1 && game.p2.pendingDir.y != 0))
+					game.p2.pendingDir = {x:-1, y:0};
+			else if (key.key === 'd' || key.key === 'D' &&  
+					(game.p2.pendingDir.x != -1 && game.p2.pendingDir.y != 0))
+					game.p2.pendingDir = {x:1, y:0};
+			else if (key.key === 'ArrowUp' && (game.p2.pendingDir.x != 0 && game.p2.pendingDir.y != 1))
+					game.p2.pendingDir = {x:0, y:-1};
+			else if (key.key === 'ArrowDown'&& (game.p2.pendingDir.x != 0 && game.p2.pendingDir.y != -1))
+					game.p2.pendingDir = {x:0, y:1};
+			else if (key.key === 'ArrowLeft'&& (game.p2.pendingDir.x != 1 && game.p2.pendingDir.y != 0))
+					game.p2.pendingDir = {x:-1, y:0};
+			else if (key.key === 'ArrowRight'&& (game.p2.pendingDir.x != -1 && game.p2.pendingDir.y != 0))
+					game.p2.pendingDir = {x:1, y:0};
+		}
 	});
 }
 
-export function createRoom(socket: Socket) {
-	socket.on('createRoom_snake', (callback: (roomId: string) => void) => {
-	    const roomId = uuidv4();
-	    games[roomId] = initGame();
-	    socket.join(roomId);
-	    callback(roomId); // Envoie l'id de la room créée au front
-});
-}
-export function joinRoom(roomId: string, socket: Socket) {
-    socket.join(roomId);
-}
 
-export async function startSnakeGame(app: FastifyInstance) {
-    app.ready().then(() => {
-        app.io.on('connection', (socket: Socket) => {
-            let currentRoom: string | null = null;
-
-            // Créer ou rejoindre une room
-            socket.on('joinRoom_snake', (roomId: string) => {
-                if (!games[roomId]) {
-                    createRoom(socket);
-                }
-                joinRoom(roomId, socket);
-                currentRoom = roomId;
-                // Associer le joueur à p1 ou p2 selon nombre de joueurs déjà dans la room
-                // TODO : Affectation précise p1/p2 à gérer
-            });
-
-            // Gestion inputs
-            socket.on('keydown_snake', (_data) => {
-                if (currentRoom) {
-                    getInputs(socket, games[currentRoom]); // à adapter pour la room
-                }
-            });
-
-            // Lancer la partie (1 tick par room)
-            socket.on('initGame_snake', (roomId: string) => {
-                if (!intervals[roomId]) {
-                    intervals[roomId] = setInterval(() => {
-                        update(games[roomId], socket, roomId, app.io);
-                        app.io.to(roomId).emit('gameState_snake', games[roomId]);
-                    }, 1000 / 60);
-                }
-            });
-
-            // Déconnexion
-            socket.on('disconnect', () => {
-                // Gestion cleanup room, joueurs etc.
-            });
-        });
-    });
-}
-
-// Adapter update() pour prendre la room en compte :
-export function update(g: Game, _sock: Socket, roomId: string, io: Server) {
+export function update(g: Game, app: FastifyInstance, roomId: string) {
     [g.p1, g.p2].forEach(snake => {
         moveSnake(snake, g.winSize);
         if (!eatFood(snake, g)) for (let i = 0; i < 8; i++) snake.segments.pop();
     });
     if (checkCollision(g.p1, g.p2)) {
-        io.to(roomId).emit('playerWin_snake', g.p2, g);
-        resetGame(g);
+        app.io.to(roomId).emit('playerWin_snake', g.p2, g);
+        //resetGame(g);
         return;
     }
     if (checkCollision(g.p2, g.p1)) {
-        io.to(roomId).emit('playerWin_snake', g.p1, g);
-        resetGame(g);
+        app.io.to(roomId).emit('playerWin_snake', g.p1, g);
+        //resetGame(g);
         return;
     }
+}
+
+export async function startSnakeGame(app: FastifyInstance) {
+    app.ready().then(() => {
+        app.io.on('connection', (socket: Socket) => {
+            const room = initRoom(socket);
+			handleDisconnect(app, socket);
+
+            getInputs(socket, room.game);
+            socket.on('initGame_snake', () => {
+					const room = snakeRooms.find(r  => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
+					    if (!room) return;
+					    if (room.interval) return;
+                   room.interval = setInterval(() => {
+                        for (const room of snakeRooms) {
+                            if (room.playersNb === 2) { 
+                                update(room.game, app, room.name);
+                                app.io.to(room.name).emit('gameState_snake', room.game);
+                            } else {
+                                app.io.to(room.name).emit('waiting_snake', room.game);
+                            }
+                        }
+                    }, 1000 / 60);
+            });
+        });
+    });
 }
