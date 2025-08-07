@@ -9,7 +9,7 @@ import { Game } from '../types/pongTypes';
 // let win_height = window.innerHeight;
 
 export function createPongSocket(): Socket {
-	const socket = io('https://localhost:8080');
+	let socket = io('https://localhost:8080');
 
 	socket.on('connect', () => {
 		console.log('Socket connected!');
@@ -77,8 +77,8 @@ function drawGame(game: Game, socket: Socket) {
 
 function listenUserInputs(socket: Socket) {
 	// Key controls
-	window.addEventListener('beforeunload', e => {
-		socket.emit('beforeunload');
+	window.addEventListener('beforeunload', () => {
+		socket.emit('beforeunload', socket);
 		// e.preventDefault();
 		gameOver = false;
 	});
@@ -121,29 +121,75 @@ function drawWaitingScreen(game: Game) {
 
 	ctx.clearRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
 
-	// Background
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
 
-	// Texte d'attente
 	ctx.font = `${40 * scale_y}px Arial`;
 	ctx.fillStyle = 'white';
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
-	ctx.fillText("Waiting for player ... (1 / 2)", (game.win.width * scale_x) / 2, (game.win.height * scale_y) / 2);
+	ctx.fillText('Waiting for player ... (1 / 2)', (game.win.width * scale_x) / 2, (game.win.height * scale_y) / 2);
 }
+
+// let waitingAnimationFrame: number | null = null;
+// let waitingStartTime: number | null = null;
+// let waitingActive = false;
+
+// function drawWaitingScreen(room: any) {
+// 	if (!ctx || !waitingActive) return; // <-- Ajout de la condition
+
+// 	const scale_x = canvas.width / room.game.win.width;
+// 	const scale_y = canvas.height / room.game.win.height;
+
+// 	if (waitingStartTime === null) waitingStartTime = performance.now();
+// 	const elapsed = performance.now() - waitingStartTime;
+// 	const dotCount = Math.floor((elapsed / 500) % 4);
+
+// 	const dots = '.'.repeat(dotCount);
+
+// 	ctx.clearRect(0, 0, room.game.win.width * scale_x, room.game.win.height * scale_y);
+// 	ctx.fillStyle = 'black';
+// 	ctx.fillRect(0, 0, room.game.win.width * scale_x, room.game.win.height * scale_y);
+
+// 	ctx.font = `${40 * scale_y}px Arial`;
+// 	ctx.fillStyle = 'white';
+// 	ctx.textAlign = 'center';
+// 	ctx.textBaseline = 'middle';
+
+// 	ctx.fillText(`Waiting for player (${room.playersNb} / 2) ${dots}`, (room.game.win.width * scale_x) / 2, (room.game.win.height * scale_y) / 2);
+
+// 	// Relance la frame SEULEMENT si l'animation est active
+// 	if (waitingActive) {
+// 		waitingAnimationFrame = requestAnimationFrame(() => drawWaitingScreen(room.game));
+// 	}
+// }
+
+// function stopWaitingScreen() {
+// 	waitingActive = false;
+// 	if (waitingAnimationFrame !== null) {
+// 		cancelAnimationFrame(waitingAnimationFrame);
+// 		waitingAnimationFrame = null;
+// 	}
+// 	waitingStartTime = null;
+// }
 
 export function pongGame() {
 	const socket = createPongSocket();
 	initCanvas();
 
 	listenUserInputs(socket);
+	// stopWaitingScreen();
+	socket.on('waiting', (room: any) => {
+		drawWaitingScreen(room);
+	});
 	socket.on('playerWin', (winner, game) => {
+		// stopWaitingScreen();
 		if (ctx) {
 			console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', winner, game);
 			gameOver = true;
 			let scale_x = canvas.width / game.win.width;
 			let scale_y = canvas.height / game.win.height;
+			ctx.clearRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
 			// console.log('scale_x:', scale_x);
 			// console.log('scale_y:', scale_y);
 			//winner announcement
@@ -153,15 +199,14 @@ export function pongGame() {
 			ctx.fillRect(win_width * 0.105, win_height * 0.26, win_width * 0.79, win_height * 0.1);
 			ctx.fillStyle = 'white';
 			ctx.textAlign = 'center';
-			ctx.fillText(winner.name + ' wins', game.win.width * scale_x * 0.5, game.win.height * scale_y * 0.33);
+			ctx.fillText(winner + ' wins', game.win.width * scale_x * 0.5, game.win.height * scale_y * 0.33);
+			return;
 		}
 	});
 	// Main game loop (frame update)
-	socket.on('waiting', (game: Game) => {
-		drawWaitingScreen(game);
-	});
 
 	socket.on('gameState', (game: Game) => {
+		// stopWaitingScreen();
 		drawGame(game, socket);
 	});
 }
