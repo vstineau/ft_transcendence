@@ -153,6 +153,7 @@ export const userController: FastifyPluginCallback = (server, _opts, done) => {
 								login: user.login,
 								nickName: user.nickName,
 								email: user.email,
+								twoFaAuth: user.twoFaAuth,
 						}});
 				} 
 			}
