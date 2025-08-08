@@ -27,20 +27,20 @@ export async function RootView() {
 
             <!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes -->
             <div class="col-span-2 row-span-2 bg-white rounded-xl shadow-lg p-6">
-                <div class="flex items-center mb-6">
+                <div class="flex items-start mb-6">
                     <div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold">
                         F
                     </div>
-                    <div class="ml-4">
-                        <h3 class="font-bold text-lg">Fatima Zahra</h3>
-                        <p class="text-gray-600 text-sm">@fatiza</p>
+                    <div class="ml-5">
+                        <h3 class="font-montserrat font-bold text-lg">Fatima Zahra</h3>
+                        <p class="text-gray-600 text-sm mb-1">@fatiza</p>
                         <p class="text-gray-500 text-xs">📍 Paris</p>
                     </div>
                 </div>
 
-                <div class="flex space-x-2">
-                    <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition">View</button>
-                    <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition">Edit</button>
+                <div class="flex space-x-6">
+                    <button class="bg-black hover:bg-gray-200 text-white px-12 py-2 rounded-lg text-sm font-medium transition">View</button>
+                    <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition">Edit</button>
                 </div>
             </div>
 
