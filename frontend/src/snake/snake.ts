@@ -34,22 +34,22 @@ function initCanvas() {
 	}
 }
 
-function drawWaitingScreen(game: Game) {
+function drawAlert(winSize: number, alert: string) {
     if (!ctx) return;
 
     // On utilise les mêmes scales que dans drawGame
-    const scale = canvas.width / game.winSize;
+    const scale = canvas.width / winSize;
 
-    ctx.clearRect(0, 0, game.winSize * scale, game.winSize * scale);
+    ctx.clearRect(0, 0, winSize * scale, winSize * scale);
 
     ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, game.winSize * scale, game.winSize * scale);
+    ctx.fillRect(0, 0, winSize * scale, winSize * scale);
 
     ctx.font = `${40 * scale}px Arial`;
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('Waiting for player ... (1 / 2)', (game.winSize * scale) / 2, (game.winSize * scale) / 2);
+    ctx.fillText(alert, (winSize * scale) / 2, (winSize * scale) / 2);
 }
 
 function drawGame(game: Game) {
@@ -114,7 +114,11 @@ export function snakeGame() {
 	initCanvas();
 	listenUserInputs(socket);
 	socket.on('waiting_snake', (game: Game) => {
-		drawWaitingScreen(game);
+		drawAlert(game.winSize, 'Waiting for player ... (1 / 2)');
+	})
+	socket.on('endGame_snake', (data) => {
+		drawAlert(data.winSize, `Game interrupted : ${data.reason}`);
+	    alert('La partie a été interrompue : ' + data.reason);
 	})
 	socket.on('playerWin_snake', (winner, game) => {
 		if (ctx) {

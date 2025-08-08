@@ -38,29 +38,19 @@ function createRoom(socket: Socket): Room {
 }
 
 function handleDisconnect(app: FastifyInstance, socket: Socket) {
-    void app;
     socket.on('disconnect', () => {
-       // console.log(`client ${socket.id} disconnected`);
         const room = snakeRooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
         if (room) {
-            room.playersNb--;
-           // console.log(`connected players = ${room.playersNb}`);
-            if (room.game.p1.id === socket.id) {
-                room.game.p1.id = ''; // ou null
-            } else if (room.game.p2.id === socket.id) {
-                room.game.p2.id = '';
+            if (room.interval) {
+                clearInterval(room.interval);
+                room.interval = undefined;
             }
-            if (room.playersNb === 0) {
-             //   console.log(`room ${room.name} closed`);
-                snakeRooms = snakeRooms.filter(r => r !== room);
-                roomcount--;
-            } else if (room.playersNb === 1) {
-                // Si un joueur reste
-                app.io.to(room.name).emit('Waiting', room.game);
-            }
+            app.io.to(room.name).emit('endGame_snake', { reason: 'A player disconnected.', winSize: WIN });
+
+            // Remove room from list
+            snakeRooms = snakeRooms.filter(r => r !== room);
+            roomcount--;
         }
-        socket.off;
-        socket.disconnect;
     });
 }
 
@@ -171,50 +161,40 @@ export function initGame(): Game {
 }
 
 export function getInputs(sock: Socket, game: Game) {
-		sock.on('keydown_snake', (key: any, sockId: string) => {
-		if (sockId === game.p1.id) {
-			console.log(`p1 id  = ${sockId}`);
-			if ((key.key === 'w' || key.key === 'W') &&
-				(game.p1.pendingDir.x != 0 && game.p1.pendingDir.y != 1))
+		sock.on('keydown_snake', (key: any) => {
+		if (sock.id === game.p1.id) {
+			if ((key.key === 'w' || key.key === 'W') && game.p1.pendingDir.y != 1)
 				game.p1.pendingDir = {x:0, y:-1};
-			else if ((key.key === 's' || key.key === 'S' )&& 
-					(game.p1.pendingDir.x != 0 && game.p1.pendingDir.y != -1))
+			else if ((key.key === 's' || key.key === 'S' )&& game.p1.pendingDir.y != -1)
 					game.p1.pendingDir = {x:0, y:1};
-			else if ((key.key === 'a' || key.key === 'A') && 
-					(game.p1.pendingDir.x != 1 && game.p1.pendingDir.y != 0))
+			else if ((key.key === 'a' || key.key === 'A') && game.p1.pendingDir.x != 1)
 					game.p1.pendingDir = {x:-1, y:0};
-			else if (key.key === 'd' || key.key === 'D' &&  
-					(game.p1.pendingDir.x != -1 && game.p1.pendingDir.y != 0))
+			else if ((key.key === 'd' || key.key === 'D') && game.p1.pendingDir.x != -1 )
 					game.p1.pendingDir = {x:1, y:0};
-			else if (key.key === 'ArrowUp' && (game.p1.pendingDir.x != 0 && game.p1.pendingDir.y != 1))
+			else if (key.key === 'ArrowUp' && game.p1.pendingDir.y != 1)
 					game.p1.pendingDir = {x:0, y:-1};
-			else if (key.key === 'ArrowDown'&& (game.p1.pendingDir.x != 0 && game.p1.pendingDir.y != -1))
+			else if (key.key === 'ArrowDown'&& game.p1.pendingDir.y != -1)
 					game.p1.pendingDir = {x:0, y:1};
-			else if (key.key === 'ArrowLeft'&& (game.p1.pendingDir.x != 1 && game.p1.pendingDir.y != 0))
+			else if (key.key === 'ArrowLeft'&& game.p1.pendingDir.x != 1)
 					game.p1.pendingDir = {x:-1, y:0};
-			else if (key.key === 'ArrowRight'&& (game.p1.pendingDir.x != -1 && game.p1.pendingDir.y != 0))
+			else if (key.key === 'ArrowRight'&& game.p1.pendingDir.x != -1)
 					game.p1.pendingDir = {x:1, y:0};
-		} else if (sockId === game.p2.id) {
-			console.log(`p2 id  = ${sockId}`);
-			if ((key.key === 'w' || key.key === 'W') &&
-				(game.p2.pendingDir.x != 0 && game.p2.pendingDir.y != 1))
+		} else if (sock.id === game.p2.id) {
+			if ((key.key === 'w' || key.key === 'W') && game.p2.pendingDir.y != 1)
 				game.p2.pendingDir = {x:0, y:-1};
-			else if ((key.key === 's' || key.key === 'S' )&& 
-					(game.p2.pendingDir.x != 0 && game.p2.pendingDir.y != -1))
+			else if ((key.key === 's' || key.key === 'S' )&& game.p2.pendingDir.y != -1)
 					game.p2.pendingDir = {x:0, y:1};
-			else if ((key.key === 'a' || key.key === 'A') && 
-					(game.p2.pendingDir.x != 1 && game.p2.pendingDir.y != 0))
+			else if ((key.key === 'a' || key.key === 'A') && game.p2.pendingDir.x != 1)
 					game.p2.pendingDir = {x:-1, y:0};
-			else if (key.key === 'd' || key.key === 'D' &&  
-					(game.p2.pendingDir.x != -1 && game.p2.pendingDir.y != 0))
+			else if ((key.key === 'd' || key.key === 'D') && game.p2.pendingDir.x != -1 )
 					game.p2.pendingDir = {x:1, y:0};
-			else if (key.key === 'ArrowUp' && (game.p2.pendingDir.x != 0 && game.p2.pendingDir.y != 1))
+			else if (key.key === 'ArrowUp' && game.p2.pendingDir.y != 1)
 					game.p2.pendingDir = {x:0, y:-1};
-			else if (key.key === 'ArrowDown'&& (game.p2.pendingDir.x != 0 && game.p2.pendingDir.y != -1))
+			else if (key.key === 'ArrowDown'&& game.p2.pendingDir.y != -1)
 					game.p2.pendingDir = {x:0, y:1};
-			else if (key.key === 'ArrowLeft'&& (game.p2.pendingDir.x != 1 && game.p2.pendingDir.y != 0))
+			else if (key.key === 'ArrowLeft'&& game.p2.pendingDir.x != 1)
 					game.p2.pendingDir = {x:-1, y:0};
-			else if (key.key === 'ArrowRight'&& (game.p2.pendingDir.x != -1 && game.p2.pendingDir.y != 0))
+			else if (key.key === 'ArrowRight'&& game.p2.pendingDir.x != -1)
 					game.p2.pendingDir = {x:1, y:0};
 		}
 	});
