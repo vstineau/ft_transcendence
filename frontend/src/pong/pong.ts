@@ -1,5 +1,6 @@
 import io, { Socket } from 'socket.io-client';
 import { Game } from '../types/pongTypes';
+import { navigateTo } from '../main';
 // import { async } from '../../backend/app/pong/pong';
 
 // let canvas: HTMLCanvasElement;
@@ -33,11 +34,13 @@ let win_width = window.innerWidth;
 let win_height = window.innerHeight;
 let gameOver = false;
 
-function initCanvas() {
+function initCanvas(): boolean {
+	let local: boolean = false;
 	canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
 	if (!canvas) {
+		canvas = document.getElementById('localgameCanvas') as HTMLCanvasElement;
 		console.error("❌ Canvas 'gameCanvas' not found");
-		return;
+		return false;
 	}
 	canvas.width = win_width;
 	canvas.height = win_height;
@@ -45,6 +48,7 @@ function initCanvas() {
 	if (!ctx) {
 		console.error('❌ Failed to get canvas context');
 	}
+	return true;
 }
 
 function drawGame(game: Game, socket: Socket) {
@@ -77,6 +81,7 @@ function drawGame(game: Game, socket: Socket) {
 
 function listenUserInputs(socket: Socket) {
 	// Key controls
+	// let id = socket.id
 	window.addEventListener('beforeunload', () => {
 		socket.emit('beforeunload', socket);
 		// e.preventDefault();
@@ -90,14 +95,22 @@ function listenUserInputs(socket: Socket) {
 		}
 	});
 	window.addEventListener('keydown', e => {
-		socket.emit('keydown', { key: e.key });
+		// let id = socket.id
+		console.log(`KEYDOWN -> sock.id = ${socket.id}, key = ${e.key}`);
+
+		socket.emit('keydown', { key: e.key }, socket.id);
 		if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
 			e.preventDefault();
 		}
 	});
 
 	window.addEventListener('keyup', e => {
-		socket.emit('keyup', { key: e.key });
+		console.log(`KEYUP -> sock.id = ${socket.id}, key = ${e.key}`);
+		// let id = socket.id
+		// console.log(`KEYUP -> socket id = ${socket.id}`);
+		// console.log(`KEYUP -> socket id = ${socket.id}`);
+		// socket.emit('keyup', { key: e.key});
+		socket.emit('keyup', { key: e.key }, socket.id);
 	});
 
 	// Resize handling
@@ -112,87 +125,105 @@ function listenUserInputs(socket: Socket) {
 	});
 }
 
-function drawWaitingScreen(game: Game) {
+// function removeEvlistenner() {
+// 	// Key controls
+// 	window.removeEventListener('beforeunload', () => {});
+// 	window.removeEventListener('keypress', () => {});
+// 	window.removeEventListener('keydown', () => {});
+// 	window.removeEventListener('keyup', () => {});
+// 	window.removeEventListener('resize', () => {});
+// }
+
+// Variables pour gérer le bouton
+let gameOverButton = {
+	x: 0,
+	y: 0,
+	width: 0,
+	height: 0,
+	visible: false,
+};
+
+function drawGameOverScreen(game: Game) {
 	if (!ctx) return;
 
-	// On utilise les mêmes scales que dans drawGame
 	const scale_x = canvas.width / game.win.width;
 	const scale_y = canvas.height / game.win.height;
 
+	// Nettoyage du canvas
 	ctx.clearRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
 
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
 
+	// Message Game Over
+	ctx.font = `${50 * scale_y}px Arial`;
+	ctx.fillStyle = 'white';
+	ctx.textAlign = 'center';
+	ctx.textBaseline = 'middle';
+	ctx.fillText('Game Over', (game.win.width * scale_x) / 2, (game.win.height * scale_y) / 2 - 60 * scale_y);
+
+	// Dessin du bouton
+	const btnWidth = 300 * scale_x;
+	const btnHeight = 80 * scale_y;
+	const btnX = (game.win.width * scale_x) / 2 - btnWidth / 2;
+	const btnY = (game.win.height * scale_y) / 2 + 40 * scale_y;
+
+	ctx.fillStyle = '#1976d2'; // Bleu
+	ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
+
+	ctx.strokeStyle = 'white';
+	ctx.lineWidth = 2;
+	ctx.strokeRect(btnX, btnY, btnWidth, btnHeight);
+
+	ctx.font = `${32 * scale_y}px Arial`;
+	ctx.fillStyle = 'white';
+	ctx.fillText("Retour à l'accueil", (game.win.width * scale_x) / 2, btnY + btnHeight / 2);
+
+	// Stockage des coordonnées du bouton pour gestion du clic
+	gameOverButton = {
+		x: btnX,
+		y: btnY,
+		width: btnWidth,
+		height: btnHeight,
+		visible: true,
+	};
+}
+
+// Gestion du clic sur le canvas
+
+function drawWaitingScreen(room: any) {
+	if (!ctx) return;
+	console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+	// On utilise les mêmes scales que dans drawGame
+	const scale_x = canvas.width / room.game.win.width;
+	const scale_y = canvas.height / room.game.win.height;
+
+	ctx.clearRect(0, 0, room.game.win.width * scale_x, room.game.win.height * scale_y);
+
+	ctx.fillStyle = 'black';
+	ctx.fillRect(0, 0, room.game.win.width * scale_x, room.game.win.height * scale_y);
+
 	ctx.font = `${40 * scale_y}px Arial`;
 	ctx.fillStyle = 'white';
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
-	ctx.fillText('Waiting for player ... (1 / 2)', (game.win.width * scale_x) / 2, (game.win.height * scale_y) / 2);
+	ctx.fillText('Waiting for player ... (1 / 2)', (room.game.win.width * scale_x) / 2, (room.game.win.height * scale_y) / 2);
 }
-
-// let waitingAnimationFrame: number | null = null;
-// let waitingStartTime: number | null = null;
-// let waitingActive = false;
-
-// function drawWaitingScreen(room: any) {
-// 	if (!ctx || !waitingActive) return; // <-- Ajout de la condition
-
-// 	const scale_x = canvas.width / room.game.win.width;
-// 	const scale_y = canvas.height / room.game.win.height;
-
-// 	if (waitingStartTime === null) waitingStartTime = performance.now();
-// 	const elapsed = performance.now() - waitingStartTime;
-// 	const dotCount = Math.floor((elapsed / 500) % 4);
-
-// 	const dots = '.'.repeat(dotCount);
-
-// 	ctx.clearRect(0, 0, room.game.win.width * scale_x, room.game.win.height * scale_y);
-// 	ctx.fillStyle = 'black';
-// 	ctx.fillRect(0, 0, room.game.win.width * scale_x, room.game.win.height * scale_y);
-
-// 	ctx.font = `${40 * scale_y}px Arial`;
-// 	ctx.fillStyle = 'white';
-// 	ctx.textAlign = 'center';
-// 	ctx.textBaseline = 'middle';
-
-// 	ctx.fillText(`Waiting for player (${room.playersNb} / 2) ${dots}`, (room.game.win.width * scale_x) / 2, (room.game.win.height * scale_y) / 2);
-
-// 	// Relance la frame SEULEMENT si l'animation est active
-// 	if (waitingActive) {
-// 		waitingAnimationFrame = requestAnimationFrame(() => drawWaitingScreen(room.game));
-// 	}
-// }
-
-// function stopWaitingScreen() {
-// 	waitingActive = false;
-// 	if (waitingAnimationFrame !== null) {
-// 		cancelAnimationFrame(waitingAnimationFrame);
-// 		waitingAnimationFrame = null;
-// 	}
-// 	waitingStartTime = null;
-// }
 
 export function pongGame() {
 	const socket = createPongSocket();
 	initCanvas();
 
 	listenUserInputs(socket);
-	// stopWaitingScreen();
 	socket.on('waiting', (room: any) => {
 		drawWaitingScreen(room);
 	});
 	socket.on('playerWin', (winner, game) => {
-		// stopWaitingScreen();
 		if (ctx) {
-			console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', winner, game);
 			gameOver = true;
 			let scale_x = canvas.width / game.win.width;
 			let scale_y = canvas.height / game.win.height;
 			ctx.clearRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
-			// console.log('scale_x:', scale_x);
-			// console.log('scale_y:', scale_y);
-			//winner announcement
 			ctx.fillStyle = 'white';
 			ctx.fillRect(win_width * 0.1, win_height * 0.25, win_width * 0.8, win_height * 0.12);
 			ctx.fillStyle = 'black';
@@ -206,7 +237,28 @@ export function pongGame() {
 	// Main game loop (frame update)
 
 	socket.on('gameState', (game: Game) => {
-		// stopWaitingScreen();
 		drawGame(game, socket);
+	});
+
+	socket.on('gameOver', (room: any) => {
+		window.addEventListener('click', function (event) {
+			if (!gameOverButton.visible) return;
+			const rect = canvas.getBoundingClientRect();
+			const x = event.clientX - rect.left;
+			const y = event.clientY - rect.top;
+
+			if (
+				x >= gameOverButton.x &&
+				x <= gameOverButton.x + gameOverButton.width &&
+				y >= gameOverButton.y &&
+				y <= gameOverButton.y + gameOverButton.height
+			) {
+				// Action : Retour à l'accueil
+				gameOverButton.visible = false;
+				// Redirection exemple :
+				navigateTo('/'); // Change la route selon ton app
+			}
+		});
+		drawGameOverScreen(room.game);
 	});
 }

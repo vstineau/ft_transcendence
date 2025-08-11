@@ -3,7 +3,7 @@ import { registerUser } from './user/register';
 import { logUser } from './user/login';
 import { rootUser } from './user/root';
 import { updateInfos } from './user/updateInfos'
-import { LoginView, PongView, RegisterView, UpdateInfosview, RootView, PongMatchMakingView, PongCanvas } from './views/root.views';
+import { LoginView, PongView, RegisterView, UpdateInfosview, RootView, PongMatchMakingView, PongCanvas, localPongCanvas } from './views/root.views';
 import { pongGame } from './pong/pong';
 
 // 1. Déclaration des routes
@@ -12,6 +12,7 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/pong': PongView, // Remplace par le vrai contenu ou composant
 	'/pong/matchmaking': PongMatchMakingView,
 	'/pong/matchmaking/game': PongCanvas,
+	'/pong/matchmaking/localgame': localPongCanvas,
 	'/pong/leaderboard': async () => '<h1>leaderboard</h1>',
 	'/pong/stats': async () => '<h1>stats</h1>',
 	'/pong/tournament': async () => '<h1>tournament</h1>',
@@ -33,7 +34,7 @@ async function renderPage() {
 	const view = routes[path] ? await routes[path]() : '<h1>404 Not Found</h1>';
 	console.log(view);
 	document.getElementById('root')!.innerHTML = view;
-	console.log(path);
+	// console.log(path);
 	path === '/' ? rootUser() : 0;
 	path === '/updateInfos' ? updateInfos() : 0;
 	path === '/register' ? registerUser() : 0;

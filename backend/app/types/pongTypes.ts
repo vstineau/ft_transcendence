@@ -3,6 +3,7 @@ export interface Game {
     p2: Player;
     ball: Ball;
     win: Window;
+    over: boolean;
 }
 
 export interface Player {

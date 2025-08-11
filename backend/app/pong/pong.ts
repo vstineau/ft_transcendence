@@ -57,6 +57,7 @@ function initGame(): Game {
 			width: WIN_WIDTH,
 			height: WIN_HEIGHT,
 		},
+		over: false,
 	};
 	return game;
 }
@@ -81,6 +82,7 @@ function createRoom(socket: Socket): Room {
 		game: initGame(),
 		locked: false,
 	};
+	getInputs(socket, newRoom.game)
 	newRoom.game.p1.id = socket.id;
 	rooms.push(newRoom);
 	return newRoom;
@@ -94,9 +96,11 @@ function initRoom(socket: Socket) {
 		room.playersNb = 2;
 		room.game.p2.id = socket.id;
 		room.locked = true;
+		getInputs(socket, room.game)
 	} else {
 		const newRoom = createRoom(socket);
 		socket.join(newRoom.name);
+		
 	}
 }
 
@@ -107,6 +111,7 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 		console.log(`client ${socket.id} disconnected`);
 		const room = rooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
 		if (room) {
+			room.game.over = true;
 			room.playersNb--;
 			console.log(`connected players = ${room.playersNb}`);
 			if (room.game.p1.id === socket.id) {
@@ -144,20 +149,20 @@ export async function startPongGame(app: FastifyInstance) {
 			handleDisconnect(app, socket);
 			console.log('number of room = ' + roomcount);
 
-			for (const room of rooms.filter(r => r.playersNb === 2)) {
-				getInputs(socket, room.game);
-			}
+			// for (const room of rooms.filter(r => r.playersNb === 2)) {
+			// 	getInputs(socket, room.game);
+			// }
 			socket.on('initGame', () => {
 				if (!intervalStarted) {
 					intervalStarted = true;
 					setInterval(() => {
 						// Pour chaque room prête, broadcast son état de jeu à tous ses joueurs
 						for (const room of rooms) {
-							if (room.playersNb === 2) {
+							if (room.playersNb === 2 && room.locked) {
 								gameLoop(room.game, app);
 								app.io.to(room.name).emit('gameState', room.game);
-							} else if (!room.locked) {
-								console.log(`room is ${room.locked}`)
+							} else if (!room.locked && room.playersNb > 0 && room.playersNb < 2) {
+								// console.log(`room is ${room.locked}`)
 								app.io.to(room.name).emit('waiting', room);
 							}
 						}
@@ -169,35 +174,44 @@ export async function startPongGame(app: FastifyInstance) {
 }
 
 function getInputs(sock: Socket, game: Game) {
-	sock.on('keydown', (key: any) => {
+	sock.on('keyup', (key: any, id: string) => {
+		console.log(sock.id);
+		console.log(`p1 = ${game.p1.id}`);
+		console.log(`p2 = ${game.p2.id}`);
 		//p1
-		if ((key.key === 'w' || key.key === 'W') && sock.id === game.p1.id) game.p1.key_up = true;
-		if ((key.key === 's' || key.key === 'S') && sock.id === game.p1.id) game.p1.key_down = true;
-		if (key.key === 'ArrowUp' && sock.id === game.p1.id) game.p1.key_up = true;
-		if (key.key === 'ArrowDown' && sock.id === game.p1.id) game.p1.key_down = true;
+		if (id === game.p1.id) {
+			console.log(`KEYDOWN -> sock.id = ${sock.id}, p1.id = ${game.p1.id}, key = ${key.key}`);
+			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') game.p1.key_up = false;
+			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') game.p1.key_down = false;
+		}
 		//p2
-		if ((key.key === 'w' || key.key === 'W') && sock.id === game.p2.id) game.p2.key_up = true;
-		if ((key.key === 's' || key.key === 'S') && sock.id === game.p2.id) game.p2.key_down = true;
-		if (key.key === 'ArrowUp' && sock.id === game.p2.id) game.p2.key_up = true;
-		if (key.key === 'ArrowDown' && sock.id === game.p2.id) game.p2.key_down = true;
+		if (id === game.p2.id) {
+			console.log(`KEYDOWN -> sock.id = ${sock.id}, p2.id = ${game.p2.id}, key = ${key.key}`);
+			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') game.p2.key_up = false;
+			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') game.p2.key_down = false;
+		}
 	});
-	sock.on('keyup', (key: any) => {
-		// console.log(key);
+	sock.on('keydown', (key: any, id: string) => {
+		console.log(sock.id);
+		console.log(`p1 = ${game.p1.id}`);
+		console.log(`p2 = ${game.p2.id}`);
 		//p1
-		if ((key.key === 'w' || key.key === 'W') && sock.id === game.p1.id) game.p1.key_up = false;
-		if ((key.key === 's' || key.key === 'S') && sock.id === game.p1.id) game.p1.key_down = false;
-		if (key.key === 'ArrowUp' && sock.id === game.p1.id) game.p1.key_up = false;
-		if (key.key === 'ArrowDown' && sock.id === game.p1.id) game.p1.key_down = false;
+		if (id === game.p1.id) {
+			console.log(`KEYUP -> id = ${id}, p1.id = ${game.p1.id}, key = ${key.key}`);
+			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') game.p1.key_up = true;
+			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') game.p1.key_down = true;
+		}
 		//p2
-		if ((key.key === 'w' || key.key === 'W') && sock.id === game.p2.id) game.p2.key_up = false;
-		if ((key.key === 's' || key.key === 'S') && sock.id === game.p2.id) game.p2.key_down = false;
-		if (key.key === 'ArrowUp' && sock.id === game.p2.id) game.p2.key_up = false;
-		if (key.key === 'ArrowDown' && sock.id === game.p2.id) game.p2.key_down = false;
+		if (id === game.p2.id) {
+			console.log(`KEYUP -> id = ${id}, p2.id = ${game.p2.id}, key = ${key.key}`);
+			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') game.p2.key_up = true;
+			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') game.p2.key_down = true;
+		}
 	});
 
-	// provisoir
+	// provisoire
 	sock.on('keypress', (key: any) => {
-		console.log(key.key);
+		// console.log(key.key);
 		if (key.key === ' ') {
 			resetGame(game);
 		}
@@ -220,7 +234,7 @@ function movePlayer(game: Game) {
 }
 
 function checkWin(game: Game, app: FastifyInstance) {
-	if (game.p1.score === 1 || game.p2.score === 1) {
+	if (game.p1.score === -1 || game.p2.score === -1) {
 		game.ball.vx = 0;
 		game.ball.vy = 0;
 		game.ball.x = WIN_WIDTH / 2;

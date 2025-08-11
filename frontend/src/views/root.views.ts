@@ -136,6 +136,7 @@ export async function PongMatchMakingView() {
 		<div class="dashboard">
 			<ul>
 				<li><a href="/pong/matchmaking/game">Find Match</a></li>
+				<li><a href="/pong/matchmaking/localgame">Local Game</a></li>
 			</ul>
 		</div>
 	`;
@@ -217,4 +218,9 @@ export async function UpdateInfosview() {
 export async function PongCanvas(){
 	// await pongGame();
 	return /* HTML */ ` <canvas id="gameCanvas">pong</canvas> `;
+}
+
+export async function localPongCanvas(){
+	// await pongGame();
+	return /* HTML */ ` <canvas id="localgameCanvas">pong</canvas> `;
 }
