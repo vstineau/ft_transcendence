@@ -23,10 +23,10 @@ export async function RootView() {
     <div class="max-w-7xl mx-auto px-8">
 
         <!-- Container des blocs en grid complexe -->
-        <div class="grid grid-cols-6 grid-rows-3 gap-4 h-96">
+        <div class="grid grid-cols-6 gap-3 auto-rows-min">
 
-            <!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes -->
-            <div class="col-span-2 row-span-2 bg-white rounded-xl shadow-lg p-6">
+            <!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes chnager la taille de base du bloc de profil -->
+            <div class="col-span-2 row-span-2 bg-white rounded-xl shadow-lg p-4">
                 <div class="flex items-start mb-6">
                     <div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold">
                         F
@@ -39,7 +39,7 @@ export async function RootView() {
                 </div>
 
                 <div class="flex space-x-6">
-                    <button class="bg-black hover:bg-gray-200 text-white px-12 py-2 rounded-lg text-sm font-medium transition">View</button>
+                    <button class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition">View</button>
                     <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition">Edit</button>
                 </div>
             </div>
@@ -47,57 +47,55 @@ export async function RootView() {
             <!-- Bloc Games played - 1 colonne, 1 ligne -->
             <div class="col-span-1 row-span-1 bg-white rounded-xl shadow-lg p-4">
                 <div class="text-left">
-                    <p class="font-montserrat text-black text-base mb-2">Games played</p>
-                    <p class="text-6xl font-bold text-black">20</p>
+                    <p class="font-montserrat text-black text-base mb-2 mt-2">Games played</p>
+                    <p class="text-4xl font-bold text-black">20</p>
                 </div>
             </div>
 
             <!-- Bloc Pong Game - 3 colonnes, 2 lignes -->
-            <div class="col-span-3 row-span-2 bg-white rounded-xl shadow-lg p-6">
-                <div class="font-Montserrat flex items-center justify-between mb-4">
-                    <h3 class="font-bold text-2xl">Pong</h3>
-                    <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">🏓</span>
+            <div class="col-span-3 row-span-2 bg-white rounded-xl shadow-lg p-4">
+                <div class="flex items-center justify-items-center mb-2">
+                    <h3 class="font-montserrat font-bold text-6xl">Pong</h3>
+                    <span class="text-white px-3 py-1 rounded-full text-sm">🏓</span>
                 </div>
 
-                <p class="text-gray-600 text-sm mb-6 leading-relaxed">
+                <p class=" font-montserrat text-gray-600 text-base mb-6 leading-relaxed">
                     Pong is one of the first computer games that ever created, the goal is to defeat your opponent by being the first one to gain a point when he misses the ball.
                 </p>
 
-                <div class="flex justify-center">
-                    <button class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg font-medium transition">
-                        Play
-                    </button>
+                <div class="flex mt-9">
+                    <button class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition">Play</button>
                 </div>
             </div>
 
             <!-- Bloc Success rate - 1 colonne, 1 ligne -->
             <div class="col-span-1 row-span-1 bg-white rounded-xl shadow-lg p-4">
                 <div class="text-left">
-                    <p class="font-Montserrat text-black text-base mb-2">Success rate</p>
-                    <p class="text-6xl font-bold text-black">86<span class="text-6xl font-normal text-gray-300">%</span></p>
+                    <p class="font-montserrat text-black text-base mb-2 mt-2">Success rate</p>
+                    <p class="text-4xl font-bold text-black">86<span class="text-4xl font-normal text-gray-300">%</span></p>
                 </div>
             </div>
 
             <!-- Bloc Let's talk - 4 colonnes, 1 ligne -->
-            <div class="col-span-4 row-span-1 bg-white rounded-xl shadow-lg p-6">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-bold text-xl">Let's talk</h3>
+            <div class="col-span-3 row-span-2 bg-white rounded-xl shadow-lg p-8">
+                <div class="h-full flex flex-col justify-between">
+                    <h3 class="font-montserrat font-bold text-6xl mb-6">Let's talk</h3>
 
-                    <div class="flex space-x-4">
+                    <div class="flex items-start space-x-6">
                         <div class="text-center">
-                            <div class="w-10 h-10 bg-black rounded-full mb-1 flex items-center justify-center text-white font-bold text-sm">
+                            <div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold">
                                 L
                             </div>
-                            <span class="text-xs text-gray-600">@LeoAaple</span>
+                            <span class="text-xs text-gray-600">@LeoApple</span>
                         </div>
                         <div class="text-center">
-                            <div class="w-10 h-10 bg-black rounded-full mb-1 flex items-center justify-center text-white font-bold text-sm">
+                            <div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold">
                                 M
                             </div>
                             <span class="text-xs text-gray-600">@MaxDragon</span>
                         </div>
                         <div class="text-center">
-                            <div class="w-10 h-10 bg-black rounded-full mb-1 flex items-center justify-center text-white font-bold text-sm">
+                            <div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold">
                                 F
                             </div>
                             <span class="text-xs text-gray-600">@FatimaPing</span>
