@@ -6,6 +6,7 @@ import config from './config.js'
 import socketioServer from './plugins/socketIo.js'
 import {startPongGame} from './pong/pong.js'
 import fastifyCookie from '@fastify/cookie';
+import {userRoutes} from './routes/router.js'
 
 export const app = Fastify({
 	logger: true,
@@ -26,8 +27,7 @@ await app.register(socketioServer);
 
 await startPongGame(app);
 authJwt(app, {jwtSecret: config.jwt.secret});
-await app.register(import('./routes/root.route.js'));
-await app.register(import('./routes/user.route.js'));
+await app.register(userRoutes);
 app.listen({port: 3000, host: '0.0.0.0'});
 
 

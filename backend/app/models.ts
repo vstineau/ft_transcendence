@@ -50,13 +50,18 @@ export class User extends BaseEntity {
 	email!: string;
 
 	@Column()
-	twoFaAuth: boolean; 
+	twoFaAuth!: boolean; 
+
+	@Column()
+	twoFaSecret?: string; 
 
 	static async createUser(data: UserJson): Promise<User> {
 		return new User(data);
 	}
 
 	async getInfos(): Promise<UserJson> {
+		let twoFaSecret: string;
+		this.twoFaSecret ? twoFaSecret = this.twoFaSecret: twoFaSecret = '';
 		return {
 			id: this.id,
 			login: this.login,
@@ -64,6 +69,7 @@ export class User extends BaseEntity {
 			password: this.password,
 			email: this.email,
 			twoFaAuth: this.twoFaAuth,
+			twoFaSecret: twoFaSecret,
 		};
 	}
 
