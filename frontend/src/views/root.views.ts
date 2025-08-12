@@ -23,107 +23,110 @@ export async function RootView() {
     <div class="max-w-7xl mx-auto px-8">
 
         <!-- Container des blocs en grid complexe -->
-        <div class="grid grid-cols-6 gap-3 auto-rows-min">
+        	<div class="grid gap-3 auto-rows-min mx-auto" style="grid-template-columns: 320px 150px 280px 150px; max-width: 1000px;">
 
-            <!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes chnager la taille de base du bloc de profil -->
-            <div class="col-span-2 row-span-2 bg-white rounded-xl shadow-lg p-4">
-                <div class="flex items-start mb-6">
-                    <div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold">
-                        F
-                    </div>
-                    <div class="ml-5">
-                        <h3 class="font-montserrat font-bold text-lg">Fatima Zahra</h3>
-                        <p class="text-gray-600 text-sm mb-1">@fatiza</p>
-                        <p class="text-gray-500 text-xs">📍 Paris</p>
-                    </div>
-                </div>
+			<!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes changer la taille de base du bloc de profil -->
+				<div class="row-span-2 bg-white rounded-xl shadow-lg p-4">
+					<div class="flex items-start mb-6 ml-3">
+						<div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold">
+							F
+						</div>
+						<div class="ml-5">
+							<h3 class="font-montserrat font-bold text-lg">Fatima Zahra</h3>
+							<p class="text-gray-600 text-sm mb-1">@fatiza</p>
+							<p class="text-gray-500 text-xs">📍 Paris</p>
+						</div>
+					</div>
 
-                <div class="flex space-x-6">
-                    <button class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition">View</button>
-                    <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition">Edit</button>
-                </div>
-            </div>
+					<div class="flex space-x-6 ml-3">
+						<button class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition">View</button>
+						<button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition">Edit</button>
+					</div>
+				</div>
 
-            <!-- Bloc Games played - 1 colonne, 1 ligne -->
-            <div class="col-span-1 row-span-1 bg-white rounded-xl shadow-lg p-4">
-                <div class="text-left">
-                    <p class="font-montserrat text-black text-base mb-2 mt-2">Games played</p>
-                    <p class="text-4xl font-bold text-black">20</p>
-                </div>
-            </div>
+				<!-- Bloc Games played - 1 colonne, 1 ligne -->
+				<div class="row-span-1 bg-white rounded-xl shadow-lg p-4">
+					<div class="text-left">
+						<p class="font-montserrat text-black text-base mb-2">Games played</p>
+						<p class="text-4xl font-bold text-black">20</p>
+					</div>
+				</div>
 
-            <!-- Bloc Pong Game - 3 colonnes, 2 lignes -->
-            <div class="col-span-3 row-span-2 bg-white rounded-xl shadow-lg p-4">
-                <div class="flex items-center justify-items-center mb-2">
-                    <h3 class="font-montserrat font-bold text-6xl">Pong</h3>
-                    <span class="text-white px-3 py-1 rounded-full text-sm">🏓</span>
-                </div>
+				<!-- Bloc Pong Game - 3 colonnes, 2 lignes -->
+				<div class="row-span-2 bg-white rounded-xl shadow-lg p-4" style="grid-column: 3 / 5">
+					<div class="flex items-center justify-items-center mb-4">
+						<h3 class="font-montserrat font-bold text-6xl">Pong</h3>
+					</div>
 
-                <p class=" font-montserrat text-gray-600 text-base mb-6 leading-relaxed">
-                    Pong is one of the first computer games that ever created, the goal is to defeat your opponent by being the first one to gain a point when he misses the ball.
-                </p>
+					<p class="font-montserrat font-medium text-gray-700 text-sm leading-5 mb-4">
+						Pong is one of the first computer games that ever created, the goal is to defeat your opponent by being the first one to gain a point when he misses the ball.
+					</p>
 
-                <div class="flex mt-9">
-                    <button class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition">Play</button>
-                </div>
-            </div>
+					<div class="flex mt-4">
+						<button class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition">Play</button>
+					</div>
+				</div>
 
-            <!-- Bloc Success rate - 1 colonne, 1 ligne -->
-            <div class="col-span-1 row-span-1 bg-white rounded-xl shadow-lg p-4">
-                <div class="text-left">
-                    <p class="font-montserrat text-black text-base mb-2 mt-2">Success rate</p>
-                    <p class="text-4xl font-bold text-black">86<span class="text-4xl font-normal text-gray-300">%</span></p>
-                </div>
-            </div>
+				<!-- Bloc Success rate - 1 colonne, 1 ligne -->
+				<div class="row-span-1 bg-white rounded-xl shadow-lg p-4">
+					<div class="text-left">
+						<p class="font-montserrat text-black text-base mb-2">Success rate</p>
+						<p class="text-4xl font-bold text-black">86<span class="text-4xl font-normal text-gray-300">%</span></p>
+					</div>
+				</div>
 
-            <!-- Bloc Let's talk - 4 colonnes, 1 ligne -->
-            <div class="col-span-3 row-span-2 bg-white rounded-xl shadow-lg p-8">
-                <div class="h-full flex flex-col justify-between">
-                    <h3 class="font-montserrat font-bold text-6xl mb-6">Let's talk</h3>
+				<!-- Bloc Let's talk - 4 colonnes, 1 ligne -->
+				<div class="bg-white rounded-xl shadow-lg p-8" style="grid-column: 1 / 3; grid-row: 3">
+					<div class="h-full flex flex-col justify-between">
+						<h3 class="font-montserrat font-bold text-6xl mb-6">Let's talk</h3>
 
-                    <div class="flex items-start space-x-6">
-                        <div class="text-center">
-                            <div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold">
-                                L
-                            </div>
-                            <span class="text-xs text-gray-600">@LeoApple</span>
-                        </div>
-                        <div class="text-center">
-                            <div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold">
-                                M
-                            </div>
-                            <span class="text-xs text-gray-600">@MaxDragon</span>
-                        </div>
-                        <div class="text-center">
-                            <div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold">
-                                F
-                            </div>
-                            <span class="text-xs text-gray-600">@FatimaPing</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+						<div class="flex items-start space-x-6">
+							<div class="text-center">
+								<div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold">
+									L
+								</div>
+								<span class="text-xs text-gray-600">@LeoApple</span>
+							</div>
+							<div class="text-center">
+								<div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold">
+									M
+								</div>
+								<span class="text-xs text-gray-600">@MaxDragon</span>
+							</div>
+							<div class="text-center">
+								<div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold">
+									F
+								</div>
+								<span class="text-xs text-gray-600">@FatimaPing</span>
+							</div>
+						</div>
+					</div>
+				</div>
 
-            <!-- Bloc Welcome Back - 2 colonnes, 1 ligne -->
-            <div class="col-span-2 row-span-1 bg-white rounded-xl shadow-lg p-4">
-                <h3 class="font-bold text-lg mb-4">Welcome<br><span class="text-gray-400 text-base">Back</span></h3>
+				<!-- Bloc Welcome Back -->
+				<div style="grid-column: 3 / 5; grid-row: 3;">
+					<div class="flex flex-col gap-3 h-full">
+						<!-- Welcome Back - moitié haute -->
+						<div class="flex-1 bg-white rounded-xl shadow-lg p-4">
+							<h3 class="font-montserrat font-bold text-6xl">Welcome<br><span class="text-gray-400">Back</span></h3>
+						</div>
 
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center text-xs">
-                            ☀️
-                        </div>
-                        <span class="text-gray-600 text-xs">Light mode</span>
-                    </div>
+						<div class="flex-1 flex gap-3">
+						<!-- Light mode avec soleil centre -->
+							<div class="flex-1 bg-white rounded-xl shadow-lg p-3 flex flex-col">
+								<p class="font-montserrat text-base mb-2">Light mode</p>
+								<div class="flex-1 flex items-center justify-center">
+									<span class="text-6xl">☼</span>
+								</div>
+							</div>
 
-                    <div class="flex items-center space-x-2">
-                        <div class="w-8 h-4 bg-black rounded-full relative cursor-pointer">
-                            <div class="w-3 h-3 bg-white rounded-full absolute right-0.5 top-0.5"></div>
-                        </div>
-                        <span class="bg-black text-white px-3 py-1 rounded-lg text-xs font-medium">Settings</span>
-                    </div>
-                </div>
-            </div>
+							<!-- Settings -->
+							<div class="flex-1 bg-black hover:bg-gray-800 text-white rounded-xl shadow-lg p-3 flex flex-col">
+								<p class="font-montserrat text-white text-base mb-2">Settings</p>
+							</div>
+						</div>
+					</div>
+				</div>
 
         </div>
     </div>
