@@ -5,6 +5,7 @@ import { authJwt } from './auth/auth.js'
 import config from './config.js'
 import socketioServer from './plugins/socketIo.js'
 import {startPongGame} from './pong/pong.js'
+import {startSnakeGame} from './snake/snake.js'
 import fastifyCookie from '@fastify/cookie';
 
 export const app = Fastify({
@@ -25,6 +26,7 @@ await app.register(fastifyCookie);
 await app.register(socketioServer);
 
 await startPongGame(app);
+await startSnakeGame(app);
 authJwt(app, {jwtSecret: config.jwt.secret});
 await app.register(import('./routes/root.route.js'));
 await app.register(import('./routes/user.route.js'));

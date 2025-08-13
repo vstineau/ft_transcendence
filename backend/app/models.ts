@@ -88,6 +88,9 @@ export class History {
 	gamecount?: number;
 
 	@Column()
+	type?: string;
+
+	@Column()
 	date?: string;
 
 	@Column()

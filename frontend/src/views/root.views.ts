@@ -220,6 +220,11 @@ export async function PongCanvas(){
 	return /* HTML */ ` <canvas id="gameCanvas">pong</canvas> `;
 }
 
+export async function SnakeCanvas(){
+	// await pongGame();
+	return /* HTML */ ` <canvas id="snakeGameCanvas">snake</canvas> `;
+}
+
 export async function localPongCanvas(){
 	// await pongGame();
 	return /* HTML */ ` <canvas id="localgameCanvas">pong</canvas> `;
