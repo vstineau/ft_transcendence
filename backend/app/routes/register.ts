@@ -12,22 +12,21 @@ import QRCode from 'qrcode';
 export default {
   method: 'POST',
   url: '/register',
-  // Typage du body et de la reply ici :
   handler: async (
     request: FastifyRequest<{ Body: UserJson }>,
     reply: FastifyReply
   ): Promise<void> => {
     try {
       const user = await User.createUser(request.body)
-	  let qrCodeDataURL: string;
+	  let qrCodeDataURL: string = '';
 	  if (user.twoFaAuth) {
 			const secret = speakeasy.generateSecret({name: `transcendence ${user.login}`});
-			user.twoFaSecret = encryptSecret(secret);
-			qrCodeDataURL = await QRCode.toDataURL(secret.otpauth_url);
-	  } else {
-			qrCodeDataURL = '';
-		}
-      if (request.body.avatar) {
+			user.twoFaSecret = encryptSecret(secret.base32);
+			if (secret.otpauth_url) {
+				qrCodeDataURL = await QRCode.toDataURL(secret.otpauth_url);
+			}
+	  } 
+	  if (request.body.avatar) {
         user.avatar = request.body.avatar
       } else {
         const file = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)]

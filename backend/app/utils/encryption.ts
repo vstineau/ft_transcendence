@@ -1,10 +1,11 @@
 import crypto from 'crypto';
+import { GeneratedSecret } from 'speakeasy';
 
 // DOIT être dans une variable d'environnement sécurisée (.env, vault, etc.)
 const ENCRYPTION_KEY = process.env.TOTP_SECRET_KEY || 'change_this_to_a_32_byte_key_minimum!'; // 32 chars for AES-256
 const IV_LENGTH = 16; // AES block size
 
-export function encryptSecret(secret: string): string {
+export function encryptSecret(secret: GeneratedSecret): string {
   const iv = crypto.randomBytes(IV_LENGTH);
   const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
   let encrypted = cipher.update(secret);

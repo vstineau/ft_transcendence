@@ -7,6 +7,7 @@ import { extname } from 'path'
 import { readFile } from 'fs/promises'
 import speakeasy from 'speakeasy';
 import { encryptSecret} from '../utils/encryption.js'
+import QRCode from 'qrcode';
 
 export default {
   method: 'POST',
@@ -21,13 +22,17 @@ export default {
         const payload = reply.server.jwt.verify<JwtPayload>(token)
         const user = await User.findOneBy({ login: payload.login })
         if (user) {
+		  let qrCodeDataURL: string = '';
           // Mise à jour des infos si présent dans le body
           if (request.body.login) user.login = request.body.login
           if (request.body.nickName) user.nickName = request.body.nickName
           if (request.body.email) user.email = request.body.email
 		  if (!user.twoFaAuth && request.body.twoFaAuth) {
 			const secret = speakeasy.generateSecret({name: `transcendence ${user.login}`});
-			user.twoFaSecret = encryptSecret(secret);
+			user.twoFaSecret = encryptSecret(secret.base32);
+			if (secret.otpauth_url) {
+				qrCodeDataURL = await QRCode.toDataURL(secret.otpauth_url);
+			}
 		  }
 		  else if (user.twoFaAuth && request.body.twoFaAuth === false) {
 			user.twoFaAuth = false;
@@ -56,7 +61,7 @@ export default {
           }
           await user.save()
           const token = reply.server.jwt.sign(await user.getInfos(), { expiresIn: '4h' })
-	      const response : IUserReply[200] = {success: true};
+	      const response : IUserReply[200] = {success: true, qrCode: qrCodeDataURL};
           reply
             .setCookie('token', token, {
               httpOnly: true,

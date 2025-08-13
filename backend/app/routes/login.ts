@@ -15,9 +15,15 @@ export default {
       if (!user || !request.body.password || !user.comparePassword(request.body.password)) {
         throw new Error(invalidInfoError)
       }
+	
       // NOTE: You might want to send only minimal info in the JWT, not the whole request.body
       const token = reply.server.jwt.sign(
-        { login: user.login, email: user.email, id: user.id }, // safer than request.body
+        { 
+		  login: user.login,
+		  email: user.email,
+		  id: user.id, 
+		  twoFaAuth: user.twoFaAuth
+		},
         { expiresIn: '4h' }
       )
 	  const response : IUserReply[200] = {success: true};
