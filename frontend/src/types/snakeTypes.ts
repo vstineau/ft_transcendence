@@ -15,9 +15,17 @@ export interface Snake {
 	dir: pos;
 	pendingDir: pos;
 	color: string;
+	id: string;
 }
 
 export interface Food {
 	pos: pos;
 	side: "left" | "right";
 }
+
+export type Room = {
+    name: string;
+    playersNb: number;
+    game: Game;
+	interval?: NodeJS.Timeout;
+};

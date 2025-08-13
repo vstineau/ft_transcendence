@@ -1,5 +1,5 @@
 import io, { Socket } from 'socket.io-client';
-import { Game, Food } from '../types/snakeTypes';
+import { Game } from '../types/snakeTypes';
 
 
 let canvas: HTMLCanvasElement;

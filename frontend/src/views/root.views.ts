@@ -340,16 +340,17 @@ export async function UpdateInfosview() {
 	`;
 }
 export async function PongCanvas(){
-	// await pongGame();
 	return /* HTML */ ` <canvas id="gameCanvas">pong</canvas> `;
 }
 
 export async function SnakeCanvas(){
-	// await pongGame();
 	return /* HTML */ ` <canvas id="snakeGameCanvas">snake</canvas> `;
 }
 
 export async function localPongCanvas(){
-	// await pongGame();
 	return /* HTML */ ` <canvas id="localgameCanvas">pong</canvas> `;
+}
+
+export async function localSnakeCanvas(){
+	return /* HTML */ ` <canvas id="localSnakeGameCanvas">pong</canvas> `;
 }

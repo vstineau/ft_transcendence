@@ -14,10 +14,12 @@ import {
 	PongCanvas,
 	localPongCanvas,
 	SnakeCanvas,
+	localSnakeCanvas,
 } from './views/root.views';
 import { pongGame } from './pong/pong';
 import { initScrollAnimations, cleanupScrollAnimations } from './utils/animations';
 import { snakeGame } from './snake/snake';
+import { localSnakeGame } from './snake/localSnake';
 import { localpongGame } from './pong/localPong';
 
 // 1. Déclaration des routes
@@ -33,9 +35,11 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/login': LoginView,
 	'/logout': async () => '<h1>LOGOUT</h1>',
 	'/snake': SnakeCanvas,
+	'/snake/local': localSnakeCanvas,
 	'/register': RegisterView,
 	'/updateInfos': UpdateInfosview,
 };
+
 
 // 2. Fonction pour naviguer
 // export async function navigateTo(url: string) {
@@ -62,6 +66,9 @@ export async function navigateTo(url: string) {
 // 	path === '/register' ? registerUser() : 0;
 // 	path === '/login' ? logUser() : 0;
 // 	path === '/pong/matchmaking/game' ? pongGame() : 0;
+// 	path === '/pong/matchmaking/localgame' ? localpongGame() : 0;
+//	path === '/snake' ? snakeGame(): 0;
+//	path === '/snake/local' ? localSnakeGame(): 0;
 // }
 
 async function renderPage() {
@@ -94,6 +101,9 @@ async function renderPage() {
 			break;
 		case '/snake':
 			snakeGame();
+			break;
+		case '/snake/local':
+			localSnakeGame();
 			break;
 	}
 }
