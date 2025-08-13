@@ -23,7 +23,8 @@ import { localpongGame } from './pong/localPong';
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
 	'/': RootView,
-	'/pong': PongView, // Remplace par le vrai contenu ou composant
+	'/snake': SnakeCanvas,
+	'/pong': PongView,
 	'/pong/matchmaking': PongMatchMakingView,
 	'/pong/matchmaking/game': PongCanvas,
 	'/pong/matchmaking/localgame': localPongCanvas,
@@ -32,7 +33,6 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/pong/tournament': async () => '<h1>tournament</h1>',
 	'/login': LoginView,
 	'/logout': async () => '<h1>LOGOUT</h1>',
-	'/snake': SnakeCanvas,
 	'/register': RegisterView,
 	'/updateInfos': UpdateInfosview,
 };
