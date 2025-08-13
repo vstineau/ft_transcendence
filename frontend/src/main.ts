@@ -2,11 +2,22 @@
 import { registerUser } from './user/register';
 import { logUser } from './user/login';
 import { rootUser } from './user/root';
-import { updateInfos } from './user/updateInfos'
+import { updateInfos } from './user/updateInfos';
 // import { LoginView, PongView, RegisterView, UpdateInfosview, RootView, PongMatchMakingView, PongCanvas, SnakeCanvas, localPongCanvas } from './views/root.views';
-import { LoginView, PongView, RegisterView, UpdateInfosview, RootView, PongMatchMakingView, PongCanvas, localPongCanvas, SnakeCanvas } from './views/root.views';
+import {
+	LoginView,
+	PongView,
+	RegisterView,
+	UpdateInfosview,
+	RootView,
+	PongMatchMakingView,
+	PongCanvas,
+	localPongCanvas,
+	SnakeCanvas,
+} from './views/root.views';
 import { pongGame } from './pong/pong';
-import { snakeGame } from './snake/snake'
+import { initScrollAnimations, cleanupScrollAnimations } from './utils/animations';
+import { snakeGame } from './snake/snake';
 import { localpongGame } from './pong/localPong';
 
 // 1. Déclaration des routes
@@ -27,31 +38,71 @@ const routes: { [key: string]: () => Promise<string> } = {
 };
 
 // 2. Fonction pour naviguer
+// export async function navigateTo(url: string) {
+// 	history.pushState(null, '', url);
+// 	await renderPage();
+// }
 export async function navigateTo(url: string) {
+	// Nettoyer les animations de la page précédente
+	cleanupScrollAnimations();
+
 	history.pushState(null, '', url);
 	await renderPage();
 }
 
 // 3. Rendu de la page selon l’URL courante
+// async function renderPage() {
+// 	const path = window.location.pathname;
+// 	const view = routes[path] ? await routes[path]() : '<h1>404 Not Found</h1>';
+// 	console.log(view);
+// 	document.getElementById('root')!.innerHTML = view;
+// 	console.log(path);
+// 	path === '/' ? rootUser() : 0;
+// 	path === '/updateInfos' ? updateInfos() : 0;
+// 	path === '/register' ? registerUser() : 0;
+// 	path === '/login' ? logUser() : 0;
+// 	path === '/pong/matchmaking/game' ? pongGame() : 0;
+// }
+
 async function renderPage() {
 	const path = window.location.pathname;
 	const view = routes[path] ? await routes[path]() : '<h1>404 Not Found</h1>';
-	console.log(view);
+
 	document.getElementById('root')!.innerHTML = view;
-	// console.log(path);
-	path === '/' ? rootUser() : 0;
-	path === '/updateInfos' ? updateInfos() : 0;
-	path === '/register' ? registerUser() : 0;
-	path === '/login' ? logUser() : 0;
-	path === '/pong/matchmaking/game' ? pongGame() : 0;
-	path === '/snake' ? snakeGame() : 0;
-	path === '/pong/matchmaking/localgame' ? localpongGame() : 0;
+
+	// Initialiser les fonctionnalités spécifiques à chaque page
+	switch (path) {
+		case '/':
+			rootUser();
+			// Initialiser les animations de scroll seulement sur la page d'accueil
+			setTimeout(() => initScrollAnimations(), 100);
+			break;
+		case '/updateInfos':
+			updateInfos();
+			break;
+		case '/register':
+			registerUser();
+			break;
+		case '/login':
+			logUser();
+			break;
+		case '/pong/matchmaking/game':
+			pongGame();
+			break;
+		case '/pong/matchmaking/localgame':
+			localpongGame();
+			break;
+		case '/snake':
+			snakeGame();
+			break;
+	}
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
 	document.body.addEventListener('click', async e => {
 		const target = e.target as HTMLElement;
-		if (target instanceof HTMLAnchorElement) {
+		// if (target instanceof HTMLAnchorElement)
+		if (target instanceof HTMLAnchorElement && target.getAttribute('href')?.startsWith('/')) {
 			e.preventDefault();
 			await navigateTo((target as HTMLAnchorElement).getAttribute('href')!);
 		}
