@@ -108,12 +108,12 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 	void app;
 	socket.on('disconnect', () => {
 		// Trouver la room où était ce joueur
-		console.log(`client ${socket.id} disconnected`);
+		// console.log(`client ${socket.id} disconnected`);
 		const room = rooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
 		if (room) {
 			room.game.over = true;
 			room.playersNb--;
-			console.log(`connected players = ${room.playersNb}`);
+			// console.log(`connected players = ${room.playersNb}`);
 			if (room.game.p1.id === socket.id) {
 				room.game.p1.id = ''; // ou null
 			} else if (room.game.p2.id === socket.id) {
@@ -121,7 +121,7 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 			}
 			// si la room est vide
 			if (room.playersNb === 0) {
-				console.log(`room ${room.name} closed`);
+				// console.log(`room ${room.name} closed`);
 				rooms = rooms.filter(r => r !== room);
 				roomcount--;
 			}
@@ -141,18 +141,14 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 export async function startPongGame(app: FastifyInstance) {
 	// let game = initGame();
 	app.ready().then(() => {
-		console.log('Pong backend is ready');
+		// console.log('Pong backend is ready');
 
 		app.io.on('connection', (socket: Socket) => {
-			console.log('Client connected:', socket.id);
-			initRoom(socket);
-			handleDisconnect(app, socket);
-			console.log('number of room = ' + roomcount);
-
-			// for (const room of rooms.filter(r => r.playersNb === 2)) {
-			// 	getInputs(socket, room.game);
-			// }
+			// console.log('Client connected:', socket.id);
+			// console.log('number of room = ' + roomcount);
 			socket.on('initGame', () => {
+				initRoom(socket);
+				handleDisconnect(app, socket);
 				if (!intervalStarted) {
 					intervalStarted = true;
 					setInterval(() => {
@@ -175,35 +171,35 @@ export async function startPongGame(app: FastifyInstance) {
 
 function getInputs(sock: Socket, game: Game) {
 	sock.on('keyup', (key: any, id: string) => {
-		console.log(sock.id);
-		console.log(`p1 = ${game.p1.id}`);
-		console.log(`p2 = ${game.p2.id}`);
+		// console.log(sock.id);
+		// console.log(`p1 = ${game.p1.id}`);
+		// console.log(`p2 = ${game.p2.id}`);
 		//p1
 		if (id === game.p1.id) {
-			console.log(`KEYDOWN -> sock.id = ${sock.id}, p1.id = ${game.p1.id}, key = ${key.key}`);
+			// console.log(`KEYDOWN -> sock.id = ${sock.id}, p1.id = ${game.p1.id}, key = ${key.key}`);
 			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') game.p1.key_up = false;
 			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') game.p1.key_down = false;
 		}
 		//p2
 		if (id === game.p2.id) {
-			console.log(`KEYDOWN -> sock.id = ${sock.id}, p2.id = ${game.p2.id}, key = ${key.key}`);
+			// console.log(`KEYDOWN -> sock.id = ${sock.id}, p2.id = ${game.p2.id}, key = ${key.key}`);
 			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') game.p2.key_up = false;
 			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') game.p2.key_down = false;
 		}
 	});
 	sock.on('keydown', (key: any, id: string) => {
-		console.log(sock.id);
-		console.log(`p1 = ${game.p1.id}`);
-		console.log(`p2 = ${game.p2.id}`);
+		// console.log(sock.id);
+		// console.log(`p1 = ${game.p1.id}`);
+		// console.log(`p2 = ${game.p2.id}`);
 		//p1
 		if (id === game.p1.id) {
-			console.log(`KEYUP -> id = ${id}, p1.id = ${game.p1.id}, key = ${key.key}`);
+			// console.log(`KEYUP -> id = ${id}, p1.id = ${game.p1.id}, key = ${key.key}`);
 			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') game.p1.key_up = true;
 			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') game.p1.key_down = true;
 		}
 		//p2
 		if (id === game.p2.id) {
-			console.log(`KEYUP -> id = ${id}, p2.id = ${game.p2.id}, key = ${key.key}`);
+			// console.log(`KEYUP -> id = ${id}, p2.id = ${game.p2.id}, key = ${key.key}`);
 			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') game.p2.key_up = true;
 			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') game.p2.key_down = true;
 		}
@@ -234,7 +230,7 @@ function movePlayer(game: Game) {
 }
 
 function checkWin(game: Game, app: FastifyInstance) {
-	if (game.p1.score === -1 || game.p2.score === -1) {
+	if (game.p1.score === 3 || game.p2.score === 3) {
 		game.ball.vx = 0;
 		game.ball.vy = 0;
 		game.ball.x = WIN_WIDTH / 2;
@@ -242,9 +238,9 @@ function checkWin(game: Game, app: FastifyInstance) {
 		const room = rooms.find(r => r.game.p1.id === game.p1.id || r.game.p2.id === game.p2.id);
 		// const targetSocket = app.io.sockets.sockets.get(socketId);
 		if (room) {
-			console.log(`${room.name} finished`);
+			// console.log(`${room.name} finished`);
 			app.io.to(room.name).emit('playerWin', game.p1.score > game.p2.score ? game.p1.id : game.p2.id, game);
-			console.log(`room ${room.name} closed`);
+			// console.log(`room ${room.name} closed`);
 			rooms = rooms.filter(r => r !== room);
 			roomcount--;
 		}

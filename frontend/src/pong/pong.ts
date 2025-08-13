@@ -10,20 +10,13 @@ import { navigateTo } from '../main';
 // let win_height = window.innerHeight;
 
 export function createPongSocket(): Socket {
-	let socket = io('https://localhost:8080');
+	let socket = io('https://localhost:8080'); // changer pour l'ip du post
 
 	socket.on('connect', () => {
+		initCanvas(socket);
 		console.log('Socket connected!');
 		socket.emit('initGame');
 	});
-
-	// socket.emit('joinGame', 'game1');
-
-	// socket.on('gameState', gameState => {
-
-	// 	game = gameState;
-	// 	console.log(game);
-	// });
 	return socket;
 }
 
@@ -34,13 +27,11 @@ let win_width = window.innerWidth;
 let win_height = window.innerHeight;
 let gameOver = false;
 
-function initCanvas(): boolean {
-	let local: boolean = false;
+function initCanvas(socket: Socket) {
 	canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
 	if (!canvas) {
-		canvas = document.getElementById('localgameCanvas') as HTMLCanvasElement;
 		console.error("❌ Canvas 'gameCanvas' not found");
-		return false;
+		return ;
 	}
 	canvas.width = win_width;
 	canvas.height = win_height;
@@ -48,7 +39,6 @@ function initCanvas(): boolean {
 	if (!ctx) {
 		console.error('❌ Failed to get canvas context');
 	}
-	return true;
 }
 
 function drawGame(game: Game, socket: Socket) {
@@ -212,7 +202,7 @@ function drawWaitingScreen(room: any) {
 
 export function pongGame() {
 	const socket = createPongSocket();
-	initCanvas();
+	// initCanvas(socket);
 
 	listenUserInputs(socket);
 	socket.on('waiting', (room: any) => {

@@ -5,6 +5,7 @@ import { rootUser } from './user/root';
 import { updateInfos } from './user/updateInfos'
 import { LoginView, PongView, RegisterView, UpdateInfosview, RootView, PongMatchMakingView, PongCanvas, localPongCanvas } from './views/root.views';
 import { pongGame } from './pong/pong';
+import { localpongGame } from './pong/localPong';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -40,6 +41,7 @@ async function renderPage() {
 	path === '/register' ? registerUser() : 0;
 	path === '/login' ? logUser() : 0;
 	path === '/pong/matchmaking/game' ? pongGame() : 0;
+	path === '/pong/matchmaking/localgame' ? localpongGame() : 0;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
