@@ -1,6 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { User } from '../models.js'
 import { IUserReply, UserJson } from '../types/userTypes.js'
+import { decryptSecret } from '../utils/encryption.js'
+import speakeasy from 'speakeasy';
 
 export default {
   method: 'POST',
@@ -15,8 +17,18 @@ export default {
       if (!user || !request.body.password || !user.comparePassword(request.body.password)) {
         throw new Error(invalidInfoError)
       }
-	
-      // NOTE: You might want to send only minimal info in the JWT, not the whole request.body
+	  if (user.twoFaAuth && user.twoFaSecret && request.body.twoFaCode) {	
+		const secret = decryptSecret(user.twoFaSecret);	
+		const isValid = speakeasy.totp.verify({
+			secret: secret,
+			encoding: 'base32',
+			token: request.body.twoFaCode,
+			window: 1,
+		});
+		 if (!isValid) {
+	 	   throw new Error("invalid 2fa code");		
+	 	 }
+	  }
       const token = reply.server.jwt.sign(
         { 
 		  login: user.login,

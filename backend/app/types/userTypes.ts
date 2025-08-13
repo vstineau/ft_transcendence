@@ -26,6 +26,7 @@ export type UserJson = {
 	ext?: string;
 	twoFaAuth: boolean;
 	twoFaSecret?: string;
+	twoFaCode?: string;
 };
 
 export type UserHistory = {
