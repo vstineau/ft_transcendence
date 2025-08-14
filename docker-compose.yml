@@ -1,33 +1,45 @@
 services:
-  backend:
-    container_name: backend
-    networks:
-      - transcendence
-    build: backend/
-    restart: always
-    ports:
-      - 3000:3000
-    volumes:
-      - ./backend/app/db:/app/db
-      # Volume pour le développement (remplace develop)
-      - ./backend:/app
-      - /app/node_modules
-
-  frontend:
-    depends_on:
-      - backend
-    container_name: frontend
-    networks:
-      - transcendence
-    build: frontend/
-    restart: always
-    ports:
-      - 8080:443
-    volumes:
-      # Volume pour le développement (remplace develop)
-      - ./frontend:/usr/share/nginx/html
-      - /usr/share/nginx/html/node_modules
-
+ backend:
+  container_name: backend
+  networks:
+   - transcendence 
+  build: backend/ 
+  develop:
+   watch:
+     - action: sync
+       path: backend
+       target: /app
+       ignore:
+        - node_modules/
+        - Dockerfile
+        - tsconfig.json
+     - action: rebuild
+       path: backend/package.json
+  restart: always
+  ports: 
+    - 3000:3000
+  volumes:
+   - ./backend/app/db:/app/db
+ frontend:
+  depends_on:
+   - backend 
+  container_name: frontend
+  networks:
+   - transcendence 
+  build: frontend/ 
+  develop:
+   watch:
+     - action: rebuild
+       path: frontend
+       target: /usr/share/nginx/html
+       ignore:
+        - node_modules/
+        - Dockerfile
+     - action: rebuild
+       path: frontend/package.json
+  restart: always
+  ports: 
+    - 8080:443
 networks:
-  transcendence:
-    driver: bridge
+ transcendence:
+  driver: bridge

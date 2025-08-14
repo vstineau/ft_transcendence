@@ -14,16 +14,18 @@ import {
 	PongCanvas,
 	localPongCanvas,
 	SnakeCanvas,
+	localSnakeCanvas,
 } from './views/root.views';
 import { pongGame } from './pong/pong';
 import { initScrollAnimations, cleanupScrollAnimations } from './utils/animations';
+import { initThemeToggle, cleanupThemeToggle } from './theme/darkMode';
 import { snakeGame } from './snake/snake';
+import { localSnakeGame } from './snake/localSnake';
 import { localpongGame } from './pong/localPong';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
 	'/': RootView,
-	'/snake': SnakeCanvas,
 	'/pong': PongView,
 	'/pong/matchmaking': PongMatchMakingView,
 	'/pong/matchmaking/game': PongCanvas,
@@ -33,9 +35,12 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/pong/tournament': async () => '<h1>tournament</h1>',
 	'/login': LoginView,
 	'/logout': async () => '<h1>LOGOUT</h1>',
+	'/snake': SnakeCanvas,
+	'/snake/local': localSnakeCanvas,
 	'/register': RegisterView,
 	'/updateInfos': UpdateInfosview,
 };
+
 
 // 2. Fonction pour naviguer
 // export async function navigateTo(url: string) {
@@ -45,6 +50,7 @@ const routes: { [key: string]: () => Promise<string> } = {
 export async function navigateTo(url: string) {
 	// Nettoyer les animations de la page précédente
 	cleanupScrollAnimations();
+	cleanupThemeToggle();
 
 	history.pushState(null, '', url);
 	await renderPage();
@@ -62,20 +68,35 @@ export async function navigateTo(url: string) {
 // 	path === '/register' ? registerUser() : 0;
 // 	path === '/login' ? logUser() : 0;
 // 	path === '/pong/matchmaking/game' ? pongGame() : 0;
+// 	path === '/pong/matchmaking/localgame' ? localpongGame() : 0;
+//	path === '/snake' ? snakeGame(): 0;
+//	path === '/snake/local' ? localSnakeGame(): 0;
 // }
 
 async function renderPage() {
 	const path = window.location.pathname;
+	console.log(path);
+
+	cleanupScrollAnimations();
+    cleanupThemeToggle();
+
 	const view = routes[path] ? await routes[path]() : '<h1>404 Not Found</h1>';
+	const rootElement: HTMLElement | null = document.getElementById('root');
 
-	document.getElementById('root')!.innerHTML = view;
+	// document.getElementById('root')!.innerHTML = view;
 
+	if (rootElement) {
+	rootElement.innerHTML = view;
+	}
 	// Initialiser les fonctionnalités spécifiques à chaque page
 	switch (path) {
 		case '/':
 			rootUser();
 			// Initialiser les animations de scroll seulement sur la page d'accueil
-			setTimeout(() => initScrollAnimations(), 100);
+			setTimeout(() => {
+				initScrollAnimations();
+				initThemeToggle(); // ← Initialiser le thème après les animations
+			}, 100);
 			break;
 		case '/updateInfos':
 			updateInfos();
@@ -94,6 +115,9 @@ async function renderPage() {
 			break;
 		case '/snake':
 			snakeGame();
+			break;
+		case '/snake/local':
+			localSnakeGame();
 			break;
 	}
 }

@@ -30,7 +30,6 @@ await startSnakeGame(app);
 authJwt(app, {jwtSecret: config.jwt.secret});
 await app.register(import('./routes/root.route.js'));
 await app.register(import('./routes/user.route.js'));
-app.listen({port: 3000, host: '0.0.0.0'});
 
 
 await SqliteDataSource.initialize()
@@ -41,6 +40,7 @@ await SqliteDataSource.initialize()
         console.error("Error during Data Source initialization", err);
     })
 
+app.listen({port: 3000, host: '0.0.0.0'});
 
 //import Fastify from 'fastify'
 //import fp from 'fastify-plugin'

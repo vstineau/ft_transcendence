@@ -6,7 +6,7 @@ export async function RootView() {
         </h1>
 
         <!-- Section Hero - écran complet SANS le titre -->
-        <div class="hero-section h-screen flex flex-col justify-center items-center bg-white relative">
+        <div class="hero-section h-screen flex flex-col justify-center items-center bg-gray-100 relative">
             <div class="hero-content text-center pt-20">
                 <p class="text-gray-600 text-lg mb-8 mt-8">This project is a surprise.</p>
             </div>
@@ -20,10 +20,10 @@ export async function RootView() {
 
 <!-- Section avec les blocs -->
 <div class="content-section min-h-screen bg-gray-100 py-16">
-    <div class="max-w-7xl mx-auto px-8">
+    <div class="max-w-7xl mx-auto px-8 ">
 
         <!-- Container des blocs en grid complexe -->
-        	<div class="grid gap-3 auto-rows-min mx-auto" style="grid-template-columns: 320px 150px 280px 150px; max-width: 1000px;">
+        	<div class="grid gap-3 auto-rows-min mx-auto mt-36  justify-center" style="grid-template-columns: 320px 150px 280px 150px; max-width: 1000px;">
 
 			<!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes changer la taille de base du bloc de profil -->
 				<div class="row-span-2 bg-white rounded-xl shadow-lg p-4">
@@ -33,7 +33,7 @@ export async function RootView() {
 						</div>
 						<div class="ml-5">
 							<h3 class="font-montserrat font-bold text-lg">Fatima Zahra</h3>
-							<p class="text-gray-600 text-sm mb-1">@fatiza</p>
+							<p class="text-gray-600 text-sm mb-1">@fatizaaa</p>
 							<p class="text-gray-500 text-xs">📍 Paris</p>
 						</div>
 					</div>
@@ -113,10 +113,10 @@ export async function RootView() {
 
 						<div class="flex-1 flex gap-3">
 						<!-- Light mode avec soleil centre -->
-							<div class="flex-1 bg-white rounded-xl shadow-lg p-3 flex flex-col">
-								<p class="font-montserrat text-base mb-2">Light mode</p>
+							<div class="flex-1 bg-white rounded-xl shadow-lg p-3 flex flex-col cursor-pointer hover:bg-gray-50 transition-colors" id="theme-toggle">
+								<p class="font-montserrat text-base mb-2" id="theme-text">Light mode</p>
 								<div class="flex-1 flex items-center justify-center">
-									<span class="text-6xl">☼</span>
+									<span class="text-6xl transition-transform hover:scale-110" id="theme-icon">☼</span>
 								</div>
 							</div>
 
@@ -127,7 +127,6 @@ export async function RootView() {
 						</div>
 					</div>
 				</div>
-
         </div>
     </div>
 </div>
@@ -190,69 +189,183 @@ export async function LoginView() {
 	`;
 }
 
+// export async function RegisterView() {
+// 	return /* HTML */ `
+// 		<div class="max-w-md mx-auto p-6 rounded-lg shadow-lg animate-fade-in">
+// 			<h2 class="text-2xl font-bold mb-4 text-center text-purple-700">Créer un compte</h2>
+// 			<form id="register-form" class="space-y-4">
+// 				<input
+// 					autocomplete="off"
+// 					type="text"
+// 					name="login"
+// 					id="login"
+// 					placeholder="Login"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 					required
+// 				/>
+// 				<input
+// 					autocomplete="off"
+// 					type="text"
+// 					name="nickname"
+// 					id="nickname"
+// 					placeholder="Nickname"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 					required
+// 				/>
+// 				<input
+// 					autocomplete="off"
+// 					type="email"
+// 					name="email"
+// 					id="mail"
+// 					placeholder="Email"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 					required
+// 				/>
+// 				<input
+// 					type="password"
+// 					name="password"
+// 					id="password"
+// 					placeholder="Mot de passe"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 					required
+// 				/>
+// 				<input
+// 					type="file"
+// 					name="avata"
+// 					id="avatar"
+// 					placeholder="inserer avatar"
+// 					accept="image/jpeg, image/png, image/jgp, image/gif"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 				/>
+// 				<button
+// 					type="submit"
+// 					class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
+// 				>
+// 					S'inscrire
+// 				</button>
+// 			</form>
+// 			<div
+// 				id="error-message"
+// 				class="w-full px-4 hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative z-20"
+// 				style="display: none;"
+// 				role="alert"
+// 			></div>
+// 		</div>
+// 	`;
+// }
+
 export async function RegisterView() {
-	return /* HTML */ `
-		<div class="max-w-md mx-auto p-6 rounded-lg shadow-lg animate-fade-in">
-			<h2 class="text-2xl font-bold mb-4 text-center text-purple-700">Créer un compte</h2>
-			<form id="register-form" class="space-y-4">
-				<input
-					autocomplete="off"
-					type="text"
-					name="login"
-					id="login"
-					placeholder="Login"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-					required
-				/>
-				<input
-					autocomplete="off"
-					type="text"
-					name="nickname"
-					id="nickname"
-					placeholder="Nickname"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-					required
-				/>
-				<input
-					autocomplete="off"
-					type="email"
-					name="email"
-					id="mail"
-					placeholder="Email"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-					required
-				/>
-				<input
-					type="password"
-					name="password"
-					id="password"
-					placeholder="Mot de passe"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-					required
-				/>
-				<input
-					type="file"
-					name="avata"
-					id="avatar"
-					placeholder="inserer avatar"
-					accept="image/jpeg, image/png, image/jgp, image/gif"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-				/>
-				<button
-					type="submit"
-					class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
-				>
-					S'inscrire
-				</button>
-			</form>
-			<div
-				id="error-message"
-				class="w-full px-4 hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative z-20"
-				style="display: none;"
-				role="alert"
-			></div>
-		</div>
-	`;
+    return /* HTML */ `
+	 <!-- Titre FT_TRANSCENDENCE en haut -->
+        <div class="bg-gray-100 py-2">
+            <h1 class="text-center text-4xl font-bold text-black">
+                FT<span class="text-blue-600">_</span>TRANSCENDENCE
+            </h1>
+        </div>
+        <!-- Arrière-plan gris comme la maquette -->
+        <div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4">
+            <!-- Container principal blanc centré -->
+            <div class="max-w-md w-full bg-white rounded-2xl shadow-sm p-8">
+
+                <!-- Titre -->
+                <h2 class="text-2xl font-semibold text-center text-black mb-8">Create an account</h2>
+
+                <!-- Formulaire -->
+                <form id="register-form" class="space-y-6">
+
+                    <!-- Ligne Login + Nickname -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <input
+                            autocomplete="off"
+                            type="text"
+                            name="login"
+                            id="login"
+                            placeholder="Login"
+                            class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+                            required
+                        />
+                        <input
+                            autocomplete="off"
+                            type="text"
+                            name="nickname"
+                            id="nickname"
+                            placeholder="Nickname"
+                            class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+                            required
+                        />
+                    </div>
+
+                    <!-- Email -->
+                    <input
+                        autocomplete="off"
+                        type="email"
+                        name="email"
+                        id="mail"
+                        placeholder="Email"
+                        class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+                        required
+                    />
+
+                    <!-- Mot de passe -->
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="Mot de passe"
+                        class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+                        required
+                    />
+
+                    <!-- Upload de fichier -->
+                    <div class="space-y-2">
+                        <label class="block text-sm text-gray-600">Photo de profil (optionnel)</label>
+                        <input
+                            type="file"
+                            name="avatar"
+                            id="avatar"
+                            accept="image/jpeg, image/png, image/jpg, image/gif"
+                            class="w-full px-0 py-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 transition-colors"
+                        />
+                    </div>
+
+                    <!-- Bouton S'inscrire -->
+					<div class="flex justify-center">
+						<button
+							type="submit"
+							class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+						>
+							Sign up
+						</button>
+					</div>
+                </form>
+
+				<!-- infos private privacy -->
+				<div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                        Signing up for a Ft_transcendence means you agree to the .
+						<a href="/privacy" class="text-black hover:underline font-medium">Privacy Policy</a>
+						and
+						<a href="/terms" class="text-black hover:underline font-medium">Terms of Service</a>.
+                    </p>
+                </div>
+
+                <!-- Lien vers connexion -->
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                        Vous avez déjà un compte ?
+                        <a href="/login" class="text-black hover:underline font-medium">Se connecter</a>
+                    </p>
+                </div>
+
+                <!-- Message d'erreur -->
+                <div
+                    id="error-message"
+                    class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg"
+                    role="alert"
+                ></div>
+            </div>
+        </div>
+    `;
 }
 
 export async function PongMatchMakingView() {
@@ -340,17 +453,17 @@ export async function UpdateInfosview() {
 	`;
 }
 export async function PongCanvas(){
-	// await pongGame();
 	return /* HTML */ ` <canvas id="gameCanvas">pong</canvas> `;
 }
 
 export async function SnakeCanvas(){
-	// await pongGame();
-	// return /* HTML */ ` <canvas id="snakeGameCanvas">snake</canvas> `;
-	    return /* HTML */ ` <canvas id="SnakeGameCanvas">snake</canvas> `;
+	return /* HTML */ ` <canvas id="SnakeGameCanvas">snake</canvas> `;
 }
 
 export async function localPongCanvas(){
-	// await pongGame();
 	return /* HTML */ ` <canvas id="localgameCanvas">pong</canvas> `;
+}
+
+export async function localSnakeCanvas(){
+	return /* HTML */ ` <canvas id="localSnakeGameCanvas">pong</canvas> `;
 }
