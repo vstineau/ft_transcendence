@@ -5,6 +5,7 @@ import { authJwt } from './auth/auth.js'
 import config from './config.js'
 import socketioServer from './plugins/socketIo.js'
 import {startPongGame} from './pong/pong.js'
+import {startSnakeGame} from './snake/snake.js'
 import fastifyCookie from '@fastify/cookie';
 import {userRoutes} from './routes/router.js'
 
@@ -26,9 +27,9 @@ await app.register(fastifyCookie);
 await app.register(socketioServer);
 
 await startPongGame(app);
+await startSnakeGame(app);
 authJwt(app, {jwtSecret: config.jwt.secret});
 await app.register(userRoutes);
-app.listen({port: 3000, host: '0.0.0.0'});
 
 
 await SqliteDataSource.initialize()
@@ -39,4 +40,5 @@ await SqliteDataSource.initialize()
         console.error("Error during Data Source initialization", err);
     })
 
+app.listen({port: 3000, host: '0.0.0.0'});
 
