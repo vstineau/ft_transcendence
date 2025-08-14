@@ -214,7 +214,6 @@ function updateGame() {
     const col2 = checkCollision(game.p2, game.p1);
 
     if (col1 === "self" || col1 === "other") {
-		console.log('AAAAAAAAAAAAAaaa');
         endGame(game.p2);
         return;
     }
