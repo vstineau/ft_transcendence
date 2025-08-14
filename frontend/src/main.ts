@@ -73,6 +73,7 @@ export async function navigateTo(url: string) {
 
 async function renderPage() {
 	const path = window.location.pathname;
+	console.log(path);
 	const view = routes[path] ? await routes[path]() : '<h1>404 Not Found</h1>';
 
 	document.getElementById('root')!.innerHTML = view;

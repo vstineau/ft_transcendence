@@ -1,4 +1,3 @@
-
 import { Game, pos, Snake } from '../types/snakeTypes';
 
 let canvas: HTMLCanvasElement;
@@ -8,20 +7,19 @@ let gameOver = false;
 let mainLoop: NodeJS.Timeout | undefined;
 
 let WIN = window.innerHeight * 0.90;
-let TOLERANCE = 15;
 let SEG_SIZE = 20;
-let FPS = 60;
+let FPS = 20; 
 
 function randomPos(side: 'left' | 'right', winSize: number): pos {
     if (side === 'left') {
         return {
-            x: Math.floor(Math.random() * (winSize / 2)),
-            y: Math.floor(Math.random() * winSize)
+            x: Math.floor(Math.random() * (winSize / 2 / SEG_SIZE)) * SEG_SIZE,
+            y: Math.floor(Math.random() * (winSize / SEG_SIZE)) * SEG_SIZE
         };
     } else {
         return {
-            x: Math.floor(Math.random() * (winSize / 2)) + winSize / 2,
-            y: Math.floor(Math.random() * winSize)
+            x: Math.floor(Math.random() * (winSize / 2 / SEG_SIZE)) * SEG_SIZE + winSize / 2,
+            y: Math.floor(Math.random() * (winSize / SEG_SIZE)) * SEG_SIZE
         };
     }
 }
@@ -40,8 +38,8 @@ function spawnFoods(g: Game) {
 function eatFood(snake: Snake, g: Game): boolean {
     const head = snake.segments[0];
     const idx = g.foods.findIndex(f =>
-        Math.abs(f.pos.x - head.x) <= TOLERANCE &&
-        Math.abs(f.pos.y - head.y) <= TOLERANCE
+        Math.abs(f.pos.x - head.x) < SEG_SIZE &&
+        Math.abs(f.pos.y - head.y) < SEG_SIZE
     );
     if (idx !== -1) {
         g.foods.splice(idx, 1);
@@ -60,31 +58,40 @@ function wrap(pos: pos, winSize: number): pos {
 
 function moveSnake(snake: Snake, winSize: number) {
     snake.dir = snake.pendingDir;
-    for (let i = 0; i < 8; i++) {
-        const head = wrap({
-            x: snake.segments[0].x + snake.dir.x,
-            y: snake.segments[0].y + snake.dir.y
-        }, winSize);
-        snake.segments.unshift(head);
-    }
+    const head = wrap({
+        x: snake.segments[0].x + snake.dir.x * SEG_SIZE,
+        y: snake.segments[0].y + snake.dir.y * SEG_SIZE
+    }, winSize);
+    snake.segments.unshift(head);
 }
 
-function checkCollision(snake: Snake, other: Snake): boolean {
+function areSegmentsColliding(a: pos, b: pos): boolean {
+    return (
+        Math.abs(a.x - b.x) < (SEG_SIZE / 2) &&
+        Math.abs(a.y - b.y) < (SEG_SIZE / 2)
+    );
+}
+
+function checkCollision(snake: Snake, other: Snake): "self" | "other" | "head-on" | null {
     const [head, ...body] = snake.segments;
-    // Self collision
-    if (body.some(seg => seg.x === head.x && seg.y === head.y)) return true;
-    // Other collision
-    if (other.segments.some(seg => seg.x === head.x && seg.y === head.y)) return true;
-    return false;
+    const [otherHead, ...otherBody] = other.segments;
+
+    // Collision avec le corps de l'autre (pas la tête)
+    if (otherBody.some(seg => areSegmentsColliding(seg, head))) return "other";
+
+    // Collision tête-à-tête
+    if (areSegmentsColliding(head, otherHead)) return "head-on";
+
+    return null;
 }
 
 function resetGame(g: Game) {
-    g.p1.segments = [{ x: g.winSize * 0.25, y: g.winSize * 0.5 }];
-    g.p1.dir = { x: 0, y: 1 };
-    g.p1.pendingDir = { x: 0, y: 1 };
-    g.p2.segments = [{ x: g.winSize * 0.75, y: g.winSize * 0.5 }];
-    g.p2.dir = { x: 0, y: -1 };
-    g.p2.pendingDir = { x: 0, y: -1 };
+    g.p1.segments = [{ x: Math.floor(g.winSize * 0.25 / SEG_SIZE) * SEG_SIZE, y: Math.floor(g.winSize * 0.5 / SEG_SIZE) * SEG_SIZE }];
+    g.p1.dir = { x: 0, y: -1 };
+    g.p1.pendingDir = { x: 0, y: -1 };
+    g.p2.segments = [{ x: Math.floor(g.winSize * 0.75 / SEG_SIZE) * SEG_SIZE, y: Math.floor(g.winSize * 0.5 / SEG_SIZE) * SEG_SIZE }];
+    g.p2.dir = { x: 0, y: 1 };
+    g.p2.pendingDir = { x: 0, y: 1 };
     g.foods = [];
     spawnFoods(g);
     gameOver = false;
@@ -94,17 +101,17 @@ function initGame(): Game {
     let g: Game = {
         p1: {
             name: 'Player 1',
-            segments: [{ x: WIN * 0.25, y: WIN * 0.5 }],
-            dir: { x: 0, y: 1 },
-            pendingDir: { x: 0, y: 1 },
+            segments: [{ x: Math.floor(WIN * 0.25 / SEG_SIZE) * SEG_SIZE, y: Math.floor(WIN * 0.5 / SEG_SIZE) * SEG_SIZE }],
+            dir: { x: 0, y: -1 },
+            pendingDir: { x: 0, y: -1 },
             color: "blue",
             id: 'p1'
         },
         p2: {
             name: 'Player 2',
-            segments: [{ x: WIN * 0.75, y: WIN * 0.5 }],
-            dir: { x: 0, y: -1 },
-            pendingDir: { x: 0, y: -1 },
+            segments: [{ x: Math.floor(WIN * 0.75 / SEG_SIZE) * SEG_SIZE, y: Math.floor(WIN * 0.5 / SEG_SIZE) * SEG_SIZE }],
+            dir: { x: 0, y: 1 },
+            pendingDir: { x: 0, y: 1 },
             color: "red",
             id: 'p2'
         },
@@ -144,7 +151,7 @@ function drawGame(g: Game) {
 
     // Draw snakes
     [g.p1, g.p2].forEach(snake => {
-		if (!ctx || gameOver) return;
+		if (!ctx) return;
         ctx.fillStyle = snake.color;
         for (const seg of snake.segments) {
             ctx.fillRect(seg.x * scale, seg.y * scale, SEG_SIZE, SEG_SIZE);
@@ -156,29 +163,29 @@ function listenUserInputs() {
     window.addEventListener('keydown', e => {
         // Player 1: WASD
         if (
-            (e.key === 'w' || e.key === 'W') && game.p1.pendingDir.y != 1
+            (e.key === 'w' || e.key === 'W') && game.p1.dir.y !== 1
         ) game.p1.pendingDir = { x: 0, y: -1 };
         else if (
-            (e.key === 's' || e.key === 'S') && game.p1.pendingDir.y != -1
+            (e.key === 's' || e.key === 'S') && game.p1.dir.y !== -1
         ) game.p1.pendingDir = { x: 0, y: 1 };
         else if (
-            (e.key === 'a' || e.key === 'A') && game.p1.pendingDir.x != 1
+            (e.key === 'a' || e.key === 'A') && game.p1.dir.x !== 1
         ) game.p1.pendingDir = { x: -1, y: 0 };
         else if (
-            (e.key === 'd' || e.key === 'D') && game.p1.pendingDir.x != -1
+            (e.key === 'd' || e.key === 'D') && game.p1.dir.x !== -1
         ) game.p1.pendingDir = { x: 1, y: 0 };
         // Player 2: Arrow keys
         else if (
-            e.key === 'ArrowUp' && game.p2.pendingDir.y != 1
+            e.key === 'ArrowUp' && game.p2.dir.y !== 1
         ) game.p2.pendingDir = { x: 0, y: -1 };
         else if (
-            e.key === 'ArrowDown' && game.p2.pendingDir.y != -1
+            e.key === 'ArrowDown' && game.p2.dir.y !== -1
         ) game.p2.pendingDir = { x: 0, y: 1 };
         else if (
-            e.key === 'ArrowLeft' && game.p2.pendingDir.x != 1
+            e.key === 'ArrowLeft' && game.p2.dir.x !== 1
         ) game.p2.pendingDir = { x: -1, y: 0 };
         else if (
-            e.key === 'ArrowRight' && game.p2.pendingDir.x != -1
+            e.key === 'ArrowRight' && game.p2.dir.x !== -1
         ) game.p2.pendingDir = { x: 1, y: 0 };
         // Restart
         else if (gameOver && e.key === 'Enter') {
@@ -201,22 +208,40 @@ function updateGame() {
     if (gameOver) return;
     [game.p1, game.p2].forEach(snake => {
         moveSnake(snake, game.winSize);
-        if (!eatFood(snake, game)) for (let i = 0; i < 8; i++) snake.segments.pop();
     });
-    if (checkCollision(game.p1, game.p2)) {
+
+    const col1 = checkCollision(game.p1, game.p2);
+    const col2 = checkCollision(game.p2, game.p1);
+
+    if (col1 === "self" || col1 === "other") {
+		console.log('AAAAAAAAAAAAAaaa');
         endGame(game.p2);
         return;
     }
-    if (checkCollision(game.p2, game.p1)) {
+    if (col2 === "self" || col2 === "other") {
         endGame(game.p1);
         return;
     }
+    if (col1 === "head-on" || col2 === "head-on") {
+        gameOver = true;
+        drawAlert(game.winSize, "Match nul !");
+        if (mainLoop) clearInterval(mainLoop);
+        return;
+    }
+    [game.p1, game.p2].forEach(snake => {
+        if (!eatFood(snake, game)) {
+            snake.segments.pop();
+        }
+    });
 }
 
 function endGame(winner: Snake) {
     gameOver = true;
     drawWinner(winner);
-    if (mainLoop) clearInterval(mainLoop);
+    if (mainLoop) {
+        clearInterval(mainLoop);
+        mainLoop = undefined;
+    }
 }
 
 function drawWinner(winner: Snake) {
@@ -233,9 +258,9 @@ function drawWinner(winner: Snake) {
 }
 
 function initCanvas() {
-    canvas = document.getElementById('SnakeGameCanvas') as HTMLCanvasElement;
+    canvas = document.getElementById('localSnakeGameCanvas') as HTMLCanvasElement;
     if (!canvas) {
-        throw new Error("❌ Canvas 'SnakeGameCanvas' not found");
+        throw new Error("❌ Canvas 'localSnakeGameCanvas' not found");
     }
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -244,7 +269,10 @@ function initCanvas() {
 }
 
 function startMainLoop() {
-    if (mainLoop) clearInterval(mainLoop);
+    if (mainLoop) {
+        clearInterval(mainLoop);
+        mainLoop = undefined;
+    }
     mainLoop = setInterval(() => {
         updateGame();
         drawGame(game);
