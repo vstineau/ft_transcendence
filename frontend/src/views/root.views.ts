@@ -344,7 +344,7 @@ export async function PongCanvas(){
 }
 
 export async function SnakeCanvas(){
-	return /* HTML */ ` <canvas id="snakeGameCanvas">snake</canvas> `;
+	return /* HTML */ ` <canvas id="SnakeGameCanvas">snake</canvas> `;
 }
 
 export async function localPongCanvas(){
