@@ -14,6 +14,7 @@ export async function registerUser() {
 		const nickname = newform.get('nickname')?.toString().trim();
 		const email = newform.get('email')?.toString().trim();
 		const file_input = document.getElementById('avatar') as HTMLInputElement | null;
+		const twoFaAuth = document.getElementById('2fa') as HTMLInputElement;
 		const file = file_input?.files?.[0];
 	
 		const body = {
@@ -21,7 +22,8 @@ export async function registerUser() {
 			nickName: nickname,
 			password: password,
 			email: email,
-			avatar: ''
+			avatar: '',
+			twoFaAuth: twoFaAuth.checked,
 		};
 
 		if (file) {

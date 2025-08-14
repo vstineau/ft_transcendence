@@ -20,10 +20,15 @@ export default {
       const user = await User.createUser(request.body)
 	  let qrCodeDataURL: string = '';
 	  if (user.twoFaAuth) {
+			console.log('111111111111111111111111111111');
 			const secret = speakeasy.generateSecret({name: `transcendence ${user.login}`});
+			console.log('22222222222222222222222222222');
 			user.twoFaSecret = encryptSecret(secret.base32);
+			console.log('3333333333333333333333');
 			if (secret.otpauth_url) {
+				console.log('44444444444444444444444');
 				qrCodeDataURL = await QRCode.toDataURL(secret.otpauth_url);
+				console.log('55555555555555555555555555');
 			}
 	  } 
 	  if (request.body.avatar) {
@@ -39,6 +44,7 @@ export default {
 	  const response : IUserReply[200] = {success: true, qrCode: qrCodeDataURL};
       reply.code(200).send(response);
     } catch (error) {
+		console.log(error);
       let errorMessage = 'unknown error'
       if (Array.isArray(error)) {
         error.forEach((err) => {

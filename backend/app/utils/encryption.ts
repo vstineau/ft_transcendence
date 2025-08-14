@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-const ENCRYPTION_KEY = process.env.TOTP_SECRET_KEY || 'change_this_to_a_32_byte_key_minimum!'; // 32 chars for AES-256
+const ENCRYPTION_KEY = process.env.TOTP_SECRET_KEY || '12345678901234567890123456789012'; // 32 chars for AES-256
 const IV_LENGTH = 16; // AES block size
 
 export function encryptSecret(secret: string): string {

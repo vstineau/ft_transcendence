@@ -49,7 +49,7 @@ export class User extends BaseEntity {
 	@IsEmail(undefined, {message: getIsInvalidMessage('Email')})
 	email!: string;
 
-	@Column()
+	@Column({type: 'boolean', default: false})
 	twoFaAuth!: boolean; 
 
 	@Column()
