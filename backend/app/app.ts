@@ -44,7 +44,6 @@ await SqliteDataSource.initialize()
 .catch((err) => {
 	console.error("Error during Data Source initialization", err);
 })
-app.listen({port: 3000, host: '0.0.0.0'});
 
 app.listen({port: 3000, host: '0.0.0.0'});
 

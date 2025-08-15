@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique, BeforeInsert, BeforeUpdate, ManyToOne, OneToMany } from "typeorm"
-import { IsEmail, Length, Matches, validateOrReject } from 'class-validator' 
+import { IsEmail, Length, Matches, validateOrReject } from 'class-validator'
 import { getIsInvalidMessage } from "./utils/errorMessages.js";
 import type { UserJson , UserHistory } from './types/userTypes.js'
 
@@ -21,7 +21,7 @@ export class User extends BaseEntity {
 
 	@PrimaryGeneratedColumn()
 	id!: number;
-	
+
 	//blob for binary large object
 	@Column({
     transformer: {
@@ -50,10 +50,10 @@ export class User extends BaseEntity {
 	email!: string;
 
 	@Column({type: 'boolean', default: false})
-	twoFaAuth!: boolean; 
+	twoFaAuth!: boolean;
 
-	@Column()
-	twoFaSecret?: string; 
+	@Column({ nullable: true })
+	twoFaSecret?: string;
 
 	static async createUser(data: UserJson): Promise<User> {
 		return new User(data);

@@ -19,7 +19,7 @@ services:
         - action: rebuild
           path: backend/package.json
     volumes:
-      - backend-db:/app/db  # SQLite persistante
+      - ./backend/app/db:/app/db  # SQLite persistante
 
   frontend:
     container_name: frontend
@@ -86,7 +86,6 @@ services:
     restart: unless-stopped
 
 volumes:
-  backend-db:
   prometheus-data:
   grafana-data:
 
