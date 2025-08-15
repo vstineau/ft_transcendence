@@ -17,3 +17,5 @@ COPY . /app
 
 #start build dev watch
 CMD ["npm", "run", "watch"] 
+
+

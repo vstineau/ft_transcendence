@@ -14,6 +14,11 @@ export const app = Fastify({
 	ignoreDuplicateSlashes: true
 });
 
+
+// Enregistre les métriques par défaut (CPU, mémoire, etc.) (prometheus)
+await app.register(import('./routes/monitoring.route.js'));
+
+
 await app.register(cors, {
 	origin: ['https://localhost:8080', 'http://localhost:8080'],
 	methods: ['GET', 'POST'],
@@ -28,16 +33,16 @@ await startPongGame(app);
 authJwt(app, {jwtSecret: config.jwt.secret});
 await app.register(import('./routes/root.route.js'));
 await app.register(import('./routes/user.route.js'));
-app.listen({port: 3000, host: '0.0.0.0'});
 
 
 await SqliteDataSource.initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!");
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization", err);
-    })
+.then(() => {
+	console.log("Data Source has been initialized!");
+})
+.catch((err) => {
+	console.error("Error during Data Source initialization", err);
+})
+app.listen({port: 3000, host: '0.0.0.0'});
 
 
 //import Fastify from 'fastify'
