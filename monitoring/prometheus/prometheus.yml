@@ -1,0 +1,29 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+  external_labels:
+    project: transcendence
+
+# Règles d'alerting (optionnel, à compléter plus tard)
+rule_files: []
+
+scrape_configs:
+  # 1) Backend Node.js (expose /metrics via prom-client)
+  - job_name: 'backend'
+    metrics_path: /metrics
+    static_configs:
+      # Utilise le nom du service Docker + port interne
+      - targets: ['backend:3000']
+
+  # 2) cAdvisor (métriques conteneurs Docker)
+  - job_name: 'cadvisor'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['cadvisor:8080']
+
+  # 3) Prometheus lui-même (auto-surveillance)
+  - job_name: 'prometheus'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['prometheus:9090']

@@ -1,7 +1,7 @@
 //import { User } from '../models.js'
 
 export interface IUserReply {
-	200: { success: boolean, user?: UserJson };
+	200: { success: boolean, user?: UserJson, qrCode?: string, twoFaAuth?: boolean };
 	401: { success: boolean, error: string };
 	400: { success: boolean, error: string };
 	500: { success: boolean, error: string };
@@ -24,6 +24,9 @@ export type UserJson = {
 	avatar?: string,
 	noAvatar?: boolean;
 	ext?: string;
+	twoFaAuth: boolean;
+	twoFaSecret?: string;
+	twoFaCode?: string;
 	stats?: UserStats;
 };
 
