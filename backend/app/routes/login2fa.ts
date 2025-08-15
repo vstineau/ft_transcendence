@@ -1,10 +1,13 @@
+
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { User } from '../models.js'
 import { IUserReply, UserJson } from '../types/userTypes.js'
+import { decryptSecret } from '../utils/encryption.js'
+import speakeasy from 'speakeasy';
 
 export default {
   method: 'POST',
-  url: '/login',
+  url: '/login2fa',
   handler: async (
     request: FastifyRequest<{ Body: UserJson }>,
     reply: FastifyReply
@@ -15,9 +18,17 @@ export default {
       if (!user || !request.body.password || !user.comparePassword(request.body.password)) {
         throw new Error(invalidInfoError)
       }
-	  if (user.twoFaAuth) {
-		const response : IUserReply[200] = {success: true, twoFaAuth: true};
-		reply.code(200).send(response);
+	  if (user.twoFaAuth && user.twoFaSecret && request.body.twoFaCode) {	
+		const secret = decryptSecret(user.twoFaSecret);	
+		const isValid = speakeasy.totp.verify({
+			secret: secret,
+			encoding: 'base32',
+			token: request.body.twoFaCode,
+			window: 1,
+		});
+		 if (!isValid) {
+	 	   throw new Error("invalid 2fa code");		
+	 	 }
 	  }
       const token = reply.server.jwt.sign(
         { 

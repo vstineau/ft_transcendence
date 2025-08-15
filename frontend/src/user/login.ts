@@ -23,13 +23,15 @@ export async function logUser() {
 			credentials: 'include',
 			 });
 		const data = await response.json();
-		      if (data.success) {
-		        navigateTo('/');
-		      } else {
-		        displayError(data.error || "Erreur inconnue");
-		   }
-		 }
-		 catch (err) {
+		if (data.success && data.twoFaAuth) {
+			//afficher une form pour recuperer le code qui a ete generer sur l'appli google authentificator	
+		}
+		if (data.success) {
+		  navigateTo('/');
+		} else {
+		  displayError(data.error || "Erreur inconnue");
+		}
+	    } catch (err) {
 		 console.error('error = ', err);
 		 }
 	});
