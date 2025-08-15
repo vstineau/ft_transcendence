@@ -1,0 +1,196 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Backend UP",
+      "id": 1,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "expr": "up{job=~\"$job\"}",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [ { "color": "red", "value": 0 }, { "color": "green", "value": 1 } ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "timeSeries",
+      "title": "CPU process Node (backend) %",
+      "id": 2,
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total{job=~\"$job\"}[5m]) * 100",
+          "legendFormat": "process cpu %",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 6, "y": 0 },
+      "fieldConfig": { "defaults": { "unit": "percent" }, "overrides": [] },
+      "options": { "legend": { "showLegend": true }, "tooltip": { "mode": "single" } }
+    },
+    {
+      "type": "timeSeries",
+      "title": "Mémoire process Node (RSS)",
+      "id": 3,
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "process_resident_memory_bytes{job=~\"$job\"}",
+          "legendFormat": "rss",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 6, "y": 8 },
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+      "options": { "legend": { "showLegend": true }, "tooltip": { "mode": "single" } }
+    },
+    {
+      "type": "timeSeries",
+      "title": "Event Loop Lag (Node)",
+      "id": 4,
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "nodejs_eventloop_lag_seconds{job=~\"$job\"}",
+          "legendFormat": "lag",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 6, "y": 16 },
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "options": { "legend": { "showLegend": true }, "tooltip": { "mode": "single" } }
+    },
+    {
+      "type": "timeSeries",
+      "title": "Heap utilisé / total (Node)",
+      "id": 5,
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        { "expr": "nodejs_heap_size_used_bytes{job=~\"$job\"}", "legendFormat": "used", "refId": "A" },
+        { "expr": "nodejs_heap_size_total_bytes{job=~\"$job\"}", "legendFormat": "total", "refId": "B" }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+      "options": { "legend": { "showLegend": true }, "tooltip": { "mode": "multi" } }
+    },
+    {
+      "type": "timeSeries",
+      "title": "CPU conteneur backend %",
+      "id": 6,
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{container=~\"$container\"}[5m]) * 100",
+          "legendFormat": "cpu %",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "fieldConfig": { "defaults": { "unit": "percent" }, "overrides": [] },
+      "options": { "legend": { "showLegend": true }, "tooltip": { "mode": "single" } }
+    },
+    {
+      "type": "timeSeries",
+      "title": "Mémoire conteneur backend",
+      "id": 7,
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{container=~\"$container\"}",
+          "legendFormat": "mem",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+      "options": { "legend": { "showLegend": true }, "tooltip": { "mode": "single" } }
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": ["transcendence", "backend", "docker", "nodejs"],
+  "templating": {
+    "list": [
+      {
+        "name": "job",
+        "type": "query",
+        "hide": 0,
+        "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+        "query": "label_values(up, job)",
+        "refresh": 1,
+        "current": { "text": "backend", "value": "backend", "selected": true },
+        "includeAll": false,
+        "multi": false
+      },
+      {
+        "name": "container",
+        "type": "query",
+        "hide": 0,
+        "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+        "query": "label_values(container_memory_usage_bytes, container)",
+        "refresh": 1,
+        "current": { "text": "backend", "value": "backend", "selected": true },
+        "includeAll": false,
+        "multi": false
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Transcendence — Backend & Docker",
+  "version": 1,
+  "weekStart": ""
+}
