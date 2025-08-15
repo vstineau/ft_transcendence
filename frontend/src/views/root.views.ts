@@ -328,16 +328,33 @@ export async function RegisterView() {
                         />
                     </div>
 
+
+					<!-- 2fa formulaire -->
+					<div class="flex justify-center">
+						<div class="flex items-center space-x-3">
+							<input
+								id="enable2fa"
+								name="enable2fa"
+								type="checkbox"
+								value="1"
+								class="w-4 h-4 accent-black focus:outline-none"
+							>
+							<label for="enable2fa" class="text-sm text-gray-700">
+								Enable dual authentication
+							</label>
+						</div>
+					</div>
+
                     <!-- Bouton S'inscrire -->
 					<div class="flex justify-center">
 						<button
 							type="submit"
 							class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors"
-						>
-							Sign up
-						</button>
+						>Sign up</button>
 					</div>
                 </form>
+
+
 
 				<!-- infos private privacy -->
 				<div class="mt-6 text-center">
