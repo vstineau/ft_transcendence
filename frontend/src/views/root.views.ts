@@ -1,22 +1,11 @@
 export async function RootView() {
     return /* HTML */ `
-        <!-- Titre isolé - position absolue dès le départ -->
-        <h1 id="main-title" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl font-bold text-black z-50">
-            FT<span class="text-blue-600">_</span>TRANSCENDENCE
-        </h1>
-
-        <!-- Section Hero - écran complet SANS le titre -->
-        <div class="hero-section h-screen flex flex-col justify-center items-center bg-gray-100 relative">
-            <div class="hero-content text-center pt-20">
-                <p class="text-gray-600 text-lg mb-8 mt-8">This project is a surprise.</p>
-            </div>
-
-            <!-- Indicateur de scroll en bas -->
-            <div class="scroll-indicator absolute bottom-12 left-1/2 transform -translate-x-1/2">
-                <span class="text-gray-500 text-sm block mb-2">scroll</span>
-                <div class="w-px h-8 bg-gray-200 mx-auto animate-pulse"></div>
-            </div>
-        </div>
+        <!-- Titre FT_TRANSCENDENCE en haut -->
+		<div class="bg-gray-100 py-2">
+			<h1 class="text-center text-4xl font-bold text-black">
+				FT<span class="text-blue-600">_</span>TRANSCENDENCE
+			</h1>
+		</div>
 
 <!-- Section avec les blocs -->
 <div class="content-section min-h-screen bg-gray-100 py-16">
@@ -63,7 +52,7 @@ export async function RootView() {
 					</p>
 
 					<div class="flex mt-4">
-						<button class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition">Play</button>
+						<a href="/pong" class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition">Play</a>
 					</div>
 				</div>
 
@@ -121,9 +110,9 @@ export async function RootView() {
 							</div>
 
 							<!-- Settings -->
-							<div class="flex-1 bg-black hover:bg-gray-800 text-white rounded-xl shadow-lg p-3 flex flex-col">
+							<a href="/updateInfos" class="flex-1 bg-black hover:bg-gray-800 text-white rounded-xl shadow-lg p-3 flex flex-col">
 								<p class="font-montserrat text-white text-base mb-2">Settings</p>
-							</div>
+							</a>
 						</div>
 					</div>
 				</div>
@@ -143,6 +132,65 @@ export async function RootView() {
     `;
 }
 
+export async function WelcomeView() {
+    return /* HTML */ `
+        <!-- Titre isolé - position absolue dès le départ -->
+        <h1 id="main-title" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl font-bold text-black z-50">
+            FT<span class="text-blue-600">_</span>TRANSCENDENCE
+        </h1>
+
+        <!-- Section Hero - écran complet SANS le titre -->
+        <div class="hero-section h-screen flex flex-col justify-center items-center bg-gray-100 relative">
+            <div class="hero-content text-center pt-20">
+                <p class="text-gray-600 text-lg mb-8 mt-8">Choose your adventure.</p>
+            </div>
+
+            <!-- Indicateur de scroll en bas -->
+            <div class="scroll-indicator absolute bottom-12 left-1/2 transform -translate-x-1/2">
+                <span class="text-gray-500 text-sm block mb-2">scroll</span>
+                <div class="w-px h-8 bg-gray-200 mx-auto animate-pulse"></div>
+            </div>
+        </div>
+
+        <!-- Section avec les blocs -->
+        <div class="content-section min-h-screen bg-gray-100 py-16">
+            <div class="max-w-4xl mx-auto px-8">
+                <!-- Container des blocs en grid simple -->
+                <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 200px 200px 200px; max-width: 600px;">
+
+                    <!-- Bloc Sign up - Plus large -->
+                    <a href="/login" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors ">
+                        <p class="font-montserrat font-medium text-white text-base mb-2">Sign up</p>
+                    </a>
+
+                    <!-- Bloc Light mode - Carré -->
+                    <div id="theme-toggle" class="bg-white rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col cursor-pointer hover:bg-gray-50 transition-colors">
+					<p class="font-montserrat font-medium text-base text-gray-600" id="theme-text">Light mode</p>
+					<div class="flex-1 flex items-center justify-center">
+						<span class="text-3xl" id="theme-icon">☼</span>
+					</div>
+				</div>
+
+                    <!-- Bloc Games - Carré -->
+                    <a href="/pong" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
+					<p class="font-montserrat font-medium text-base text-gray-600">Games</p>
+					<div class="flex-1 flex items-center justify-center">
+						<span class="text-2xl">▶</span>
+					</div>
+					</a>
+            	</div>
+			</div>
+			<!-- Bouton Create an account - Large en dessous -->
+			<div class="mt-4" style="max-width: 616px; margin-left: auto; margin-right: auto;">
+                    <a href="/register" class="font-montserrat block bg-black hover:bg-gray-800 text-white py-4 rounded-xl font-medium text-lg transition-colors text-center" >
+                        Create an account
+                    </a>
+            </div>
+        </div>
+    </div>
+`;
+}
+
 // <img src="https://i.gifer.com/QgxJ.gif" alt="pong" />
 export async function PongView() {
 	return /* HTML */ `
@@ -159,100 +207,63 @@ export async function PongView() {
 }
 
 export async function LoginView() {
-	return /* HTML */ `
-		<div class="max-w-md mx-auto p-6 rounded-lg shadow-lg animate-slide-up">
-			<h2 class="text-2xl font-bold mb-4 text-center text-blue-700">Connexion</h2>
+	return /*HTML*/ `
+		 <!-- Titre FT_TRANSCENDENCE en haut -->
+		<div class="bg-gray-100 py-2">
+			<h1 class="text-center text-4xl font-bold text-black">
+				FT<span class="text-blue-600">_</span>TRANSCENDENCE
+			</h1>
+		</div>
+
+		<div class="min-h-screen bg-gray-100 flex items-center justify-center py-4 px-4">
+			<!--conteneur principal-->
+			<div class="max-w-md w-full bg-white rounded-2xl shadow-sm p-8">
+
+			<!-- Titre -->
+			<h2 class="text-2xl font-semibold text-center text-black mb-8">Welcome back !</h2>
 			<form id="login-form" class="space-y-4">
+
+				<!--email-->
 				<input
-					name="login"
-					type="text"
-					placeholder="Login"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 					autocomplete="off"
+					type="email"
+					name="email"
+					id="mail"
+					placeholder="Email"
+					class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
 					required
-				/>
+                />
+
+				<!-- Mot de passe -->
 				<input
-					name="password"
 					type="password"
-					placeholder="Mot de passe"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+					name="password"
+					id="password"
+					placeholder="Password"
+					class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
 					required
 				/>
-				<button
-					type="submit"
-					class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
-				>
-					Se connecter
-				</button>
-			</form>
+
+				<!-- Bouton S'inscrire -->
+					<div class="flex justify-center pt-4">
+						<button
+							type="submit"
+							class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+						>Sign in</button>
+					</div>
+                </form>
+
+				 <!-- Lien vers connexion -->
+				<div class="mt-4 text-center">
+					<p class="text-sm text-gray-600">
+						Don't have an account ?
+						<a href="/register" class="text-black hover:underline font-medium">Sign up</a>
+					</p>
+				</div>
+
 		</div>
 	`;
 }
-
-// export async function RegisterView() {
-// 	return /* HTML */ `
-// 		<div class="max-w-md mx-auto p-6 rounded-lg shadow-lg animate-fade-in">
-// 			<h2 class="text-2xl font-bold mb-4 text-center text-purple-700">Créer un compte</h2>
-// 			<form id="register-form" class="space-y-4">
-// 				<input
-// 					autocomplete="off"
-// 					type="text"
-// 					name="login"
-// 					id="login"
-// 					placeholder="Login"
-// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-// 					required
-// 				/>
-// 				<input
-// 					autocomplete="off"
-// 					type="text"
-// 					name="nickname"
-// 					id="nickname"
-// 					placeholder="Nickname"
-// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-// 					required
-// 				/>
-// 				<input
-// 					autocomplete="off"
-// 					type="email"
-// 					name="email"
-// 					id="mail"
-// 					placeholder="Email"
-// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-// 					required
-// 				/>
-// 				<input
-// 					type="password"
-// 					name="password"
-// 					id="password"
-// 					placeholder="Mot de passe"
-// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-// 					required
-// 				/>
-// 				<input
-// 					type="file"
-// 					name="avata"
-// 					id="avatar"
-// 					placeholder="inserer avatar"
-// 					accept="image/jpeg, image/png, image/jgp, image/gif"
-// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-// 				/>
-// 				<button
-// 					type="submit"
-// 					class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
-// 				>
-// 					S'inscrire
-// 				</button>
-// 			</form>
-// 			<div
-// 				id="error-message"
-// 				class="w-full px-4 hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative z-20"
-// 				style="display: none;"
-// 				role="alert"
-// 			></div>
-// 		</div>
-// 	`;
-// }
 
 export async function RegisterView() {
     return /* HTML */ `
@@ -262,7 +273,7 @@ export async function RegisterView() {
                 FT<span class="text-blue-600">_</span>TRANSCENDENCE
             </h1>
         </div>
-        <!-- Arrière-plan gris comme la maquette -->
+        <!-- Arrière-plan -->
         <div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4">
             <!-- Container principal blanc centré -->
             <div class="max-w-md w-full bg-white rounded-2xl shadow-sm p-8">
