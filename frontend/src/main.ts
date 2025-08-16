@@ -73,11 +73,14 @@ async function renderPage() {
 
 			setTimeout(() => {
 				initScrollAnimations();
-				initThemeToggle(); // ← Initialiser le thème après les animations
+				initThemeToggle();
 			}, 100);
 			break;
-		case '/dashborad':
+		case '/dashboard':
 			rootUser();
+			setTimeout(() => {
+				initThemeToggle(); // ← Initialiser le thème après les animations
+			}, 100);
 			break;
 		case '/updateInfos':
 			updateInfos();

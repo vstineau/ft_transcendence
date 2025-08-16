@@ -1,8 +1,8 @@
 export async function RootView() {
     return /* HTML */ `
-        <!-- Titre FT_TRANSCENDENCE en haut -->
+<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 class="text-center text-4xl font-bold text-black">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
 			</h1>
 		</div>
@@ -102,10 +102,10 @@ export async function RootView() {
 
 						<div class="flex-1 flex gap-3">
 						<!-- Light mode avec soleil centre -->
-							<div class="flex-1 bg-white rounded-xl shadow-lg p-3 flex flex-col cursor-pointer hover:bg-gray-50 transition-colors" id="theme-toggle">
-								<p class="font-montserrat text-base mb-2" id="theme-text">Light mode</p>
+							<div id="dash-theme-toggle" class="flex-1 bg-white rounded-xl shadow-lg p-3 flex flex-col cursor-pointer hover:bg-gray-50 transition-colors">
+								<p class="font-montserrat text-base mb-2" id="dash-theme-text">Light mode</p>
 								<div class="flex-1 flex items-center justify-center">
-									<span class="text-6xl transition-transform hover:scale-110" id="theme-icon">☼</span>
+									<span class="text-6xl transition-transform hover:scale-110" id="dash-theme-icon">☼</span>
 								</div>
 							</div>
 
@@ -380,8 +380,8 @@ export async function RegisterView() {
                 <!-- Lien vers connexion -->
                 <div class="mt-6 text-center">
                     <p class="text-sm text-gray-600">
-                        Vous avez déjà un compte ?
-                        <a href="/login" class="text-black hover:underline font-medium">Se connecter</a>
+                        Have an account ?
+                        <a href="/login" class="text-black hover:underline font-medium">Sign in</a>
                     </p>
                 </div>
 
@@ -409,77 +409,282 @@ export async function PongMatchMakingView() {
 
 export async function UpdateInfosview() {
 	return /* HTML */ `
-		<div class="max-w-md mx-auto p-6 rounded-lg shadow-lg animate-fade-in">
-			<h2 class="text-2xl font-bold mb-4 text-center text-purple-700">Modifier le compte</h2>
-			<form id="register-form" class="space-y-4">
-				<input
-					autocomplete="off"
-					type="text"
-					name="login"
-					id="login"
-					placeholder="Login"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-				/>
-				<input
-					autocomplete="off"
-					type="text"
-					name="nickname"
-					id="nickname"
-					placeholder="Nickname"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-				/>
-				<input
-					autocomplete="off"
-					type="email"
-					name="email"
-					id="mail"
-					placeholder="Email"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-				/>
-				<input
-					type="password"
-					name="password"
-					id="password"
-					placeholder="Mot de passe"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-				/>
-				<input
-					type="password"
-					name="newPassword"
-					id="newPassword"
-					placeholder="Nouveau Mot de passe"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-				/>
-				<input
-					type="file"
-					name="avatar"
-					id="avatar"
-					placeholder="inserer avatar"
-					accept="image/jpeg, image/png, image/jgp, image/gif"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-				/>
-				<button
-					type="save updates"
-					class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
-				>
-				Save updates
+
+<!-- Titre FT_TRANSCENDENCE en haut -->
+	<div class="bg-gray-100 py-2">
+		<h1 class="text-center text-4xl font-bold text-black">
+			FT<span class="text-blue-600">_</span>TRANSCENDENCE
+		</h1>
+	</div>
+
+
+	<div class="min-h-screen bg-gray-100 py-8 px-4">
+		<div class="max-w-4xl mx-auto">
+			<!-- creer les onglets-->
+			<div class="flex border-b border-gray-300 mb-8">
+				<button class="font-montserrat tab-button active px-6 px-3 front-medium text-sm focus:outline-none border-b-2 transition-colors data-tab="profil">
+					Profil
 				</button>
-			</form>
-			<button
-				id="defaultAvatars"
-				class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
-			>
-			No avatar
-			</button>
-			<div
-				id="error-message"
-				class="w-full px-4 hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative z-20"
-				style="display: none;"
-				role="alert"
-			></div>
-		</div>
-	`;
+
+				<button class="font-montserrat tab-button active px-6 px-3 front-medium text-sm focus:outline-none border-b-2 transition-colors data-tab="profil">
+					Games
+				</button>
+
+				</button>
+                    <button
+                        class="tab-button px-6 py-3 font-medium text-sm focus:outline-none border-b-2 transition-colors"
+                        data-tab="general"
+                    >
+                        General
+                    </button>
+                </div>
+
+                <!-- Contenu des onglets -->
+                <div class="flex gap-8">
+
+                    <!-- Sidebar gauche avec menu -->
+                    <div class="w-64">
+                        <!-- Profil utilisateur -->
+                        <div class="bg-white rounded-xl p-4 mb-6 shadow-sm">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-gray-300 rounded-lg flex items-center justify-center text-lg font-bold">
+                                    F
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="font-medium text-black">Fatima Zahra</h3>
+                                    <p class="text-xs text-gray-500">Profil settings</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Menu latéral pour onglet Profil -->
+                        <div id="profil-menu" class="tab-content">
+                            <div class="space-y-2">
+                                <button class="menu-item active w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                    <span class="w-5 h-5 mr-3">🔒</span>
+                                    Change password
+                                </button>
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                    <span class="w-5 h-5 mr-3">✓</span>
+                                    Dual authentication
+                                </button>
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                    <span class="w-5 h-5 mr-3">👤</span>
+                                    Profile picture
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Menu latéral pour onglet Games (caché par défaut) -->
+                        <div id="games-menu" class="tab-content hidden">
+                            <div class="space-y-2">
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                    <span class="w-5 h-5 mr-3">🏓</span>
+                                    Pong Settings
+                                </button>
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                    <span class="w-5 h-5 mr-3">🐍</span>
+                                    Snake Settings
+                                </button>
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                    <span class="w-5 h-5 mr-3">📊</span>
+                                    Statistics
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Menu latéral pour onglet General (caché par défaut) -->
+                        <div id="general-menu" class="tab-content hidden">
+                            <div class="space-y-2">
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                    <span class="w-5 h-5 mr-3">🎨</span>
+                                    Theme
+                                </button>
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                    <span class="w-5 h-5 mr-3">🔔</span>
+                                    Notifications
+                                </button>
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                    <span class="w-5 h-5 mr-3">⚙️</span>
+                                    Preferences
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Zone de contenu principale -->
+                    <div class="flex-1">
+                        <!-- Contenu pour Change password (actif par défaut) -->
+                        <div id="change-password-content" class="content-panel bg-white rounded-xl p-8 shadow-sm">
+                            <form class="space-y-6">
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-2">Email</label>
+                                    <input
+                                        type="email"
+                                        class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-black transition-colors bg-transparent"
+                                        placeholder="Enter your email"
+                                    >
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-2">Password</label>
+                                    <input
+                                        type="password"
+                                        class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-black transition-colors bg-transparent"
+                                        placeholder="Current password"
+                                    >
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-2">New password</label>
+                                    <input
+                                        type="password"
+                                        class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-black transition-colors bg-transparent"
+                                        placeholder="New password"
+                                    >
+                                </div>
+                                <button type="submit" class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
+                                    Submit
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Contenu pour Dual authentication (caché par défaut) -->
+                        <div id="dual-auth-content" class="content-panel bg-white rounded-xl p-8 shadow-sm hidden">
+                            <div class="space-y-6">
+                                <div class="flex items-start">
+                                    <input type="checkbox" id="enable-2fa" class="w-5 h-5 mt-1 mr-4">
+                                    <div>
+                                        <h3 class="font-medium text-black mb-2">Turn on 2-Step Verification</h3>
+                                        <p class="text-sm text-gray-600 mb-4">
+                                            With 2-Step Verification, or two-factor authentication, you can add an extra layer of security to your account in case your password is stolen.
+                                        </p>
+                                        <p class="text-sm text-gray-600 mb-4">
+                                            After you set up 2-Step Verification, you can sign in to your account with:
+                                        </p>
+                                        <ul class="text-sm text-gray-600 mb-6">
+                                            <li>• Your password and a second step</li>
+                                            <li>• Your passkey</li>
+                                        </ul>
+                                        <button class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
+                                            Submit
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contenu pour Profile picture (caché par défaut) -->
+                        <div id="profile-picture-content" class="content-panel bg-white rounded-xl p-8 shadow-sm hidden">
+                            <div class="space-y-6">
+                                <div class="text-center">
+                                    <div class="w-24 h-24 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center text-2xl font-bold">
+                                        F
+                                    </div>
+                                    <input type="file" id="profile-upload" class="hidden" accept="image/*">
+                                    <button onclick="document.getElementById('profile-upload').click()" class="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-lg text-sm transition-colors mb-4">
+                                        Browse...
+                                    </button>
+                                    <p class="text-xs text-gray-500 mb-4">No file selected.</p>
+
+                                    <div class="flex items-center justify-center mb-6">
+                                        <input type="checkbox" id="no-picture" class="mr-2">
+                                        <label for="no-picture" class="text-sm text-gray-600">I don't want a picture: random picture would be selected</label>
+                                    </div>
+
+                                    <button class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bouton retour -->
+                <div class="mt-8 text-center">
+                    <a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+                </div>
+
+            </div>
+        </div>
+    `;
 }
+
+
+// export async function UpdateInfosview() {
+// 	return /* HTML */ `
+// 		<div class="max-w-md mx-auto p-6 rounded-lg shadow-lg animate-fade-in">
+// 			<h2 class="text-2xl font-bold mb-4 text-center text-purple-700">Modifier le compte</h2>
+// 			<form id="register-form" class="space-y-4">
+// 				<input
+// 					autocomplete="off"
+// 					type="text"
+// 					name="login"
+// 					id="login"
+// 					placeholder="Login"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 				/>
+// 				<input
+// 					autocomplete="off"
+// 					type="text"
+// 					name="nickname"
+// 					id="nickname"
+// 					placeholder="Nickname"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 				/>
+// 				<input
+// 					autocomplete="off"
+// 					type="email"
+// 					name="email"
+// 					id="mail"
+// 					placeholder="Email"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 				/>
+// 				<input
+// 					type="password"
+// 					name="password"
+// 					id="password"
+// 					placeholder="Mot de passe"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 				/>
+// 				<input
+// 					type="password"
+// 					name="newPassword"
+// 					id="newPassword"
+// 					placeholder="Nouveau Mot de passe"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 				/>
+// 				<input
+// 					type="file"
+// 					name="avatar"
+// 					id="avatar"
+// 					placeholder="inserer avatar"
+// 					accept="image/jpeg, image/png, image/jgp, image/gif"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 				/>
+// 				<button
+// 					type="save updates"
+// 					class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
+// 				>
+// 				Save updates
+// 				</button>
+// 			</form>
+// 			<button
+// 				id="defaultAvatars"
+// 				class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
+// 			>
+// 			No avatar
+// 			</button>
+// 			<div
+// 				id="error-message"
+// 				class="w-full px-4 hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative z-20"
+// 				style="display: none;"
+// 				role="alert"
+// 			></div>
+// 		</div>
+// 	`;
+// }
+
+
 export async function PongCanvas(){
 	return /* HTML */ ` <canvas id="gameCanvas">pong</canvas> `;
 }
