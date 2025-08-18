@@ -493,5 +493,9 @@ export async function localPongCanvas(){
 }
 
 export async function localSnakeCanvas(){
-	return /* HTML */ ` <canvas id="localSnakeGameCanvas">pong</canvas> `;
+	return /* HTML */ `
+	<div class="flex items-center justify-center w-screen h-screen bg-gray-900">
+	  <canvas id="localSnakeGameCanvas" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"></canvas>
+	</div>
+`;
 }
