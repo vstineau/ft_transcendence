@@ -6,6 +6,7 @@ import config from './config.js'
 import socketioServer from './plugins/socketIo.js'
 import {startPongGame} from './pong/pong.js'
 import fastifyCookie from '@fastify/cookie';
+import { setupChat } from './chat/chat.js';
 
 export const app = Fastify({
 	logger: true,
@@ -29,7 +30,9 @@ await app.register(fastifyCookie);
 
 await app.register(socketioServer);
 
-await startPongGame(app);
+setupChat(app); // <-- Register the chat setup function
+
+await startPongGame(app);	
 authJwt(app, {jwtSecret: config.jwt.secret});
 await app.register(import('./routes/root.route.js'));
 await app.register(import('./routes/user.route.js'));
