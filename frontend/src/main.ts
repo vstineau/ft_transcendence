@@ -22,6 +22,7 @@ import { initThemeToggle, cleanupThemeToggle } from './theme/darkMode';
 import { snakeGame } from './snake/snake';
 import { localSnakeGame } from './snake/localSnake';
 import { localpongGame } from './pong/localPong';
+import { initUserAvatar } from './utils/avatar';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -80,6 +81,7 @@ async function renderPage() {
 			rootUser();
 			setTimeout(() => {
 				initThemeToggle(); // ← Initialiser le thème après les animations
+				initUserAvatar(); //mis a jour infos
 			}, 100);
 			break;
 		case '/updateInfos':

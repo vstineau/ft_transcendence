@@ -160,7 +160,7 @@ export async function WelcomeView() {
 
                     <!-- Bloc Sign up - Plus large -->
                     <a href="/login" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors ">
-                        <p class="font-montserrat font-medium text-white text-base mb-2">Sign up</p>
+                        <p class="font-montserrat font-medium text-white text-base mb-2">Sign in</p>
                     </a>
 
                     <!-- Bloc Light mode - Carré -->
@@ -432,7 +432,7 @@ export async function UpdateInfosview() {
 
 				</button>
                     <button
-                        class="tab-button px-6 py-3 font-medium text-sm focus:outline-none border-b-2 transition-colors"
+                        class="font-montserrat tab-button px-6 py-3 font-medium text-sm focus:outline-none border-b-2 transition-colors"
                         data-tab="general"
                     >
                         General
@@ -446,29 +446,42 @@ export async function UpdateInfosview() {
                     <div class="w-64">
                         <!-- Profil utilisateur -->
                         <div class="bg-white rounded-xl p-4 mb-6 shadow-sm">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 bg-gray-300 rounded-lg flex items-center justify-center text-lg font-bold">
-                                    F
-                                </div>
-                                <div class="ml-3">
-                                    <h3 class="font-medium text-black">Fatima Zahra</h3>
-                                    <p class="text-xs text-gray-500">Profil settings</p>
-                                </div>
+
+                            <div class="font-montserrat flex items-center">
+                                <div class="w-12 h-12 bg-gray-300 rounded-lg overflow-hidden">
+								<img
+									id="profile-image"
+									class="w-full h-full object-cover"
+									alt="Profile picture"
+									style="display: none;"
+								>
+
+								<div class="w-12 h-12  bg-gray-300 rounded-lg flex items-center justify-center text-lg font-bold">
+									<span id="user-initial">X</span>
+								</div>
+
                             </div>
+							<div class="ml-5">
+								<h3 id="user-name" class="font-montserrat font-bold text-black">Loading...</h3>
+								<p class="font-montserrat text-sm text-gray-500">Profil settings</p>
+									<!-- Optionnel : afficher l'email ailleurs -->
+								<p id="user-email" class="font-montserrat text-xs text-gray-400" style="display: none;"></p>
+							</div>
                         </div>
+                    </div>
 
                         <!-- Menu latéral pour onglet Profil -->
                         <div id="profil-menu" class="tab-content">
                             <div class="space-y-2">
-                                <button class="menu-item active w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
-                                    <span class="w-5 h-5 mr-3">🔒</span>
+                                <button class="font-montserrat menu-item active w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                    <span class="w-5 h-5 mr-3">ꗃ</span>
                                     Change password
                                 </button>
-                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                <button class="font-montserrat menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
                                     <span class="w-5 h-5 mr-3">✓</span>
                                     Dual authentication
                                 </button>
-                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                <button class="font-montserrat menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
                                     <span class="w-5 h-5 mr-3">👤</span>
                                     Profile picture
                                 </button>
@@ -513,39 +526,49 @@ export async function UpdateInfosview() {
                     </div>
 
                     <!-- Zone de contenu principale -->
-                    <div class="flex-1">
-                        <!-- Contenu pour Change password (actif par défaut) -->
-                        <div id="change-password-content" class="content-panel bg-white rounded-xl p-8 shadow-sm">
-                            <form class="space-y-6">
-                                <div>
-                                    <label class="block text-sm text-gray-600 mb-2">Email</label>
-                                    <input
-                                        type="email"
-                                        class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-black transition-colors bg-transparent"
-                                        placeholder="Enter your email"
-                                    >
-                                </div>
-                                <div>
-                                    <label class="block text-sm text-gray-600 mb-2">Password</label>
-                                    <input
-                                        type="password"
-                                        class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-black transition-colors bg-transparent"
-                                        placeholder="Current password"
-                                    >
-                                </div>
-                                <div>
-                                    <label class="block text-sm text-gray-600 mb-2">New password</label>
-                                    <input
-                                        type="password"
-                                        class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-black transition-colors bg-transparent"
-                                        placeholder="New password"
-                                    >
-                                </div>
-                                <button type="submit" class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
-                                    Submit
-                                </button>
-                            </form>
-                        </div>
+                    <div class="flex max-w-md w-full bg-white rounded-2xl shadow-sm p-8 ml-16 mt-12">
+                    <form id="newPassword-form" class="space-y-4">
+
+                        <!--email-->
+                        <input
+                            autocomplete="off"
+                            type="email"
+                            name="login"
+                            id="mail"
+                            placeholder="Email"
+                            class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+                            required
+                        />
+
+                        <!-- Mot de passe -->
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            placeholder="Password"
+                            class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+                            required
+                        />
+
+						 <!-- nouveau mdp -->
+                        <input
+                            type="newpassword"
+                            name="newpassword"
+                            id="newpassword"
+                            placeholder="New password"
+                            class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+                            required
+                        />
+
+                        <!-- Bouton Submit-->
+                            <div class="flex justify-center pt-4">
+                                <button
+                                    type="submit"
+                                    class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                                >Submit</button>
+                            </div>
+                        </form>
+                    </div>
 
                         <!-- Contenu pour Dual authentication (caché par défaut) -->
                         <div id="dual-auth-content" class="content-panel bg-white rounded-xl p-8 shadow-sm hidden">

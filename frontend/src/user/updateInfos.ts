@@ -1,8 +1,12 @@
 import { navigateTo } from '../main';
 import { displayError } from '../utils/error'
 import { readFileAsBase64 } from '../utils/userInfo'
+import { initUserAvatar } from '../utils/avatar';
 
 export async function updateInfos() {
+
+	initUserAvatar();
+	
 	const form = document.getElementById('register-form') as HTMLFormElement | null;
 	if (!form) return true;
 

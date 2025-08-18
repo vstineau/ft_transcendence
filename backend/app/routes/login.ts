@@ -20,15 +20,15 @@ export default {
 		reply.code(200).send(response);
 	  }
       const token = reply.server.jwt.sign(
-        { 
+        {
 		  login: user.login,
 		  email: user.email,
-		  id: user.id, 
+		  id: user.id,
 		  twoFaAuth: user.twoFaAuth
 		},
         { expiresIn: '4h' }
       )
-	  const response : IUserReply[200] = {success: true};
+	  const response : IUserReply[200] = {success: true, user:{avatar: user.avatar}};
       reply
         .setCookie('token', token, {
           httpOnly: true,

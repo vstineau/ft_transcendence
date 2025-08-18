@@ -24,7 +24,7 @@ export type UserJson = {
 	avatar?: string,
 	noAvatar?: boolean;
 	ext?: string;
-	twoFaAuth: boolean;
+	twoFaAuth?: boolean;
 	twoFaSecret?: string;
 	twoFaCode?: string;
 	stats?: UserStats;
