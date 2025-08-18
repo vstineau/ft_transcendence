@@ -1,47 +1,94 @@
 services:
- backend:
-  container_name: backend
-  networks:
-   - transcendence 
-  build: backend/ 
-  develop:
-   watch:
-     - action: sync
-       path: backend
-       target: /app
-       ignore:
-        - node_modules/
-        - Dockerfile
-        - tsconfig.json
-     - action: rebuild
-       path: backend/package.json
-    #env_file: .env
-  restart: always
-  ports: 
-    - 3000:3000
-  volumes:
-   - ./backend/app/db:/app/db
- frontend:
-  depends_on:
-   - backend 
-  container_name: frontend
-  networks:
-   - transcendence 
-  build: frontend/ 
-  develop:
-   watch:
-     - action: rebuild
-       path: frontend
-       target: /usr/share/nginx/html
-       ignore:
-        - node_modules/
-        - Dockerfile
-     - action: rebuild
-       path: frontend/package.json
-    #env_file: .env
-  restart: always
-  ports: 
-    - 8080:443
+  backend:
+    container_name: backend
+    build: ./backend
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - transcendence
+    develop:
+      watch:
+        - action: sync
+          path: backend
+          target: /app
+          ignore:
+            - node_modules/
+            - Dockerfile
+            - tsconfig.json
+        - action: rebuild
+          path: backend/package.json
+    volumes:
+      - ./backend/app/db:/app/db  # SQLite persistante
+
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "8080:443"
+    networks:
+      - transcendence
+    develop:
+      watch:
+        - action: rebuild
+          path: frontend
+          target: /usr/share/nginx/html
+          ignore:
+            - node_modules/
+            - Dockerfile
+        - action: rebuild
+          path: frontend/package.json
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - transcendence
+    depends_on:
+      - backend
+      - cadvisor
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+      - grafana-data:/var/lib/grafana
+    networks:
+      - transcendence
+    depends_on:
+      - prometheus
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - "8081:8080"
+    networks:
+      - transcendence
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:
+  grafana-data:
+
 networks:
- transcendence:
-  driver: bridge
+  transcendence:
+    driver: bridge

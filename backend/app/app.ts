@@ -5,8 +5,10 @@ import { authJwt } from './auth/auth.js'
 import config from './config.js'
 import socketioServer from './plugins/socketIo.js'
 import {startPongGame} from './pong/pong.js'
+import {startSnakeGame} from './snake/snake.js'
 import fastifyCookie from '@fastify/cookie';
 import fastifyOauth2 from '@fastify/oauth2';
+import {userRoutes} from './routes/router.js'
 
 export const app = Fastify({
 	logger: true,
@@ -14,6 +16,11 @@ export const app = Fastify({
 	ignoreTrailingSlash: true,
 	ignoreDuplicateSlashes: true
 });
+
+
+// Enregistre les métriques par défaut (CPU, mémoire, etc.) (prometheus)
+await app.register(import('./routes/monitoring.route.js'));
+
 
 await app.register(cors, {
 	origin: ['https://localhost:8080', 'http://localhost:8080'],
@@ -46,44 +53,18 @@ await app.register(fastifyOauth2, {
 
 
 await startPongGame(app);
+await startSnakeGame(app);
 authJwt(app, {jwtSecret: config.jwt.secret});
-await app.register(import('./routes/root.route.js'));
-await app.register(import('./routes/user.route.js'));
-await app.register(import('./routes/oauth2.route.js'));
-app.listen({port: 3000, host: '0.0.0.0'});
+await app.register(userRoutes);
 
 
 await SqliteDataSource.initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!");
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization", err);
-    })
+.then(() => {
+	console.log("Data Source has been initialized!");
+})
+.catch((err) => {
+	console.error("Error during Data Source initialization", err);
+})
 
+app.listen({port: 3000, host: '0.0.0.0'});
 
-//import Fastify from 'fastify'
-//import fp from 'fastify-plugin'
-//import { Server } from 'socket.io'
-//
-//// PLUGIN SOCKET.IO
-//const fastifySocketIO = fp(async function (fastify) {
-//  fastify.decorate('io', new Server(fastify.server, {
-//    path: '/socket.io',
-//    cors: { origin: '*', methods: ['GET', 'POST'] }
-//  }))
-//})
-//
-//// INSTANCE FASTIFY
-//const app = Fastify()
-//
-//// ENREGISTRE LE PLUGIN
-//await app.register(fastifySocketIO)
-//
-//// AJOUTE LE HANDLER
-//app.io.on('connection', (socket) => {
-//  console.log('Socket.IO client connected:', socket.id)
-//})
-//
-//// DEMARRE LE SERVEUR
-//app.listen({ port: 3000, host: '0.0.0.0' })

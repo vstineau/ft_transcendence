@@ -7,6 +7,7 @@ export interface Game {
 
 export interface Player {
     name: string;
+    id: string;
     y: number;
     x: number;
     height: number;
