@@ -49,7 +49,8 @@ export type UserStats = {
 
 export const defaultAvatars: Array<string> = [
 	'/app/app/avatar/dog-meme.gif',
-	'/app/app/avatar/singe_rio_de_janeiro.jpg'
+	'/app/app/avatar/singe_rio_de_janeiro.jpg',
+	'/app/app/avatar/samy.jpg'
 ];
 
 export const mimeTypes: { [key: string]: string } = {

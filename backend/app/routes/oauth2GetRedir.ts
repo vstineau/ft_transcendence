@@ -1,16 +1,14 @@
-
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { JwtPayload, IUserReply,UserJson } from '../types/userTypes.js'
-
 
 export default {
-	method: 'POST',
+	method: 'GET',
 	url: '/login/github/callback',
 	handler: async (
-		request: FastifyRequest<{Body: UserJson}>,
-		reply: FastifyReply
+		_request: FastifyRequest,
+		_reply: FastifyReply
 	) : Promise<void> => {
 		try {
+		//const {token} = await this.githubOAuth.getAccessTokenFromAuthorizationCodeFlow(request);
 		} catch (error: any) {
 		}
 	}
