@@ -19,7 +19,7 @@ services:
         - action: rebuild
           path: backend/package.json
     volumes:
-      - ./backend/app/db:/app/db
+      - ./backend/app/db:/app/db  # SQLite persistante
 
   frontend:
     container_name: frontend

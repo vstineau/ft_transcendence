@@ -1,7 +1,7 @@
 //import { User } from '../models.js'
 
 export interface IUserReply {
-	200: { success: boolean, user?: UserJson };
+	200: { success: boolean, user?: UserJson, qrCode?: string, twoFaAuth?: boolean };
 	401: { success: boolean, error: string };
 	400: { success: boolean, error: string };
 	500: { success: boolean, error: string };
@@ -15,22 +15,35 @@ export type JwtPayload = {
 };
 
 export type UserJson = {
-	id: number,
-	login: string,
-	nickName: string,
+	id?: number,
+	login?: string,
+	nickName?: string,
 	password?: string,
 	newPassword?: string,
-	email: string,
+	email?: string,
 	avatar?: string,
 	noAvatar?: boolean;
 	ext?: string;
+	twoFaAuth: boolean;
+	twoFaSecret?: string;
+	twoFaCode?: string;
+	stats?: UserStats;
 };
 
 export type UserHistory = {
-	date: string,
-	opponent: string,
-	score: string,
-	win: boolean,
+	date?: string,
+	opponent?: string,
+	score?: string,
+	win?: boolean,
+};
+
+export type UserStats = {
+	gameNb?: number,
+	lose?: number,
+	win?: number,
+	winrate?: number,
+	actualWinStreak?: number,
+	maxWinStreak?: number,
 };
 
 export const defaultAvatars: Array<string> = [

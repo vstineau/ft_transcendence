@@ -1,0 +1,187 @@
+/* Variables CSS pour les couleurs */
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f3f4f6;
+    --bg-tertiary: #e5e7eb;
+    --text-primary: #000000;
+    --text-secondary: #6b7280;
+    --text-tertiary: #9ca3af;
+    --border-color: #e5e7eb;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.dark {
+    --bg-primary: #1f2937;      /* Gris foncé pour remplacer blanc */
+    --bg-secondary: #111827;    /* Plus foncé pour remplacer gris clair */
+    --bg-tertiary: #374151;     /* Gris moyen */
+    --text-primary: #ffffff;    /* Blanc pour remplacer noir */
+    --text-secondary: #d1d5db;  /* Gris clair pour remplacer gris foncé */
+    --text-tertiary: #9ca3af;   /* Gris moyen */
+    --border-color: #374151;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* === ARRIÈRE-PLANS === */
+.dark .bg-white {
+    background-color: var(--bg-primary) !important;
+}
+
+.dark .bg-gray-100 {
+    background-color: var(--bg-secondary) !important;
+}
+
+.dark .bg-gray-200 {
+    background-color: var(--bg-tertiary) !important;
+}
+
+/* === TEXTES === */
+.dark .text-black {
+    color: var(--text-primary) !important;
+}
+
+.dark .text-gray-600 {
+    color: var(--text-secondary) !important;
+}
+
+.dark .text-gray-500 {
+    color: var(--text-tertiary) !important;
+}
+
+.dark .text-gray-700 {
+    color: var(--text-secondary) !important;
+}
+
+.dark .text-gray-300 {
+    color: var(--text-tertiary) !important;
+}
+
+.dark .text-gray-400 {
+    color: var(--text-secondary) !important;
+}
+
+/* === OMBRES === */
+.dark .shadow-lg {
+    box-shadow: var(--shadow) !important;
+}
+
+/* === BORDURES === */
+.dark .border {
+    border-color: var(--border-color) !important;
+}
+
+/* === BOUTONS === */
+.dark .bg-gray-100.hover\:bg-gray-200:hover {
+    background-color: var(--bg-tertiary) !important;
+}
+
+.dark .hover\:bg-gray-50:hover {
+    background-color: var(--bg-tertiary) !important;
+}
+
+/* === SECTION HERO === */
+.dark .hero-section {
+    background-color: var(--bg-secondary) !important;
+}
+
+/* === ANIMATIONS ET TRANSITIONS === */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* === STYLES SPÉCIFIQUES === */
+.dark .content-section {
+    background-color: var(--bg-secondary) !important;
+}
+
+/* Pour les avatars et zones grises */
+.dark .bg-gray-200 {
+    background-color: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* === TITRES ET HEADINGS === */
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+    color: var(--text-primary) !important;
+}
+
+/* Force tous les textes sans classe spécifique à être blancs */
+.dark * {
+    color: var(--text-primary);
+}
+
+/* Mais préserve les couleurs spécifiques définies */
+.dark .text-blue-600 {
+    color: #3b82f6 !important; /* Garde le bleu */
+}
+
+.dark .text-white {
+    color: #ffffff !important; /* Garde le blanc */
+}
+
+.dark .text-gray-400 {
+    color: var(--text-secondary) !important;
+}
+
+/* === INVERSION COMPLÈTE DES BOUTONS === */
+
+/* Boutons NOIRS deviennent BLANCS */
+.dark .bg-black {
+    background-color: #ffffff !important; /* Blanc */
+    color: #000000 !important; /* Texte noir */
+}
+
+.dark .bg-black:hover,
+.dark .hover\:bg-gray-800:hover {
+    background-color: #e5e7eb !important; /* Gris clair au hover */
+    color: #000000 !important;
+}
+
+/* Boutons BLANCS deviennent NOIRS */
+.dark button:not(.bg-black):not([class*="bg-"]) {
+    background-color: #000000 !important; /* Noir */
+    color: #ffffff !important; /* Texte blanc */
+}
+
+/* Boutons avec bg-gray-100 (blancs/gris clairs) deviennent noirs */
+.dark .bg-gray-100 {
+    background-color: #000000 !important; /* Noir */
+    color: #ffffff !important; /* Texte blanc */
+}
+
+.dark .bg-gray-100:hover,
+.dark .hover\:bg-gray-200:hover {
+    background-color: #1f2937 !important; /* Gris foncé au hover */
+    color: #ffffff !important;
+}
+
+/* Boutons View/Edit dans le profil */
+.dark button {
+    transition: all 0.3s ease !important;
+}
+
+/* Force l'inversion pour tous les boutons */
+.dark button.bg-black {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+.dark button:not(.bg-black) {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+dark .bg-black .text-white,
+.dark .bg-black.hover\:bg-gray-800 .text-white,
+.dark .bg-black p.text-white {
+    color: #000000 !important; /* Force le texte en noir */
+}
+
+/* Pour être sûr, ciblons aussi par la classe font-montserrat */
+.dark .bg-black .font-montserrat.text-white {
+    color: #000000 !important;
+}
+
+/* Règle générale pour tous les éléments avec text-white dans un bg-black en dark mode */
+.dark .bg-black * {
+    color: #000000 !important;
+}

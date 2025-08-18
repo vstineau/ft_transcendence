@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique, BeforeInsert, BeforeUpdate, ManyToOne, OneToMany } from "typeorm"
-import { IsEmail, Length, Matches, validateOrReject } from 'class-validator' 
+import { IsEmail, Length, Matches, validateOrReject } from 'class-validator'
 import { getIsInvalidMessage } from "./utils/errorMessages.js";
 import type { UserJson , UserHistory } from './types/userTypes.js'
 
@@ -21,7 +21,7 @@ export class User extends BaseEntity {
 
 	@PrimaryGeneratedColumn()
 	id!: number;
-	
+
 	//blob for binary large object
 	@Column({
     transformer: {
@@ -49,17 +49,27 @@ export class User extends BaseEntity {
 	@IsEmail(undefined, {message: getIsInvalidMessage('Email')})
 	email!: string;
 
+	@Column({type: 'boolean', default: false})
+	twoFaAuth!: boolean;
+
+	@Column({ nullable: true })
+	twoFaSecret?: string;
+
 	static async createUser(data: UserJson): Promise<User> {
 		return new User(data);
 	}
 
 	async getInfos(): Promise<UserJson> {
+		let twoFaSecret: string;
+		this.twoFaSecret ? twoFaSecret = this.twoFaSecret: twoFaSecret = '';
 		return {
 			id: this.id,
 			login: this.login,
 			nickName: this.nickName,
 			password: this.password,
 			email: this.email,
+			twoFaAuth: this.twoFaAuth,
+			twoFaSecret: twoFaSecret,
 		};
 	}
 
@@ -75,6 +85,7 @@ export class User extends BaseEntity {
 		this.nickName = obj?.nickName ?? '';
 		this.password = obj?.password ?? '';
 		this.email = obj?.email ?? '';
+		this.twoFaAuth = obj?.twoFaAuth ?? false;
 	}
 
 	@OneToMany(() => History, (history: History) => history.user, { cascade: true })
@@ -86,6 +97,9 @@ export class History {
 
 	@PrimaryGeneratedColumn()
 	gamecount?: number;
+
+	@Column()
+	type?: string;
 
 	@Column()
 	date?: string;

@@ -1,0 +1,19 @@
+import register from './register.js'
+import home from './root.js'
+import login from './login.js'
+import logout from './logout.js'
+import deleteAccount from './deleteAccount.js'
+import updateInfosGet from './updateInfosGet.js'
+import updateInfosPost from './updateInfosPost.js'
+import { FastifyPluginCallback } from 'fastify';
+
+export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
+  fastify.route(register)
+  fastify.route(home)
+  fastify.route(login)
+  fastify.route(logout)
+  fastify.route(deleteAccount)
+  fastify.route(updateInfosGet)
+  fastify.route(updateInfosPost)
+  done()
+}

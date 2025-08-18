@@ -3,10 +3,12 @@ export interface Game {
     p2: Player;
     ball: Ball;
     win: Window;
+    over: boolean;
 }
 
 export interface Player {
     name: string;
+    id: string;
     y: number;
     x: number;
     height: number;
