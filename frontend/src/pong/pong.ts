@@ -25,16 +25,18 @@ let ctx: CanvasRenderingContext2D | null = null;
 
 let win_width = window.innerWidth;
 let win_height = window.innerHeight;
+// let gameWidth = win_width * 0.8;
+// let gameHeight = win_height * 0.8;
 let gameOver = false;
 
 function initCanvas(socket: Socket) {
 	canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
 	if (!canvas) {
 		console.error("❌ Canvas 'gameCanvas' not found");
-		return ;
+		return;
 	}
-	canvas.width = win_width;
-	canvas.height = win_height;
+	canvas.width = win_width * 0.8;
+	canvas.height = win_height * 0.8;
 	ctx = canvas.getContext('2d');
 	if (!ctx) {
 		console.error('❌ Failed to get canvas context');
@@ -43,30 +45,42 @@ function initCanvas(socket: Socket) {
 
 function drawGame(game: Game) {
 	if (!ctx || gameOver) return;
-	let scale_x = canvas.width / game.win.width;
-	let scale_y = canvas.height / game.win.height;
+	const scale_x = canvas.width / game.win.width;
+	const scale_y = canvas.height / game.win.height;
 
-	ctx.clearRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
-	// Background
+	ctx.clearRect(0, 0, canvas.width, canvas.height); // clear full screen
+
+	// Background (zone de jeu)
 	ctx.fillStyle = 'black';
-	ctx.fillRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
 	// Ball
 	ctx.fillStyle = 'white';
 	ctx.beginPath();
-	ctx.fillRect(game.ball.x * scale_x, game.ball.y * scale_y, game.ball.radius * scale_x, game.ball.radius * scale_y);
+	ctx.fillRect(
+		game.ball.x * scale_x - game.ball.radius / 2,
+		game.ball.y * scale_y - game.ball.radius / 2,
+		game.ball.radius * scale_x,
+		game.ball.radius * scale_y
+	);
 	ctx.closePath();
+
 	// Paddles
 	ctx.fillRect(game.p1.x * scale_x, game.p1.y * scale_y, game.p1.length * scale_x, game.p1.height * scale_y);
 	ctx.fillRect(game.p2.x * scale_x, game.p2.y * scale_y, game.p2.length * scale_x, game.p2.height * scale_y);
+
 	// Net (dashed center line)
-	for (let i = 0; i < game.win.height * scale_y; i += 25) {
-		ctx.fillRect((game.win.width * scale_x) / 2 - 2, i * scale_y, 4 * scale_x, 15 * scale_y);
+	console.log(`canvas.height = ${canvas.height}`);
+	for (let i = 0; i < canvas.height; i += canvas.height * 0.03) {
+		ctx.fillRect(canvas.width / 2 - 2, i, 4 * scale_x, 15 * scale_y);
 	}
+
 	// Scores
 	ctx.font = '50px Arial';
 	ctx.textAlign = 'center';
-	ctx.fillText(game.p1.score.toString(), game.win.width * scale_x * 0.25, 60);
-	ctx.fillText(game.p2.score.toString(), game.win.width * scale_x * 0.75, 60);
+	ctx.fillStyle = 'white';
+	ctx.fillText(game.p1.score.toString(), canvas.width * 0.25, canvas.height * 0.1);
+	ctx.fillText(game.p2.score.toString(), canvas.width * 0.75, canvas.height * 0.1);
 }
 
 function listenUserInputs(socket: Socket) {
@@ -105,11 +119,11 @@ function listenUserInputs(socket: Socket) {
 
 	// Resize handling
 	window.addEventListener('resize', () => {
-		win_width = window.innerWidth;
-		win_height = window.innerHeight;
+		// win_width = window.innerWidth;
+		// win_height = window.innerHeight;
 		if (canvas) {
-			canvas.width = win_width;
-			canvas.height = win_height;
+			canvas.width = window.innerWidth * 0.8;
+			canvas.height = window.innerHeight * 0.8;
 		}
 		socket.emit('resize');
 	});
@@ -209,20 +223,20 @@ export function pongGame() {
 		drawWaitingScreen(room);
 	});
 	socket.on('playerWin', (winner, game) => {
-		if (ctx) {
-			gameOver = true;
-			let scale_x = canvas.width / game.win.width;
-			let scale_y = canvas.height / game.win.height;
-			ctx.clearRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
-			ctx.fillStyle = 'white';
-			ctx.fillRect(win_width * 0.1, win_height * 0.25, win_width * 0.8, win_height * 0.12);
-			ctx.fillStyle = 'black';
-			ctx.fillRect(win_width * 0.105, win_height * 0.26, win_width * 0.79, win_height * 0.1);
-			ctx.fillStyle = 'white';
-			ctx.textAlign = 'center';
-			ctx.fillText(winner + ' wins', game.win.width * scale_x * 0.5, game.win.height * scale_y * 0.33);
-			return;
-		}
+		if (!ctx) return;
+		gameOver = true;
+		let scale_x = canvas.width / game.win.width;
+		let scale_y = canvas.height / game.win.height;
+		ctx.clearRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
+		ctx.fillStyle = 'white';
+		ctx.fillRect(canvas.width * 0.1, canvas.height * 0.25, canvas.width * 0.8, canvas.height * 0.12);
+		ctx.fillStyle = 'black';
+		ctx.fillRect(canvas.width * 0.105, canvas.height * 0.26, canvas.width * 0.79, canvas.height * 0.1);
+		ctx.fillStyle = 'white';
+		ctx.textAlign = 'center';
+		ctx.font = `${40 * scale_y}px Arial`;
+		ctx.fillText(winner + ' wins', canvas.width * 0.5, canvas.height * 0.33);
+		return;
 	});
 	// Main game loop (frame update)
 

@@ -215,13 +215,13 @@ function getInputs(sock: Socket, game: Game) {
 }
 
 function movePlayer(game: Game) {
-	if (game.p1.key_up === true && game.p1.y - game.p1.vy >= -10) {
+	if (game.p1.key_up === true && game.p1.y - game.p1.vy >= 5) {
 		game.p1.y -= game.p1.vy;
 	}
 	if (game.p1.key_down === true && game.p1.y + game.p1.vy <= WIN_HEIGHT - game.p1.height) {
 		game.p1.y += game.p1.vy;
 	}
-	if (game.p2.key_up === true && game.p2.y - game.p2.vy >= -10) {
+	if (game.p2.key_up === true && game.p2.y - game.p2.vy >= 5) {
 		game.p2.y -= game.p2.vy;
 	}
 	if (game.p2.key_down === true && game.p2.y + game.p2.vy <= WIN_HEIGHT - game.p2.height) {
@@ -230,7 +230,7 @@ function movePlayer(game: Game) {
 }
 
 function checkWin(game: Game, app: FastifyInstance) {
-	if (game.p1.score === 3 || game.p2.score === 3) {
+	if (game.p1.score === 1 || game.p2.score === 1) {
 		game.ball.vx = 0;
 		game.ball.vy = 0;
 		game.ball.x = WIN_WIDTH / 2;
@@ -241,7 +241,7 @@ function checkWin(game: Game, app: FastifyInstance) {
 			// console.log(`${room.name} finished`);
 			app.io.to(room.name).emit('playerWin', game.p1.score > game.p2.score ? game.p1.id : game.p2.id, game);
 			// console.log(`room ${room.name} closed`);
-			rooms = rooms.filter(r => r !== room);
+			// rooms = rooms.filter(r => r !== room);
 			roomcount--;
 		}
 	}
