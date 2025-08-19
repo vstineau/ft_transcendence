@@ -122,7 +122,7 @@ function movePlayer() {
 }
 
 function checkWin() {
-	if (p1.score === -3 || p2.score === -3) {
+	if (p1.score === 3 || p2.score === 3) {
 		ball.vx = 0;
 		ball.vy = 0;
 		ball.x = win_width / 2;
@@ -223,15 +223,6 @@ export function localpongGame() {
 			key_down = true;
 		}
 	});
-
-	// window.addEventListener('keypress', e => {
-	// 	if (e.key === ' ') {
-	// 		e.preventDefault();
-	// 		p1.score = 0;
-	// 		p2.score = 0;
-	// 		updateInfos();
-	// 	}
-	// });
 
 	window.addEventListener('keyup', e => {
 		if (e.key === 'w' || e.key === 'W') key_w = false;

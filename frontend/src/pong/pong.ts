@@ -10,8 +10,10 @@ import { navigateTo } from '../main';
 // let win_height = window.innerHeight;
 
 export function createPongSocket(): Socket {
-	let socket = io('https://localhost:8080'); // changer pour l'ip du post
-
+	const host = window.location.hostname;
+	const port = window.location.port;
+	const protocol = window.location.protocol;
+	let socket = io(`${protocol}//${host}:${port}`); // changer pour l'ip du post
 	socket.on('connect', () => {
 		initCanvas(socket);
 		console.log('Socket connected!');
