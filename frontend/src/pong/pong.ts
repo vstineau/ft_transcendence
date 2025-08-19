@@ -13,7 +13,7 @@ export function createPongSocket(): Socket {
 	const host = window.location.hostname;
 	const port = window.location.port;
 	const protocol = window.location.protocol;
-	let socket = io(`${protocol}//${host}:${port}`); // changer pour l'ip du post
+	let socket = io(`${protocol}//${host}:${port}`);
 	socket.on('connect', () => {
 		initCanvas(socket);
 		console.log('Socket connected!');
