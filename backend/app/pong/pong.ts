@@ -2,6 +2,7 @@ import { Server, Socket } from 'socket.io';
 // import { EventEmitter } from 'events';
 import { Game } from '../types/pongTypes.js';
 import { FastifyInstance } from 'fastify';
+import { IUserReply } from '../types/userTypes.js';
 // import { User } from '../models.js';
 // import { app } from '../app';
 // import io from 'socket.io-client';
@@ -82,7 +83,7 @@ function createRoom(socket: Socket): Room {
 		game: initGame(),
 		locked: false,
 	};
-	getInputs(socket, newRoom.game)
+	getInputs(socket, newRoom.game);
 	newRoom.game.p1.id = socket.id;
 	rooms.push(newRoom);
 	return newRoom;
@@ -96,11 +97,10 @@ function initRoom(socket: Socket) {
 		room.playersNb = 2;
 		room.game.p2.id = socket.id;
 		room.locked = true;
-		getInputs(socket, room.game)
+		getInputs(socket, room.game);
 	} else {
 		const newRoom = createRoom(socket);
 		socket.join(newRoom.name);
-		
 	}
 }
 
@@ -138,8 +138,31 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 	});
 }
 
+async function getUserInfos(socket: Socket) { // verifier que l'user est log si non le rediiger sur /login
+	try {
+		const response = await fetch(`https://localhost:8080/api/game/matchmaking`, {
+			method: 'GET',
+			headers: {},
+			credentials: 'include',
+		});
+		const data = (await response.json()) as IUserReply[200]; // changer pour as any
+		if (data.success) {
+			let room = rooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id)
+			if(room && data.user?.nickName){
+				room.game.p1.name = data.user?.nickName
+			}
+			socket.emit("")
+		// } else {
+		// 	displayError(data.error || 'Erreur inconnue');
+		}
+	} catch (err) {
+		console.error('error = ', err);
+	}
+}
+
 export async function startPongGame(app: FastifyInstance) {
 	// let game = initGame();
+
 	app.ready().then(() => {
 		// console.log('Pong backend is ready');
 

@@ -8,11 +8,22 @@ import { navigateTo } from '../main';
 
 // let win_width = window.innerWidth;
 // let win_height = window.innerHeight;
+function getCookie(name: string) {
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop()?.split(';').shift();
+	return null;
+}
 
 export function createPongSocket(): Socket {
+	// const cookie = getCookie(`token`);
+	// if(cookie){
+		console.log(`COOKIE = ` + getCookie(`token`));
+	// }
 	const host = window.location.hostname;
 	const port = window.location.port;
 	const protocol = window.location.protocol;
+
 	let socket = io(`${protocol}//${host}:${port}`);
 	socket.on('connect', () => {
 		initCanvas(socket);
@@ -72,7 +83,7 @@ function drawGame(game: Game) {
 	ctx.fillRect(game.p2.x * scale_x, game.p2.y * scale_y, game.p2.length * scale_x, game.p2.height * scale_y);
 
 	// Net (dashed center line)
-	console.log(`canvas.height = ${canvas.height}`);
+	// console.log(`canvas.height = ${canvas.height}`);
 	for (let i = 0; i < canvas.height; i += canvas.height * 0.03) {
 		ctx.fillRect(canvas.width / 2 - 2, i, 4 * scale_x, 15 * scale_y);
 	}
@@ -102,7 +113,7 @@ function listenUserInputs(socket: Socket) {
 	});
 	window.addEventListener('keydown', e => {
 		// let id = socket.id
-		console.log(`KEYDOWN -> sock.id = ${socket.id}, key = ${e.key}`);
+		// console.log(`KEYDOWN -> sock.id = ${socket.id}, key = ${e.key}`);
 
 		socket.emit('keydown', { key: e.key }, socket.id);
 		if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
@@ -111,7 +122,7 @@ function listenUserInputs(socket: Socket) {
 	});
 
 	window.addEventListener('keyup', e => {
-		console.log(`KEYUP -> sock.id = ${socket.id}, key = ${e.key}`);
+		// console.log(`KEYUP -> sock.id = ${socket.id}, key = ${e.key}`);
 		// let id = socket.id
 		// console.log(`KEYUP -> socket id = ${socket.id}`);
 		// console.log(`KEYUP -> socket id = ${socket.id}`);
@@ -199,7 +210,6 @@ function drawGameOverScreen(game: Game) {
 
 function drawWaitingScreen(room: any) {
 	if (!ctx) return;
-	console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
 	// On utilise les mêmes scales que dans drawGame
 	const scale_x = canvas.width / room.game.win.width;
 	const scale_y = canvas.height / room.game.win.height;
@@ -217,6 +227,7 @@ function drawWaitingScreen(room: any) {
 }
 
 export function pongGame() {
+	// fetch(`/game/matchmaking`)
 	const socket = createPongSocket();
 	// initCanvas(socket);
 
