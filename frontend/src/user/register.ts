@@ -93,6 +93,9 @@ export async function registerUser() {
 			const host = window.location.hostname;
 			const port = window.location.port;
 			const protocol = window.location.protocol;
+			// console.log(`protocol = ${protocol}`);
+			// console.log(`host = ${host}`);
+			// console.log(`port = ${port}`);
 			const response = await fetch(`${protocol}//${host}:${port}/api/register`, {
 				method: 'POST',
 				headers: {
