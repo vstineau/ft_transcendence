@@ -43,7 +43,7 @@ export class User extends BaseEntity {
 	@Column()
 	//Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
 	@Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, {message : getIsInvalidMessage("password", "please use  password with at least 8 characters, one uppercase, one lowercase, one number and one special character")})
-	password!: string;
+	password: string;
 
 	@Column()
 	@IsEmail(undefined, {message: getIsInvalidMessage('Email')})
@@ -54,6 +54,9 @@ export class User extends BaseEntity {
 
 	@Column({ nullable: true })
 	twoFaSecret?: string;
+
+	@Column({ nullable: true })
+	provider?: string;
 
 	static async createUser(data: UserJson): Promise<User> {
 		return new User(data);
@@ -70,6 +73,7 @@ export class User extends BaseEntity {
 			email: this.email,
 			twoFaAuth: this.twoFaAuth,
 			twoFaSecret: twoFaSecret,
+			provider: this.provider,
 		};
 	}
 

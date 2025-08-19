@@ -28,6 +28,7 @@ export type UserJson = {
 	twoFaAuth: boolean;
 	twoFaSecret?: string;
 	twoFaCode?: string;
+	provider?: string;
 	stats?: UserStats;
 };
 

@@ -12,7 +12,7 @@ export default {
     try {
       const invalidInfoError = 'the provided user details are invalid'
       const user = await User.findOneBy({ login: request.body.login })
-      if (!user || !request.body.password || !user.comparePassword(request.body.password)) {
+      if (!user || !request.body.password || !user.comparePassword(request.body.password) || user.provider === 'github') {
         throw new Error(invalidInfoError)
       }
 	  if (user.twoFaAuth) {
