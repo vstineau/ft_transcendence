@@ -28,7 +28,10 @@ export default {
 		},
         { expiresIn: '4h' }
       )
-	  const response : IUserReply[200] = {success: true, user:{avatar: user.avatar}};
+	  const response : IUserReply[200] = {success: true, user:{avatar: user.avatar,
+															nickName: user.nickName,
+															login: user.login,
+															email: user.email}};
       reply
         .setCookie('token', token, {
           httpOnly: true,

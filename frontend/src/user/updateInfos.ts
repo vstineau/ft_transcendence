@@ -1,12 +1,17 @@
 import { navigateTo } from '../main';
 import { displayError } from '../utils/error'
 import { readFileAsBase64 } from '../utils/userInfo'
+import { fetchAndSaveUserInfo } from '../utils/avatar';
 import { initUserAvatar } from '../utils/avatar';
 
 export async function updateInfos() {
 
-	initUserAvatar();
-	
+	await fetchAndSaveUserInfo();
+
+	 setTimeout(() => {
+        initUserAvatar();
+    }, 100);
+
 	const form = document.getElementById('register-form') as HTMLFormElement | null;
 	if (!form) return true;
 

@@ -445,29 +445,19 @@ export async function UpdateInfosview() {
                     <!-- Sidebar gauche avec menu -->
                     <div class="w-64">
                         <!-- Profil utilisateur -->
-                        <div class="bg-white rounded-xl p-4 mb-6 shadow-sm">
+							<div class="bg-white rounded-xl p-4 mb-6 shadow-sm">
+							<div class="font-montserrat flex items-center">
+							<!-- CONTAINER PRINCIPAL -->
+							<div id="avatar-container" class="w-12 h-12 bg-gray-300 rounded-lg overflow-hidden">
+								<!-- Seul l'avatar OU le fallback sera affiché, pas les deux -->
+							</div>
 
-                            <div class="font-montserrat flex items-center">
-                                <div class="w-12 h-12 bg-gray-300 rounded-lg overflow-hidden">
-								<img
-									id="profile-image"
-									class="w-full h-full object-cover"
-									alt="Profile picture"
-									style="display: none;"
-								>
-
-								<div class="w-12 h-12  bg-gray-300 rounded-lg flex items-center justify-center text-lg font-bold">
-									<span id="user-initial">X</span>
-								</div>
-
-                            </div>
 							<div class="ml-5">
 								<h3 id="user-name" class="font-montserrat font-bold text-black">Loading...</h3>
 								<p class="font-montserrat text-sm text-gray-500">Profil settings</p>
-									<!-- Optionnel : afficher l'email ailleurs -->
 								<p id="user-email" class="font-montserrat text-xs text-gray-400" style="display: none;"></p>
 							</div>
-                        </div>
+						</div>
                     </div>
 
                         <!-- Menu latéral pour onglet Profil -->
