@@ -90,6 +90,7 @@ export class User extends BaseEntity {
 		this.password = obj?.password ?? '';
 		this.email = obj?.email ?? '';
 		this.twoFaAuth = obj?.twoFaAuth ?? false;
+		this.provider = obj?.provider ?? '';
 	}
 
 	@OneToMany(() => History, (history: History) => history.user, { cascade: true })
