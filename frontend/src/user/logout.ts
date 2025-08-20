@@ -1,5 +1,5 @@
 import { navigateTo } from '../main';
-import { displayError } from '../utils/error'
+import { displayError } from '../utils/error';
 
 export async function delogUser() {
 	const button = document.getElementById('logout') as HTMLFormElement | null;
@@ -7,21 +7,22 @@ export async function delogUser() {
 	button?.addEventListener('click', async e => {
 		e.preventDefault();
 		try {
-		const response = await fetch('https://localhost:8080/api/logout', {
-		 	method: 'GET',
-		 	headers: {
-		 	},
-			credentials: 'include',
-			 });
-		const data = await response.json();
-		      if (data.success) {
-		        navigateTo('/');
-		      } else {
-		        displayError(data.error || "Erreur inconnue");
-		   }
-		 }
-		 catch (err) {
-		 console.error('error = ', err);
-		 }
+			const host = window.location.hostname;
+			const port = window.location.port;
+			const protocol = window.location.protocol;
+			const response = await fetch(`${protocol}//${host}:${port}/api/logout`, {
+				method: 'GET',
+				headers: {},
+				credentials: 'include',
+			});
+			const data = await response.json();
+			if (data.success) {
+				navigateTo('/');
+			} else {
+				displayError(data.error || 'Erreur inconnue');
+			}
+		} catch (err) {
+			console.error('error = ', err);
+		}
 	});
 }

@@ -1,6 +1,6 @@
 import { navigateTo } from '../main';
-import { displayError } from '../utils/error'
-import { readFileAsBase64 } from '../utils/userInfo'
+import { displayError } from '../utils/error';
+import { readFileAsBase64 } from '../utils/userInfo';
 
 export async function updateInfos() {
 	const form = document.getElementById('register-form') as HTMLFormElement | null;
@@ -9,7 +9,7 @@ export async function updateInfos() {
 	let state: boolean = false;
 	const noAvatar = document.getElementById('defaultAvatars') as HTMLElement | null;
 	if (noAvatar) {
-		noAvatar.addEventListener('click', (e) => {
+		noAvatar.addEventListener('click', e => {
 			e.preventDefault(); // Pour éviter tout comportement natif éventuel
 			state = !state;
 			if (noAvatar.classList.contains('bg-purple-600')) {
@@ -23,17 +23,20 @@ export async function updateInfos() {
 	}
 
 	try {
-		const response = await fetch('https://localhost:8080/api/updateInfos', {
+		const host = window.location.hostname;
+		const port = window.location.port;
+		const protocol = window.location.protocol;
+		const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
 			method: 'GET',
 		});
 		const reply = await response.json();
 		const loginInput = document.getElementById('login') as HTMLInputElement | null;
 		const nicknameInput = document.getElementById('nickname') as HTMLInputElement | null;
 		const mailInput = document.getElementById('mail') as HTMLInputElement | null;
-		loginInput ? loginInput.placeholder = reply.user.login : "";
-		nicknameInput ? nicknameInput.placeholder = reply.user.nickName : "";
-	    mailInput ? mailInput.placeholder = reply.user.email : "";}
-	catch (err ){}
+		loginInput ? (loginInput.placeholder = reply.user.login) : '';
+		nicknameInput ? (nicknameInput.placeholder = reply.user.nickName) : '';
+		mailInput ? (mailInput.placeholder = reply.user.email) : '';
+	} catch (err) {}
 	form?.addEventListener('submit', async e => {
 		e.preventDefault();
 		displayError('');
@@ -70,21 +73,23 @@ export async function updateInfos() {
 		}
 		// sending token to backend then wait response
 		try {
-		const response = await fetch('https://localhost:8080/api/updateInfos', {
-		 	method: 'POST',
-		 	headers: {
-		 		'Content-Type': 'application/json',
-		 	},
-		 	body: JSON.stringify(body),
-		 });
-		 const reply = await response.json();
-		 console.log(reply);
-		 if (reply.success) {
-		 	navigateTo('/');
-		 }
-		 else {
-			displayError(reply.error || "registration failed please try again");
-		}
+			const host = window.location.hostname;
+			const port = window.location.port;
+			const protocol = window.location.protocol;
+			const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(body),
+			});
+			const reply = await response.json();
+			console.log(reply);
+			if (reply.success) {
+				navigateTo('/');
+			} else {
+				displayError(reply.error || 'registration failed please try again');
+			}
 		} catch (err) {
 			console.log(err);
 		}

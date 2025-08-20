@@ -1,12 +1,12 @@
 import { navigateTo } from '../main';
-import { displayError } from '../utils/error'
-import { readFileAsBase64 } from '../utils/userInfo'
+import { displayError } from '../utils/error';
+import { readFileAsBase64 } from '../utils/userInfo';
 
 function showQRCodeModal(qrCodeDataURL: string): void {
-    // Créer la modale
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-    modal.innerHTML = `
+	// Créer la modale
+	const modal = document.createElement('div');
+	modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+	modal.innerHTML = `
         <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 text-center">
             <h3 class="text-2xl font-bold mb-4">Configuration 2FA</h3>
             <p class="text-gray-600 mb-6">
@@ -34,23 +34,23 @@ function showQRCodeModal(qrCodeDataURL: string): void {
         </div>
     `;
 
-    // Ajouter au DOM
-    document.body.appendChild(modal);
+	// Ajouter au DOM
+	document.body.appendChild(modal);
 
-    // Gestion du bouton "Terminé"
-    const doneBtn = modal.querySelector('#qr-done-btn') as HTMLButtonElement;
-    doneBtn?.addEventListener('click', () => {
-        document.body.removeChild(modal);
-        navigateTo('/login');
-    });
+	// Gestion du bouton "Terminé"
+	const doneBtn = modal.querySelector('#qr-done-btn') as HTMLButtonElement;
+	doneBtn?.addEventListener('click', () => {
+		document.body.removeChild(modal);
+		navigateTo('/login');
+	});
 
-    // Fermer en cliquant à l'extérieur
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            document.body.removeChild(modal);
-            navigateTo('/login');
-        }
-    });
+	// Fermer en cliquant à l'extérieur
+	modal.addEventListener('click', e => {
+		if (e.target === modal) {
+			document.body.removeChild(modal);
+			navigateTo('/login');
+		}
+	});
 }
 
 export async function registerUser() {
@@ -90,26 +90,31 @@ export async function registerUser() {
 		}
 		// sending token to backend then wait response
 		try {
-		const response = await fetch('https://localhost:8080/api/register', {
-		 	method: 'POST',
-		 	headers: {
-		 		'Content-Type': 'application/json',
-		 	},
-		 	body: JSON.stringify(body),
-		 });
-		 const reply = await response.json();
+			const host = window.location.hostname;
+			const port = window.location.port;
+			const protocol = window.location.protocol;
+			// console.log(`protocol = ${protocol}`);
+			// console.log(`host = ${host}`);
+			// console.log(`port = ${port}`);
+			const response = await fetch(`${protocol}//${host}:${port}/api/register`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(body),
+			});
+			const reply = await response.json();
 
-		 if (reply.success) {
-			if(reply.qrCode && twoFaAuth?.checked){
-				showQRCodeModal(reply.qrCode);
-			}else{
-				navigateTo('/login');
+			if (reply.success) {
+				if (reply.qrCode && twoFaAuth?.checked) {
+					showQRCodeModal(reply.qrCode);
+				} else {
+					navigateTo('/login');
+				}
+			} else {
+				displayError(reply.error || 'registration failed please try again');
 			}
-		 }
-		 else {
-			displayError(reply.error || "registration failed please try again");
-		}
-		//JSON.parse;
+			//JSON.parse;
 		} catch (err) {
 			console.log(err);
 			navigateTo('/');
