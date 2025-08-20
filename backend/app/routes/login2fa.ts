@@ -42,7 +42,7 @@ export default {
 	  const response : IUserReply[200] = {success: true};
       reply
         .setCookie('token', token, {
-          httpOnly: true,
+          httpOnly: false,
           secure: true,
           path: '/',
           sameSite: 'lax',

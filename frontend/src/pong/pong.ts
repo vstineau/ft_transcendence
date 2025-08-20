@@ -18,7 +18,7 @@ function getCookie(name: string) {
 export function createPongSocket(): Socket {
 	// const cookie = getCookie(`token`);
 	// if(cookie){
-		console.log(`COOKIE = ` + getCookie(`token`));
+	// console.log(`COOKIE = ` + getCookie(`token`));
 	// }
 	const host = window.location.hostname;
 	const port = window.location.port;
@@ -28,7 +28,7 @@ export function createPongSocket(): Socket {
 	socket.on('connect', () => {
 		initCanvas(socket);
 		console.log('Socket connected!');
-		socket.emit('initGame');
+		socket.emit('initGame', getCookie);
 	});
 	return socket;
 }

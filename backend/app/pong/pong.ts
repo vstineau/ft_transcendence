@@ -2,7 +2,10 @@ import { Server, Socket } from 'socket.io';
 // import { EventEmitter } from 'events';
 import { Game } from '../types/pongTypes.js';
 import { FastifyInstance } from 'fastify';
-import { IUserReply } from '../types/userTypes.js';
+// import { app } from '../app.js';
+// import { JwtPayload } from '../types/userTypes.js';
+// import { User } from '../models.js';
+// import { IUserReply } from '../types/userTypes.js';
 // import { User } from '../models.js';
 // import { app } from '../app';
 // import io from 'socket.io-client';
@@ -89,7 +92,13 @@ function createRoom(socket: Socket): Room {
 	return newRoom;
 }
 
-function initRoom(socket: Socket) {
+async function initRoom(socket: Socket) {
+	console.log('fffffffffffffffffffffffffffffffffffffffffffffffffffff');
+	// if (cookie) {
+	// 	const payload = app.jwt.verify<JwtPayload>(cookie);
+	// 	const user = await User.findOneBy({ login: payload.login });
+	// 	console.log(user);
+	// }
 	const room = getRoom();
 	if (room) {
 		socket.join(room.name);
@@ -138,27 +147,27 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 	});
 }
 
-async function getUserInfos(socket: Socket) { // verifier que l'user est log si non le rediiger sur /login
-	try {
-		const response = await fetch(`https://localhost:8080/api/game/matchmaking`, {
-			method: 'GET',
-			headers: {},
-			credentials: 'include',
-		});
-		const data = (await response.json()) as IUserReply[200]; // changer pour as any
-		if (data.success) {
-			let room = rooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id)
-			if(room && data.user?.nickName){
-				room.game.p1.name = data.user?.nickName
-			}
-			socket.emit("")
-		// } else {
-		// 	displayError(data.error || 'Erreur inconnue');
-		}
-	} catch (err) {
-		console.error('error = ', err);
-	}
-}
+// async function getUserInfos(socket: Socket) { // verifier que l'user est log si non le rediiger sur /login
+// 	try {
+// 		const response = await fetch(`https://localhost:8080/api/game/matchmaking`, {
+// 			method: 'GET',
+// 			headers: {},
+// 			credentials: 'include',
+// 		});
+// 		const data = (await response.json()) as IUserReply[200]; // changer pour as any
+// 		if (data.success) {
+// 			let room = rooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id)
+// 			if(room && data.user?.nickName){
+// 				room.game.p1.name = data.user?.nickName
+// 			}
+// 			socket.emit("")
+// 		// } else {
+// 		// 	displayError(data.error || 'Erreur inconnue');
+// 		}
+// 	} catch (err) {
+// 		console.error('error = ', err);
+// 	}
+// }
 
 export async function startPongGame(app: FastifyInstance) {
 	// let game = initGame();
