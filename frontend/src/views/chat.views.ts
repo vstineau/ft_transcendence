@@ -8,9 +8,9 @@ export async function ChatView() {
 			<!-- Sidebar avec les salles de chat -->
 			<div class="w-80 bg-white border-r border-gray-200 flex flex-col">
 				<!-- Header du chat -->
-				<div class="p-4 border-b border-gray-200 bg-blue-600">
+				<div class="p-4 border-b border-gray-200 bg-black">
 					<h2 class="text-xl font-bold text-white">Chat</h2>
-					<p class="text-blue-100 text-sm">Connecté</p>
+					<p class="text-gray-300 text-sm">Connecté</p>
 				</div>
 
 				<!-- Liste des salles -->
@@ -85,14 +85,14 @@ export async function ChatView() {
 								<textarea
 									id="message-input"
 									placeholder="Tapez votre message..."
-									class="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+									class="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
 									rows="1"
 								></textarea>
 							</div>
 							<div class="flex flex-col space-y-2">
 								<button
 									id="send-button"
-									class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition-colors"
+									class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 focus:ring-2 focus:ring-gray-500 transition-colors"
 								>
 									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
@@ -120,10 +120,10 @@ export function ChatPanel() {
 	return /* HTML */ `
 		<div id="chat-panel" class="fixed bottom-24 right-6 w-80 h-96 bg-white rounded-xl shadow-2xl z-40 font-montserrat flex flex-col overflow-hidden">
 			<!-- Header du chat -->
-			<div class="bg-blue-600 text-white p-4 rounded-t-xl">
+			<div class="bg-black text-white p-4 rounded-t-xl">
 				<div class="flex items-center justify-between">
 					<h3 class="font-bold text-lg">Chat</h3>
-					<button id="chat-close" class="text-white hover:bg-blue-700 rounded p-1">
+					<button id="chat-close" class="text-white hover:bg-gray-800 rounded p-1">
 						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 						</svg>
@@ -131,10 +131,10 @@ export function ChatPanel() {
 				</div>
 				<!-- Onglets -->
 				<div class="flex mt-3 space-x-1">
-					<button id="tab-global" class="px-3 py-1 rounded text-sm bg-blue-700 text-white">
+					<button id="tab-global" class="px-3 py-1 rounded text-sm bg-gray-800 text-white">
 						Global
 					</button>
-					<button id="tab-private" class="px-3 py-1 rounded text-sm text-blue-200 hover:bg-blue-700 hover:text-white">
+					<button id="tab-private" class="px-3 py-1 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white">
 						Privé
 					</button>
 				</div>
@@ -148,15 +148,15 @@ export function ChatPanel() {
 			<!-- Zone de saisie -->
 			<div class="p-3 bg-white border-t border-gray-200">
 				<div class="flex items-center space-x-2">
-					<input
+					<input100
 						id="message-input"
 						type="text"
 						placeholder="Tapez votre message..."
-						class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+						class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
 					/>
 					<button
 						id="send-message"
-						class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors"
+						class="bg-black hover:bg-gray-800 text-white px-3 py-2 rounded-lg transition-colors"
 					>
 						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
@@ -173,7 +173,7 @@ export function ChatFloatingButton() {
 	return /* HTML */ `
 		<button
 			id="chat-fab"
-			class="fixed bottom-6 right-6 bg-black hover:bg-blue-700 text-white rounded-full shadow-lg w-16 h-16 flex items-center justify-center transition-colors duration-200 z-50 font-montserrat"
+			class="fixed bottom-6 right-6 bg-black hover:bg-gray-800 text-white rounded-full shadow-lg w-16 h-16 flex items-center justify-center transition-colors duration-200 z-50 font-montserrat"
 			aria-label="Ouvrir le chat"
 		>
 			<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">

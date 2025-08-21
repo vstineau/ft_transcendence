@@ -31,7 +31,7 @@ function applyTheme(theme: string): void {
 			mainTitle.classList.remove('text-black');
 			mainTitle.classList.add('text-white');
 		}
-	}else {
+	} else {
 		html.classList.remove('dark');
 		if(themeText) themeText.textContent = 'Light mode';
 		if(themeIcon) themeIcon.textContent = '☼';
