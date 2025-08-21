@@ -148,7 +148,7 @@ export function ChatPanel() {
 			<!-- Zone de saisie -->
 			<div class="p-3 bg-white border-t border-gray-200">
 				<div class="flex items-center space-x-2">
-					<input100
+					<input
 						id="message-input"
 						type="text"
 						placeholder="Tapez votre message..."
