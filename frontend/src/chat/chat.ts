@@ -1,4 +1,5 @@
 import { ChatState, Message, ChatRoom } from '../types/chatTypes';
+import { ChatPanel } from '../views/chat.views';
 
 class ChatManager {
     private state: ChatState = {
@@ -83,62 +84,14 @@ class ChatManager {
         // Si le panel existe déjà, ne pas le recréer
         if (document.getElementById('chat-panel')) return;
 
-        const chatPanel = document.createElement('div');
-        chatPanel.id = 'chat-panel';
-        chatPanel.className = 'fixed bottom-24 right-6 w-80 h-96 bg-white rounded-xl shadow-2xl z-40 font-montserrat flex flex-col overflow-hidden';
-
-        chatPanel.innerHTML = `
-            <!-- Header du chat -->
-            <div class="bg-blue-600 text-white p-4 rounded-t-xl">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-bold text-lg">Chat</h3>
-                    <button id="chat-close" class="text-white hover:bg-blue-700 rounded p-1">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-                <!-- Onglets -->
-                <div class="flex mt-3 space-x-1">
-                    <button id="tab-global" class="px-3 py-1 rounded text-sm bg-blue-700 text-white">
-                        Global
-                    </button>
-                    <button id="tab-private" class="px-3 py-1 rounded text-sm text-blue-200 hover:bg-blue-700 hover:text-white">
-                        Privé
-                    </button>
-                </div>
-            </div>
-
-            <!-- Zone des messages -->
-            <div id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
-                ${this.renderMessages()}
-            </div>
-
-            <!-- Zone de saisie -->
-            <div class="p-3 bg-white border-t border-gray-200">
-                <div class="flex items-center space-x-2">
-                    <input
-                        id="message-input"
-                        type="text"
-                        placeholder="Tapez votre message..."
-                        class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    <button
-                        id="send-message"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors"
-                    >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        `;
-
-        document.body.appendChild(chatPanel);
+        // Créer le panel avec la fonction ChatPanel
+        document.body.insertAdjacentHTML('beforeend', ChatPanel());
 
         // Ajouter les event listeners pour le panel
         this.setupPanelEventListeners();
+        
+        // Render initial des messages
+        this.updateMessagesDisplay();
         
         // Scroll vers le bas des messages
         const messagesContainer = document.getElementById('messages-container');

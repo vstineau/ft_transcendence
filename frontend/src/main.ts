@@ -3,6 +3,7 @@ import { registerUser } from './user/register';
 import { logUser } from './user/login';
 import { rootUser } from './user/root';
 import { updateInfos } from './user/updateInfos';
+import { ChatFloatingButton } from './views/chat.views';
 import {
 	LoginView,
 	PongView,
@@ -104,6 +105,9 @@ async function renderPage() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+	// Créer le bouton flottant de chat
+	document.body.insertAdjacentHTML('beforeend', ChatFloatingButton());
+	
 	// Initialiser le chat une fois que le DOM est prêt
 	const { chatManager } = await import('./chat/chat');
 	
