@@ -256,10 +256,10 @@ export async function LoginView() {
 				<!--email-->
 				<input
 					autocomplete="off"
-					type="email"
-					name="email"
-					id="mail"
-					placeholder="Email"
+					type="login"
+					name="login"
+					id="login"
+					placeholder="login"
 					class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
 					required
                 />

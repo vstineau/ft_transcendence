@@ -17,6 +17,7 @@ export interface Player {
     score: number;
     key_up: boolean;
     key_down: boolean;
+    avatar: string;
 }
 
 export interface Ball {

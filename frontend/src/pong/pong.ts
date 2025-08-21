@@ -26,9 +26,11 @@ export function createPongSocket(): Socket {
 
 	let socket = io(`${protocol}//${host}:${port}`);
 	socket.on('connect', () => {
+		let cookie = getCookie('token');
+		console.log(getCookie("token"));
 		initCanvas(socket);
+		socket.emit('initGame', cookie);
 		console.log('Socket connected!');
-		socket.emit('initGame', getCookie);
 	});
 	return socket;
 }
@@ -232,6 +234,9 @@ export function pongGame() {
 	// initCanvas(socket);
 
 	listenUserInputs(socket);
+	socket.on('notLogged', () => {
+		navigateTo('/login');
+	});
 	socket.on('waiting', (room: any) => {
 		drawWaitingScreen(room);
 	});

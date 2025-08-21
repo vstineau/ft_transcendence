@@ -2,6 +2,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { IUserReply } from '../types/userTypes.js'
 
+// savoir si l'user est connecte
 export default {
   method: 'GET',
   url: '/',

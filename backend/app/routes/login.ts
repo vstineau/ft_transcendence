@@ -10,6 +10,8 @@ export default {
     reply: FastifyReply
   ): Promise<void> => {
     try {
+      console.log(`login = ${request.body.login}`)
+      console.log(`password = ${request.body.password}`)
       const invalidInfoError = 'the provided user details are invalid'
       const user = await User.findOneBy({ login: request.body.login })
       if (!user || !request.body.password || !user.comparePassword(request.body.password)) {
