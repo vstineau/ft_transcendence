@@ -1,5 +1,5 @@
 import io, { Socket } from 'socket.io-client';
-import { Game } from '../types/snakeTypes';
+import { Game ,Snake} from '../types/snakeTypes';
 
 
 let canvas: HTMLCanvasElement;
@@ -29,8 +29,8 @@ function initCanvas() {
 		console.error("❌ Canvas 'SnakeGameCanvas' not found");
 		return;
 	}
-	canvas.width = win_width;
-	canvas.height = win_height;
+	canvas.width = win_height * 0.80;
+	canvas.height = win_height * 0.80;
 	ctx = canvas.getContext('2d');
 	if (!ctx) {
 		console.error('❌ Failed to get canvas context');
@@ -39,20 +39,14 @@ function initCanvas() {
 
 function drawAlert(winSize: number, alert: string) {
     if (!ctx) return;
-
-    // On utilise les mêmes scales que dans drawGame
-    const scale = canvas.width / winSize;
-
-    ctx.clearRect(0, 0, winSize * scale, winSize * scale);
-
+    ctx.clearRect(0, 0, winSize, winSize);
     ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, winSize * scale, winSize * scale);
-
-    ctx.font = `${40 * scale}px Arial`;
+    ctx.fillRect(0, 0, winSize, winSize);
+    ctx.font = `40px Arial`;
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(alert, (winSize * scale) / 2, (winSize * scale) / 2);
+    ctx.fillText(alert, winSize / 2, winSize / 2);
 }
 
 function drawGame(game: Game) {
@@ -105,12 +99,23 @@ function listenUserInputs(socket: Socket) {
 		win_width = window.innerWidth;
 		win_height = window.innerHeight;
 		if (canvas) {
-			canvas.width = win_width;
-			canvas.height = win_height;
+			canvas.width = win_height * 0.80;
+			canvas.height = win_height * 0.80;
 		}
 	});
 }
 
+function drawWinner(winner: Snake) {
+    if (!ctx) return;
+    ctx.fillStyle = 'white';
+    ctx.fillRect(canvas.width * 0.1, canvas.height * 0.25, canvas.width * 0.8, canvas.height * 0.12);
+    ctx.fillStyle = 'black';
+    ctx.fillRect(canvas.width * 0.105, canvas.height * 0.26, canvas.width * 0.79, canvas.height * 0.1);
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.font = `${Math.floor(canvas.height * 0.03)}px Arial`;
+    ctx.fillText(winner.name + ' wins! (Press Enter to restart)', canvas.width * 0.5, canvas.height * 0.33);
+}
 
 export function snakeGame() {
 	const socket = createSnakeSocket();
@@ -123,18 +128,14 @@ export function snakeGame() {
 		drawAlert(data.winSize, `Game interrupted : ${data.reason}`);
 	    alert('La partie a été interrompue : ' + data.reason);
 	})
-	socket.on('playerWin_snake', (winner, game) => {
+	socket.on('draw', (game) => {
+		drawAlert(game.winSize, "DRAW")
+	});
+	socket.on('playerWin_snake', (winner, _game) => {
 		if (ctx) {
 		gameOver = true;
-		let scale = canvas.width / game.winSize;
 		//winner announcement
-			ctx.fillStyle = 'white';
-			ctx.fillRect(win_width * 0.1, win_height * 0.25, win_width * 0.8, win_height * 0.12);
-			ctx.fillStyle = 'black';
-			ctx.fillRect(win_width * 0.105, win_height * 0.26, win_width * 0.79, win_height * 0.1);
-			ctx.fillStyle = 'white';
-			ctx.textAlign = 'center';
-			ctx.fillText(winner.name + ' wins', game.winSize * scale * 0.5, game.winSize * scale * 0.33);
+			drawWinner(winner);
 			return ;
 		}
 	});

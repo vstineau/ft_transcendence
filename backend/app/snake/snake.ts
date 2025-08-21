@@ -4,6 +4,8 @@ import { FastifyInstance } from 'fastify';
 //import { v4 as uuidv4 } from "uuid";
 
 const WIN = 600;
+const SEG_SIZE = 10;
+const FPS = 30;
 let snakeRooms: Room[] = [];
 let roomcount = 0;
 
@@ -97,67 +99,64 @@ export function eatFood(snake: Snake, g: Game): boolean {
   return false;
 }
 
-export function wrap(pos: pos, winSize: number): pos {
-  return {
-    x: (pos.x + winSize ) % winSize,
-    y: (pos.y + winSize) % winSize
-  };
+function wrap(pos: pos, winSize: number): pos {
+    let x = pos.x;
+    let y = pos.y;
+    if (x < 0) x = winSize - SEG_SIZE;
+    else if (x >= winSize) x = 0;
+    if (y < 0) y = winSize - SEG_SIZE;
+    else if (y >= winSize) y = 0;
+    return { x, y };
 }
 
-export function moveSnake(snake: Snake, winSize: number) {
-  snake.dir = snake.pendingDir;
-  for (let i = 0; i < 8; i++) {
-	const head = wrap({
-  	  x: snake.segments[0].x + snake.dir.x,
-  	  y: snake.segments[0].y + snake.dir.y
-  	}, winSize);
-  	snake.segments.unshift(head);
-  }
+function moveSnake(snake: Snake, winSize: number) {
+    snake.dir = snake.pendingDir;
+    const head = wrap({
+        x: snake.segments[0].x + snake.dir.x * SEG_SIZE,
+        y: snake.segments[0].y + snake.dir.y * SEG_SIZE
+    }, winSize);
+    snake.segments.unshift(head);
 }
 
-export function checkCollision(snake: Snake, other: Snake): boolean {
-const [head, ...body] = snake.segments;
-  // Self collision
-  if (body.some(seg => seg.x === head.x && seg.y === head.y)) return true;
-  // Other collision
-  if (other.segments.some(seg => seg.x === head.x && seg.y === head.y)) return true;
-  return false;
+function areSegmentsColliding(a: pos, b: pos): boolean {
+    return (
+        Math.abs(a.x - b.x) < (SEG_SIZE / 2) &&
+        Math.abs(a.y - b.y) < (SEG_SIZE / 2)
+    );
 }
 
-export function resetGame(g: Game) {
-  g.p1.segments = [{ x: g.winSize * 0.25, y: g.winSize * 0.5 }];
-  g.p1.dir = { x: 0, y: 1 };
-  g.p1.pendingDir = { x: 0, y: 1 };
-  g.p2.segments = [{ x: g.winSize * 0.75, y: g.winSize * 0.5 }];
-  g.p2.dir = { x: 0, y: -1 };
-  g.p2.pendingDir = { x: 0, y: -1 };
-  g.foods = [];
-  spawnFoods(g);
+function checkCollision(snake: Snake, other: Snake): "other" | "head-on" | null {
+    const [head, ..._body] = snake.segments;
+    const [otherHead, ...otherBody] = other.segments;
+
+    if (otherBody.some(seg => areSegmentsColliding(seg, head))) return "other";
+    if (areSegmentsColliding(head, otherHead)) return "head-on";
+    return null;
 }
 
-export function initGame(): Game {
-	let game = {
-		p1: {
-			name: 'player 1',
-			segments: [{ x: WIN * 0.25, y: WIN * 0.5 }],
-			dir: { x: 0, y: 1},
-			pendingDir: { x: 0, y: 1},
-			color: "blue",
-			id: '',
-		},
-		p2: {
-			name: 'player 2',
-			segments: [{ x: WIN * 0.75, y: WIN * 0.5 }],
-			dir: { x: 0, y: -1},
-			pendingDir: { x: 0, y: -1},
-			color: "red",
-			id: '',
-		},
-		foods: [],
-		winSize: WIN
-	}
-	spawnFoods(game);
-	return game;
+function initGame(): Game {
+    let game: Game = {
+        p1: {
+            name: 'Player 1',
+            segments: [{ x: Math.floor(WIN * 0.25 / SEG_SIZE) * SEG_SIZE, y: Math.floor(WIN * 0.5 / SEG_SIZE) * SEG_SIZE }],
+            dir: { x: 0, y: -1 },
+            pendingDir: { x: 0, y: -1 },
+            color: "blue",
+            id: 'p1'
+        },
+        p2: {
+            name: 'Player 2',
+            segments: [{ x: Math.floor(WIN * 0.75 / SEG_SIZE) * SEG_SIZE, y: Math.floor(WIN * 0.5 / SEG_SIZE) * SEG_SIZE }],
+            dir: { x: 0, y: 1 },
+            pendingDir: { x: 0, y: 1 },
+            color: "red",
+            id: 'p2'
+        },
+        foods: [],
+        winSize: WIN
+    };
+    spawnFoods(game);
+    return game;
 }
 
 export function getInputs(sock: Socket, game: Game) {
@@ -200,22 +199,36 @@ export function getInputs(sock: Socket, game: Game) {
 	});
 }
 
-
-export function update(g: Game, app: FastifyInstance, roomId: string) {
-    [g.p1, g.p2].forEach(snake => {
-        moveSnake(snake, g.winSize);
-        if (!eatFood(snake, g)) for (let i = 0; i < 8; i++) snake.segments.pop();
+export function update(game: Game, app: FastifyInstance, roomId: string) {
+    [game.p1, game.p2].forEach(snake => {
+        moveSnake(snake, game.winSize);
     });
-    if (checkCollision(g.p1, g.p2)) {
-        app.io.to(roomId).emit('playerWin_snake', g.p2, g);
-        //resetGame(g);
+
+    const col1 = checkCollision(game.p1, game.p2);
+    const col2 = checkCollision(game.p2, game.p1);
+
+    if (col1 === "head-on" || col2 === "head-on" || (col1 === "other" && col2 === "other")) {
+        app.io.to(roomId).emit('draw', game);
         return;
     }
-    if (checkCollision(g.p2, g.p1)) {
-        app.io.to(roomId).emit('playerWin_snake', g.p1, g);
-        //resetGame(g);
+
+    if (col1 === "other") {
+        app.io.to(roomId).emit('playerWin_snake', game.p2, game);
         return;
     }
+    if (col2 === "other") {
+        app.io.to(roomId).emit('playerWin_snake', game.p1, game);
+        return;
+    }
+    if (col1 === "head-on" || col2 === "head-on") {
+        app.io.to(roomId).emit('draw', game);
+        return;
+    }
+    [game.p1, game.p2].forEach(snake => {
+        if (!eatFood(snake, game)) {
+            snake.segments.pop();
+        }
+    });
 }
 
 export async function startSnakeGame(app: FastifyInstance) {
@@ -238,7 +251,7 @@ export async function startSnakeGame(app: FastifyInstance) {
                                 app.io.to(room.name).emit('waiting_snake', room.game);
                             }
                         }
-                    }, 1000 / 60);
+                    }, 1000 / FPS);
             });
         });
     });

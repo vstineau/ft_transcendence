@@ -512,7 +512,41 @@ export async function PongCanvas() {
 }
 
 export async function SnakeCanvas() {
-	return /* HTML */ ` <canvas id="SnakeGameCanvas">snake</canvas> `;
+  return /* HTML */ `
+    <div class="flex flex-col items-center justify-center w-screen h-screen bg-gray-900">
+      <!-- Zone de texte (20%) -->
+      <div class="flex items-center justify-center w-full h-[20vh] px-8">
+        <div class="text-center text-white text-4xl font-bold">SNAKE GAME ONLINE</div>
+      </div>
+      <!-- Zone centrale avec blocs latéraux et canvas (80%) -->
+      <div class="flex flex-row items-center justify-center w-full h-[80vh]">
+        <!-- Bloc gauche : Photo carrée + nom joueur -->
+        <div class="flex flex-col items-center justify-center h-[80vh] w-[20vh] mr-28">
+          <img src="https://randomuser.me/api/portraits/men/32.jpg"
+            alt="Avatar joueur 1"
+            class="w-40 h-40 object-cover border-4 border-gray-600 shadow-lg mb-8 rounded-xl" />
+          <div class="bg-gray-700 text-white rounded px-4 py-2 text-2xl font-extrabold text-center w-full">Joueur 1</div>
+        </div>
+        <!-- Canvas central -->
+        <div class="flex items-center justify-center h-[80vh] w-[80vh]">
+          <canvas
+            id="SnakeGameCanvas"
+            class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"
+            width="640"
+            height="640"
+            style="width:80vh; height:80vh;"
+          ></canvas>
+        </div>
+        <!-- Bloc droit : Photo carrée + nom joueur -->
+        <div class="flex flex-col items-center justify-center h-[80vh] w-[20vh] ml-28">
+          <img src="https://randomuser.me/api/portraits/women/44.jpg"
+            alt="Avatar joueur 2"
+            class="w-40 h-40 object-cover border-4 border-gray-600 shadow-lg mb-8 rounded-xl" />
+          <div class="bg-gray-700 text-white rounded px-4 py-2 text-2xl font-extrabold text-center w-full">Joueur 2</div>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 export async function localPongCanvas() {
@@ -523,10 +557,49 @@ export async function localPongCanvas() {
 	`;
 }
 
-export async function localSnakeCanvas(){
-	return /* HTML */ `
-	<div class="flex items-center justify-center w-screen h-screen bg-gray-900">
-	  <canvas id="localSnakeGameCanvas" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"></canvas>
-	</div>
-`;
+export async function localSnakeCanvas() {
+  return /* HTML */ `
+    <div class="flex flex-col items-center justify-center w-screen h-screen bg-gray-900">
+      <!-- Zone de texte (20%) -->
+      <div class="flex items-center justify-center w-full h-[20vh] px-8">
+        <div class="text-center text-white text-4xl font-bold">LOCAL SNAKE GAME</div>
+      </div>
+      <!-- Zone centrale avec blocs latéraux et canvas (80%) -->
+		<div class="flex flex-row items-center justify-center w-full h-[80vh]">
+		  <!-- Bloc gauche pour WASD -->
+		  <div class="flex flex-col items-center justify-center h-[80vh] w-[10vh] mr-28">
+		    <div class="grid grid-cols-3 grid-rows-2 gap-2">
+		      <div></div>
+		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">W</div>
+		      <div></div>
+		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">A</div>
+		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">S</div>
+		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">D</div>
+		    </div>
+		  </div>
+		  <!-- Canvas central -->
+		  <div class="flex items-center justify-center h-[80vh] w-[80vh]">
+		    <canvas
+		      id="localSnakeGameCanvas"
+		      class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"
+		      width="640"
+		      height="640"
+		      style="width:80vh; height:80vh;"
+		    ></canvas>
+		  </div>
+		  <!-- Bloc droit pour flèches directionnelles -->
+		  <div class="flex flex-col items-center justify-center h-[80vh] w-[10vh] ml-28">
+		    <div class="grid grid-cols-3 grid-rows-2 gap-2">
+		      <div></div>
+		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">&#8593;</div>
+		      <div></div>
+		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">&#8592;</div>
+		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">&#8595;</div>
+		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">&#8594;</div>
+		    </div>
+		  </div>
+		</div>
+      </div>
+    </div>
+  `;
 }

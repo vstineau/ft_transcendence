@@ -76,7 +76,7 @@ function areSegmentsColliding(a: pos, b: pos): boolean {
 }
 
 function checkCollision(snake: Snake, other: Snake): "self" | "other" | "head-on" | null {
-    const [head, ...body] = snake.segments;
+    const [head, ..._body] = snake.segments;
     const [otherHead, ...otherBody] = other.segments;
 
     if (otherBody.some(seg => areSegmentsColliding(seg, head))) return "other";
@@ -97,7 +97,7 @@ function resetGame(g: Game) {
 }
 
 function initGame(): Game {
-    let g: Game = {
+    let game: Game = {
         p1: {
             name: 'Player 1',
             segments: [{ x: Math.floor(WIN * 0.25 / SEG_SIZE) * SEG_SIZE, y: Math.floor(WIN * 0.5 / SEG_SIZE) * SEG_SIZE }],
@@ -117,8 +117,8 @@ function initGame(): Game {
         foods: [],
         winSize: WIN
     };
-    spawnFoods(g);
-    return g;
+    spawnFoods(game);
+    return game;
 }
 
 // --- Rendering ---
@@ -246,13 +246,16 @@ function drawWinner(winner: Snake) {
 function initCanvas() {
     canvas = document.getElementById('localSnakeGameCanvas') as HTMLCanvasElement;
     if (!canvas) {
-        throw new Error("Canvas 'localSnakeGameCanvas' not found");
+		console.error("❌ Canvas 'SnakeGameCanvas' not found");
+		return;
     }
     WIN = Math.floor(window.innerHeight * 0.90);
     canvas.width = WIN;
     canvas.height = WIN;
     ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Failed to get canvas context');
+	if (!ctx) {
+		console.error('❌ Failed to get canvas context');
+	}
 }
 
 function startMainLoop() {
