@@ -1,0 +1,31 @@
+export interface Message {
+    id: string;
+    userId: string;
+    username: string;
+    content: string;
+    timestamp: Date;
+    type: 'text' | 'system' | 'game-invitation';
+}
+
+export interface ChatRoom {
+    id: string;
+    name: string;
+    type: 'global' | 'private';
+    participants?: string[];
+    unreadCount: number;
+}
+
+export interface User {
+    id: string;
+    username: string;
+    status: 'online' | 'offline' | 'in-game';
+    avatar?: string;
+}
+
+export interface ChatState {
+    isOpen: boolean;
+    activeTab: 'global' | 'private';
+    currentRoom: ChatRoom | null;
+    messages: Message[];
+    unreadCount: number;
+}

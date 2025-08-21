@@ -104,6 +104,9 @@ async function renderPage() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+	// Initialiser le chat une fois que le DOM est prêt
+	const { chatManager } = await import('./chat/chat');
+	
 	document.body.addEventListener('click', async e => {
 		const target = e.target as HTMLElement;
 		// if (target instanceof HTMLAnchorElement)
