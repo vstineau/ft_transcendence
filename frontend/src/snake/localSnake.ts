@@ -6,9 +6,9 @@ let game: Game;
 let gameOver = false;
 let mainLoop: NodeJS.Timeout | undefined;
 
-let WIN = window.innerHeight * 0.90;
-let SEG_SIZE = 20;
-let FPS = 20; 
+let WIN = Math.floor(window.innerHeight * 0.90);
+const SEG_SIZE = 20;
+const FPS = 20; 
 
 function randomPos(side: 'left' | 'right', winSize: number): pos {
     if (side === 'left') {
@@ -50,10 +50,13 @@ function eatFood(snake: Snake, g: Game): boolean {
 }
 
 function wrap(pos: pos, winSize: number): pos {
-    return {
-        x: (pos.x + winSize) % winSize,
-        y: (pos.y + winSize) % winSize
-    };
+    let x = pos.x;
+    let y = pos.y;
+    if (x < 0) x = winSize - SEG_SIZE;
+    else if (x >= winSize) x = 0;
+    if (y < 0) y = winSize - SEG_SIZE;
+    else if (y >= winSize) y = 0;
+    return { x, y };
 }
 
 function moveSnake(snake: Snake, winSize: number) {
@@ -76,12 +79,8 @@ function checkCollision(snake: Snake, other: Snake): "self" | "other" | "head-on
     const [head, ...body] = snake.segments;
     const [otherHead, ...otherBody] = other.segments;
 
-    // Collision avec le corps de l'autre (pas la tête)
     if (otherBody.some(seg => areSegmentsColliding(seg, head))) return "other";
-
-    // Collision tête-à-tête
     if (areSegmentsColliding(head, otherHead)) return "head-on";
-
     return null;
 }
 
@@ -125,82 +124,71 @@ function initGame(): Game {
 // --- Rendering ---
 function drawAlert(winSize: number, alert: string) {
     if (!ctx) return;
-    const scale = canvas.width / winSize;
-    ctx.clearRect(0, 0, winSize * scale, winSize * scale);
+    ctx.clearRect(0, 0, winSize, winSize);
     ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, winSize * scale, winSize * scale);
-    ctx.font = `${40 * scale}px Arial`;
+    ctx.fillRect(0, 0, winSize, winSize);
+    ctx.font = `40px Arial`;
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(alert, (winSize * scale) / 2, (winSize * scale) / 2);
+    ctx.fillText(alert, winSize / 2, winSize / 2);
 }
 
 function drawGame(g: Game) {
     if (!ctx || gameOver) return;
-    let scale = Math.min(canvas.width, canvas.height) / g.winSize;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, g.winSize * scale, g.winSize * scale);
+    ctx.fillRect(0, 0, g.winSize, g.winSize);
 
-    // Draw foods
     for (const food of g.foods) {
         ctx.fillStyle = food.side === 'left' ? "#0ff" : "#f0f";
-        ctx.fillRect(food.pos.x * scale, food.pos.y * scale, SEG_SIZE, SEG_SIZE);
+        ctx.fillRect(
+            Math.max(0, Math.min(food.pos.x, g.winSize - SEG_SIZE)),
+            Math.max(0, Math.min(food.pos.y, g.winSize - SEG_SIZE)),
+            SEG_SIZE, SEG_SIZE
+        );
     }
 
-    // Draw snakes
     [g.p1, g.p2].forEach(snake => {
 		if (!ctx) return;
         ctx.fillStyle = snake.color;
         for (const seg of snake.segments) {
-            ctx.fillRect(seg.x * scale, seg.y * scale, SEG_SIZE, SEG_SIZE);
+            ctx.fillRect(
+                Math.max(0, Math.min(seg.x, g.winSize - SEG_SIZE)),
+                Math.max(0, Math.min(seg.y, g.winSize - SEG_SIZE)),
+                SEG_SIZE, SEG_SIZE
+            );
         }
     });
 }
 
 function listenUserInputs() {
     window.addEventListener('keydown', e => {
-        // Player 1: WASD
-        if (
-            (e.key === 'w' || e.key === 'W') && game.p1.dir.y !== 1
-        ) game.p1.pendingDir = { x: 0, y: -1 };
-        else if (
-            (e.key === 's' || e.key === 'S') && game.p1.dir.y !== -1
-        ) game.p1.pendingDir = { x: 0, y: 1 };
-        else if (
-            (e.key === 'a' || e.key === 'A') && game.p1.dir.x !== 1
-        ) game.p1.pendingDir = { x: -1, y: 0 };
-        else if (
-            (e.key === 'd' || e.key === 'D') && game.p1.dir.x !== -1
-        ) game.p1.pendingDir = { x: 1, y: 0 };
-        // Player 2: Arrow keys
-        else if (
-            e.key === 'ArrowUp' && game.p2.dir.y !== 1
-        ) game.p2.pendingDir = { x: 0, y: -1 };
-        else if (
-            e.key === 'ArrowDown' && game.p2.dir.y !== -1
-        ) game.p2.pendingDir = { x: 0, y: 1 };
-        else if (
-            e.key === 'ArrowLeft' && game.p2.dir.x !== 1
-        ) game.p2.pendingDir = { x: -1, y: 0 };
-        else if (
-            e.key === 'ArrowRight' && game.p2.dir.x !== -1
-        ) game.p2.pendingDir = { x: 1, y: 0 };
-        // Restart
+        if ((e.key === 'w' || e.key === 'W') && game.p1.dir.y !== 1) game.p1.pendingDir = { x: 0, y: -1 };
+        else if ((e.key === 's' || e.key === 'S') && game.p1.dir.y !== -1) game.p1.pendingDir = { x: 0, y: 1 };
+        else if ((e.key === 'a' || e.key === 'A') && game.p1.dir.x !== 1) game.p1.pendingDir = { x: -1, y: 0 };
+        else if ((e.key === 'd' || e.key === 'D') && game.p1.dir.x !== -1) game.p1.pendingDir = { x: 1, y: 0 };
+        else if (e.key === 'ArrowUp' && game.p2.dir.y !== 1) game.p2.pendingDir = { x: 0, y: -1 };
+        else if (e.key === 'ArrowDown' && game.p2.dir.y !== -1) game.p2.pendingDir = { x: 0, y: 1 };
+        else if (e.key === 'ArrowLeft' && game.p2.dir.x !== 1) game.p2.pendingDir = { x: -1, y: 0 };
+        else if (e.key === 'ArrowRight' && game.p2.dir.x !== -1) game.p2.pendingDir = { x: 1, y: 0 };
         else if (gameOver && e.key === 'Enter') {
             resetGame(game);
             startMainLoop();
         }
-        if (
-            ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)
-        ) {
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
             e.preventDefault();
         }
     });
+
     window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        WIN = Math.floor(window.innerHeight * 0.90);
+        canvas.width = WIN;
+        canvas.height = WIN;
+        if (game) {
+            game.winSize = WIN;
+        }
     });
 }
 
@@ -245,26 +233,26 @@ function endGame(winner: Snake) {
 
 function drawWinner(winner: Snake) {
     if (!ctx) return;
-    const scale = canvas.width / game.winSize;
     ctx.fillStyle = 'white';
     ctx.fillRect(canvas.width * 0.1, canvas.height * 0.25, canvas.width * 0.8, canvas.height * 0.12);
     ctx.fillStyle = 'black';
     ctx.fillRect(canvas.width * 0.105, canvas.height * 0.26, canvas.width * 0.79, canvas.height * 0.1);
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
-    ctx.font = `${40 * scale}px Arial`;
+    ctx.font = `40px Arial`;
     ctx.fillText(winner.name + ' wins! (Press Enter to restart)', canvas.width * 0.5, canvas.height * 0.33);
 }
 
 function initCanvas() {
     canvas = document.getElementById('localSnakeGameCanvas') as HTMLCanvasElement;
     if (!canvas) {
-        throw new Error("❌ Canvas 'localSnakeGameCanvas' not found");
+        throw new Error("Canvas 'localSnakeGameCanvas' not found");
     }
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    WIN = Math.floor(window.innerHeight * 0.90);
+    canvas.width = WIN;
+    canvas.height = WIN;
     ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('❌ Failed to get canvas context');
+    if (!ctx) throw new Error('Failed to get canvas context');
 }
 
 function startMainLoop() {

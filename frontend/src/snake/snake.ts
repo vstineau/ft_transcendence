@@ -11,7 +11,10 @@ let gameOver = false;
 
 
 export function createSnakeSocket(): Socket {
-    const socket = io('https://localhost:8080');
+	const host = window.location.hostname;
+	const port = window.location.port;
+	const protocol = window.location.protocol;
+	let socket = io(`${protocol}//${host}:${port}`);
 	socket.on('connect', () => {
 		console.log('Socket connected!');
 		socket.emit('initGame_snake');
