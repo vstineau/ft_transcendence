@@ -1,5 +1,6 @@
 import { navigateTo } from '../main';
 import { displayError } from '../utils/error';
+import { displayChatButton } from '../utils/chat_tools';
 
 export async function logUser() {
 	const form = document.getElementById('login-form') as HTMLFormElement | null;
@@ -30,6 +31,8 @@ export async function logUser() {
 				//afficher une form pour recuperer le code qui a ete generer sur l'appli google authentificator
 			}
 			if (data.success) {
+				// Afficher le bouton chat après connexion réussie
+				await displayChatButton();
 				navigateTo('/');
 			} else {
 				displayError(data.error || 'Erreur inconnue');
