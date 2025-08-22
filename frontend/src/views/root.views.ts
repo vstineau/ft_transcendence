@@ -29,7 +29,7 @@ export async function RootView() {
 							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
 
 							<!-- EMAIL OU LOCALISATION -->
-							<p id="profile-location" class="text-gray-500 text-xs">📍 Loading...</p>
+							<p id="profile-location" class="text-gray-500 text-xs">Loading...</p>
 						</div>
 					</div>
 
@@ -39,11 +39,7 @@ export async function RootView() {
 							>
 								View
 							</button>
-							<button
-								class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition"
-							>
-								Edit
-							</button>
+								 <a href="/updateInfos" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition">Edit</a>
 						</div>
 					</div>
 
