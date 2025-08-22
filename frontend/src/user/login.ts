@@ -11,10 +11,10 @@ export async function logUser() {
         displayError('');
 
         const formData = new FormData(form);
-        const email = formData.get('email')?.toString().trim();
+        const login = formData.get('login')?.toString().trim();
         const password = formData.get('password')?.toString().trim();
 
-        if (!email || !password) {
+        if (!login || !password) {
             displayError('Please fill in all fields');
             return;
         }
@@ -26,7 +26,7 @@ export async function logUser() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email: email, // Si le backend attend 'login' au lieu d'email
+                    login: login, // Si le backend attend 'login' au lieu d'email
                     password: password
                 }),
             });

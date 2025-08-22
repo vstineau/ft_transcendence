@@ -255,13 +255,13 @@ export async function LoginView() {
 			<h2 class="text-2xl font-semibold text-center text-black mb-8">Welcome back !</h2>
 			<form id="login-form" class="space-y-4">
 
-				<!--email-->
+				<!--login-->
 				<input
 					autocomplete="off"
-					type="email"
-					name="email"
-					id="mail"
-					placeholder="Email"
+					type="login"
+					name="login"
+					id="login"
+					placeholder="login"
 					class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
 					required
                 />
