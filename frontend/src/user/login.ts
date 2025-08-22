@@ -14,7 +14,10 @@ export async function logUser() {
 			password: password,
 		};
 		try {
-			const host = window.location.hostname;
+			// const queryString = window.location;
+			const queryString = !window.location.search ? '/' : window.location.search.substring(1);
+			console.log("querystring = " + queryString);
+			const host = window.location.hostname; 
 			const port = window.location.port;
 			const protocol = window.location.protocol;
 			const response = await fetch(`${protocol}//${host}:${port}/api/login`, {
@@ -30,7 +33,7 @@ export async function logUser() {
 				//afficher une form pour recuperer le code qui a ete generer sur l'appli google authentificator
 			}
 			if (data.success) {
-				navigateTo('/');
+				navigateTo(queryString);
 			} else {
 				displayError(data.error || 'Erreur inconnue');
 			}

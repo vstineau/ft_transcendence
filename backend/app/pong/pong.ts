@@ -22,7 +22,7 @@ let intervalStarted = false;
 function initGame(): Game {
 	let game = {
 		p1: {
-			name: 'p1',
+			nickName: 'p1',
 			id: '',
 			y: WIN_HEIGHT / 2,
 			x: 20,
@@ -33,9 +33,10 @@ function initGame(): Game {
 			key_up: false,
 			key_down: false,
 			avatar: '',
+			login: '',
 		},
 		p2: {
-			name: 'p2',
+			nickName: 'p2',
 			id: '',
 			y: WIN_HEIGHT / 2,
 			x: WIN_WIDTH * 0.98,
@@ -46,6 +47,7 @@ function initGame(): Game {
 			key_up: false,
 			key_down: false,
 			avatar: '',
+			login: '',
 		},
 		ball: {
 			x: WIN_WIDTH / 2,
@@ -90,102 +92,73 @@ function createRoom(socket: Socket): Room {
 }
 
 async function initRoom(socket: Socket, cookie: string) {
-	console.log('cookie = ' + cookie);
+	// console.log('cookie = ' + cookie);
 	let nickName: string;
+	let user;
 	if (cookie) {
 		const payload = app.jwt.verify<JwtPayload>(cookie);
-		const user = await User.findOneBy({ login: payload.login });
+		user = await User.findOneBy({ login: payload.login });
 		if (!user) {
 			socket.emit('notLogged');
 			return;
 		}
-		console.log(user);
+		// console.log(user);
 		nickName = user.nickName;
 	} else {
 		socket.emit('notLogged');
 		return;
 	}
+	console.log(`user = ${user.login}`)
+	console.log(`nickname = ${user.nickName}`)
 	const room = getRoom();
-	if (room) {
+	if (room && user.login != room.game.p1.login) {
 		socket.join(room.name);
 		socket.emit('roomjoined', room.name);
 		room.playersNb = 2;
 		room.game.p2.id = socket.id;
-		room.game.p2.name = nickName;
+		room.game.p2.nickName = nickName;
+		room.game.p2.login = user.login;
 		room.locked = true;
 		getInputs(socket, room.game);
 	} else {
 		const newRoom = createRoom(socket);
-		newRoom.game.p1.name = nickName;
+		newRoom.game.p1.login = user.login;
+		newRoom.game.p1.nickName = user.nickName;
 		socket.join(newRoom.name);
 	}
+	console.log(`roomcount = ${roomcount}`)
 }
 
 function handleDisconnect(app: FastifyInstance, socket: Socket) {
 	void app;
 	socket.on('disconnect', () => {
-		// Trouver la room où était ce joueur
-		// console.log(`client ${socket.id} disconnected`);
+		// Trouver la room du joueur
 		const room = rooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
 		if (room) {
 			room.game.over = true;
 			room.playersNb--;
-			// console.log(`connected players = ${room.playersNb}`);
-			if (room.game.p1.id === socket.id) {
-				room.game.p1.id = ''; // ou null
-			} else if (room.game.p2.id === socket.id) {
-				room.game.p2.id = '';
-			}
-			// si la room est vide
-			if (room.playersNb === 0) {
-				// console.log(`room ${room.name} closed`);
-				rooms = rooms.filter(r => r !== room);
-				roomcount--;
-			}
+			// if (room.game.p1.id === socket.id) {
+			// 	room.game.p1.id = '';
+			// } else if (room.game.p2.id === socket.id) {
+			// 	room.game.p2.id = '';
+			// }
+			// le ternaire c'est la vie
+			// room.game.p1.id === socket.id ? (room.game.p1.id = '') : (room.game.p2.id = '');
 			app.io
 				.to(room.name)
-				.emit('playerWin', room.game.p1.id > room.game.p2.id ? room.game.p1.id : room.game.p2.id, room.game);
-			// } else if (room.playersNb === 1) {
-			// 	// Si un joueur reste
-			// 	app.io.to(room.name).emit('Waiting', room.game);
-			// }
+				.emit('playerWin', room.game.p1.id === socket.id ? room.game.p2.nickName : room.game.p1.nickName, room.game);
+			socket.leave(room.name);
+			rooms = rooms.filter(r => r !== room);
+			// roomcount--;
 		}
 		socket.off;
 		socket.disconnect;
 	});
 }
 
-// async function getUserInfos(socket: Socket) { // verifier que l'user est log si non le rediiger sur /login
-// 	try {
-// 		const response = await fetch(`https://localhost:8080/api/game/matchmaking`, {
-// 			method: 'GET',
-// 			headers: {},
-// 			credentials: 'include',
-// 		});
-// 		const data = (await response.json()) as IUserReply[200]; // changer pour as any
-// 		if (data.success) {
-// 			let room = rooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id)
-// 			if(room && data.user?.nickName){
-// 				room.game.p1.name = data.user?.nickName
-// 			}
-// 			socket.emit("")
-// 		// } else {
-// 		// 	displayError(data.error || 'Erreur inconnue');
-// 		}
-// 	} catch (err) {
-// 		console.error('error = ', err);
-// 	}
-// }
-
-export async function startPongGame(app: FastifyInstance) {
-	// let game = initGame();
-
+export function startPongGame(app: FastifyInstance) {
 	app.ready().then(() => {
-		// console.log('Pong backend is ready');
-
 		app.io.on('connection', (socket: Socket) => {
-			// console.log('Client connected:', socket.id);
-			// console.log('number of room = ' + roomcount);
 			socket.on('initGame', (cookie: string) => {
 				initRoom(socket, cookie);
 				handleDisconnect(app, socket);
@@ -197,8 +170,7 @@ export async function startPongGame(app: FastifyInstance) {
 							if (room.playersNb === 2 && room.locked) {
 								gameLoop(room.game, app);
 								app.io.to(room.name).emit('gameState', room.game);
-							} else if (!room.locked && room.playersNb > 0 && room.playersNb < 2) {
-								// console.log(`room is ${room.locked}`)
+							} else if (!room.locked && room.playersNb === 1) {
 								app.io.to(room.name).emit('waiting', room);
 							}
 						}
@@ -211,45 +183,27 @@ export async function startPongGame(app: FastifyInstance) {
 
 function getInputs(sock: Socket, game: Game) {
 	sock.on('keyup', (key: any, id: string) => {
-		// console.log(sock.id);
-		// console.log(`p1 = ${game.p1.id}`);
-		// console.log(`p2 = ${game.p2.id}`);
 		//p1
 		if (id === game.p1.id) {
-			// console.log(`KEYDOWN -> sock.id = ${sock.id}, p1.id = ${game.p1.id}, key = ${key.key}`);
 			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') game.p1.key_up = false;
 			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') game.p1.key_down = false;
 		}
 		//p2
 		if (id === game.p2.id) {
-			// console.log(`KEYDOWN -> sock.id = ${sock.id}, p2.id = ${game.p2.id}, key = ${key.key}`);
 			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') game.p2.key_up = false;
 			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') game.p2.key_down = false;
 		}
 	});
 	sock.on('keydown', (key: any, id: string) => {
-		// console.log(sock.id);
-		// console.log(`p1 = ${game.p1.id}`);
-		// console.log(`p2 = ${game.p2.id}`);
 		//p1
 		if (id === game.p1.id) {
-			// console.log(`KEYUP -> id = ${id}, p1.id = ${game.p1.id}, key = ${key.key}`);
 			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') game.p1.key_up = true;
 			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') game.p1.key_down = true;
 		}
 		//p2
 		if (id === game.p2.id) {
-			// console.log(`KEYUP -> id = ${id}, p2.id = ${game.p2.id}, key = ${key.key}`);
 			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') game.p2.key_up = true;
 			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') game.p2.key_down = true;
-		}
-	});
-
-	// provisoire
-	sock.on('keypress', (key: any) => {
-		// console.log(key.key);
-		if (key.key === ' ') {
-			resetGame(game);
 		}
 	});
 }
@@ -276,13 +230,8 @@ function checkWin(game: Game, app: FastifyInstance) {
 		game.ball.x = WIN_WIDTH / 2;
 		game.ball.y = WIN_HEIGHT / 2;
 		const room = rooms.find(r => r.game.p1.id === game.p1.id || r.game.p2.id === game.p2.id);
-		// const targetSocket = app.io.sockets.sockets.get(socketId);
 		if (room) {
-			// console.log(`${room.name} finished`);
-			app.io.to(room.name).emit('playerWin', game.p1.score > game.p2.score ? game.p1.name : game.p2.name, game);
-			// console.log(`room ${room.name} closed`);
-			// rooms = rooms.filter(r => r !== room);
-			roomcount--;
+			app.io.to(room.name).emit('playerWin', game.p1.score > game.p2.score ? game.p1.nickName : game.p2.nickName, game);
 		}
 	}
 }
@@ -352,11 +301,11 @@ function gameLoop(game: Game, app: FastifyInstance) {
 	}
 }
 
-function resetGame(game: Game) {
-	resetBall(game);
-	game.p1.score = 0;
-	game.p2.score = 0;
-}
+// function resetGame(game: Game) {
+// 	resetBall(game);
+// 	game.p1.score = 0;
+// 	game.p2.score = 0;
+// }
 
 function resetBall(game: Game) {
 	// game.p1.score = 0;

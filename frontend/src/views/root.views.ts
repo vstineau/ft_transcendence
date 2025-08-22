@@ -287,7 +287,7 @@ export async function LoginView() {
 				<div class="mt-4 text-center">
 					<p class="text-sm text-gray-600">
 						Don't have an account ?
-						<a href="/register" class="text-black hover:underline font-medium">Sign up</a>
+						<a href="/register?/login" class="text-black hover:underline font-medium">Sign up</a>
 					</p>
 				</div>
 

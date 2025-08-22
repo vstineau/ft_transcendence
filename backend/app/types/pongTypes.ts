@@ -7,7 +7,7 @@ export interface Game {
 }
 
 export interface Player {
-    name: string;
+    nickName: string;
     id: string;
     y: number;
     x: number;
@@ -18,6 +18,7 @@ export interface Player {
     key_up: boolean;
     key_down: boolean;
     avatar: string;
+    login: string;
 }
 
 export interface Ball {
