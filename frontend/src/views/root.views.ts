@@ -564,8 +564,10 @@ export async function localSnakeCanvas() {
       <div class="flex items-center justify-center w-full h-[20vh] px-8">
         <div class="text-center text-white text-4xl font-bold">LOCAL SNAKE GAME</div>
       </div>
+
       <!-- Zone centrale avec blocs latéraux et canvas (80%) -->
 		<div class="flex flex-row items-center justify-center w-full h-[80vh]">
+
 		  <!-- Bloc gauche pour WASD -->
 		  <div class="flex flex-col items-center justify-center h-[80vh] w-[10vh] mr-28">
 		    <div class="grid grid-cols-3 grid-rows-2 gap-2">
@@ -577,6 +579,7 @@ export async function localSnakeCanvas() {
 		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">D</div>
 		    </div>
 		  </div>
+
 		  <!-- Canvas central -->
 		  <div class="flex items-center justify-center h-[80vh] w-[80vh]">
 		    <canvas
@@ -587,6 +590,7 @@ export async function localSnakeCanvas() {
 		      style="width:80vh; height:80vh;"
 		    ></canvas>
 		  </div>
+
 		  <!-- Bloc droit pour flèches directionnelles -->
 		  <div class="flex flex-col items-center justify-center h-[80vh] w-[10vh] ml-28">
 		    <div class="grid grid-cols-3 grid-rows-2 gap-2">
@@ -600,6 +604,16 @@ export async function localSnakeCanvas() {
 		  </div>
 		</div>
       </div>
-    </div>
+
+		<!-- Boutons fin de partie -->
+		<div id="snakeGameEndButtons"
+		     class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50"
+		     style="display:none; pointer-events:auto;">
+		  <div class="flex flex-row items-center justify-center gap-4 bg-gray-900 bg-opacity-30 p-8 rounded-xl shadow-2xl"
+		       style="position:relative; top:200px;">
+		    <button id="replayBtn" class="bg-green-500 :bg-green-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition">click or Press 'Enter' for replay</button>
+		    <button id="quitBtn" class="bg-red-500 hover:bg-red-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition">click or press 'Escape' for quit</button>
+		  </div>
+		</div>
   `;
 }
