@@ -9,7 +9,8 @@ export async function updateInfos() {
 
 	 setTimeout(() => {
         initUserAvatar();
-    }, 100);
+        initUpdateInfosPage();
+    }, 500);
 
 	const form = document.getElementById('register-form') as HTMLFormElement | null;
 	if (!form) return true;
@@ -109,7 +110,7 @@ function initUpdateInfosPage(): void {
     console.log('=== Initializing UpdateInfos page ===');
 
     // Initialiser l'avatar
-    initUserAvatar();
+    // initUserAvatar();
 
     // Initialiser les onglets
     initTabs();
@@ -143,23 +144,31 @@ function switchTab(tabName: string): void {
     });
     document.querySelector(`[data-tab="${tabName}"]`)?.classList.add('active');
 
+    // Désactiver TOUS les menu items
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+    });
+
     // Cacher tous les menus
     document.querySelectorAll('.tab-menu').forEach(menu => {
         menu.classList.add('hidden');
     });
 
-    // Afficher le menu correspondant
-    const targetMenu = document.getElementById(`${tabName}-menu`);
+    // CORRECTION : Gérer tous les onglets, pas seulement "profil"
+    let targetMenuId = '';
+    if (tabName === 'profil') {
+        targetMenuId = 'profil-menu';
+    } else if (tabName === 'general') {
+        targetMenuId = 'general-menu';
+    }
+
+    const targetMenu = document.getElementById(targetMenuId);
     if (targetMenu) {
         targetMenu.classList.remove('hidden');
 
-        // Activer le premier item du menu
+        // Activer le premier item du nouveau menu
         const firstMenuItem = targetMenu.querySelector('.menu-item');
         if (firstMenuItem) {
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('active');
-            });
-
             firstMenuItem.classList.add('active');
 
             const contentKey = (firstMenuItem as HTMLElement).dataset.content;
@@ -217,94 +226,117 @@ function showContent(contentKey: string): void {
 function getContentHTML(contentKey: string): string {
     const contents: Record<string, string> = {
         'change-password': `
-            <form id="change-password-form" class="space-y-6">
-                <h2 class="text-xl font-bold text-black mb-6">Change Password</h2>
+			<!--- ici les elements qui selon affiches selon l'onglet--->
+			<form id="change-password-form" class="space-y-4">
 
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-blue-500 transition-colors bg-transparent"
-                    required
-                />
+				<!--email-->
+				<input
+				autocomplete="off"
+				type="email"
+				name="login"
+				id="mail"
+				placeholder="Email"
+				class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+				required
+				/>
 
-                <input
-                    type="password"
-                    name="current-password"
-                    placeholder="Current Password"
-                    class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-blue-500 transition-colors bg-transparent"
-                    required
-                />
+				<!-- Mot de passe -->
+				<input
+				type="password"
+				name="password"
+				id="password"
+				placeholder="Password"
+				class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+				required
+				/>
 
-                <input
-                    type="password"
-                    name="new-password"
-                    placeholder="New Password"
-                    class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-blue-500 transition-colors bg-transparent"
-                    required
-                />
+				<!-- nouveau mdp -->
+				<input
+				type="newpassword"
+				name="newpassword"
+				id="newpassword"
+				placeholder="New password"
+				class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+				required
+				/>
 
-                <div class="flex justify-center pt-4">
-                    <button
-                        type="submit"
-                        class="bg-black hover:bg-gray-800 text-white font-medium py-3 px-8 rounded-lg transition-colors"
-                    >
-                        Submit
-                    </button>
-                </div>
-            </form>
+				<!-- Bouton Submit-->
+				<div class="flex justify-center pt-4">
+				<button
+				type="submit"
+				class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-2 rounded-lg transition-colors"
+				>Submit</button>
+			</div>
+		</form>
         `,
 
-        'dual-auth': `
+        'dual-authentication': `
             <div class="space-y-6">
-                <h2 class="text-xl font-bold text-black mb-6">Two-Factor Authentication</h2>
 
                 <div class="flex items-start">
                     <input type="checkbox" id="enable-2fa" class="w-5 h-5 mt-1 mr-4">
                     <div>
-                        <h3 class="font-medium text-black mb-2">Turn on 2-Step Verification</h3>
+                        <h3 class="font-medium text-black text-medium mb-2">Turn on 2-Step Verification</h3>
                         <p class="text-sm text-gray-600 mb-4">
-                            Add an extra layer of security to your account with two-factor authentication.
+                            With 2-Step Verification, or two-factor authentication, you can add  an extra layer of security to your account in case your password is stolen.<br><br>
+							After you set up 2-Step Verification, you can sign in to your account with:
                         </p>
                         <ul class="text-sm text-gray-600 mb-6 space-y-1">
                             <li>• Your password and a second step</li>
                             <li>• Your passkey</li>
                         </ul>
-                        <button class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
-                            Enable 2FA
-                        </button>
+                        <div class="flex justify-center pt-4">
+							<button
+							type="submit"
+							class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-2 rounded-lg transition-colors">Submit</button>
+						</div>
                     </div>
                 </div>
             </div>
         `,
 
         'profile-picture': `
+		<div class="w-full h-full flex items-center justify-center">
+            <div class="space-y-6 text-center">
+				<div class="text-center">
+					<input type="file" id="profile-upload" class="hidden" accept="image/*">
+					<button onclick="document.getElementById('profile-upload').click()" class="bg-gray-200 hover:bg-gray-200 px-6 py-2 rounded-lg text-sm transition-colors mb-2">
+						Browse...
+					</button>
+					<p id="file-info" class="text-xs text-gray-500 mb-12">No file selected.</p>
+					<div class="flex items-center justify-center mb-6">
+						<input type="checkbox" id="no-picture" class="mr-2">
+						<label for="no-picture" class="text-sm text-gray-600">Use default avatar</label>
+					</div>
+					<button class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
+						Save Changes
+					</button>
+				</div>
+			</div>
+		</div>
+        `,
+
+        'theme': `
             <div class="space-y-6">
-                <h2 class="text-xl font-bold text-black mb-6">Profile Picture</h2>
-
-                <div class="text-center">
-                    <div id="preview-avatar" class="w-24 h-24 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center text-2xl font-bold">
-                        U
-                    </div>
-
-                    <input type="file" id="profile-upload" class="hidden" accept="image/*">
-                    <button onclick="document.getElementById('profile-upload').click()" class="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-lg text-sm transition-colors mb-4">
-                        Browse Files
-                    </button>
-                    <p id="file-info" class="text-xs text-gray-500 mb-4">No file selected.</p>
-
-                    <div class="flex items-center justify-center mb-6">
-                        <input type="checkbox" id="no-picture" class="mr-2">
-                        <label for="no-picture" class="text-sm text-gray-600">Use default avatar</label>
-                    </div>
-
-                    <button class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
-                        Save Changes
-                    </button>
-                </div>
+                <h2 class="text-xl font-bold text-black mb-6">Theme Settings</h2>
+                <p class="text-gray-600">Customize your theme preferences...</p>
             </div>
-        `
-    };
+        `,
+
+		'notifications': `
+			<div class="space-y-6">
+				<h2 class="text-xl font-bold text-black mb-6">Notifications</h2>
+				<p class="text-gray-600">Manage your notification settings...</p>
+			</div>
+	`,
+
+		'preferences': `
+			<div class="space-y-6">
+				<h2 class="text-xl font-bold text-black mb-6">Preferences</h2>
+				<p class="text-gray-600">Configure your general preferences...</p>
+			</div>
+		`
+};
 
     return contents[contentKey] || '<p>Content not found</p>';
 }
@@ -313,6 +345,9 @@ function initContentFeatures(contentKey: string): void {
     switch (contentKey) {
         case 'change-password':
             initChangePasswordForm();
+            break;
+		case 'dual-authentication':
+            initProfilePictureUpload();
             break;
         case 'profile-picture':
             initProfilePictureUpload();
@@ -385,3 +420,4 @@ function initProfilePictureUpload(): void {
         });
     }
 }
+

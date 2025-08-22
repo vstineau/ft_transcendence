@@ -41,7 +41,7 @@ function updateProfileBlock(userData?: UserData): void {
     if (locationEl) {
         // Vous pouvez choisir d'afficher l'email, la localisation, ou autre chose
         if (userData.email) {
-            locationEl.textContent = `📧 ${userData.email}`;
+            locationEl.textContent = `${userData.email}`;
         } else {
             locationEl.textContent = '📍 Unknown';
         }

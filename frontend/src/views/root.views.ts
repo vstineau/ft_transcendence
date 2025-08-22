@@ -12,7 +12,7 @@ export async function RootView() {
     <div class="max-w-7xl mx-auto px-8 ">
 
         <!-- Container des blocs en grid complexe -->
-        	<div class="grid gap-3 auto-rows-min mx-auto mt-36  justify-center" style="grid-template-columns: 320px 150px 280px 150px; max-width: 1000px;">
+        	<div class="grid gap-3 auto-rows-min mx-auto mt-36 justify-center" style="grid-template-columns: 320px 150px 280px 150px; max-width: 1000px;">
 
 			<!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes changer la taille de base du bloc de profil -->
 				<div class="row-span-2 bg-white rounded-xl shadow-lg p-4">
@@ -152,7 +152,7 @@ export async function RootView() {
 		<button
 			type="button"
 			id="logout"
-			class="fixed top-4 right-4 z-50 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
+			class="font-montserrat fixed top-4 right-4 z-50 bg-black hover:bg-gray-600 text-white text-sm py-2 px-4 rounded-lg"
 			style="display: none;"
 		>
 			Logout
@@ -276,8 +276,7 @@ export async function LoginView() {
 					<div class="flex justify-center pt-4">
 						<button
 							type="submit"
-							class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors"
-						>Sign in</button>
+							class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors">Sign in</button>
 					</div>
                 </form>
 
@@ -441,33 +440,29 @@ export async function UpdateInfosview() {
 
 	<div class="min-h-screen bg-gray-100 py-8 px-4">
 		<div class="max-w-4xl mx-auto">
+
 			<!-- creer les onglets-->
 			<div class="flex border-b border-gray-300 mb-8">
-				<button class="font-montserrat tab-button active px-6 px-3 front-medium text-sm focus:outline-none border-b-2 transition-colors data-tab="profil">
+				<button class="tab-button active px-6 px-3 front-medium font-montserrat text-sm focus:outline-none border-b-2 transition-colors" data-tab="profil">
 					Profil
 				</button>
 
-				<button class="font-montserrat tab-button active px-6 px-3 front-medium text-sm focus:outline-none border-b-2 transition-colors data-tab="profil">
-					Games
+				<button
+					class="font-montserrat tab-button px-6 py-3 font-medium text-sm focus:outline-none border-b-2 transition-colors" data-tab="general">
+					General
 				</button>
-
-				</button>
-                    <button
-                        class="font-montserrat tab-button px-6 py-3 font-medium text-sm focus:outline-none border-b-2 transition-colors"
-                        data-tab="general"
-                    >
-                        General
-                    </button>
-                </div>
+			</div>
 
                 <!-- Contenu des onglets -->
                 <div class="flex gap-8">
 
                     <!-- Sidebar gauche avec menu -->
                     <div class="w-64">
+
                         <!-- Profil utilisateur -->
 							<div class="bg-white rounded-xl p-4 mb-6 shadow-sm">
 							<div class="font-montserrat flex items-center">
+
 							<!-- CONTAINER PRINCIPAL -->
 							<div id="avatar-container" class="w-12 h-12 bg-gray-300 rounded-lg overflow-hidden">
 								<!-- Seul l'avatar OU le fallback sera affiché, pas les deux -->
@@ -476,59 +471,40 @@ export async function UpdateInfosview() {
 							<div class="ml-5">
 								<h3 id="user-name" class="font-montserrat font-bold text-black">Loading...</h3>
 								<p class="font-montserrat text-sm text-gray-500">Profil settings</p>
-								<p id="user-email" class="font-montserrat text-xs text-gray-400" style="display: none;"></p>
 							</div>
 						</div>
                     </div>
 
                         <!-- Menu latéral pour onglet Profil -->
-                        <div id="profil-menu" class="tab-content">
+                        <div id="profil-menu" class="tab-menu">
                             <div class="space-y-2">
-                                <button class="font-montserrat menu-item active w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                <button class="font-montserrat menu-item active w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="change-password">
                                     <span class="w-5 h-5 mr-3">ꗃ</span>
                                     Change password
                                 </button>
-                                <button class="font-montserrat menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                <button class="font-montserrat menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center"  data-content="dual-authentication">
                                     <span class="w-5 h-5 mr-3">✓</span>
                                     Dual authentication
                                 </button>
-                                <button class="font-montserrat menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                <button class="font-montserrat menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center"  data-content="profile-picture">
                                     <span class="w-5 h-5 mr-3">👤</span>
                                     Profile picture
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Menu latéral pour onglet Games (caché par défaut) -->
-                        <div id="games-menu" class="tab-content hidden">
-                            <div class="space-y-2">
-                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
-                                    <span class="w-5 h-5 mr-3">🏓</span>
-                                    Pong Settings
-                                </button>
-                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
-                                    <span class="w-5 h-5 mr-3">🐍</span>
-                                    Snake Settings
-                                </button>
-                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
-                                    <span class="w-5 h-5 mr-3">📊</span>
-                                    Statistics
-                                </button>
-                            </div>
-                        </div>
-
                         <!-- Menu latéral pour onglet General (caché par défaut) -->
-                        <div id="general-menu" class="tab-content hidden">
+                        <div id="general-menu" class="tab-menu hidden">
                             <div class="space-y-2">
-                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="theme">
                                     <span class="w-5 h-5 mr-3">🎨</span>
                                     Theme
                                 </button>
-                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="notifications">
                                     <span class="w-5 h-5 mr-3">🔔</span>
                                     Notifications
                                 </button>
-                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center">
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="preferences">
                                     <span class="w-5 h-5 mr-3">⚙️</span>
                                     Preferences
                                 </button>
@@ -536,111 +512,50 @@ export async function UpdateInfosview() {
                         </div>
                     </div>
 
-                    <!-- Zone de contenu principale -->
-                    <div class="flex max-w-md w-full bg-white rounded-2xl shadow-sm p-8 ml-16 mt-12">
-                    <form id="newPassword-form" class="space-y-4">
-
-                        <!--email-->
-                        <input
-                            autocomplete="off"
-                            type="email"
-                            name="login"
-                            id="mail"
-                            placeholder="Email"
-                            class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
-                            required
-                        />
-
-                        <!-- Mot de passe -->
-                        <input
-                            type="password"
-                            name="password"
-                            id="password"
-                            placeholder="Password"
-                            class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
-                            required
-                        />
-
-						 <!-- nouveau mdp -->
-                        <input
-                            type="newpassword"
-                            name="newpassword"
-                            id="newpassword"
-                            placeholder="New password"
-                            class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
-                            required
-                        />
-
-                        <!-- Bouton Submit-->
-                            <div class="flex justify-center pt-4">
-                                <button
-                                    type="submit"
-                                    class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors"
-                                >Submit</button>
-                            </div>
-                        </form>
-                    </div>
-
-                        <!-- Contenu pour Dual authentication (caché par défaut) -->
-                        <div id="dual-auth-content" class="content-panel bg-white rounded-xl p-8 shadow-sm hidden">
-                            <div class="space-y-6">
-                                <div class="flex items-start">
-                                    <input type="checkbox" id="enable-2fa" class="w-5 h-5 mt-1 mr-4">
-                                    <div>
-                                        <h3 class="font-medium text-black mb-2">Turn on 2-Step Verification</h3>
-                                        <p class="text-sm text-gray-600 mb-4">
-                                            With 2-Step Verification, or two-factor authentication, you can add an extra layer of security to your account in case your password is stolen.
-                                        </p>
-                                        <p class="text-sm text-gray-600 mb-4">
-                                            After you set up 2-Step Verification, you can sign in to your account with:
-                                        </p>
-                                        <ul class="text-sm text-gray-600 mb-6">
-                                            <li>• Your password and a second step</li>
-                                            <li>• Your passkey</li>
-                                        </ul>
-                                        <button class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
-                                            Submit
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Contenu pour Profile picture (caché par défaut) -->
-                        <div id="profile-picture-content" class="content-panel bg-white rounded-xl p-8 shadow-sm hidden">
-                            <div class="space-y-6">
-                                <div class="text-center">
-                                    <div class="w-24 h-24 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center text-2xl font-bold">
-                                        F
-                                    </div>
-                                    <input type="file" id="profile-upload" class="hidden" accept="image/*">
-                                    <button onclick="document.getElementById('profile-upload').click()" class="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-lg text-sm transition-colors mb-4">
-                                        Browse...
-                                    </button>
-                                    <p class="text-xs text-gray-500 mb-4">No file selected.</p>
-
-                                    <div class="flex items-center justify-center mb-6">
-                                        <input type="checkbox" id="no-picture" class="mr-2">
-                                        <label for="no-picture" class="text-sm text-gray-600">I don't want a picture: random picture would be selected</label>
-                                    </div>
-
-                                    <button class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
-                                        Submit
-                                    </button>
-                                </div>
-                            </div>
+					<!-- Zone de contenu principal -->
+                    <div class="flex-1">
+                        <div id="content-area" class="flex max-w-md w-full bg-white rounded-2xl shadow-md p-8 ml-16 mt-12">
+                            <!-- Le contenu changera ici dynamiquement -->
                         </div>
                     </div>
                 </div>
 
-                <!-- Bouton retour -->
-                <div class="mt-8 text-center">
-                    <a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
-                </div>
+						<!-- Bouton retour -->
+						<div class="mt-8 text-center">
+							<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+						</div>
+					</div>
+				</div>
 
-            </div>
-        </div>
-    `;
+						</div>
+					</div>
+				</div>
+
+			<style>
+				.tab-button {
+					border-bottom-color: transparent;
+					color: #6B7280; /* Gris par défaut */
+				}
+				.tab-button.active {
+					border-bottom-color: #000000; /* Bordure noire */
+					color: #000000; /* Texte noir */
+				}
+
+				/* Styles pour les menu items - noir et blanc */
+				.menu-item {
+					background-color: transparent;
+					color: #000000; /* Texte noir par défaut */
+				}
+				.menu-item:hover {
+					background-color: #F3F4F6; /* Gris clair au survol */
+					color: #000000;
+				}
+				.menu-item.active {
+					background-color: #000000; /* Fond noir quand actif */
+					color: #FFFFFF; /* Texte blanc quand actif */
+				}
+			</style>
+	`;
 }
 
 
