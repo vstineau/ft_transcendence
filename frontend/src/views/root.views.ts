@@ -17,13 +17,19 @@ export async function RootView() {
 			<!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes changer la taille de base du bloc de profil -->
 				<div class="row-span-2 bg-white rounded-xl shadow-lg p-4">
 					<div class="flex items-start mb-6 ml-3">
-						<div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold">
-							F
+						<div id="profile-avatar-container" class="w-32 h-32 bg-gray-200 rounded-xl overflow-hidden">
+                        	<!-- L'avatar ou le fallback sera injecté ici -->
 						</div>
+
 						<div class="ml-5">
-							<h3 class="font-montserrat font-bold text-lg">Fatima Zahra</h3>
-							<p class="text-gray-600 text-sm mb-1">@fatizaaa</p>
-							<p class="text-gray-500 text-xs">📍 Paris</p>
+							<!-- NOM UTILISATEUR -->
+							<h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
+
+							<!-- USERNAME/LOGIN -->
+							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
+
+							<!-- EMAIL OU LOCALISATION -->
+							<p id="profile-location" class="text-gray-500 text-xs">📍 Loading...</p>
 						</div>
 					</div>
 

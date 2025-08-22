@@ -9,6 +9,131 @@ interface UserData {
     lastName?: string;
 }
 
+function updateProfileBlock(userData?: UserData): void {
+    console.log('=== updateProfileBlock called ===');
+
+    if (!userData) {
+        console.log('No user data provided');
+        return;
+    }
+
+    // 1. METTRE À JOUR L'AVATAR
+    updateProfileAvatar(userData.avatar);
+
+    // 2. METTRE À JOUR LE NOM
+    const displayNameEl = document.getElementById('profile-display-name');
+    if (displayNameEl) {
+        const displayName = getDisplayName(userData);
+        displayNameEl.textContent = displayName;
+        console.log('✅ Display name updated:', displayName);
+    }
+
+    // 3. METTRE À JOUR LE USERNAME
+    const usernameEl = document.getElementById('profile-username');
+    if (usernameEl) {
+        const username = userData.login || userData.nickName || 'user';
+        usernameEl.textContent = `@${username}`;
+        console.log('✅ Username updated:', username);
+    }
+
+    // 4. METTRE À JOUR LA LOCALISATION/EMAIL
+    const locationEl = document.getElementById('profile-location');
+    if (locationEl) {
+        // Vous pouvez choisir d'afficher l'email, la localisation, ou autre chose
+        if (userData.email) {
+            locationEl.textContent = `📧 ${userData.email}`;
+        } else {
+            locationEl.textContent = '📍 Unknown';
+        }
+        console.log('✅ Location/Email updated');
+    }
+}
+
+function updateProfileAvatar(avatarData?: string): void {
+    console.log('=== updateProfileAvatar called ===');
+
+    const container = document.getElementById('profile-avatar-container');
+    if (!container) {
+        console.error('Profile avatar container not found!');
+        return;
+    }
+
+    // Vider le container
+    container.innerHTML = '';
+
+    if (avatarData) {
+        // Créer l'image
+        const img = document.createElement('img');
+        img.className = 'w-full h-full object-cover rounded-xl';
+        img.alt = 'Profile picture';
+
+        // Gérer le format base64
+        let imageSrc = avatarData;
+        if (!avatarData.startsWith('data:image/')) {
+            if (avatarData.startsWith('iVBOR')) {
+                imageSrc = `data:image/png;base64,${avatarData}`;
+            } else if (avatarData.startsWith('/9j/')) {
+                imageSrc = `data:image/jpeg;base64,${avatarData}`;
+            } else {
+                imageSrc = `data:image/png;base64,${avatarData}`;
+            }
+        }
+
+        img.src = imageSrc;
+
+        img.onload = () => {
+            console.log('✅ Profile avatar loaded successfully!');
+        };
+
+        img.onerror = () => {
+            console.error('❌ Profile avatar failed to load, showing fallback');
+            showProfileFallback(container);
+        };
+
+        container.appendChild(img);
+
+    } else {
+        // Pas d'avatar, afficher le fallback
+        showProfileFallback(container);
+    }
+}
+
+function showProfileFallback(container: HTMLElement): void {
+    const userData = getCurrentUser();
+    const initial = userData ? getFirstLetter(userData) : 'U';
+
+    container.innerHTML = `
+        <div class="w-full h-full bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-4xl font-bold">
+            ${initial}
+        </div>
+    `;
+}
+
+export async function initProfilePage(): Promise<void> {
+    console.log('=== initProfilePage called ===');
+
+    // 1. Récupérer les données utilisateur depuis le serveur
+    await fetchAndSaveUserInfo();
+
+    // 2. Attendre que le DOM soit prêt
+    setTimeout(() => {
+        // 3. Récupérer les données depuis localStorage
+        const userData = getCurrentUser();
+
+        if (userData) {
+            console.log('User data found:', userData);
+            updateProfileBlock(userData);
+        } else {
+            console.log('No user data found, showing default');
+            updateProfileBlock({
+                nickName: 'Guest User',
+                login: 'guest',
+                email: 'guest@example.com'
+            });
+        }
+    }, 100);
+}
+
 //recup les donnees user actuelles
 
 export function getCurrentUser(): UserData | null {
@@ -132,131 +257,6 @@ function showFallback(container: HTMLElement): void {
         </div>
     `;
 }
-
-// function updateAvatarDisplay(avatarData?: string): void{
-//     const profileImage = document.getElementById('profile-image') as HTMLImageElement;
-//     const fallback = document.querySelector('.w-12.h-12.bg-gray-300') as HTMLElement;
-
-//     if(profileImage && avatarData){
-//         console.log('Settings avatar source:', avatarData.substring(0, 50)+ '...');
-
-//         // CORRECTION : Ajouter le préfixe si manquant
-//         let imageSrc = avatarData;
-//         if (!avatarData.startsWith('data:image/')) {
-//             if (avatarData.startsWith('iVBOR')) {
-//                 imageSrc = `data:image/png;base64,${avatarData}`;
-//             } else if (avatarData.startsWith('/9j/')) {
-//                 imageSrc = `data:image/jpeg;base64,${avatarData}`;
-//             } else {
-//                 imageSrc = `data:image/png;base64,${avatarData}`;
-//             }
-//             console.log('Added missing data URI prefix');
-//         }
-
-//         profileImage.src = imageSrc;
-//         profileImage.style.display = 'block';
-
-//         if(fallback){
-//             fallback.style.display = 'none';
-//         }
-
-//         // REMPLACEZ cette partie par le debug
-//         profileImage.onload = () => {
-//             console.log('Avatar BASE64 loaded sucessfully');
-
-//             // DEBUG CSS
-//             console.log('Image display:', profileImage.style.display);
-//             console.log('Image dimensions:', profileImage.width, 'x', profileImage.height);
-//             console.log('Image position:', profileImage.offsetLeft, profileImage.offsetTop);
-//             console.log('Parent container:', profileImage.parentElement);
-
-//             // Force l'affichage
-//             profileImage.style.display = 'block';
-//             profileImage.style.width = '48px';
-//             profileImage.style.height = '48px';
-//             profileImage.style.zIndex = '999';
-//         };
-
-//         profileImage.onerror = (error) => {
-//             console.error('Error loading BASE64 avatar:', error);
-//             profileImage.style.display = 'none';
-//             if (fallback){
-//                 fallback.style.display= 'flex';
-//             }
-//         };
-//     }else {
-//         console.log('No avatar data, showing fallback');
-//         if(profileImage){
-//             profileImage.style.display = 'none';
-//         }
-//         if(fallback){
-//             fallback.style.display = 'flex';
-//         }
-//     }
-// }
-
-
-// Initialiser l'avatar et les infos utilisateur dans l'interface
-// export function initUserAvatar(): void {
-//     const userData = getCurrentUser();
-
-//     if (!userData) {
-//         console.log('No user data found');
-//         return;
-//     }
-// 	console.log('Raw user data:', userData);
-
-//     // Mettre à jour l'image de profil
-// const profileImage = document.getElementById('profile-image') as HTMLImageElement;
-//     if (profileImage && userData?.avatar) {
-//         profileImage.src = userData.avatar;
-//         profileImage.style.display = 'block';
-
-//         profileImage.onerror = () => {
-//             // En cas d'erreur, afficher la lettre par défaut
-//             profileImage.style.display = 'none';
-//             const fallback = profileImage.nextElementSibling as HTMLElement;
-//             if (fallback) {
-//                 fallback.style.display = 'flex';
-//                 // Mettre la première lettre du nom
-//                 const initial = getFirstLetter(userData);
-//                 const initialSpan = fallback.querySelector('#user-initial') as HTMLElement;
-//                 if (initialSpan) {
-//                     initialSpan.textContent = initial;
-//                 }
-//             }
-//         };
-//     } else {
-//         // Pas d'avatar, afficher l'initiale
-//         const fallback = document.querySelector('.w-12.h-12.bg-gray-300') as HTMLElement;
-//         if (fallback) {
-//             const initial = getFirstLetter(userData);
-//             const initialSpan = fallback.querySelector('#user-initial') as HTMLElement;
-//             if (initialSpan) {
-//                 initialSpan.textContent = initial;
-//             }
-//         }
-//     }
-
-//     // Mettre à jour le nom d'utilisateur
-//     const userName = document.getElementById('user-name') as HTMLElement;
-//     if (userName) {
-//         const displayName = getDisplayName(userData);
-//         userName.textContent = displayName;
-//     }
-
-//     // Mettre à jour l'email si l'élément existe
-//     const userEmail = document.getElementById('user-email') as HTMLElement;
-//     if (userEmail && userData.email) {
-//         userEmail.textContent = userData.email;
-//     }
-
-//     console.log('User info loaded:', {
-//         name: getDisplayName(userData),
-//         email: userData.email,
-//         hasAvatar: !!userData.avatar
-//     });
-// }
 
 export function initUserAvatar(): void {
     console.log('=== initUserAvatar called ===');
