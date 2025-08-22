@@ -1,5 +1,5 @@
 import { navigateTo } from '../main';
-import { displayError } from '../utils/error'
+import { displayError } from '../utils/error';
 
 
 export async function logUser() {

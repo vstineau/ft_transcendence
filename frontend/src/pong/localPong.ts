@@ -6,32 +6,37 @@ let ctx: CanvasRenderingContext2D | null;
 
 let win_width = window.innerWidth;
 let win_height = window.innerHeight;
+let gameWidth = win_width * 0.8;
+let gameHeight = win_height * 0.8;
 
 let p1 = {
 	name: 'player 1',
-	y: win_height / 2,
+	y: gameHeight / 2,
 	x: 20,
-	height: win_height / 9,
-	length: win_width / 90,
-	vy: win_height / 150,
+	height: gameHeight / 9,
+	length: gameWidth / 90,
+	vy: gameHeight / 150,
 	score: 0,
 };
+
 let p2 = {
 	name: 'player 2',
-	y: win_height / 2,
-	x: win_width * 0.98,
-	height: win_height / 9,
-	length: win_width / 90,
-	vy: win_height / 150,
+	y: gameHeight / 2,
+	x: gameWidth - 20,
+	height: gameHeight / 9,
+	length: gameWidth / 90,
+	vy: gameHeight / 150,
 	score: 0,
 };
+
 let ball = {
-	x: win_width / 2,
-	y: win_height / 2,
-	radius: (win_height * win_width) / 80000,
+	x: gameWidth / 2,
+	y: gameHeight / 2,
+	radius: (gameHeight * gameWidth) / 80000,
 	vx: 0,
 	vy: 0,
 };
+
 let key_w = false,
 	key_s = false,
 	key_up = false,
@@ -64,35 +69,55 @@ function updateInfos() {
 }
 
 function drawGame() {
-	ctx!.fillStyle = 'black';
-	ctx!.fillRect(0, 0, win_width, win_height);
-	ctx!.save();
-	ctx!.beginPath();
-	ctx!.lineWidth = 5;
-	ctx!.fillStyle = 'white';
-	ctx!.fillRect(ball.x, ball.y, ball.radius, ball.radius);
-	ctx!.fill();
-	ctx!.lineWidth = 4;
-	ctx!.stroke();
-	ctx!.fillRect(p1.x, p1.y, p1.length, p1.height);
-	ctx!.fillRect(p2.x, p2.y, p2.length, p2.height);
-	ctx!.stroke();
-	for (let height = 0; height < win_height; height += 0) {
-		ctx!.fillRect(win_width / 2, height, 5, 10);
-		height += 15;
-		ctx!.stroke();
+	if (!ctx) return;
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	// Dessine le fond du jeu (zone centrale)
+	ctx.fillStyle = 'black';
+	ctx.fillRect(0, 0, gameWidth, gameHeight);
+	ctx.save();
+	// Dessine la balle (en ajoutant le décalage)
+	ctx.beginPath();
+	ctx.fillStyle = 'white';
+	ctx.lineWidth = 5;
+	ctx.fillRect(
+		(ball.x / win_width) * gameWidth,
+		(ball.y / win_height) * gameHeight,
+		(ball.radius / win_width) * gameWidth,
+		(ball.radius / win_height) * gameHeight
+	);
+	// Dessine les joueurs (en ajoutant le décalage)
+	ctx.fillRect(
+		(p1.x / win_width) * gameWidth,
+		(p1.y / win_height) * gameHeight,
+		(p1.length / win_width) * gameWidth,
+		(p1.height / win_height) * gameHeight
+	);
+	ctx.fillRect(
+		(p2.x / win_width) * gameWidth,
+		(p2.y / win_height) * gameHeight,
+		(p2.length / win_width) * gameWidth,
+		(p2.height / win_height) * gameHeight
+	);
+
+	// Ligne centrale en pointillés
+	for (let height = 0; height < gameHeight; height += 15) {
+		ctx.fillRect(gameWidth / 2 - 2, height, 5, 10);
 	}
-	ctx!.font = '50px Arial';
-	ctx!.fillText(p1.score.toString(), win_width * 0.25, win_height * 0.1);
-	ctx!.fillText(p2.score.toString(), win_width * 0.75, win_height * 0.1);
-	ctx!.fillStyle = 'white';
-	ctx!.textAlign = 'center';
+	// Scores en relatif à la zone de jeu
+	ctx.font = '50px Arial';
+	ctx.fillStyle = 'white';
+	ctx.textAlign = 'center';
+	ctx.fillText(p1.score.toString(), gameWidth * 0.25, gameHeight * 0.1);
+	ctx.fillText(p2.score.toString(), gameWidth * 0.75, gameHeight * 0.1);
+
+	ctx.restore();
 }
+// }
 
 function movePlayer() {
-	if (key_w === true && p1.y - p1.vy >= -10) p1.y -= p1.vy;
+	if (key_w === true && p1.y - p1.vy >= 1) p1.y -= p1.vy;
 	if (key_s === true && p1.y + p1.vy <= win_height - p1.height) p1.y += p1.vy;
-	if (key_up === true && p2.y - p2.vy >= -10) p2.y -= p2.vy;
+	if (key_up === true && p2.y - p2.vy >= 1) p2.y -= p2.vy;
 	if (key_down === true && p2.y + p2.vy <= win_height - p2.height) p2.y += p2.vy;
 }
 
@@ -199,15 +224,6 @@ export function localpongGame() {
 		}
 	});
 
-	// window.addEventListener('keypress', e => {
-	// 	if (e.key === ' ') {
-	// 		e.preventDefault();
-	// 		p1.score = 0;
-	// 		p2.score = 0;
-	// 		updateInfos();
-	// 	}
-	// });
-
 	window.addEventListener('keyup', e => {
 		if (e.key === 'w' || e.key === 'W') key_w = false;
 		if (e.key === 's' || e.key === 'S') key_s = false;
@@ -222,18 +238,20 @@ export function localpongGame() {
 	});
 
 	window.addEventListener('resize', () => {
-		canvas.width = window.innerWidth;
-		canvas.height = window.innerHeight;
-		win_width = window.innerWidth;
-		win_height = window.innerHeight;
+		canvas.width = window.innerWidth * 0.8;
+		canvas.height = window.innerHeight * 0.8;
+		win_width = window.innerWidth * 0.8;
+		win_height = window.innerHeight * 0.8;
+		gameWidth = win_width * 0.8;
+		gameHeight = win_height * 0.8;
 
 		updateInfos();
 	});
 
 	const initGame = () => {
 		canvas = document.getElementById('localgameCanvas') as HTMLCanvasElement;
-		canvas.width = window.innerWidth;
-		canvas.height = window.innerHeight;
+		canvas.width = window.innerWidth * 0.8;
+		canvas.height = window.innerHeight * 0.8;
 		if (!canvas) {
 			console.error("Canvas 'game' not found");
 			return;
