@@ -1,70 +1,74 @@
 import { navigateTo } from '../main';
 import { displayError } from '../utils/error';
 
-
 export async function logUser() {
-    const form = document.getElementById('login-form') as HTMLFormElement | null;
-    if (!form) return;
+	const form = document.getElementById('login-form') as HTMLFormElement | null;
+	if (!form) return;
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        displayError('');
+	form.addEventListener('submit', async e => {
+		e.preventDefault();
+		displayError('');
 
-        const formData = new FormData(form);
-        const login = formData.get('login')?.toString().trim();
-        const password = formData.get('password')?.toString().trim();
+		const formData = new FormData(form);
+		const login = formData.get('login')?.toString().trim();
+		const password = formData.get('password')?.toString().trim();
 
-        if (!login || !password) {
-            displayError('Please fill in all fields');
-            return;
-        }
+		if (!login || !password) {
+			displayError('Please fill in all fields');
+			return;
+		}
 
-        try {
-            const response = await fetch('https://localhost:8080/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    login: login, // Si le backend attend 'login' au lieu d'email
-                    password: password
-                }),
-            });
+		try {
+            const host = window.location.hostname;
+            const port = window.location.port;
+            const protocol = window.location.protocol;
+            const response = await fetch(`${protocol}//${host}:${port}/api/login`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					login: login, // Si le backend attend 'login' au lieu d'email
+					password: password,
+				}),
+			});
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
 
-            const result = await response.json();
-            console.log('Login response:', result); // Pour debug
+			const result = await response.json();
+			console.log('Login response:', result); // Pour debug
 
-            if (result.success) {
-                // Sauvegarder les données utilisateur
-                if (result.user) {
-                    saveUserData(result.user);
-                }
-                // Vérifier si 2FA est nécessaire
-                if (result.twoFaAuth) {
-                    navigateTo('/2fa-verification');
-                } else {
-                    // Connexion réussie, aller au dashboard
-                    navigateTo('/dashboard');
-                }
-            } else {
-                displayError(result.error || 'Login failed. Please try again.');
-            }
-        } catch (error) {
-            console.error('Login error:', error);
-            displayError('Connection error. Please try again.');
-        }
-    });
+			if (result.success) {
+				const queryString = !window.location.search ? '/' : window.location.search.substring(1);
+				// console.log('querystring = ' + queryString);
+				// Sauvegarder les données utilisateur
+				if (result.user) {
+					saveUserData(result.user);
+				}
+				// Vérifier si 2FA est nécessaire
+				if (result.twoFaAuth) {
+					navigateTo('/2fa-verification');
+				} else {
+					// Connexion réussie, aller au dashboard
+					navigateTo(queryString);
+				}
+			} else {
+				displayError(result.error || 'Login failed. Please try again.');
+			}
+		} catch (error) {
+			console.error('Login error:', error);
+			displayError('Connection error. Please try again.');
+		}
+	});
 }
 
 function saveUserData(userData: any): void {
-	try{
+	try {
 		localStorage.setItem('currentUser', JSON.stringify(userData));
 		console.log('USer data saved:', userData);
-	}catch (error){
+	} catch (error) {
 		console.error('Error saving user data:', error);
 	}
 }

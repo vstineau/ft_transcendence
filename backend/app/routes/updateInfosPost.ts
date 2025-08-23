@@ -64,7 +64,7 @@ export default {
 	      const response : IUserReply[200] = {success: true, qrCode: qrCodeDataURL};
           reply
             .setCookie('token', token, {
-              httpOnly: true,
+              httpOnly: false,
               secure: true,
               path: '/',
               sameSite: 'lax',

@@ -56,8 +56,8 @@ export default {
 	}
 };
 
-// export default {
-//   method: 'POST',
+=======
+//   method: 'GET',
 //   url: '/deleteAccount',
 //   handler: async (
 //     request: FastifyRequest,
@@ -73,7 +73,7 @@ export default {
 // 	      const response : IUserReply[200] = {success: true};
 //           reply
 //             .clearCookie('token', {
-//               httpOnly: true,
+//               httpOnly: false,
 //               secure: true,
 //               path: '/',
 //               sameSite: 'lax',
@@ -93,3 +93,4 @@ export default {
 //     }
 //   }
 // }
+

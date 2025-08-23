@@ -90,6 +90,7 @@ export async function registerUser() {
 		}
 		// sending token to backend then wait response
 		try {
+			const queryString = !window.location.search ? '/login' : window.location.search.substring(1);
 			const host = window.location.hostname;
 			const port = window.location.port;
 			const protocol = window.location.protocol;
@@ -109,7 +110,7 @@ export async function registerUser() {
 				if (reply.qrCode && twoFaAuth?.checked) {
 					showQRCodeModal(reply.qrCode);
 				} else {
-					navigateTo('/login');
+					navigateTo(queryString);
 				}
 			} else {
 				displayError(reply.error || 'registration failed please try again');
