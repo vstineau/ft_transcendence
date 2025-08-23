@@ -19,7 +19,10 @@ export async function logUser() {
 		}
 
 		try {
-			const response = await fetch('https://localhost:8080/api/login', {
+            const host = window.location.hostname;
+            const port = window.location.port;
+            const protocol = window.location.protocol;
+            const response = await fetch(`${protocol}//${host}:${port}/api/login`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',

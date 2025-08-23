@@ -634,8 +634,12 @@ export async function UpdateInfosview() {
 // }
 
 
-export async function PongCanvas(){
-	return /* HTML */ ` <canvas id="gameCanvas">pong</canvas> `;
+export async function PongCanvas(){ // gameCanvas
+	return /* HTML */ `
+		<div class="flex items-center justify-center w-screen h-screen bg-gray-900">
+			<canvas id="gameCanvas" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"></canvas>
+		</div>
+	`;
 }
 
 export async function SnakeCanvas() {
