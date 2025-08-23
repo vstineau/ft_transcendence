@@ -22,14 +22,16 @@ export async function RootView() {
 						</div>
 
 						<div class="ml-5">
+							<div class="flex items-center">
+								<h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
+								<button id="edit-profile-btn" class="ml-2 text-gray-500 hover:text-black transition-colors" title="Edit profile">
+									✍︎
+							</div>
 							<!-- NOM UTILISATEUR -->
-							<h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
+							<p id="profile-username" class="font-montserrat font-bold text-lg">Loading...</p>
 
 							<!-- USERNAME/LOGIN -->
 							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
-
-							<!-- EMAIL OU LOCALISATION -->
-							<p id="profile-location" class="text-gray-500 text-xs">Loading...</p>
 						</div>
 					</div>
 
@@ -479,11 +481,11 @@ export async function UpdateInfosview() {
                         <div id="profil-menu" class="tab-menu">
                             <div class="space-y-2">
                                 <button class="font-montserrat menu-item active w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="change-password">
-                                    <span class="w-5 h-5 mr-3">ꗃ</span>
+                                    <span class="w-5 h-5 mr-3 text-lg">ꗃ</span>
                                     Change password
                                 </button>
                                 <button class="font-montserrat menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center"  data-content="dual-authentication">
-                                    <span class="w-5 h-5 mr-3">✓</span>
+                                    <span class="w-5 h-5 mr-3 text-lg">✓</span>
                                     Dual authentication
                                 </button>
                                 <button class="font-montserrat menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center"  data-content="profile-picture">
@@ -496,17 +498,18 @@ export async function UpdateInfosview() {
                         <!-- Menu latéral pour onglet General (caché par défaut) -->
                         <div id="general-menu" class="tab-menu hidden">
                             <div class="space-y-2">
-                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="theme">
-                                    <span class="w-5 h-5 mr-3">🎨</span>
-                                    Theme
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="language">
+                                    <span class="w-5 h-5 mr-3">🗣</span>
+                                    Langage
                                 </button>
-                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="notifications">
-                                    <span class="w-5 h-5 mr-3">🔔</span>
-                                    Notifications
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="privacy-policy">
+                                    <span class="w-5 h-5 mr-3 text-lg">⚖︎</span>
+                                    General privacy police<br>
+									& terms of service
                                 </button>
-                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="preferences">
-                                    <span class="w-5 h-5 mr-3">⚙️</span>
-                                    Preferences
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="delete">
+                                    <span class="w-5 h-5 mr-3">🗑</span>
+                                    Delete your account
                                 </button>
                             </div>
                         </div>
@@ -553,6 +556,46 @@ export async function UpdateInfosview() {
 				.menu-item.active {
 					background-color: #000000; /* Fond noir quand actif */
 					color: #FFFFFF; /* Texte blanc quand actif */
+				}
+
+				.square-radio {
+					appearance: none;
+					width: 18px;
+					height: 18px;
+					border: 2px solid #D1D5DB;
+					background-color: white;
+					border-radius: 2px;
+					cursor: pointer;
+					position: relative;
+					margin-top: 2px;
+				}
+
+				.square-radio:checked {
+					background-color: #000000;
+					border-color: #000000;
+				}
+
+				.square-radio:checked::after {
+					content: '✓';
+					color: white;
+					font-size: 12px;
+					position: absolute;
+					top: 0px;
+					left: 2px;
+				}
+
+				.square-radio:hover {
+					border-color: #6B7280;
+				}
+
+				#content-area .w-full {
+					width: 100% !important;
+				}
+
+				#content-area .flex.justify-center {
+					display: flex !important;
+					justify-content: center !important;
+					width: 100% !important;
 				}
 			</style>
 	`;

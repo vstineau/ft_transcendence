@@ -94,7 +94,7 @@ export async function updateInfos() {
 			const reply = await response.json();
 			console.log(reply);
 			if (reply.success) {
-				navigateTo('/');
+				navigateTo('/dashboard');
 			} else {
 				displayError(reply.error || 'registration failed please try again');
 			}
@@ -111,13 +111,13 @@ function initUpdateInfosPage(): void {
 	// initUserAvatar();
 
 	// Initialiser les onglets
-	initTabs();
+	  initTabs();
 
 	// Initialiser les menus
-	initMenuItems();
-
-	// Afficher le contenu par défaut
-	showContent('change-password');
+	  initMenuItems();
+    // Afficher le contenu par défaut
+    showContent('change-password');
+	  initEditProfileButton();
 }
 
 function initTabs(): void {
@@ -314,27 +314,120 @@ function getContentHTML(contentKey: string): string {
 		</div>
         `,
 
-		theme: `
-            <div class="space-y-6">
-                <h2 class="text-xl font-bold text-black mb-6">Theme Settings</h2>
-                <p class="text-gray-600">Customize your theme preferences...</p>
-            </div>
-        `,
+		'language': `
+			<div class="space-y-6" style="width: 100%;">
+				<h2 class="font-montserrat font-medium text-black mb-4">Select language</h2>
 
-		notifications: `
-			<div class="space-y-6">
-				<h2 class="text-xl font-bold text-black mb-6">Notifications</h2>
-				<p class="text-gray-600">Manage your notification settings...</p>
-			</div>
-	`,
+				<div class="flex items-start">
+					<input type="radio" name="language" id="langage_fr" value="fr" class="square-radio mr-4">
+					<label for="langage_fr" class="font-medium text-black">French</label>
+				</div>
+				<div class="flex items-start">
+					<input type="radio" name="language" id="langage_en" value="en" class="square-radio mr-4" checked>
+					<label for="langage_en" class="font-medium text-black">English</label>
+				</div>
+				<div class="flex items-start">
+					<input type="radio" name="language" id="langage_sp" value="es" class="square-radio mr-4">
+					<label for="langage_sp" class="font-medium text-black">Spanish</label>
+				</div>
 
-		preferences: `
+				<div style="width: 100%; display: flex; justify-content: center; padding-top: 16px;">
+					<button
+						type="submit"
+						style="background-color: black; color: white; padding: 12px 32px; border-radius: 8px; border: none; cursor: pointer;">
+						Submit
+					</button>
+				</div>
+		`,
+
+		'privacy-policy': `
 			<div class="space-y-6">
-				<h2 class="text-xl font-bold text-black mb-6">Preferences</h2>
-				<p class="text-gray-600">Configure your general preferences...</p>
+				<h2 class="font-montserrat font-medium text-black mb-4">General Privacy Policy & Terms of Service</h2>
+
+				<div class="text-sm text-gray-700 space-y-4">
+					<div>
+						<h3 class="font-medium text-black mb-2">Privacy Policy</h3>
+						<p>This is an educational project. We collect minimal user data (username, email, game scores) for functionality purposes only. Data is stored securely and not shared with third parties.</p>
+					</div>
+
+					<div>
+						<h3 class="font-medium text-black mb-2">Terms of Service</h3>
+						<p>This platform is provided for educational purposes. Users must not attempt to harm the system or other users. We reserve the right to suspend accounts for inappropriate behavior.</p>
+					</div>
+
+					<div>
+						<h3 class="font-medium text-black mb-2">Data Usage</h3>
+						<p>User data is used solely for game functionality and account management. Data may be deleted upon request.</p>
+					</div>
+
+					<div>
+						<h3 class="font-medium text-black mb-2">Contact</h3>
+						<p>For questions regarding privacy or terms, contact: [votre email étudiant]</p>
+					</div>
+				</div>
+
+				<div class="flex justify-center pt-4">
+					<button class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
+						I Agree
+					</button>
+				</div>
 			</div>
 		`,
-	};
+
+		'delete': `
+			<div class="space-y-6">
+				<h2 class="font-montserrat font-medium text-black mb-4">Delete your account</h2>
+
+				<div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+					<div class="flex">
+						<div class="text-red-500 mr-3">⚠️</div>
+						<div>
+							<h3 class="text-red-800 font-medium mb-2">Warning: This action is irreversible</h3>
+							<p class="text-sm text-red-700">
+								Deleting your account will permanently remove all your data, game history, and settings.
+								This cannot be undone.
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<form id="delete-account-form" class="space-y-4">
+					<p class="text-sm text-gray-600 mb-4">
+						To confirm account deletion, please enter your email and password:
+					</p>
+
+            	<input
+				type="email"
+				name="email"
+				id="delete-email"
+				placeholder="Email"
+				class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-red-500 transition-colors bg-transparent"
+				required
+            	/>
+
+            	<input
+				type="password"
+				name="password"
+				id="delete-password"
+				placeholder="Password"
+				class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-red-500 transition-colors bg-transparent"
+				required
+            	/>
+
+            <div style="width: 100%; display: flex; justify-content: center; padding-top: 16px;">
+					<button
+						type="submit"
+						style="background-color: #DC2626; color: white; padding: 12px 32px; border-radius: 8px; border: none; cursor: pointer; transition: background-color 0.3s;"
+						onmouseover="this.style.backgroundColor='#B91C1C'"
+						onmouseout="this.style.backgroundColor='#DC2626'"
+					>
+						Delete Account Forever
+					</button>
+				</div>
+			</form>
+		</div>
+	`
+};
 
 	return contents[contentKey] || '<p>Content not found</p>';
 }
@@ -345,12 +438,18 @@ function initContentFeatures(contentKey: string): void {
 			initChangePasswordForm();
 			break;
 		case 'dual-authentication':
-			initProfilePictureUpload();
-			break;
-		case 'profile-picture':
-			initProfilePictureUpload();
-			break;
-	}
+            initProfilePictureUpload();
+            break;
+        case 'profile-picture':
+            initProfilePictureUpload();
+            break;
+		case 'delete':
+            initDeleteAccountForm();
+            break;
+		case 'edit-profile':
+            initEditProfileForm();
+            break;
+    }
 }
 
 function initChangePasswordForm(): void {
@@ -421,3 +520,167 @@ function initProfilePictureUpload(): void {
 		});
 	}
 }
+
+function initDeleteAccountForm(): void {
+    const form = document.getElementById('delete-account-form') as HTMLFormElement;
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Double confirmation avant suppression
+        const confirmed = confirm(
+            "Are you absolutely sure you want to delete your account? This action cannot be undone."
+        );
+
+        if (!confirmed) return;
+
+        const formData = new FormData(form);
+        const email = formData.get('email')?.toString().trim();
+        const password = formData.get('password')?.toString().trim();
+
+        if (!email || !password) {
+            displayError('Please enter both email and password');
+            return;
+        }
+
+        try {
+            // Désactiver le bouton pendant la requête
+            const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Deleting...';
+                submitButton.style.backgroundColor = '#9CA3AF';
+            }
+
+            // Appel à votre API de suppression
+            const host = window.location.hostname;
+            const port = window.location.port;
+            const protocol = window.location.protocol;
+
+            const response = await fetch(`${protocol}//${host}:${port}/api/deleteAccount`, {
+                method: 'POST', // Changé en POST pour envoyer les données
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', // Pour les cookies
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                }),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Your account has been successfully deleted.');
+                // Rediriger vers la page d'accueil
+                window.location.href = '/';
+            } else {
+                displayError(result.error || 'Failed to delete account. Please check your credentials.');
+
+                // Réactiver le bouton
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Delete Account Forever';
+                    submitButton.style.backgroundColor = '#DC2626';
+                }
+            }
+
+        } catch (error) {
+            console.error('Delete account error:', error);
+            displayError('Network error occurred. Please try again.');
+
+            // Réactiver le bouton
+            const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Delete Account Forever';
+                submitButton.style.backgroundColor = '#DC2626';
+            }
+        }
+    });
+}
+
+function initEditProfileForm(): void {
+    const form = document.getElementById('edit-profile-form') as HTMLFormElement;
+    if (!form) return;
+
+    // Pré-remplir avec les données existantes
+    const userData = getCurrentUser();
+    if (userData) {
+        const firstNameInput = document.getElementById('edit-firstName') as HTMLInputElement;
+        const lastNameInput = document.getElementById('edit-lastName') as HTMLInputElement;
+        const nickNameInput = document.getElementById('edit-nickName') as HTMLInputElement;
+        const emailInput = document.getElementById('edit-email') as HTMLInputElement;
+
+        if (firstNameInput) firstNameInput.value = userData.firstName || '';
+        if (lastNameInput) lastNameInput.value = userData.lastName || '';
+        if (nickNameInput) nickNameInput.value = userData.nickName || '';
+        if (emailInput) emailInput.value = userData.email || '';
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const body = {
+            firstName: formData.get('firstName')?.toString().trim(),
+            lastName: formData.get('lastName')?.toString().trim(),
+            nickName: formData.get('nickName')?.toString().trim(),
+            email: formData.get('email')?.toString().trim(),
+        };
+
+        try {
+            const host = window.location.hostname;
+            const port = window.location.port;
+            const protocol = window.location.protocol;
+
+            const response = await fetch(`${protocol}//${host}:${port}/api/updateProfile`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(body),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Profile updated successfully!');
+                // Mettre à jour les données locales
+                const currentUser = getCurrentUser();
+                if (currentUser) {
+                    Object.assign(currentUser, body);
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                }
+                // Actualiser l'affichage du nom
+                initUserAvatar();
+            } else {
+                displayError(result.error || 'Failed to update profile');
+            }
+        } catch (error) {
+            console.error('Update profile error:', error);
+            displayError('Network error occurred');
+        }
+    });
+}
+
+function initEditProfileButton(): void {
+    const editBtn = document.getElementById('edit-profile-btn');
+    if (editBtn) {
+        editBtn.addEventListener('click', () => {
+            console.log('Edit profile clicked');
+
+            // Désactiver tous les menu items actifs
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Afficher le contenu d'édition de profil
+            showContent('edit-profile');
+        });
+    }
+}
+
