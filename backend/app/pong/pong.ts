@@ -81,7 +81,7 @@ function getRoom() {
 function createRoom(socket: Socket): Room {
 	let newRoom: Room = {
 		name: `room_${roomcount++}`,
-		playersNb: 1,
+		playersNb: 1, ////// changer ca
 		game: initGame(),
 		locked: false,
 	};

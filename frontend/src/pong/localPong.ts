@@ -138,7 +138,11 @@ function checkWin() {
 		ctx.fillStyle = 'white';
 		ctx.textAlign = 'center';
 		ctx.font = `${(canvas.height * canvas.width) / 40000}px Arial`;
-		ctx.fillText((p1.score > p2.score ? p1.name : p2.name) + ' wins, press `Enter` to restart game', canvas.width * 0.5, canvas.height * 0.32);
+		ctx.fillText(
+			(p1.score > p2.score ? p1.name : p2.name) + ' wins, press `Enter` to restart game',
+			canvas.width * 0.5,
+			canvas.height * 0.32
+		);
 
 		return;
 	}
@@ -178,7 +182,7 @@ function handlePaddleCollisionP2() {
 }
 
 export function gameLoop(_socket: any) {
-	requestAnimationFrame(gameLoop);
+	// requestAnimationFrame(gameLoop);
 	// win_width = canvas.width;
 	// win_height = canvas.height;
 	drawGame();
@@ -211,7 +215,7 @@ export function gameLoop(_socket: any) {
 	}
 }
 
-export function localpongGame() {
+function listenInputs() {
 	window.addEventListener('keydown', e => {
 		if (e.key === 'w' || e.key === 'W') key_w = true;
 		if (e.key === 's' || e.key === 'S') key_s = true;
@@ -223,8 +227,7 @@ export function localpongGame() {
 			e.preventDefault();
 			key_down = true;
 		}
-		if(e.key === 'Enter' && gameOver)
-		{
+		if (e.key === 'Enter' && gameOver) {
 			gameOver = false;
 			updateInfos();
 			p1.score = 0;
@@ -255,18 +258,34 @@ export function localpongGame() {
 
 		updateInfos();
 	});
+}
 
-	const initGame = () => {
-		canvas = document.getElementById('localgameCanvas') as HTMLCanvasElement;
-		canvas.width = window.innerWidth * 0.8;
-		canvas.height = window.innerHeight * 0.8;
-		if (!canvas) {
-			console.error("Canvas 'game' not found");
-			return;
-		}
-		ctx = canvas.getContext('2d');
-		updateInfos();
-		gameLoop(canvas);
-	};
+function initGame() {
+	canvas = document.getElementById('localgameCanvas') as HTMLCanvasElement;
+	canvas.width = window.innerWidth * 0.8;
+	canvas.height = window.innerHeight * 0.8;
+	if (!canvas) {
+		console.error("Canvas 'game' not found");
+		return;
+	}
+	ctx = canvas.getContext('2d');
+	updateInfos();
+}
+
+let mainLoop : NodeJS.Timeout | undefined ;
+
+function startMainLoop() {
+    if (mainLoop) {
+        clearInterval(mainLoop);
+        mainLoop = undefined;
+    }
+    mainLoop = setInterval(() => {
+        gameLoop(canvas)
+    }, 1000 / 60);
+}
+
+export function localpongGame() {
+	listenInputs();
 	initGame();
+	startMainLoop();
 }
