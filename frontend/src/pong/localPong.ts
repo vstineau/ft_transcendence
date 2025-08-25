@@ -42,9 +42,11 @@ let key_w = false,
 	key_up = false,
 	key_down = false;
 
+let gameOver = false;
+
 function updateInfos() {
-	ball.x = win_width / 2;
-	ball.y = win_height / 2;
+	ball.x = win_width / 2 - ball.radius / 2;
+	ball.y = win_height / 2 - ball.radius / 2;
 
 	// updting ball properties
 	ball.vx = (Math.random() < 0.5 ? -1 : 1) * (win_width / 280);
@@ -54,8 +56,8 @@ function updateInfos() {
 	if (ball.radius > 30) ball.radius = 30;
 
 	// updating players positions
-	p1.y = win_height / 2;
-	p2.y = win_height / 2;
+	p1.y = win_height / 2 - p1.height / 2;
+	p2.y = win_height / 2 - p1.height / 2;
 	p2.x = win_width * 0.98;
 
 	// updating players properties
@@ -73,42 +75,43 @@ function drawGame() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	// Dessine le fond du jeu (zone centrale)
 	ctx.fillStyle = 'black';
-	ctx.fillRect(0, 0, gameWidth, gameHeight);
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	ctx.save();
 	// Dessine la balle (en ajoutant le décalage)
 	ctx.beginPath();
 	ctx.fillStyle = 'white';
 	ctx.lineWidth = 5;
 	ctx.fillRect(
-		(ball.x / win_width) * gameWidth,
-		(ball.y / win_height) * gameHeight,
-		(ball.radius / win_width) * gameWidth,
-		(ball.radius / win_height) * gameHeight
+		(ball.x / win_width) * canvas.width,
+		(ball.y / win_height) * canvas.height,
+		(ball.radius / win_width) * canvas.width,
+		(ball.radius / win_height) * canvas.height
 	);
 	// Dessine les joueurs (en ajoutant le décalage)
 	ctx.fillRect(
-		(p1.x / win_width) * gameWidth,
-		(p1.y / win_height) * gameHeight,
-		(p1.length / win_width) * gameWidth,
-		(p1.height / win_height) * gameHeight
+		(p1.x / win_width) * canvas.width,
+		(p1.y / win_height) * canvas.height,
+		(p1.length / win_width) * canvas.width,
+		(p1.height / win_height) * canvas.height
 	);
 	ctx.fillRect(
-		(p2.x / win_width) * gameWidth,
-		(p2.y / win_height) * gameHeight,
-		(p2.length / win_width) * gameWidth,
-		(p2.height / win_height) * gameHeight
+		(p2.x / win_width) * canvas.width,
+		(p2.y / win_height) * canvas.height,
+		(p2.length / win_width) * canvas.width,
+		(p2.height / win_height) * canvas.height
 	);
 
 	// Ligne centrale en pointillés
-	for (let height = 0; height < gameHeight; height += 15) {
-		ctx.fillRect(gameWidth / 2 - 2, height, 5, 10);
+	for (let height = 0; height < canvas.height; height += 15) {
+		ctx.fillRect(canvas.width / 2 - 2, height, 5, 10);
 	}
 	// Scores en relatif à la zone de jeu
-	ctx.font = '50px Arial';
+	ctx.font = `${(canvas.height * canvas.width) / 25000}px Arial`;
+	// ctx.font = '50px Arial';
 	ctx.fillStyle = 'white';
 	ctx.textAlign = 'center';
-	ctx.fillText(p1.score.toString(), gameWidth * 0.25, gameHeight * 0.1);
-	ctx.fillText(p2.score.toString(), gameWidth * 0.75, gameHeight * 0.1);
+	ctx.fillText(p1.score.toString(), canvas.width * 0.25, canvas.height * 0.07);
+	ctx.fillText(p2.score.toString(), canvas.width * 0.75, canvas.height * 0.07);
 
 	ctx.restore();
 }
@@ -122,23 +125,21 @@ function movePlayer() {
 }
 
 function checkWin() {
-	if (p1.score === 3 || p2.score === 3) {
+	if ((p1.score === 1 || p2.score === 1) && ctx) {
+		gameOver = true;
 		ball.vx = 0;
 		ball.vy = 0;
-		ball.x = win_width / 2;
-		ball.y = win_height / 2;
-		ctx!.fillStyle = 'white';
-		ctx!.fillRect(win_width * 0.1, win_height * 0.25, win_width * 0.8, win_height * 0.12);
-		ctx!.fillStyle = 'black';
-		ctx!.fillRect(win_width * 0.105, win_height * 0.26, win_width * 0.79, win_height * 0.1);
-		ctx!.fillStyle = 'white';
-		ctx!.textAlign = 'center';
-		if (p1.score === 3) {
-			ctx!.fillText(p1.name + ' wins', win_width * 0.5, win_height * 0.33);
-		}
-		if (p2.score === 3) {
-			ctx!.fillText(p2.name + ' wins', win_width * 0.5, win_height * 0.33);
-		}
+		ball.x = win_width / 2 - ball.radius / 2;
+		ball.y = win_height / 2 - ball.radius / 2;
+		ctx.fillStyle = 'white';
+		ctx.fillRect(canvas.width * 0.1, canvas.height * 0.25, canvas.width * 0.8, canvas.height * 0.12);
+		ctx.fillStyle = 'black';
+		ctx.fillRect(canvas.width * 0.105, canvas.height * 0.26, canvas.width * 0.79, canvas.height * 0.1);
+		ctx.fillStyle = 'white';
+		ctx.textAlign = 'center';
+		ctx.font = `${(canvas.height * canvas.width) / 40000}px Arial`;
+		ctx.fillText((p1.score > p2.score ? p1.name : p2.name) + ' wins, press `Enter` to restart game', canvas.width * 0.5, canvas.height * 0.32);
+
 		return;
 	}
 }
@@ -178,8 +179,8 @@ function handlePaddleCollisionP2() {
 
 export function gameLoop(_socket: any) {
 	requestAnimationFrame(gameLoop);
-	win_width = window.innerWidth;
-	win_height = window.innerHeight;
+	// win_width = canvas.width;
+	// win_height = canvas.height;
 	drawGame();
 	movePlayer();
 	checkWin();
@@ -222,6 +223,13 @@ export function localpongGame() {
 			e.preventDefault();
 			key_down = true;
 		}
+		if(e.key === 'Enter' && gameOver)
+		{
+			gameOver = false;
+			updateInfos();
+			p1.score = 0;
+			p2.score = 0;
+		}
 	});
 
 	window.addEventListener('keyup', e => {
@@ -240,10 +248,10 @@ export function localpongGame() {
 	window.addEventListener('resize', () => {
 		canvas.width = window.innerWidth * 0.8;
 		canvas.height = window.innerHeight * 0.8;
-		win_width = window.innerWidth * 0.8;
-		win_height = window.innerHeight * 0.8;
-		gameWidth = win_width * 0.8;
-		gameHeight = win_height * 0.8;
+		win_width = canvas.width;
+		win_height = canvas.height;
+		// gameWidth = canvas.width;
+		// gameHeight = canvas.height;
 
 		updateInfos();
 	});
