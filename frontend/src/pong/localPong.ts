@@ -1,6 +1,3 @@
-// import { Game } from '../types/pongTypes';
-// import { navigateTo } from '../main';
-
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D | null;
 
@@ -106,7 +103,8 @@ function drawGame() {
 		ctx.fillRect(canvas.width / 2 - 2, height, 5, 10);
 	}
 	// Scores en relatif à la zone de jeu
-	ctx.font = `${(canvas.height * canvas.width) / 25000}px Arial`;
+	const px = (canvas.height * canvas.width) / 35000 > 20 ? (canvas.height * canvas.width) / 35000 : 20;
+	ctx.font = `${px}px Arial`;
 	// ctx.font = '50px Arial';
 	ctx.fillStyle = 'white';
 	ctx.textAlign = 'center';
@@ -125,19 +123,26 @@ function movePlayer() {
 }
 
 function checkWin() {
-	if ((p1.score === 1 || p2.score === 1) && ctx) {
+	if ((p1.score === 3 || p2.score === 3) && ctx) {
 		gameOver = true;
+		const px = (canvas.height * canvas.width) / 35000;
+		console.log(px);
 		ball.vx = 0;
 		ball.vy = 0;
 		ball.x = win_width / 2 - ball.radius / 2;
 		ball.y = win_height / 2 - ball.radius / 2;
-		ctx.fillStyle = 'white';
-		ctx.fillRect(canvas.width * 0.1, canvas.height * 0.25, canvas.width * 0.8, canvas.height * 0.12);
-		ctx.fillStyle = 'black';
-		ctx.fillRect(canvas.width * 0.105, canvas.height * 0.26, canvas.width * 0.79, canvas.height * 0.1);
+		ctx.fillStyle = 'gray';
+		// Couleur de la bordure
+		ctx.strokeStyle = 'white';
+		ctx.lineWidth = 4; // épaisseur de la bordure
+
+		// Dessine le rectangle plein
+		ctx.fillRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
+		ctx.strokeRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
+
 		ctx.fillStyle = 'white';
 		ctx.textAlign = 'center';
-		ctx.font = `${(canvas.height * canvas.width) / 40000}px Arial`;
+		ctx.font = `${px}px Arial`;
 		ctx.fillText(
 			(p1.score > p2.score ? p1.name : p2.name) + ' wins, press `Enter` to restart game',
 			canvas.width * 0.5,
@@ -272,16 +277,16 @@ function initGame() {
 	updateInfos();
 }
 
-let mainLoop : NodeJS.Timeout | undefined ;
+let mainLoop: NodeJS.Timeout | undefined;
 
 function startMainLoop() {
-    if (mainLoop) {
-        clearInterval(mainLoop);
-        mainLoop = undefined;
-    }
-    mainLoop = setInterval(() => {
-        gameLoop(canvas)
-    }, 1000 / 60);
+	if (mainLoop) {
+		clearInterval(mainLoop);
+		mainLoop = undefined;
+	}
+	mainLoop = setInterval(() => {
+		gameLoop(canvas);
+	}, 1000 / 60);
 }
 
 export function localpongGame() {
