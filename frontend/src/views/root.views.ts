@@ -692,15 +692,20 @@ export async function SnakeCanvas() {
       <div class="flex items-center justify-center w-full h-[20vh] px-8">
         <div class="text-center text-white text-4xl font-bold">SNAKE GAME ONLINE</div>
       </div>
+
       <!-- Zone centrale avec blocs latéraux et canvas (80%) -->
       <div class="flex flex-row items-center justify-center w-full h-[80vh]">
+
         <!-- Bloc gauche : Photo carrée + nom joueur -->
-        <div class="flex flex-col items-center justify-center h-[80vh] w-[20vh] mr-28">
-          <img src="https://randomuser.me/api/portraits/men/32.jpg"
-            alt="Avatar joueur 1"
-            class="w-40 h-40 object-cover border-4 border-gray-600 shadow-lg mb-8 rounded-xl" />
-          <div class="bg-gray-700 text-white rounded px-4 py-2 text-2xl font-extrabold text-center w-full">Joueur 1</div>
-        </div>
+		<div class="flex flex-col items-center justify-center h-[80vh] w-[20vh] mr-28">
+		  <img id="avatarJoueur1"
+		    src=""
+		    alt="Avatar joueur 1"
+		    class="w-40 h-40 object-cover border-4 border-gray-600 shadow-lg mb-8 rounded-xl" />
+		  <input id="photoJoueur1" type="url" placeholder="URL photo..." class="mb-2 px-2 py-1 rounded bg-gray-800 text-white w-full text-center" />
+		  <input id="nomJoueur1" type="text" value="Joueur 1" class="bg-gray-700 text-white rounded px-4 py-2 text-2xl font-extrabold text-center w-full mb-2" />
+		</div>
+
         <!-- Canvas central -->
         <div class="flex items-center justify-center h-[80vh] w-[80vh]">
           <canvas
@@ -711,15 +716,27 @@ export async function SnakeCanvas() {
             style="width:80vh; height:80vh;"
           ></canvas>
         </div>
+
         <!-- Bloc droit : Photo carrée + nom joueur -->
-        <div class="flex flex-col items-center justify-center h-[80vh] w-[20vh] ml-28">
-          <img src="https://randomuser.me/api/portraits/women/44.jpg"
-            alt="Avatar joueur 2"
-            class="w-40 h-40 object-cover border-4 border-gray-600 shadow-lg mb-8 rounded-xl" />
-          <div class="bg-gray-700 text-white rounded px-4 py-2 text-2xl font-extrabold text-center w-full">Joueur 2</div>
-        </div>
-      </div>
-    </div>
+		<div class="flex flex-col items-center justify-center h-[80vh] w-[20vh] ml-28">
+		  <img id="avatarJoueur2"
+		    src=""
+		    alt="Avatar joueur 2"
+		    class="w-40 h-40 object-cover border-4 border-gray-600 shadow-lg mb-8 rounded-xl" />
+		  <input id="photoJoueur2" type="url" placeholder="URL photo..." class="mb-2 px-2 py-1 rounded bg-gray-800 text-white w-full text-center" />
+		  <input id="nomJoueur2" type="text" value="Joueur 2" class="bg-gray-700 text-white rounded px-4 py-2 text-2xl font-extrabold text-center w-full mb-2" />
+		</div>
+
+	<!-- Boutons fin de partie -->
+			<div id="snakeGameEndButtons"
+			     class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50"
+			     style="display:none; pointer-events:auto;">
+			  <div class="flex flex-row items-center justify-center gap-4 bg-gray-900 bg-opacity-30 p-8 rounded-xl shadow-2xl"
+			       style="position:relative; top:200px;">
+			    <button id="replayBtn" class="bg-green-500 :bg-green-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition">click or Press 'Enter' for replay</button>
+			    <button id="quitBtn" class="bg-red-500 hover:bg-red-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition">click or press 'Escape' for quit</button>
+			  </div>
+			</div>
   `;
 }
 

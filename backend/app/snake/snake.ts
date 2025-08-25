@@ -1,6 +1,9 @@
 import { pos, Game, Snake , Room} from '../types/snakeTypes.js';
+import { app } from '../app.js'
+import { JwtPayload } from '../types/userTypes.js'
 import { Socket } from 'socket.io';
 import { FastifyInstance } from 'fastify';
+import { User } from '../models.js'
 //import { v4 as uuidv4 } from "uuid";
 
 const WIN = 600;
@@ -13,26 +16,29 @@ function getRoom() {
     return snakeRooms.find(room => room.playersNb === 1);
 }
 
-function initRoom(socket: Socket) {
+function initRoom(socket: Socket, user: User) {
     const room = getRoom();
-    if (room) {
+    if (room && user.login != room.game.p1.login) {
         socket.join(room.name);
         room.playersNb = 2;
         room.game.p2.id = socket.id;
+		room.game.p2.name = user.nickName;
+		room.game.p2.login = user.login;
+		room.game.p2.avatar = user.avatar;
 		return room;
     } else {
-        const newRoom = createRoom(socket);
+        const newRoom = createRoom(socket, user);
         socket.join(newRoom.name);
 		newRoom.playersNb = 1;
 		return newRoom;
     }
 }
 
-function createRoom(socket: Socket): Room {
+function createRoom(socket: Socket, user: User): Room {
     let newRoom: Room = {
         name: `room_${roomcount++}`,
         playersNb: 1,
-        game: initGame(),
+        game: initGame(user),
     };
     newRoom.game.p1.id = socket.id;
     snakeRooms.push(newRoom);
@@ -51,7 +57,6 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 
             // Remove room from list
             snakeRooms = snakeRooms.filter(r => r !== room);
-            roomcount--;
         }
     });
 }
@@ -134,15 +139,17 @@ function checkCollision(snake: Snake, other: Snake): "other" | "head-on" | null 
     return null;
 }
 
-function initGame(): Game {
+function initGame(user: User): Game {
     let game: Game = {
         p1: {
-            name: 'Player 1',
+            name: user.nickName,
             segments: [{ x: Math.floor(WIN * 0.25 / SEG_SIZE) * SEG_SIZE, y: Math.floor(WIN * 0.5 / SEG_SIZE) * SEG_SIZE }],
             dir: { x: 0, y: -1 },
             pendingDir: { x: 0, y: -1 },
             color: "blue",
-            id: 'p1'
+            id: 'p1',
+			login: user.login,
+			avatar: user.avatar,
         },
         p2: {
             name: 'Player 2',
@@ -150,7 +157,9 @@ function initGame(): Game {
             dir: { x: 0, y: 1 },
             pendingDir: { x: 0, y: 1 },
             color: "red",
-            id: 'p2'
+            id: 'p2',
+			login: '',
+			avatar: '',
         },
         foods: [],
         winSize: WIN
@@ -178,6 +187,9 @@ export function getInputs(sock: Socket, game: Game) {
 					game.p1.pendingDir = {x:-1, y:0};
 			else if (key.key === 'ArrowRight'&& game.p1.pendingDir.x != -1)
 					game.p1.pendingDir = {x:1, y:0};
+			else if (key.key === 'Escape' || key.key === 'Enter') {
+				sock.emit('endGameButtons', key.key);
+			}
 		} else if (sock.id === game.p2.id) {
 			if ((key.key === 'w' || key.key === 'W') && game.p2.pendingDir.y != 1)
 				game.p2.pendingDir = {x:0, y:-1};
@@ -195,6 +207,9 @@ export function getInputs(sock: Socket, game: Game) {
 					game.p2.pendingDir = {x:-1, y:0};
 			else if (key.key === 'ArrowRight'&& game.p2.pendingDir.x != -1)
 					game.p2.pendingDir = {x:1, y:0};
+			else if (key.key === 'Escape' || key.key === 'Enter') {
+				sock.emit('endGameButtons', key.key);
+			}
 		}
 	});
 }
@@ -231,18 +246,38 @@ export function update(game: Game, app: FastifyInstance, roomId: string) {
     });
 }
 
+
+async function getUser(socket: Socket, cookie: string): Promise<User | undefined> {
+				
+	let user;
+	if (cookie) {
+		const payload = app.jwt.verify<JwtPayload>(cookie);
+		user = await User.findOneBy({ login: payload.login });
+		if (!user) {
+			socket.emit('notLogged');
+			return undefined;
+		}
+		return user;
+	}
+	socket.emit('notLogged');
+	return undefined;
+}
+
 export async function startSnakeGame(app: FastifyInstance) {
     app.ready().then(() => {
         app.io.on('connection', (socket: Socket) => {
-            const room = initRoom(socket);
-			handleDisconnect(app, socket);
+            socket.on('isConnected', async (cookie: string) => {
+                const user = await getUser(socket, cookie);
+                if (!user) return; // non connecté
+                const room = initRoom(socket, user);
+                handleDisconnect(app, socket);
+                getInputs(socket, room.game);
 
-            getInputs(socket, room.game);
-            socket.on('initGame_snake', () => {
-					const room = snakeRooms.find(r  => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
-					    if (!room) return;
-					    if (room.interval) return;
-                   room.interval = setInterval(() => {
+                socket.on('initGame_snake', () => {
+                    const room = snakeRooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
+                    if (!room) return;
+                    if (room.interval) return;
+                    room.interval = setInterval(() => {
                         for (const room of snakeRooms) {
                             if (room.playersNb === 2) { 
                                 update(room.game, app, room.name);
@@ -252,6 +287,7 @@ export async function startSnakeGame(app: FastifyInstance) {
                             }
                         }
                     }, 1000 / FPS);
+                });
             });
         });
     });

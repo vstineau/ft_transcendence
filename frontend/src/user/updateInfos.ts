@@ -117,7 +117,7 @@ function initUpdateInfosPage(): void {
 	  initMenuItems();
     // Afficher le contenu par défaut
     showContent('change-password');
-	  initEditProfileButton();
+	  //initEditProfileButton();
 }
 
 function initTabs(): void {
@@ -447,7 +447,7 @@ function initContentFeatures(contentKey: string): void {
             initDeleteAccountForm();
             break;
 		case 'edit-profile':
-            initEditProfileForm();
+            //initEditProfileForm();
             break;
     }
 }
@@ -602,85 +602,85 @@ function initDeleteAccountForm(): void {
     });
 }
 
-function initEditProfileForm(): void {
-    const form = document.getElementById('edit-profile-form') as HTMLFormElement;
-    if (!form) return;
-
-    // Pré-remplir avec les données existantes
-    const userData = getCurrentUser();
-    if (userData) {
-        const firstNameInput = document.getElementById('edit-firstName') as HTMLInputElement;
-        const lastNameInput = document.getElementById('edit-lastName') as HTMLInputElement;
-        const nickNameInput = document.getElementById('edit-nickName') as HTMLInputElement;
-        const emailInput = document.getElementById('edit-email') as HTMLInputElement;
-
-        if (firstNameInput) firstNameInput.value = userData.firstName || '';
-        if (lastNameInput) lastNameInput.value = userData.lastName || '';
-        if (nickNameInput) nickNameInput.value = userData.nickName || '';
-        if (emailInput) emailInput.value = userData.email || '';
-    }
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const formData = new FormData(form);
-        const body = {
-            firstName: formData.get('firstName')?.toString().trim(),
-            lastName: formData.get('lastName')?.toString().trim(),
-            nickName: formData.get('nickName')?.toString().trim(),
-            email: formData.get('email')?.toString().trim(),
-        };
-
-        try {
-            const host = window.location.hostname;
-            const port = window.location.port;
-            const protocol = window.location.protocol;
-
-            const response = await fetch(`${protocol}//${host}:${port}/api/updateProfile`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify(body),
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                alert('Profile updated successfully!');
-                // Mettre à jour les données locales
-                const currentUser = getCurrentUser();
-                if (currentUser) {
-                    Object.assign(currentUser, body);
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                }
-                // Actualiser l'affichage du nom
-                initUserAvatar();
-            } else {
-                displayError(result.error || 'Failed to update profile');
-            }
-        } catch (error) {
-            console.error('Update profile error:', error);
-            displayError('Network error occurred');
-        }
-    });
-}
-
-function initEditProfileButton(): void {
-    const editBtn = document.getElementById('edit-profile-btn');
-    if (editBtn) {
-        editBtn.addEventListener('click', () => {
-            console.log('Edit profile clicked');
-
-            // Désactiver tous les menu items actifs
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('active');
-            });
-
-            // Afficher le contenu d'édition de profil
-            showContent('edit-profile');
-        });
-    }
-}
-
+//function initEditProfileForm(): void {
+//    const form = document.getElementById('edit-profile-form') as HTMLFormElement;
+//    if (!form) return;
+//
+//    // Pré-remplir avec les données existantes
+//    const userData = getCurrentUser();
+//    if (userData) {
+//        const firstNameInput = document.getElementById('edit-firstName') as HTMLInputElement;
+//        const lastNameInput = document.getElementById('edit-lastName') as HTMLInputElement;
+//        const nickNameInput = document.getElementById('edit-nickName') as HTMLInputElement;
+//        const emailInput = document.getElementById('edit-email') as HTMLInputElement;
+//
+//        if (firstNameInput) firstNameInput.value = userData.firstName || '';
+//        if (lastNameInput) lastNameInput.value = userData.lastName || '';
+//        if (nickNameInput) nickNameInput.value = userData.nickName || '';
+//        if (emailInput) emailInput.value = userData.email || '';
+//    }
+//
+//    form.addEventListener('submit', async (e) => {
+//        e.preventDefault();
+//
+//        const formData = new FormData(form);
+//        const body = {
+//            firstName: formData.get('firstName')?.toString().trim(),
+//            lastName: formData.get('lastName')?.toString().trim(),
+//            nickName: formData.get('nickName')?.toString().trim(),
+//            email: formData.get('email')?.toString().trim(),
+//        };
+//
+//        try {
+//            const host = window.location.hostname;
+//            const port = window.location.port;
+//            const protocol = window.location.protocol;
+//
+//            const response = await fetch(`${protocol}//${host}:${port}/api/updateProfile`, {
+//                method: 'POST',
+//                headers: {
+//                    'Content-Type': 'application/json',
+//                },
+//                credentials: 'include',
+//                body: JSON.stringify(body),
+//            });
+//
+//            const result = await response.json();
+//
+//            if (result.success) {
+//                alert('Profile updated successfully!');
+//                // Mettre à jour les données locales
+//                const currentUser = getCurrentUser();
+//                if (currentUser) {
+//                    Object.assign(currentUser, body);
+//                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+//                }
+//                // Actualiser l'affichage du nom
+//                initUserAvatar();
+//            } else {
+//                displayError(result.error || 'Failed to update profile');
+//            }
+//        } catch (error) {
+//            console.error('Update profile error:', error);
+//            displayError('Network error occurred');
+//        }
+//    });
+//}
+//
+//function initEditProfileButton(): void {
+//    const editBtn = document.getElementById('edit-profile-btn');
+//    if (editBtn) {
+//        editBtn.addEventListener('click', () => {
+//            console.log('Edit profile clicked');
+//
+//            // Désactiver tous les menu items actifs
+//            document.querySelectorAll('.menu-item').forEach(item => {
+//                item.classList.remove('active');
+//            });
+//
+//            // Afficher le contenu d'édition de profil
+//            showContent('edit-profile');
+//        });
+//    }
+//}
+//

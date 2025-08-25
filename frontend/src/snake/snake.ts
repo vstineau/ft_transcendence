@@ -1,5 +1,6 @@
 import io, { Socket } from 'socket.io-client';
 import { Game ,Snake} from '../types/snakeTypes';
+import { navigateTo } from '../main'
 
 
 let canvas: HTMLCanvasElement;
@@ -8,7 +9,14 @@ let ctx: CanvasRenderingContext2D | null = null;
 let win_width = window.innerWidth;
 let win_height = window.innerHeight;
 let gameOver = false;
+let started = false;
 
+function getCookie(name: string) {
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop()?.split(';').shift();
+	return null;
+}
 
 export function createSnakeSocket(): Socket {
 	const host = window.location.hostname;
@@ -16,7 +24,8 @@ export function createSnakeSocket(): Socket {
 	const protocol = window.location.protocol;
 	let socket = io(`${protocol}//${host}:${port}`);
 	socket.on('connect', () => {
-		console.log('Socket connected!');
+		let cookie = getCookie('token');
+		socket.emit('isConnected', cookie);
 		socket.emit('initGame_snake');
 	});
     return socket;
@@ -117,30 +126,117 @@ function drawWinner(winner: Snake) {
     ctx.fillText(winner.name + ' wins! (Press Enter to restart)', canvas.width * 0.5, canvas.height * 0.33);
 }
 
+function endgameButtons(socket: Socket) {
+	const replayBtn = document.getElementById('replayBtn');
+    const quitBtn = document.getElementById('quitBtn');
+    if (replayBtn) {
+        replayBtn.onclick = () => {
+			gameOver = false;
+			started = false;
+			navigateTo('/snake');
+        };
+    }
+    if (quitBtn) {
+        quitBtn.onclick = () => {
+			gameOver = false;
+			started = false;
+			if (socket && socket.connected) {
+            socket.disconnect();
+        }
+			navigateTo('/');
+        };
+    }
+}
+
+function displayInfoPlayer(game: Game) {
+
+	const imgP1 = document.getElementById('avatarJoueur1') as HTMLImageElement;
+	const nameP1 = document.getElementById('nomJoueur1') as HTMLInputElement;
+	nameP1.value = game.p1.name;
+	if( game.p1.avatar) {
+		imgP1.src = game.p1.avatar;
+		if (!game.p1.avatar.startsWith('data:image/')) {
+			if (game.p1.avatar.startsWith('iVBOR')) {
+				imgP1.src = `data:image/png;base64,${game.p1.avatar}`;
+			} else if (game.p1.avatar.startsWith('/9j/')) {
+				imgP1.src = `data:image/jpeg;base64,${game.p1.avatar}`;
+			} else {
+				imgP1.src = `data:image/png;base64,${game.p1.avatar}`;
+			}
+		}
+	}
+	const imgP2 = document.getElementById('avatarJoueur2') as HTMLImageElement;
+	const nameP2 = document.getElementById('nomJoueur2') as HTMLInputElement;
+	nameP2.value = game.p2.name;
+	if( game.p2.avatar) {
+		imgP2.src = game.p2.avatar;
+		if (!game.p2.avatar.startsWith('data:image/')) {
+			if (game.p2.avatar.startsWith('iVBOR')) {
+				imgP2.src = `data:image/png;base64,${game.p2.avatar}`;
+			} else if (game.p2.avatar.startsWith('/9j/')) {
+				imgP2.src = `data:image/jpeg;base64,${game.p2.avatar}`;
+			} else {
+				imgP2.src = `data:image/png;base64,${game.p2.avatar}`;
+			}
+		}
+	}
+}
+
 export function snakeGame() {
 	const socket = createSnakeSocket();
+	socket.on('notLogged', () => {
+		navigateTo('/login?/snake');
+	});
 	initCanvas();
 	listenUserInputs(socket);
 	socket.on('waiting_snake', (game: Game) => {
 		drawAlert(game.winSize, 'Waiting for player ... (1 / 2)');
 	})
+	socket.on('endGameButtons', (key) => {
+		if  (gameOver && key === 'Escape') {
+			gameOver = false;
+			started = false;
+			navigateTo('/');
+		}
+		else if (gameOver && key === 'Enter') {
+			gameOver = false;
+			started = false;
+			if (socket && socket.connected) {
+            socket.disconnect();
+        }
+			navigateTo('/snake');
+		}
+	})
 	socket.on('endGame_snake', (data) => {
 		drawAlert(data.winSize, `Game interrupted : ${data.reason}`);
-	    alert('La partie a été interrompue : ' + data.reason);
+	    drawAlert(data.winsize, 'La partie a été interrompue : ' + data.reason);
 	})
 	socket.on('draw', (game) => {
 		drawAlert(game.winSize, "DRAW")
+		if (socket && socket.connected) {
+            socket.disconnect();
+        }
 	});
 	socket.on('playerWin_snake', (winner, _game) => {
 		if (ctx) {
-		gameOver = true;
-		//winner announcement
-			drawWinner(winner);
+			gameOver = true;
+			//winner announcement
+			const btns = document.getElementById('snakeGameEndButtons');
+			if (btns) btns.style.display = 'flex';
+			endgameButtons(socket);
+			if (socket && socket.connected) {
+        	    socket.disconnect();
+        	}
+	    	drawWinner(winner);
 			return ;
 		}
 	});
 	// Main game loop (frame update)
 	socket.on('gameState_snake', (game: Game) => {
+		if (!started) {
+			displayInfoPlayer(game);
+			started = true;
+		}
 		drawGame(game);
 	});
 
