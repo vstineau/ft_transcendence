@@ -10,6 +10,8 @@ export default {
     reply: FastifyReply
   ): Promise<void> => {
     try {
+      console.log(`login = ${request.body.login}`)
+      console.log(`password = ${request.body.password}`)
       const invalidInfoError = 'the provided user details are invalid'
       const user = await User.findOneBy({ login: request.body.login })
       if (!user || !request.body.password || !user.comparePassword(request.body.password)) {
@@ -20,18 +22,21 @@ export default {
 		reply.code(200).send(response);
 	  }
       const token = reply.server.jwt.sign(
-        { 
+        {
 		  login: user.login,
 		  email: user.email,
-		  id: user.id, 
+		  id: user.id,
 		  twoFaAuth: user.twoFaAuth
 		},
         { expiresIn: '4h' }
       )
-	  const response : IUserReply[200] = {success: true};
+	  const response : IUserReply[200] = {success: true, user:{avatar: user.avatar,
+															nickName: user.nickName,
+															login: user.login,
+															email: user.email}};
       reply
         .setCookie('token', token, {
-          httpOnly: true,
+          httpOnly: false,
           secure: true,
           path: '/',
           sameSite: 'lax',

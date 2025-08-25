@@ -1,23 +1,24 @@
 import io, { Socket } from 'socket.io-client';
 import { Game } from '../types/pongTypes';
 import { navigateTo } from '../main';
-// import { async } from '../../backend/app/pong/pong';
 
-// let canvas: HTMLCanvasElement;
-// let ctx: CanvasRenderingContext2D | null;
-
-// let win_width = window.innerWidth;
-// let win_height = window.innerHeight;
+function getCookie(name: string) {
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop()?.split(';').shift();
+	return null;
+}
 
 export function createPongSocket(): Socket {
 	const host = window.location.hostname;
 	const port = window.location.port;
 	const protocol = window.location.protocol;
+
 	let socket = io(`${protocol}//${host}:${port}`);
 	socket.on('connect', () => {
+		let cookie = getCookie('token');
+		socket.emit('initGame', cookie);
 		initCanvas(socket);
-		console.log('Socket connected!');
-		socket.emit('initGame');
 	});
 	return socket;
 }
@@ -27,8 +28,6 @@ let ctx: CanvasRenderingContext2D | null = null;
 
 let win_width = window.innerWidth;
 let win_height = window.innerHeight;
-// let gameWidth = win_width * 0.8;
-// let gameHeight = win_height * 0.8;
 let gameOver = false;
 
 function initCanvas(socket: Socket) {
@@ -71,8 +70,7 @@ function drawGame(game: Game) {
 	ctx.fillRect(game.p1.x * scale_x, game.p1.y * scale_y, game.p1.length * scale_x, game.p1.height * scale_y);
 	ctx.fillRect(game.p2.x * scale_x, game.p2.y * scale_y, game.p2.length * scale_x, game.p2.height * scale_y);
 
-	// Net (dashed center line)
-	console.log(`canvas.height = ${canvas.height}`);
+	// dashed center line
 	for (let i = 0; i < canvas.height; i += canvas.height * 0.03) {
 		ctx.fillRect(canvas.width / 2 - 2, i, 4 * scale_x, 15 * scale_y);
 	}
@@ -86,13 +84,6 @@ function drawGame(game: Game) {
 }
 
 function listenUserInputs(socket: Socket) {
-	// Key controls
-	// let id = socket.id
-	window.addEventListener('beforeunload', () => {
-		socket.emit('beforeunload', socket);
-		// e.preventDefault();
-		gameOver = false;
-	});
 	window.addEventListener('keypress', e => {
 		socket.emit('keypress', { key: e.key });
 		if (e.key === ' ') {
@@ -101,9 +92,6 @@ function listenUserInputs(socket: Socket) {
 		}
 	});
 	window.addEventListener('keydown', e => {
-		// let id = socket.id
-		console.log(`KEYDOWN -> sock.id = ${socket.id}, key = ${e.key}`);
-
 		socket.emit('keydown', { key: e.key }, socket.id);
 		if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
 			e.preventDefault();
@@ -111,18 +99,11 @@ function listenUserInputs(socket: Socket) {
 	});
 
 	window.addEventListener('keyup', e => {
-		console.log(`KEYUP -> sock.id = ${socket.id}, key = ${e.key}`);
-		// let id = socket.id
-		// console.log(`KEYUP -> socket id = ${socket.id}`);
-		// console.log(`KEYUP -> socket id = ${socket.id}`);
-		// socket.emit('keyup', { key: e.key});
 		socket.emit('keyup', { key: e.key }, socket.id);
 	});
 
 	// Resize handling
 	window.addEventListener('resize', () => {
-		// win_width = window.innerWidth;
-		// win_height = window.innerHeight;
 		if (canvas) {
 			canvas.width = window.innerWidth * 0.8;
 			canvas.height = window.innerHeight * 0.8;
@@ -130,15 +111,6 @@ function listenUserInputs(socket: Socket) {
 		socket.emit('resize');
 	});
 }
-
-// function removeEvlistenner() {
-// 	// Key controls
-// 	window.removeEventListener('beforeunload', () => {});
-// 	window.removeEventListener('keypress', () => {});
-// 	window.removeEventListener('keydown', () => {});
-// 	window.removeEventListener('keyup', () => {});
-// 	window.removeEventListener('resize', () => {});
-// }
 
 // Variables pour gérer le bouton
 let gameOverButton = {
@@ -149,57 +121,10 @@ let gameOverButton = {
 	visible: false,
 };
 
-function drawGameOverScreen(game: Game) {
-	if (!ctx) return;
-
-	const scale_x = canvas.width / game.win.width;
-	const scale_y = canvas.height / game.win.height;
-
-	// Nettoyage du canvas
-	ctx.clearRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
-
-	ctx.fillStyle = 'black';
-	ctx.fillRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
-
-	// Message Game Over
-	ctx.font = `${50 * scale_y}px Arial`;
-	ctx.fillStyle = 'white';
-	ctx.textAlign = 'center';
-	ctx.textBaseline = 'middle';
-	ctx.fillText('Game Over', (game.win.width * scale_x) / 2, (game.win.height * scale_y) / 2 - 60 * scale_y);
-
-	// Dessin du bouton
-	const btnWidth = 300 * scale_x;
-	const btnHeight = 80 * scale_y;
-	const btnX = (game.win.width * scale_x) / 2 - btnWidth / 2;
-	const btnY = (game.win.height * scale_y) / 2 + 40 * scale_y;
-
-	ctx.fillStyle = '#1976d2'; // Bleu
-	ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
-
-	ctx.strokeStyle = 'white';
-	ctx.lineWidth = 2;
-	ctx.strokeRect(btnX, btnY, btnWidth, btnHeight);
-
-	ctx.font = `${32 * scale_y}px Arial`;
-	ctx.fillStyle = 'white';
-	ctx.fillText("Retour à l'accueil", (game.win.width * scale_x) / 2, btnY + btnHeight / 2);
-
-	// Stockage des coordonnées du bouton pour gestion du clic
-	gameOverButton = {
-		x: btnX,
-		y: btnY,
-		width: btnWidth,
-		height: btnHeight,
-		visible: true,
-	};
-}
-
 // Gestion du clic sur le canvas
 
 function drawWaitingScreen(room: any) {
 	if (!ctx) return;
-	console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
 	// On utilise les mêmes scales que dans drawGame
 	const scale_x = canvas.width / room.game.win.width;
 	const scale_y = canvas.height / room.game.win.height;
@@ -218,14 +143,15 @@ function drawWaitingScreen(room: any) {
 
 export function pongGame() {
 	const socket = createPongSocket();
-	// initCanvas(socket);
-
 	listenUserInputs(socket);
+	socket.on('notLogged', () => {
+		navigateTo('/login?/pong/matchmaking/game');
+	});
 	socket.on('waiting', (room: any) => {
 		drawWaitingScreen(room);
 	});
 	socket.on('playerWin', (winner, game) => {
-		if (!ctx) return;
+		if (!ctx || gameOver) return;
 		gameOver = true;
 		let scale_x = canvas.width / game.win.width;
 		let scale_y = canvas.height / game.win.height;
@@ -244,27 +170,5 @@ export function pongGame() {
 
 	socket.on('gameState', (game: Game) => {
 		drawGame(game);
-	});
-
-	socket.on('gameOver', (room: any) => {
-		window.addEventListener('click', function (event) {
-			if (!gameOverButton.visible) return;
-			const rect = canvas.getBoundingClientRect();
-			const x = event.clientX - rect.left;
-			const y = event.clientY - rect.top;
-
-			if (
-				x >= gameOverButton.x &&
-				x <= gameOverButton.x + gameOverButton.width &&
-				y >= gameOverButton.y &&
-				y <= gameOverButton.y + gameOverButton.height
-			) {
-				// Action : Retour à l'accueil
-				gameOverButton.visible = false;
-				// Redirection exemple :
-				navigateTo('/'); // Change la route selon ton app
-			}
-		});
-		drawGameOverScreen(room.game);
 	});
 }

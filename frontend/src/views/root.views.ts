@@ -1,32 +1,39 @@
 export async function RootView() {
-	return /* HTML */ `
-		<!-- Titre FT_TRANSCENDENCE en haut -->
+    return /* HTML */ `
+<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 class="text-center text-4xl font-bold text-black">FT<span class="text-blue-600">_</span>TRANSCENDENCE</h1>
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+				FT<span class="text-blue-600">_</span>TRANSCENDENCE
+			</h1>
 		</div>
 
-		<!-- Section avec les blocs -->
-		<div class="content-section min-h-screen bg-gray-100 py-16">
-			<div class="max-w-7xl mx-auto px-8 ">
-				<!-- Container des blocs en grid complexe -->
-				<div
-					class="grid gap-3 auto-rows-min mx-auto mt-36  justify-center"
-					style="grid-template-columns: 320px 150px 280px 150px; max-width: 1000px;"
-				>
-					<!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes changer la taille de base du bloc de profil -->
-					<div class="row-span-2 bg-white rounded-xl shadow-lg p-4">
-						<div class="flex items-start mb-6 ml-3">
-							<div
-								class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
-							>
-								F
-							</div>
-							<div class="ml-5">
-								<h3 class="font-montserrat font-bold text-lg">Fatima Zahra</h3>
-								<p class="text-gray-600 text-sm mb-1">@fatizaaa</p>
-								<p class="text-gray-500 text-xs">📍 Paris</p>
-							</div>
+<!-- Section avec les blocs -->
+<div class="content-section min-h-screen bg-gray-100 py-16">
+    <div class="max-w-7xl mx-auto px-8 ">
+
+        <!-- Container des blocs en grid complexe -->
+        	<div class="grid gap-3 auto-rows-min mx-auto mt-36 justify-center" style="grid-template-columns: 320px 150px 280px 150px; max-width: 1000px;">
+
+			<!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes changer la taille de base du bloc de profil -->
+				<div class="row-span-2 bg-white rounded-xl shadow-lg p-4">
+					<div class="flex items-start mb-6 ml-3">
+						<div id="profile-avatar-container" class="w-32 h-32 bg-gray-200 rounded-xl overflow-hidden">
+                        	<!-- L'avatar ou le fallback sera injecté ici -->
 						</div>
+
+						<div class="ml-5">
+							<div class="flex items-center">
+								<h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
+								<button id="edit-profile-btn" class="ml-2 text-gray-500 hover:text-black transition-colors" title="Edit profile">
+									✍︎
+							</div>
+							<!-- NOM UTILISATEUR -->
+							<p id="profile-username" class="font-montserrat font-bold text-lg">Loading...</p>
+
+							<!-- USERNAME/LOGIN -->
+							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
+						</div>
+					</div>
 
 						<div class="flex space-x-6 ml-3">
 							<button
@@ -34,11 +41,7 @@ export async function RootView() {
 							>
 								View
 							</button>
-							<button
-								class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition"
-							>
-								Edit
-							</button>
+								 <a href="/updateInfos" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition">Edit</a>
 						</div>
 					</div>
 
@@ -124,17 +127,14 @@ export async function RootView() {
 								</h3>
 							</div>
 
-							<div class="flex-1 flex gap-3">
-								<!-- Light mode avec soleil centre -->
-								<div
-									class="flex-1 bg-white rounded-xl shadow-lg p-3 flex flex-col cursor-pointer hover:bg-gray-50 transition-colors"
-									id="theme-toggle"
-								>
-									<p class="font-montserrat text-base mb-2" id="theme-text">Light mode</p>
-									<div class="flex-1 flex items-center justify-center">
-										<span class="text-6xl transition-transform hover:scale-110" id="theme-icon">☼</span>
-									</div>
+						<div class="flex-1 flex gap-3">
+						<!-- Light mode avec soleil centre -->
+							<div id="dash-theme-toggle" class="flex-1 bg-white rounded-xl shadow-lg p-3 flex flex-col cursor-pointer hover:bg-gray-50 transition-colors">
+								<p class="font-montserrat text-base mb-2" id="dash-theme-text">Light mode</p>
+								<div class="flex-1 flex items-center justify-center">
+									<span class="text-6xl transition-transform hover:scale-110" id="dash-theme-icon">☼</span>
 								</div>
+							</div>
 
 								<!-- Settings -->
 								<a
@@ -154,7 +154,7 @@ export async function RootView() {
 		<button
 			type="button"
 			id="logout"
-			class="fixed top-4 right-4 z-50 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
+			class="font-montserrat fixed top-4 right-4 z-50 bg-black hover:bg-gray-600 text-white text-sm py-2 px-4 rounded-lg"
 			style="display: none;"
 		>
 			Logout
@@ -190,7 +190,7 @@ export async function WelcomeView() {
 
                     <!-- Bloc Sign up - Plus large -->
                     <a href="/login" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors ">
-                        <p class="font-montserrat font-medium text-white text-base mb-2">Sign up</p>
+                        <p class="font-montserrat font-medium text-white text-base mb-2">Sign in</p>
                     </a>
 
                     <!-- Bloc Light mode - Carré -->
@@ -253,13 +253,13 @@ export async function LoginView() {
 			<h2 class="text-2xl font-semibold text-center text-black mb-8">Welcome back !</h2>
 			<form id="login-form" class="space-y-4">
 
-				<!--email-->
+				<!--login-->
 				<input
 					autocomplete="off"
-					type="email"
-					name="email"
-					id="mail"
-					placeholder="Email"
+					type="login"
+					name="login"
+					id="login"
+					placeholder="login"
 					class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
 					required
                 />
@@ -278,8 +278,7 @@ export async function LoginView() {
 					<div class="flex justify-center pt-4">
 						<button
 							type="submit"
-							class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors"
-						>Sign in</button>
+							class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors">Sign in</button>
 					</div>
                 </form>
 
@@ -287,7 +286,7 @@ export async function LoginView() {
 				<div class="mt-4 text-center">
 					<p class="text-sm text-gray-600">
 						Don't have an account ?
-						<a href="/register" class="text-black hover:underline font-medium">Sign up</a>
+						<a href="/register?/login" class="text-black hover:underline font-medium">Sign up</a>
 					</p>
 				</div>
 
@@ -400,13 +399,13 @@ export async function RegisterView() {
 					</p>
 				</div>
 
-				<!-- Lien vers connexion -->
-				<div class="mt-6 text-center">
-					<p class="text-sm text-gray-600">
-						Vous avez déjà un compte ?
-						<a href="/login" class="text-black hover:underline font-medium">Se connecter</a>
-					</p>
-				</div>
+                <!-- Lien vers connexion -->
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                        Have an account ?
+                        <a href="/login" class="text-black hover:underline font-medium">Sign in</a>
+                    </p>
+                </div>
 
 				<!-- Message d'erreur -->
 				<div
@@ -432,81 +431,256 @@ export async function PongMatchMakingView() {
 
 export async function UpdateInfosview() {
 	return /* HTML */ `
-		<div class="max-w-md mx-auto p-6 rounded-lg shadow-lg animate-fade-in">
-			<h2 class="text-2xl font-bold mb-4 text-center text-purple-700">Modifier le compte</h2>
-			<form id="register-form" class="space-y-4">
-				<input
-					autocomplete="off"
-					type="text"
-					name="login"
-					id="login"
-					placeholder="Login"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-				/>
-				<input
-					autocomplete="off"
-					type="text"
-					name="nickname"
-					id="nickname"
-					placeholder="Nickname"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-				/>
-				<input
-					autocomplete="off"
-					type="email"
-					name="email"
-					id="mail"
-					placeholder="Email"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-				/>
-				<input
-					type="password"
-					name="password"
-					id="password"
-					placeholder="Mot de passe"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-				/>
-				<input
-					type="password"
-					name="newPassword"
-					id="newPassword"
-					placeholder="Nouveau Mot de passe"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-				/>
-				<input
-					type="file"
-					name="avatar"
-					id="avatar"
-					placeholder="inserer avatar"
-					accept="image/jpeg, image/png, image/jgp, image/gif"
-					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-				/>
-				<button
-					type="save updates"
-					class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
-				>
-					Save updates
+
+<!-- Titre FT_TRANSCENDENCE en haut -->
+	<div class="bg-gray-100 py-2">
+		<h1 class="text-center text-4xl font-bold text-black">
+			FT<span class="text-blue-600">_</span>TRANSCENDENCE
+		</h1>
+	</div>
+
+
+	<div class="min-h-screen bg-gray-100 py-8 px-4">
+		<div class="max-w-4xl mx-auto">
+
+			<!-- creer les onglets-->
+			<div class="flex border-b border-gray-300 mb-8">
+				<button class="tab-button active px-6 px-3 front-medium font-montserrat text-sm focus:outline-none border-b-2 transition-colors" data-tab="profil">
+					Profil
 				</button>
-			</form>
-			<button
-				id="defaultAvatars"
-				class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
-			>
-				No avatar
-			</button>
-			<div
-				id="error-message"
-				class="w-full px-4 hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative z-20"
-				style="display: none;"
-				role="alert"
-			></div>
-		</div>
+
+				<button
+					class="font-montserrat tab-button px-6 py-3 font-medium text-sm focus:outline-none border-b-2 transition-colors" data-tab="general">
+					General
+				</button>
+			</div>
+
+                <!-- Contenu des onglets -->
+                <div class="flex gap-8">
+
+                    <!-- Sidebar gauche avec menu -->
+                    <div class="w-64">
+
+                        <!-- Profil utilisateur -->
+							<div class="bg-white rounded-xl p-4 mb-6 shadow-sm">
+							<div class="font-montserrat flex items-center">
+
+							<!-- CONTAINER PRINCIPAL -->
+							<div id="avatar-container" class="w-12 h-12 bg-gray-300 rounded-lg overflow-hidden">
+								<!-- Seul l'avatar OU le fallback sera affiché, pas les deux -->
+							</div>
+
+							<div class="ml-5">
+								<h3 id="user-name" class="font-montserrat font-bold text-black">Loading...</h3>
+								<p class="font-montserrat text-sm text-gray-500">Profil settings</p>
+							</div>
+						</div>
+                    </div>
+
+                        <!-- Menu latéral pour onglet Profil -->
+                        <div id="profil-menu" class="tab-menu">
+                            <div class="space-y-2">
+                                <button class="font-montserrat menu-item active w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="change-password">
+                                    <span class="w-5 h-5 mr-3 text-lg">ꗃ</span>
+                                    Change password
+                                </button>
+                                <button class="font-montserrat menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center"  data-content="dual-authentication">
+                                    <span class="w-5 h-5 mr-3 text-lg">✓</span>
+                                    Dual authentication
+                                </button>
+                                <button class="font-montserrat menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center"  data-content="profile-picture">
+                                    <span class="w-5 h-5 mr-3">👤</span>
+                                    Profile picture
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Menu latéral pour onglet General (caché par défaut) -->
+                        <div id="general-menu" class="tab-menu hidden">
+                            <div class="space-y-2">
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="language">
+                                    <span class="w-5 h-5 mr-3">🗣</span>
+                                    Langage
+                                </button>
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="privacy-policy">
+                                    <span class="w-5 h-5 mr-3 text-lg">⚖︎</span>
+                                    General privacy police<br>
+									& terms of service
+                                </button>
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="delete">
+                                    <span class="w-5 h-5 mr-3">🗑</span>
+                                    Delete your account
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+					<!-- Zone de contenu principal -->
+                    <div class="flex-1">
+                        <div id="content-area" class="flex max-w-md w-full bg-white rounded-2xl shadow-md p-8 ml-16 mt-12">
+                            <!-- Le contenu changera ici dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+
+						<!-- Bouton retour -->
+						<div class="mt-8 text-center">
+							<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+						</div>
+					</div>
+				</div>
+
+						</div>
+					</div>
+				</div>
+
+			<style>
+				.tab-button {
+					border-bottom-color: transparent;
+					color: #6B7280; /* Gris par défaut */
+				}
+				.tab-button.active {
+					border-bottom-color: #000000; /* Bordure noire */
+					color: #000000; /* Texte noir */
+				}
+
+				/* Styles pour les menu items - noir et blanc */
+				.menu-item {
+					background-color: transparent;
+					color: #000000; /* Texte noir par défaut */
+				}
+				.menu-item:hover {
+					background-color: #F3F4F6; /* Gris clair au survol */
+					color: #000000;
+				}
+				.menu-item.active {
+					background-color: #000000; /* Fond noir quand actif */
+					color: #FFFFFF; /* Texte blanc quand actif */
+				}
+
+				.square-radio {
+					appearance: none;
+					width: 18px;
+					height: 18px;
+					border: 2px solid #D1D5DB;
+					background-color: white;
+					border-radius: 2px;
+					cursor: pointer;
+					position: relative;
+					margin-top: 2px;
+				}
+
+				.square-radio:checked {
+					background-color: #000000;
+					border-color: #000000;
+				}
+
+				.square-radio:checked::after {
+					content: '✓';
+					color: white;
+					font-size: 12px;
+					position: absolute;
+					top: 0px;
+					left: 2px;
+				}
+
+				.square-radio:hover {
+					border-color: #6B7280;
+				}
+
+				#content-area .w-full {
+					width: 100% !important;
+				}
+
+				#content-area .flex.justify-center {
+					display: flex !important;
+					justify-content: center !important;
+					width: 100% !important;
+				}
+			</style>
 	`;
 }
-export async function PongCanvas() {
+
+
+// export async function UpdateInfosview() {
+// 	return /* HTML */ `
+// 		<div class="max-w-md mx-auto p-6 rounded-lg shadow-lg animate-fade-in">
+// 			<h2 class="text-2xl font-bold mb-4 text-center text-purple-700">Modifier le compte</h2>
+// 			<form id="register-form" class="space-y-4">
+// 				<input
+// 					autocomplete="off"
+// 					type="text"
+// 					name="login"
+// 					id="login"
+// 					placeholder="Login"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 				/>
+// 				<input
+// 					autocomplete="off"
+// 					type="text"
+// 					name="nickname"
+// 					id="nickname"
+// 					placeholder="Nickname"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 				/>
+// 				<input
+// 					autocomplete="off"
+// 					type="email"
+// 					name="email"
+// 					id="mail"
+// 					placeholder="Email"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 				/>
+// 				<input
+// 					type="password"
+// 					name="password"
+// 					id="password"
+// 					placeholder="Mot de passe"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 				/>
+// 				<input
+// 					type="password"
+// 					name="newPassword"
+// 					id="newPassword"
+// 					placeholder="Nouveau Mot de passe"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 				/>
+// 				<input
+// 					type="file"
+// 					name="avatar"
+// 					id="avatar"
+// 					placeholder="inserer avatar"
+// 					accept="image/jpeg, image/png, image/jgp, image/gif"
+// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+// 				/>
+// 				<button
+// 					type="save updates"
+// 					class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
+// 				>
+// 				Save updates
+// 				</button>
+// 			</form>
+// 			<button
+// 				id="defaultAvatars"
+// 				class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
+// 			>
+// 			No avatar
+// 			</button>
+// 			<div
+// 				id="error-message"
+// 				class="w-full px-4 hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative z-20"
+// 				style="display: none;"
+// 				role="alert"
+// 			></div>
+// 		</div>
+// 	`;
+// }
+
+
+export async function PongCanvas(){ // gameCanvas
 	return /* HTML */ `
-		<div class="flex items-center justify-center w-screen h-screen bg-green-900">
-			<canvas id="gameCanvas" class="rounded-xl shadow-lg border-4 border-green-800 bg-black"></canvas>
+		<div class="flex items-center justify-center w-screen h-screen bg-gray-900">
+			<canvas id="gameCanvas" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"></canvas>
 		</div>
 	`;
 }
