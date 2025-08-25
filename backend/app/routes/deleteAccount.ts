@@ -56,7 +56,6 @@ export default {
 	}
 };
 
-=======
 //   method: 'GET',
 //   url: '/deleteAccount',
 //   handler: async (
