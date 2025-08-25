@@ -108,8 +108,8 @@ async function initRoom(socket: Socket, cookie: string) {
 		socket.emit('notLogged');
 		return;
 	}
-	console.log(`user = ${user.login}`)
-	console.log(`nickname = ${user.nickName}`)
+	console.log(`user = ${user.login}`);
+	console.log(`nickname = ${user.nickName}`);
 	const room = getRoom();
 	if (room && user.login != room.game.p1.login) {
 		socket.join(room.name);
@@ -126,7 +126,7 @@ async function initRoom(socket: Socket, cookie: string) {
 		newRoom.game.p1.nickName = user.nickName;
 		socket.join(newRoom.name);
 	}
-	console.log(`roomcount = ${roomcount}`)
+	console.log(`roomcount = ${roomcount}`);
 }
 
 function handleDisconnect(app: FastifyInstance, socket: Socket) {
@@ -135,7 +135,6 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 		// Trouver la room du joueur
 		const room = rooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
 		if (room) {
-			room.game.over = true;
 			room.playersNb--;
 			// if (room.game.p1.id === socket.id) {
 			// 	room.game.p1.id = '';
@@ -144,10 +143,15 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 			// }
 			// le ternaire c'est la vie
 			// room.game.p1.id === socket.id ? (room.game.p1.id = '') : (room.game.p2.id = '');
-			app.io
-				.to(room.name)
-				.emit('playerWin', room.game.p1.id === socket.id ? room.game.p2.nickName : room.game.p1.nickName, room.game);
+			// if(!room.game.over){
+			const sock = app.io.sockets.sockets.get(room.game.p1.id === socket.id ? room.game.p2.id : room.game.p1.id) as Socket
+			// app.io
+			// 	.to(room.name)
+			sock.emit('playerWin', room.game.p1.id === socket.id ? room.game.p2.nickName : room.game.p1.nickName, room.game);
+			// }
+			// room.game.over = true;
 			socket.leave(room.name);
+			sock.leave(room.name);
 			rooms = rooms.filter(r => r !== room);
 			// roomcount--;
 		}
