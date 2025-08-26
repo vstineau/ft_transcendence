@@ -1,7 +1,7 @@
 import { navigateTo } from '../main';
 import { displayError } from '../utils/error';
 import { readFileAsBase64 } from '../utils/userInfo';
-import { fetchAndSaveUserInfo, initUserAvatar } from '../utils/avatar';
+import { fetchAndSaveUserInfo, initUserAvatar, getCurrentUser} from '../utils/avatar';
 
 export async function updateInfos() {
 	await fetchAndSaveUserInfo();
@@ -89,6 +89,7 @@ export async function updateInfos() {
 				headers: {
 					'Content-Type': 'application/json',
 				},
+				credentials: 'include',
 				body: JSON.stringify(body),
 			});
 			const reply = await response.json();
@@ -107,17 +108,17 @@ export async function updateInfos() {
 function initUpdateInfosPage(): void {
 	console.log('=== Initializing UpdateInfos page ===');
 
-	// Initialiser l'avatar
-	// initUserAvatar();
-
 	// Initialiser les onglets
-	  initTabs();
-
+	initTabs();
 	// Initialiser les menus
 	  initMenuItems();
     // Afficher le contenu par défaut
     showContent('change-password');
-	  //initEditProfileButton();
+	initMenuItems();
+	// Afficher le contenu par défaut
+	showContent('change-password');
+	// Edit le profil
+	initEditProfileButton();
 }
 
 function initTabs(): void {
@@ -296,19 +297,31 @@ function getContentHTML(contentKey: string): string {
 		'profile-picture': `
 		<div class="w-full h-full flex items-center justify-center">
             <div class="space-y-6 text-center">
-				<div class="text-center">
-					<input type="file" id="profile-upload" class="hidden" accept="image/*">
-					<button onclick="document.getElementById('profile-upload').click()" class="bg-gray-200 hover:bg-gray-200 px-6 py-2 rounded-lg text-sm transition-colors mb-2">
+				<!-- Upload area -->
+					<div class="space-y-4">
+					<input type="file" id="profile-upload-input" class="hidden" accept="image/*">
+					<button
+						type="button"
+						onclick="document.getElementById('profile-upload-input').click()"
+						class="bg-gray-200 hover:bg-gray-200 px-6 py-2 rounded-lg text-sm transition-colors mb-2">
 						Browse...
 					</button>
 					<p id="file-info" class="text-xs text-gray-500 mb-12">No file selected.</p>
+					</div>
+
+					<!-- Form just for save -->
+					<form id="profile-upload-form" class="space-y-4">
 					<div class="flex items-center justify-center mb-6">
 						<input type="checkbox" id="no-picture" class="mr-2">
 						<label for="no-picture" class="text-sm text-gray-600">Use default avatar</label>
 					</div>
-					<button class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
+
+					<button type="submit"
+						class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
 						Save Changes
 					</button>
+					</form>
+
 				</div>
 			</div>
 		</div>
@@ -426,11 +439,177 @@ function getContentHTML(contentKey: string): string {
 				</div>
 			</form>
 		</div>
+	`,
+
+	'edit-profile': `
+		<div class="space-y-6">
+			<h2 class="font-montserrat font-medium text-black mb-4">Edit profile</h2>
+				<form id="edit-profile-form" class="space-y-4">
+
+					<input
+						type="text"
+						name="nickName"
+						id="edit-nickName"
+						placeholder="Nick Name"
+						class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-black transition-colors bg-transparent"
+					/>
+
+					<input
+						type="email"
+						name="email"
+						id="edit-email"
+						placeholder="Email"
+						class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-black transition-colors bg-transparent"
+					/>
+
+					<div class="flex justify-center pt-4">
+						<button type="submit" class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
+							Save Changes
+						</button>
+					</div>
+				</form>
+		</div>
 	`
 };
 
 	return contents[contentKey] || '<p>Content not found</p>';
 }
+
+function initEditProfileForm(): void {
+    console.log("=== DEBUGGING initEditProfileForm ===");
+
+    // 1. Vérifier les cookies
+    console.log("Document cookies:", document.cookie);
+
+    // 2. Vérifier les données utilisateur
+    const userData = getCurrentUser();
+    console.log("Current user data:", userData);
+
+    const form = document.getElementById('edit-profile-form') as HTMLFormElement;
+    if (!form) {
+        console.log("❌ Form not found");
+        return;
+    }
+
+    if (userData) {
+        // const firstNameInput = document.getElementById('edit-firstName') as HTMLInputElement;
+        // const lastNameInput = document.getElementById('edit-lastName') as HTMLInputElement;
+        const nickNameInput = document.getElementById('edit-nickName') as HTMLInputElement;
+		const usernameInput = document.getElementById('edit-username') as HTMLInputElement;
+        const emailInput = document.getElementById('edit-email') as HTMLInputElement;
+
+        // if (firstNameInput) firstNameInput.value = userData.firstName || '';
+        // if (lastNameInput) lastNameInput.value = userData.lastName || '';
+        if (nickNameInput) nickNameInput.value = userData.nickName || '';
+        if (emailInput) emailInput.value = userData.email || '';
+		if (usernameInput && userData.login) {
+			usernameInput.value = userData.login;
+		}
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        console.log("=== FORM SUBMIT DEBUG ===");
+
+        const formData = new FormData(form);
+        const body = {
+            login: '',
+            nickName: formData.get('nickName')?.toString().trim(),
+            password: '',
+            newPassword: '',
+            email: formData.get('email')?.toString().trim(),
+            avatar: '',
+            noAvatar: false,
+            ext: '',
+        };
+
+        console.log("Body being sent:", body);
+        console.log("Cookies before request:", document.cookie);
+
+        try {
+            const host = window.location.hostname;
+            const port = window.location.port;
+            const protocol = window.location.protocol;
+            const url = `${protocol}//${host}:${port}/api/updateInfos`;
+
+            console.log("Request URL:", url);
+            console.log("Request headers will include credentials");
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(body),
+            });
+
+            console.log("Response status:", response.status);
+            console.log("Response headers:", [...response.headers.entries()]);
+
+            const result = await response.json();
+            console.log("Full response:", result);
+
+            if (result.success) {
+                console.log("✅ Success!");
+                alert('Profile updated successfully!');
+                // ... reste du code
+            } else {
+                console.log("❌ Backend error:", result.error);
+                displayError(result.error || 'Failed to update profile');
+            }
+        } catch (error) {
+            console.log("❌ Network error:", error);
+            displayError('Network error occurred');
+        }
+    });
+}
+
+// Ajoutez cette fonction pour tester l'authentification
+async function testAuth(): Promise<void> {
+    console.log("=== TESTING AUTHENTICATION ===");
+    console.log("Cookies:", document.cookie);
+
+    try {
+        const host = window.location.hostname;
+        const port = window.location.port;
+        const protocol = window.location.protocol;
+
+        const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
+            method: 'GET',
+            credentials: 'include',
+        });
+
+        console.log("Auth test response status:", response.status);
+        const result = await response.json();
+        console.log("Auth test result:", result);
+
+    } catch (error) {
+        console.log("Auth test error:", error);
+    }
+}
+
+// function updateProfileDisplay(userData: any): void {
+//     // Mettre à jour le nom affiché
+//     const displayNameEl = document.getElementById('user-name');
+//     if (displayNameEl) {
+//         displayNameEl.textContent = userData.nickName || 'User'; // Utilisez nickName directement
+//     }
+
+//     // CORRECTION : utilisez 'login' au lieu de 'username'
+//     const usernameEl = document.getElementById('profile-username');
+//     if (usernameEl && userData.login) {
+//         usernameEl.textContent = `@${userData.login}`;
+//     }
+
+//     // Mettre à jour l'email
+//     const locationEl = document.getElementById('profile-location');
+//     if (locationEl && userData.email) {
+//         locationEl.textContent = userData.email;
+//     }
+// }
+
+
 
 function initContentFeatures(contentKey: string): void {
 	switch (contentKey) {
@@ -465,9 +644,14 @@ function initChangePasswordForm(): void {
 
 			// Votre logique existante adaptée
 			const body = {
-				email: email,
+				login: '',
+				nickName: '',
 				password: currentPassword,
 				newPassword: newPassword,
+				email: email,
+				avatar: '',
+				noAvatar: false,
+				ext: '',
 			};
 
 			try {
@@ -479,6 +663,7 @@ function initChangePasswordForm(): void {
 					headers: {
 						'Content-Type': 'application/json',
 					},
+					credentials: 'include',
 					body: JSON.stringify(body),
 				});
 
@@ -498,28 +683,123 @@ function initChangePasswordForm(): void {
 	}
 }
 
+// function initProfilePictureUpload(): void {
+// 	const fileInput = document.getElementById('profile-upload') as HTMLInputElement;
+// 	const fileInfo = document.getElementById('file-info');
+// 	const preview = document.getElementById('preview-avatar');
+
+// 	if (fileInput && fileInfo) {
+// 		fileInput.addEventListener('change', e => {
+// 			const file = (e.target as HTMLInputElement).files?.[0];
+// 			if (file) {
+// 				fileInfo.textContent = file.name;
+
+// 				const reader = new FileReader();
+// 				reader.onload = e => {
+// 					if (preview && e.target?.result) {
+// 						preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded-lg">`;
+// 					}
+// 				};
+// 				reader.readAsDataURL(file);
+// 				// const form = document.getElementById('edit-profile-form') as HTMLFormElement;
+// 				if (!form) {
+// 					console.log("❌ Form not found");
+// 					return;
+// 				}
+
+// 			}
+// 		});
+// 	}
+// }
+
 function initProfilePictureUpload(): void {
-	const fileInput = document.getElementById('profile-upload') as HTMLInputElement;
+	const fileInput = document.getElementById('profile-upload-input') as HTMLInputElement;
 	const fileInfo = document.getElementById('file-info');
 	const preview = document.getElementById('preview-avatar');
+	const form = document.getElementById('profile-upload-form') as HTMLFormElement;
 
-	if (fileInput && fileInfo) {
-		fileInput.addEventListener('change', e => {
-			const file = (e.target as HTMLInputElement).files?.[0];
-			if (file) {
-				fileInfo.textContent = file.name;
+	if (!fileInput || !form) return;
 
-				const reader = new FileReader();
-				reader.onload = e => {
-					if (preview && e.target?.result) {
-						preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded-lg">`;
-					}
-				};
-				reader.readAsDataURL(file);
+	// Preview file name + image
+	fileInput.addEventListener('change', e => {
+		const file = (e.target as HTMLInputElement).files?.[0];
+		if (file) {
+		if (fileInfo) fileInfo.textContent = file.name;
+
+		const reader = new FileReader();
+		reader.onload = ev => {
+			if (preview && ev.target?.result) {
+			preview.innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-cover rounded-lg">`;
 			}
+		};
+		reader.readAsDataURL(file);
+		}
+	});
+
+	// Submit form
+	form.addEventListener('submit', async e => {
+		e.preventDefault();
+
+		const file = fileInput.files?.[0];
+		const noPicture = (document.getElementById('no-picture') as HTMLInputElement)?.checked;
+
+		const body: any = {
+		login: '',
+		nickName: '',
+		password: '',
+		newPassword: '',
+		email: '',
+		avatar: '',
+		noAvatar: noPicture,
+		ext: '',
+		};
+
+		if (file && !noPicture) {
+		try {
+			const base64 = await readFileAsBase64(file);
+			body.avatar = base64;
+
+			const fileName = file.name;
+			const lastDot = fileName.lastIndexOf('.');
+			if (lastDot !== -1) {
+			body.ext = fileName.slice(lastDot + 1).toLowerCase();
+			}
+		} catch (err) {
+			displayError('Error with avatar upload');
+			return;
+		}
+		}
+
+		try {
+		const host = window.location.hostname;
+		const port = window.location.port;
+		const protocol = window.location.protocol;
+
+		const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
+			method: 'POST',
+			headers: {
+			'Content-Type': 'application/json',
+			},
+			credentials: 'include',
+			body: JSON.stringify(body),
 		});
-	}
+
+		const reply = await response.json();
+		console.log("Upload response:", reply);
+
+		if (reply.success) {
+			initUserAvatar(); // Rafraîchir l’affichage
+			alert("Profile picture updated!");
+		} else {
+			displayError(reply.error || "Upload failed");
+		}
+		} catch (err) {
+		console.error(err);
+		displayError("Network error during upload");
+		}
+	});
 }
+
 
 function initDeleteAccountForm(): void {
     const form = document.getElementById('delete-account-form') as HTMLFormElement;
@@ -602,85 +882,21 @@ function initDeleteAccountForm(): void {
     });
 }
 
-//function initEditProfileForm(): void {
-//    const form = document.getElementById('edit-profile-form') as HTMLFormElement;
-//    if (!form) return;
-//
-//    // Pré-remplir avec les données existantes
-//    const userData = getCurrentUser();
-//    if (userData) {
-//        const firstNameInput = document.getElementById('edit-firstName') as HTMLInputElement;
-//        const lastNameInput = document.getElementById('edit-lastName') as HTMLInputElement;
-//        const nickNameInput = document.getElementById('edit-nickName') as HTMLInputElement;
-//        const emailInput = document.getElementById('edit-email') as HTMLInputElement;
-//
-//        if (firstNameInput) firstNameInput.value = userData.firstName || '';
-//        if (lastNameInput) lastNameInput.value = userData.lastName || '';
-//        if (nickNameInput) nickNameInput.value = userData.nickName || '';
-//        if (emailInput) emailInput.value = userData.email || '';
-//    }
-//
-//    form.addEventListener('submit', async (e) => {
-//        e.preventDefault();
-//
-//        const formData = new FormData(form);
-//        const body = {
-//            firstName: formData.get('firstName')?.toString().trim(),
-//            lastName: formData.get('lastName')?.toString().trim(),
-//            nickName: formData.get('nickName')?.toString().trim(),
-//            email: formData.get('email')?.toString().trim(),
-//        };
-//
-//        try {
-//            const host = window.location.hostname;
-//            const port = window.location.port;
-//            const protocol = window.location.protocol;
-//
-//            const response = await fetch(`${protocol}//${host}:${port}/api/updateProfile`, {
-//                method: 'POST',
-//                headers: {
-//                    'Content-Type': 'application/json',
-//                },
-//                credentials: 'include',
-//                body: JSON.stringify(body),
-//            });
-//
-//            const result = await response.json();
-//
-//            if (result.success) {
-//                alert('Profile updated successfully!');
-//                // Mettre à jour les données locales
-//                const currentUser = getCurrentUser();
-//                if (currentUser) {
-//                    Object.assign(currentUser, body);
-//                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-//                }
-//                // Actualiser l'affichage du nom
-//                initUserAvatar();
-//            } else {
-//                displayError(result.error || 'Failed to update profile');
-//            }
-//        } catch (error) {
-//            console.error('Update profile error:', error);
-//            displayError('Network error occurred');
-//        }
-//    });
-//}
-//
-//function initEditProfileButton(): void {
-//    const editBtn = document.getElementById('edit-profile-btn');
-//    if (editBtn) {
-//        editBtn.addEventListener('click', () => {
-//            console.log('Edit profile clicked');
-//
-//            // Désactiver tous les menu items actifs
-//            document.querySelectorAll('.menu-item').forEach(item => {
-//                item.classList.remove('active');
-//            });
-//
-//            // Afficher le contenu d'édition de profil
-//            showContent('edit-profile');
-//        });
-//    }
-//}
-//
+
+function initEditProfileButton(): void {
+    const editBtn = document.getElementById('edit-profile-btn');
+    if (editBtn) {
+        editBtn.addEventListener('click', () => {
+            console.log('Edit profile clicked');
+
+            // Désactiver tous les menu items actifs
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Afficher le contenu d'édition de profil
+            showContent('edit-profile');
+        });
+    }
+}
+

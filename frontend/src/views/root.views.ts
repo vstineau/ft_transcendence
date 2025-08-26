@@ -22,16 +22,13 @@ export async function RootView() {
 						</div>
 
 						<div class="ml-5">
-							<div class="flex items-center">
-								<h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
-								<button id="edit-profile-btn" class="ml-2 text-gray-500 hover:text-black transition-colors" title="Edit profile">
-									✍︎
-							</div>
-							<!-- NOM UTILISATEUR -->
-							<p id="profile-username" class="font-montserrat font-bold text-lg">Loading...</p>
+							 <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
 
-							<!-- USERNAME/LOGIN -->
+							<!-- NOM UTILISATEUR -->
 							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
+
+							<!-- EMAIL OU LOCALISATION -->
+							<p id="profile-location" class="text-gray-500 text-xs">Loading...</p>
 						</div>
 					</div>
 
@@ -470,8 +467,13 @@ export async function UpdateInfosview() {
 								<!-- Seul l'avatar OU le fallback sera affiché, pas les deux -->
 							</div>
 
-							<div class="ml-5">
-								<h3 id="user-name" class="font-montserrat font-bold text-black">Loading...</h3>
+							<div class="ml-5 flex-1">
+								<div class="flex items-center">
+									<h3 id="user-name" class="font-montserrat font-bold text-black">Loading...</h3>
+									<button id="edit-profile-btn" class="ml-2 text-gray-500 hover:text-black transition-colors text-xl" title="Edit profile">
+									✍︎
+									</button>
+								</div>
 								<p class="font-montserrat text-sm text-gray-500">Profil settings</p>
 							</div>
 						</div>
