@@ -445,6 +445,14 @@ function getContentHTML(contentKey: string): string {
 
 					<input
 						type="text"
+						name="username"
+						id="edit-username"
+						placeholder="Username (without @)"
+						class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-black transition-colors bg-transparent"
+					/>
+
+					<input
+						type="text"
 						name="nickName"
 						id="edit-nickName"
 						placeholder="Nick Name"
@@ -511,7 +519,7 @@ function initEditProfileForm(): void {
 
         const formData = new FormData(form);
         const body = {
-            login: '',
+            login: formData.get('username')?.toString().trim(),
             nickName: formData.get('nickName')?.toString().trim(),
             password: '',
             newPassword: '',
@@ -551,7 +559,6 @@ function initEditProfileForm(): void {
             if (result.success) {
                 console.log("✅ Success!");
                 alert('Profile updated successfully!');
-                // ... reste du code
             } else {
                 console.log("❌ Backend error:", result.error);
                 displayError(result.error || 'Failed to update profile');
