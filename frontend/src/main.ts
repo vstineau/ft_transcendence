@@ -119,7 +119,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 	});
 
 	// 5. Gère le bouton "Retour" du navigateur
-	window.addEventListener('popstate', renderPage);
+	window.addEventListener('popstate', () =>{
+		renderPage();
+	});
 
 	// 6. Rendu initial
 	await renderPage();
