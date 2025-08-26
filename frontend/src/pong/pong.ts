@@ -167,7 +167,7 @@ function drawWinner(winner: string, game: Game) {
 	return;
 }
 
-let winner: string | null = null;
+let winner: Player | null = null;
 let lastGame: Game | null = null;
 export function pongGame() {
 	const socket = createPongSocket();
@@ -178,14 +178,14 @@ export function pongGame() {
 	socket.on('waiting', (room: any) => {
 		drawWaitingScreen(room);
 	});
-	socket.on('playerWin', (player, game) => {
+	socket.on('playerWin', (player :Player, game) => {
 		if (!gameOver) {
 			lastGame = game;
 			winner = player;
 		}
 		gameOver = true;
 		if (gameOver && winner && lastGame) {
-			drawWinner(winner, lastGame);
+			drawWinner(winner.nickName, lastGame);
 		}
 	});
 	// Main game loop (frame update)

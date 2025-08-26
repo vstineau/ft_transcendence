@@ -1,10 +1,11 @@
 import { Server, Socket } from 'socket.io';
 // import { EventEmitter } from 'events';
-import { Game } from '../types/pongTypes.js';
+import { Game, Player, Room } from '../types/pongTypes.js';
 import { FastifyInstance } from 'fastify';
 import { app } from '../app.js';
 import { JwtPayload } from '../types/userTypes.js';
 import { User } from '../models.js';
+// import { Player } from '../types/pongTypes';
 
 // EventEmitter.defaultMaxListeners = 30;
 declare module 'fastify' {
@@ -18,6 +19,25 @@ const WIN_WIDTH = 1280;
 
 // let game: Game;
 let intervalStarted = false;
+
+export function initPlayer(socket: Socket, user: User, room: Room): Player {
+	let player: Player = {
+		nickName: user.nickName,
+		id: socket.id,
+		y: WIN_HEIGHT / 2,
+		x: room.playersNb === 0 ? 20 : WIN_WIDTH * 0.98,
+		height: WIN_HEIGHT / 9,
+		length: WIN_WIDTH / 90,
+		vy: WIN_HEIGHT / 130,
+		score: 0,
+		key_up: false,
+		key_down: false,
+		avatar: user.avatar,
+		login: user.login,
+	};
+	room.playersNb += 1;
+	return player;
+}
 
 function initGame(): Game {
 	let game = {
@@ -64,12 +84,6 @@ function initGame(): Game {
 	};
 	return game;
 }
-type Room = {
-	name: string;
-	playersNb: number;
-	game: Game;
-	locked: boolean;
-};
 
 let rooms: Room[] = [];
 let roomcount = 0;
@@ -84,6 +98,7 @@ function createRoom(socket: Socket): Room {
 		playersNb: 1, ////// changer ca
 		game: initGame(),
 		locked: false,
+		winner: null,
 	};
 	getInputs(socket, newRoom.game);
 	newRoom.game.p1.id = socket.id;
@@ -91,42 +106,29 @@ function createRoom(socket: Socket): Room {
 	return newRoom;
 }
 
-async function initRoom(socket: Socket, cookie: string) {
-	// console.log('cookie = ' + cookie);
-	let nickName: string;
-	let user;
+async function initPlayerRoom(socket: Socket, cookie: string) {
 	if (cookie) {
 		const payload = app.jwt.verify<JwtPayload>(cookie);
-		user = await User.findOneBy({ login: payload.login });
+		const user = await User.findOneBy({ login: payload.login });
 		if (!user) {
 			socket.emit('notLogged');
 			return;
 		}
-		// console.log(user);
-		nickName = user.nickName;
+		const room = getRoom();
+		if (room && user.login != room.game.p1.login) {
+			room.game.p2 = initPlayer(socket, user, room);
+			socket.join(room.name);
+			room.locked = true;
+			getInputs(socket, room.game);
+		} else {
+			const newRoom = createRoom(socket);
+			newRoom.game.p1 = initPlayer(socket, user, newRoom);
+			socket.join(newRoom.name);
+		}
 	} else {
 		socket.emit('notLogged');
 		return;
 	}
-	console.log(`user = ${user.login}`);
-	console.log(`nickname = ${user.nickName}`);
-	const room = getRoom();
-	if (room && user.login != room.game.p1.login) {
-		socket.join(room.name);
-		socket.emit('roomjoined', room.name);
-		room.playersNb = 2;
-		room.game.p2.id = socket.id;
-		room.game.p2.nickName = nickName;
-		room.game.p2.login = user.login;
-		room.locked = true;
-		getInputs(socket, room.game);
-	} else {
-		const newRoom = createRoom(socket);
-		newRoom.game.p1.login = user.login;
-		newRoom.game.p1.nickName = user.nickName;
-		socket.join(newRoom.name);
-	}
-	console.log(`roomcount = ${roomcount}`);
 }
 
 function handleDisconnect(app: FastifyInstance, socket: Socket) {
@@ -136,50 +138,41 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 		const room = rooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
 		if (room) {
 			room.playersNb--;
-			// if (room.game.p1.id === socket.id) {
-			// 	room.game.p1.id = '';
-			// } else if (room.game.p2.id === socket.id) {
-			// 	room.game.p2.id = '';
-			// }
-			// le ternaire c'est la vie
-			// room.game.p1.id === socket.id ? (room.game.p1.id = '') : (room.game.p2.id = '');
-			// if(!room.game.over){
-			const sock = app.io.sockets.sockets.get(room.game.p1.id === socket.id ? room.game.p2.id : room.game.p1.id) as Socket
-			// app.io
-			// 	.to(room.name)
+			const sock = app.io.sockets.sockets.get(room.game.p1.id === socket.id ? room.game.p2.id : room.game.p1.id) as Socket;
 			sock.emit('playerWin', room.game.p1.id === socket.id ? room.game.p2.nickName : room.game.p1.nickName, room.game);
-			// }
-			// room.game.over = true;
 			socket.leave(room.name);
 			sock.leave(room.name);
 			rooms = rooms.filter(r => r !== room);
-			// roomcount--;
 		}
 		socket.off;
 		socket.disconnect;
 	});
 }
 
+export function launchGame(rooms: Room[]) {
+	if (!intervalStarted) {
+		intervalStarted = true;
+		setInterval(() => {
+			// Pour chaque room prête, broadcast son état de jeu à tous ses joueurs
+			for (const room of rooms) {
+				if (room.playersNb === 2 && room.locked && !room.game!.over) {
+					gameLoop(room.game!, app);
+					app.io.to(room.name).emit('gameState', room.game);
+				} else if (!room.locked && room.playersNb === 1) {
+					app.io.to(room.name).emit('waiting', room);
+				}
+			}
+		}, 1000 / 60);
+	}
+}
+
 export function startPongGame(app: FastifyInstance) {
 	app.ready().then(() => {
 		app.io.on('connection', (socket: Socket) => {
+			handleDisconnect(app, socket);
 			socket.on('initGame', (cookie: string) => {
-				initRoom(socket, cookie);
-				handleDisconnect(app, socket);
-				if (!intervalStarted) {
-					intervalStarted = true;
-					setInterval(() => {
-						// Pour chaque room prête, broadcast son état de jeu à tous ses joueurs
-						for (const room of rooms) {
-							if (room.playersNb === 2 && room.locked) {
-								gameLoop(room.game, app);
-								app.io.to(room.name).emit('gameState', room.game);
-							} else if (!room.locked && room.playersNb === 1) {
-								app.io.to(room.name).emit('waiting', room);
-							}
-						}
-					}, 1000 / 60);
-				}
+				initPlayerRoom(socket, cookie);
+				launchGame(rooms);
 			});
 		});
 	});
@@ -235,7 +228,8 @@ function checkWin(game: Game, app: FastifyInstance) {
 		game.ball.y = WIN_HEIGHT / 2;
 		const room = rooms.find(r => r.game.p1.id === game.p1.id || r.game.p2.id === game.p2.id);
 		if (room) {
-			app.io.to(room.name).emit('playerWin', game.p1.score > game.p2.score ? game.p1.nickName : game.p2.nickName, game);
+			if (!room.winner) room.winner = room.game.p1.score > room.game.p2.score ? room.game.p1 : room.game.p2;
+			app.io.to(room.name).emit('playerWin', room.winner, game);
 		}
 	}
 }

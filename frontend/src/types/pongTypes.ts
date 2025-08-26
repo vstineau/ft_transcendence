@@ -7,7 +7,7 @@ export interface Game {
 }
 
 export interface Player {
-    name: string;
+    nickName: string;
     id: string;
     y: number;
     x: number;
@@ -17,6 +17,8 @@ export interface Player {
     score: number;
     key_up: boolean;
     key_down: boolean;
+    avatar: string | undefined;
+    login: string;
 }
 
 export interface Ball {
