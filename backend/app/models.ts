@@ -41,8 +41,6 @@ export class User extends BaseEntity {
 	nickName!: string;
 
 	@Column()
-	//Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
-	@Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, {message : getIsInvalidMessage("password", "please use  password with at least 8 characters, one uppercase, one lowercase, one number and one special character")})
 	password!: string;
 
 	@Column()
