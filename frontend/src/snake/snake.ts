@@ -102,6 +102,22 @@ function listenUserInputs(socket: Socket) {
 			e.key === 'ArrowRight') {
 			e.preventDefault();
 		}
+		if  (gameOver && e.key === 'Escape') {
+			gameOver = false;
+			started = false;
+			if (socket && socket.connected) {
+    	       socket.disconnect();
+    	   }
+			navigateTo('/');
+		}
+		else if (gameOver && e.key === 'Enter') {
+			gameOver = false;
+			started = false;
+			if (socket && socket.connected) {
+    	       socket.disconnect();
+    	   }
+			navigateTo('/snake');
+		}
 	});
 	// Resize handling
 	window.addEventListener('resize', () => {
@@ -192,21 +208,6 @@ export function snakeGame() {
 	socket.on('waiting_snake', (game: Game) => {
 		drawAlert(game.winSize, 'Waiting for player ... (1 / 2)');
 	})
-	socket.on('endGameButtons', (key) => {
-		if  (gameOver && key === 'Escape') {
-			gameOver = false;
-			started = false;
-			navigateTo('/');
-		}
-		else if (gameOver && key === 'Enter') {
-			gameOver = false;
-			started = false;
-			if (socket && socket.connected) {
-            socket.disconnect();
-        }
-			navigateTo('/snake');
-		}
-	})
 	socket.on('endGame_snake', (data) => {
 		drawAlert(data.winSize, `Game interrupted : ${data.reason}`);
 	    drawAlert(data.winsize, 'La partie a été interrompue : ' + data.reason);
@@ -220,6 +221,7 @@ export function snakeGame() {
 	socket.on('playerWin_snake', (winner, _game) => {
 		if (ctx) {
 			gameOver = true;
+			started = false;
 			//winner announcement
 			const btns = document.getElementById('snakeGameEndButtons');
 			if (btns) btns.style.display = 'flex';

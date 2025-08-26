@@ -187,9 +187,6 @@ export function getInputs(sock: Socket, game: Game) {
 					game.p1.pendingDir = {x:-1, y:0};
 			else if (key.key === 'ArrowRight'&& game.p1.pendingDir.x != -1)
 					game.p1.pendingDir = {x:1, y:0};
-			else if (key.key === 'Escape' || key.key === 'Enter') {
-				sock.emit('endGameButtons', key.key);
-			}
 		} else if (sock.id === game.p2.id) {
 			if ((key.key === 'w' || key.key === 'W') && game.p2.pendingDir.y != 1)
 				game.p2.pendingDir = {x:0, y:-1};
@@ -207,9 +204,6 @@ export function getInputs(sock: Socket, game: Game) {
 					game.p2.pendingDir = {x:-1, y:0};
 			else if (key.key === 'ArrowRight'&& game.p2.pendingDir.x != -1)
 					game.p2.pendingDir = {x:1, y:0};
-			else if (key.key === 'Escape' || key.key === 'Enter') {
-				sock.emit('endGameButtons', key.key);
-			}
 		}
 	});
 }
@@ -228,7 +222,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
 	}
 	const historyp1: UserHistory = {
 		type: 'snake',
-		date: '',
+		date: Date(),
 		win: winner === 'P1' ? 'WIN' : 'LOOSE',
 		opponent: user2.login,
 		score: '',
@@ -236,9 +230,9 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
 	}
 	const historyp2: UserHistory = {
 		type: 'snake',
-		date: '',
+		date: Date(),
 		win: winner === 'P2' ? 'WIN' : 'LOOSE',
-		opponent: user2.login,
+		opponent: user1.login,
 		score: '',
 		finalLength: game.p2.segments.length,
 	}
