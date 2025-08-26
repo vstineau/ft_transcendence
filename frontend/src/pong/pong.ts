@@ -1,5 +1,5 @@
 import io, { Socket } from 'socket.io-client';
-import { Game } from '../types/pongTypes';
+import { Game, Player } from '../types/pongTypes';
 import { navigateTo } from '../main';
 
 function getCookie(name: string) {
@@ -36,8 +36,8 @@ function initCanvas(socket: Socket) {
 		console.error("❌ Canvas 'gameCanvas' not found");
 		return;
 	}
-	canvas.width = win_width * 0.8;
-	canvas.height = win_height * 0.8;
+	canvas.width = win_width * 0.6;
+	canvas.height = win_height * 0.6;
 	ctx = canvas.getContext('2d');
 	if (!ctx) {
 		console.error('❌ Failed to get canvas context');
@@ -105,10 +105,11 @@ function listenUserInputs(socket: Socket) {
 	// Resize handling
 	window.addEventListener('resize', () => {
 		if (canvas) {
-			canvas.width = window.innerWidth * 0.8;
-			canvas.height = window.innerHeight * 0.8;
+			canvas.width = window.innerWidth * 0.6;
+			canvas.height = window.innerHeight * 0.6;
 		}
-		socket.emit('resize');
+		if (gameOver && winner && lastGame) drawWinner(winner, lastGame);
+		// socket.emit('resize');
 	});
 }
 
@@ -124,7 +125,7 @@ let gameOverButton = {
 // Gestion du clic sur le canvas
 
 function drawWaitingScreen(room: any) {
-	if (!ctx) return;
+	if (!ctx || gameOver) return;
 	// On utilise les mêmes scales que dans drawGame
 	const scale_x = canvas.width / room.game.win.width;
 	const scale_y = canvas.height / room.game.win.height;
@@ -141,6 +142,33 @@ function drawWaitingScreen(room: any) {
 	ctx.fillText('Waiting for player ... (1 / 2)', (room.game.win.width * scale_x) / 2, (room.game.win.height * scale_y) / 2);
 }
 
+function drawWinner(winner: string, game: Game) {
+	if (!ctx) return;
+	// game.over = true;
+	// gameOver = true;
+	let scale_x = canvas.width / game.win.width;
+	let scale_y = canvas.height / game.win.height;
+	ctx.clearRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
+	// ctx.fillStyle = 'white';
+	ctx.fillStyle = 'gray';
+	// Couleur de la bordure
+	ctx.strokeStyle = 'white';
+	ctx.lineWidth = 4; // épaisseur de la bordure
+	ctx.fillRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
+	ctx.strokeRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
+	// ctx.fillRect(canvas.width * 0.1, canvas.height * 0.25, canvas.width * 0.6, canvas.height * 0.12);
+	// ctx.fillStyle = 'black';
+	// ctx.fillRect(canvas.width * 0.105, canvas.height * 0.26, canvas.width * 0.69, canvas.height * 0.1);
+	ctx.fillStyle = 'white';
+	ctx.textAlign = 'center';
+	// const px = canvas.width * canvas.height / 30000;
+	ctx.font = `${40 * (scale_y < scale_x ? scale_y : scale_y)}px Arial`;
+	ctx.fillText(winner + ' wins', canvas.width * 0.5, canvas.height * 0.33, canvas.width * 0.4);
+	return;
+}
+
+let winner: string | null = null;
+let lastGame: Game | null = null;
 export function pongGame() {
 	const socket = createPongSocket();
 	listenUserInputs(socket);
@@ -150,24 +178,17 @@ export function pongGame() {
 	socket.on('waiting', (room: any) => {
 		drawWaitingScreen(room);
 	});
-	socket.on('playerWin', (winner, game) => {
-		if (!ctx || gameOver) return;
+	socket.on('playerWin', (player, game) => {
+		if (!gameOver) {
+			lastGame = game;
+			winner = player;
+		}
 		gameOver = true;
-		let scale_x = canvas.width / game.win.width;
-		let scale_y = canvas.height / game.win.height;
-		ctx.clearRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
-		ctx.fillStyle = 'white';
-		ctx.fillRect(canvas.width * 0.1, canvas.height * 0.25, canvas.width * 0.8, canvas.height * 0.12);
-		ctx.fillStyle = 'black';
-		ctx.fillRect(canvas.width * 0.105, canvas.height * 0.26, canvas.width * 0.79, canvas.height * 0.1);
-		ctx.fillStyle = 'white';
-		ctx.textAlign = 'center';
-		ctx.font = `${40 * scale_y}px Arial`;
-		ctx.fillText(winner + ' wins', canvas.width * 0.5, canvas.height * 0.33);
-		return;
+		if (gameOver && winner && lastGame) {
+			drawWinner(winner, lastGame);
+		}
 	});
 	// Main game loop (frame update)
-
 	socket.on('gameState', (game: Game) => {
 		drawGame(game);
 	});
