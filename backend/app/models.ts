@@ -111,7 +111,10 @@ export class History {
 	score?: string;
 
 	@Column()
-	win?: boolean;
+	win?: string;
+
+	@Column()
+	finalLength?: number;
 
 	@ManyToOne(() => User, (user: User) => user.history)
     user: User;
@@ -119,10 +122,12 @@ export class History {
 	constructor(user: User , data?: UserHistory)
 	{
 		if (data) {
+			this.type = data.type;
 			this.date = data.date;
 			this.opponent = data.opponent;
 			this.score = data.score;
 			this.win = data.win;
+			this.finalLength = data.finalLength;
 		}
 		this.user = user;
 	}

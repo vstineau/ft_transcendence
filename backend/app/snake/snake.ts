@@ -1,9 +1,9 @@
 import { pos, Game, Snake , Room} from '../types/snakeTypes.js';
 import { app } from '../app.js'
-import { JwtPayload } from '../types/userTypes.js'
+import { JwtPayload, UserHistory } from '../types/userTypes.js'
 import { Socket } from 'socket.io';
 import { FastifyInstance } from 'fastify';
-import { User } from '../models.js'
+import { User, History} from '../models.js'
 //import { v4 as uuidv4 } from "uuid";
 
 const WIN = 600;
@@ -214,6 +214,47 @@ export function getInputs(sock: Socket, game: Game) {
 	});
 }
 
+async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
+
+	const user1 = await User.findOneBy({login: game.p1.login});
+	if (!user1 ) {
+		console.log('cant get user1');
+		return ;
+	}
+	const user2 = await User.findOneBy({login: game.p2.login});
+	if (!user2 ) {
+		console.log('cant get user2');
+		return ;
+	}
+	const historyp1: UserHistory = {
+		type: 'snake',
+		date: '',
+		win: winner === 'P1' ? 'WIN' : 'LOOSE',
+		opponent: user2.login,
+		score: '',
+		finalLength: game.p1.segments.length,
+	}
+	const historyp2: UserHistory = {
+		type: 'snake',
+		date: '',
+		win: winner === 'P2' ? 'WIN' : 'LOOSE',
+		opponent: user2.login,
+		score: '',
+		finalLength: game.p2.segments.length,
+	}
+	if (winner === 'DRAW') {
+		historyp1.win = 'DRAW';
+		historyp2.win = 'DRAW';
+	}
+	if (!user1.history) user1.history = [];
+	user1.history.push(new History(user1, historyp1));
+	if (!user2.history) user2.history = [];
+	user2.history.push(new History(user2, historyp2));
+	user1.save();
+	user2.save();
+}
+
+
 export function update(game: Game, app: FastifyInstance, roomId: string) {
     [game.p1, game.p2].forEach(snake => {
         moveSnake(snake, game.winSize);
@@ -224,19 +265,18 @@ export function update(game: Game, app: FastifyInstance, roomId: string) {
 
     if (col1 === "head-on" || col2 === "head-on" || (col1 === "other" && col2 === "other")) {
         app.io.to(roomId).emit('draw', game);
+		saveDataInHistory(game, 'DRAW');
         return;
     }
 
     if (col1 === "other") {
         app.io.to(roomId).emit('playerWin_snake', game.p2, game);
+		saveDataInHistory(game, 'P2');
         return;
     }
     if (col2 === "other") {
         app.io.to(roomId).emit('playerWin_snake', game.p1, game);
-        return;
-    }
-    if (col1 === "head-on" || col2 === "head-on") {
-        app.io.to(roomId).emit('draw', game);
+		saveDataInHistory(game, 'P1');
         return;
     }
     [game.p1, game.p2].forEach(snake => {
