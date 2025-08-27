@@ -15,6 +15,7 @@ import {
 	SnakeCanvas,
 	localSnakeCanvas,
 	WelcomeView,
+	pongTournament,
 } from './views/root.views';
 import { pongGame } from './pong/pong';
 import { initScrollAnimations, cleanupScrollAnimations } from './utils/animations';
@@ -22,7 +23,7 @@ import { initThemeToggle, cleanupThemeToggle } from './theme/darkMode';
 import { snakeGame } from './snake/snake';
 import { localSnakeGame } from './snake/localSnake';
 import { localpongGame } from './pong/localPong';
-import {initProfilePage } from './utils/avatar';
+import { initProfilePage } from './utils/avatar';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -57,7 +58,7 @@ async function renderPage() {
 	console.log(path);
 
 	cleanupScrollAnimations();
-    cleanupThemeToggle();
+	cleanupThemeToggle();
 
 	const view = routes[path] ? await routes[path]() : '<h1>404 Not Found</h1>';
 	const rootElement: HTMLElement | null = document.getElementById('root');
@@ -65,7 +66,7 @@ async function renderPage() {
 	// document.getElementById('root')!.innerHTML = view;
 
 	if (rootElement) {
-	rootElement.innerHTML = view;
+		rootElement.innerHTML = view;
 	}
 	// Initialiser les fonctionnalités spécifiques à chaque page
 	switch (path) {
@@ -105,6 +106,9 @@ async function renderPage() {
 		case '/snake/local':
 			localSnakeGame();
 			break;
+		case '/pong/tournament':
+			pongTournament();
+			break;
 	}
 }
 
@@ -119,7 +123,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	});
 
 	// 5. Gère le bouton "Retour" du navigateur
-	window.addEventListener('popstate', () =>{
+	window.addEventListener('popstate', () => {
 		renderPage();
 	});
 

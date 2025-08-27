@@ -142,7 +142,7 @@ function drawWaitingScreen(room: any) {
 	ctx.fillText('Waiting for player ... (1 / 2)', (room.game.win.width * scale_x) / 2, (room.game.win.height * scale_y) / 2);
 }
 
-function drawWinner(winner: string, game: Game) {
+function drawWinner(winner: Player, game: Game) {
 	if (!ctx) return;
 	// game.over = true;
 	// gameOver = true;
@@ -163,7 +163,7 @@ function drawWinner(winner: string, game: Game) {
 	ctx.textAlign = 'center';
 	// const px = canvas.width * canvas.height / 30000;
 	ctx.font = `${40 * (scale_y < scale_x ? scale_y : scale_y)}px Arial`;
-	ctx.fillText(winner + ' wins', canvas.width * 0.5, canvas.height * 0.33, canvas.width * 0.4);
+	ctx.fillText(winner.nickName + ' wins', canvas.width * 0.5, canvas.height * 0.33, canvas.width * 0.4);
 	return;
 }
 
@@ -185,7 +185,7 @@ export function pongGame() {
 		}
 		gameOver = true;
 		if (gameOver && winner && lastGame) {
-			drawWinner(winner.nickName, lastGame);
+			drawWinner(winner, lastGame);
 		}
 	});
 	// Main game loop (frame update)

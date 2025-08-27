@@ -1,36 +1,37 @@
 export async function RootView() {
-    return /* HTML */ `
-<!-- Titre FT_TRANSCENDENCE en haut -->
+	return /* HTML */ `
+		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
 			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
 			</h1>
 		</div>
 
-<!-- Section avec les blocs -->
-<div class="content-section min-h-screen bg-gray-100 py-16">
-    <div class="max-w-7xl mx-auto px-8 ">
+		<!-- Section avec les blocs -->
+		<div class="content-section min-h-screen bg-gray-100 py-16">
+			<div class="max-w-7xl mx-auto px-8 ">
+				<!-- Container des blocs en grid complexe -->
+				<div
+					class="grid gap-3 auto-rows-min mx-auto mt-36 justify-center"
+					style="grid-template-columns: 320px 150px 280px 150px; max-width: 1000px;"
+				>
+					<!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes changer la taille de base du bloc de profil -->
+					<div class="row-span-2 bg-white rounded-xl shadow-lg p-4">
+						<div class="flex items-start mb-6 ml-3">
+							<div id="profile-avatar-container" class="w-32 h-32 bg-gray-200 rounded-xl overflow-hidden">
+								<!-- L'avatar ou le fallback sera injecté ici -->
+							</div>
 
-        <!-- Container des blocs en grid complexe -->
-        	<div class="grid gap-3 auto-rows-min mx-auto mt-36 justify-center" style="grid-template-columns: 320px 150px 280px 150px; max-width: 1000px;">
+							<div class="ml-5">
+								<h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
 
-			<!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes changer la taille de base du bloc de profil -->
-				<div class="row-span-2 bg-white rounded-xl shadow-lg p-4">
-					<div class="flex items-start mb-6 ml-3">
-						<div id="profile-avatar-container" class="w-32 h-32 bg-gray-200 rounded-xl overflow-hidden">
-                        	<!-- L'avatar ou le fallback sera injecté ici -->
+								<!-- NOM UTILISATEUR -->
+								<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
+
+								<!-- EMAIL OU LOCALISATION -->
+								<p id="profile-location" class="text-gray-500 text-xs">Loading...</p>
+							</div>
 						</div>
-
-						<div class="ml-5">
-							 <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
-
-							<!-- NOM UTILISATEUR -->
-							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
-
-							<!-- EMAIL OU LOCALISATION -->
-							<p id="profile-location" class="text-gray-500 text-xs">Loading...</p>
-						</div>
-					</div>
 
 						<div class="flex space-x-6 ml-3">
 							<button
@@ -38,7 +39,11 @@ export async function RootView() {
 							>
 								View
 							</button>
-								 <a href="/updateInfos" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition">Edit</a>
+							<a
+								href="/updateInfos"
+								class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition"
+								>Edit</a
+							>
 						</div>
 					</div>
 
@@ -124,14 +129,17 @@ export async function RootView() {
 								</h3>
 							</div>
 
-						<div class="flex-1 flex gap-3">
-						<!-- Light mode avec soleil centre -->
-							<div id="dash-theme-toggle" class="flex-1 bg-white rounded-xl shadow-lg p-3 flex flex-col cursor-pointer hover:bg-gray-50 transition-colors">
-								<p class="font-montserrat text-base mb-2" id="dash-theme-text">Light mode</p>
-								<div class="flex-1 flex items-center justify-center">
-									<span class="text-6xl transition-transform hover:scale-110" id="dash-theme-icon">☼</span>
+							<div class="flex-1 flex gap-3">
+								<!-- Light mode avec soleil centre -->
+								<div
+									id="dash-theme-toggle"
+									class="flex-1 bg-white rounded-xl shadow-lg p-3 flex flex-col cursor-pointer hover:bg-gray-50 transition-colors"
+								>
+									<p class="font-montserrat text-base mb-2" id="dash-theme-text">Light mode</p>
+									<div class="flex-1 flex items-center justify-center">
+										<span class="text-6xl transition-transform hover:scale-110" id="dash-theme-icon">☼</span>
+									</div>
 								</div>
-							</div>
 
 								<!-- Settings -->
 								<a
@@ -396,13 +404,13 @@ export async function RegisterView() {
 					</p>
 				</div>
 
-                <!-- Lien vers connexion -->
-                <div class="mt-6 text-center">
-                    <p class="text-sm text-gray-600">
-                        Have an account ?
-                        <a href="/login" class="text-black hover:underline font-medium">Sign in</a>
-                    </p>
-                </div>
+				<!-- Lien vers connexion -->
+				<div class="mt-6 text-center">
+					<p class="text-sm text-gray-600">
+						Have an account ?
+						<a href="/login" class="text-black hover:underline font-medium">Sign in</a>
+					</p>
+				</div>
 
 				<!-- Message d'erreur -->
 				<div
@@ -603,7 +611,6 @@ export async function UpdateInfosview() {
 	`;
 }
 
-
 // export async function UpdateInfosview() {
 // 	return /* HTML */ `
 // 		<div class="max-w-md mx-auto p-6 rounded-lg shadow-lg animate-fade-in">
@@ -678,8 +685,8 @@ export async function UpdateInfosview() {
 // 	`;
 // }
 
-
-export async function PongCanvas(){ // gameCanvas
+export async function PongCanvas() {
+	// gameCanvas
 	return /* HTML */ `
 		<div class="flex items-center justify-center w-screen h-screen bg-gray-900">
 			<canvas id="gameCanvas" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"></canvas>
@@ -699,10 +706,34 @@ export async function localPongCanvas() {
 	`;
 }
 
-export async function localSnakeCanvas(){
+export async function localSnakeCanvas() {
 	return /* HTML */ `
-	<div class="flex items-center justify-center w-screen h-screen bg-gray-900">
-	  <canvas id="localSnakeGameCanvas" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"></canvas>
-	</div>
-`;
+		<div class="flex items-center justify-center w-screen h-screen bg-gray-900">
+			<canvas id="localSnakeGameCanvas" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"></canvas>
+		</div>
+	`;
+}
+
+export async function pongTournament() {
+	return /* HTML */ `
+		<div>
+			<h2>Tournoi - Saisie des joueurs</h2>
+			<form>
+				<label for="nbPlayers">Nombre de joueurs :</label>
+				<select id="nbPlayers" name="nbPlayers">
+					<option value="4">4 joueurs</option>
+					<option value="5">5 joueurs</option>
+					<option value="6">6 joueurs</option>
+					<option value="7">7 joueurs</option>
+					<option value="8">8 joueurs</option>
+				</select>
+
+				<div id="playersZone">
+					<!-- Inputs générés dynamiquement -->
+				</div>
+
+				<button type="submit">Valider la liste</button>
+			</form>
+		</div>
+	`;
 }

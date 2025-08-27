@@ -25,7 +25,7 @@ export function initPlayer(socket: Socket, user: User, room: Room): Player {
 		nickName: user.nickName,
 		id: socket.id,
 		y: WIN_HEIGHT / 2,
-		x: room.playersNb === 0 ? 20 : WIN_WIDTH * 0.98,
+		x: 20,
 		height: WIN_HEIGHT / 9,
 		length: WIN_WIDTH / 90,
 		vy: WIN_HEIGHT / 130,
@@ -88,11 +88,11 @@ function initGame(): Game {
 let rooms: Room[] = [];
 let roomcount = 0;
 
-function getRoom() {
+export function getRoom() {
 	return rooms.find(room => room.playersNb < 2 && !room.locked);
 }
 
-function createRoom(socket: Socket): Room {
+export function createRoom(socket: Socket): Room {
 	let newRoom: Room = {
 		name: `room_${roomcount++}`,
 		playersNb: 1, ////// changer ca
@@ -105,6 +105,7 @@ function createRoom(socket: Socket): Room {
 	rooms.push(newRoom);
 	return newRoom;
 }
+
 
 async function initPlayerRoom(socket: Socket, cookie: string) {
 	if (cookie) {
@@ -178,7 +179,7 @@ export function startPongGame(app: FastifyInstance) {
 	});
 }
 
-function getInputs(sock: Socket, game: Game) {
+export function getInputs(sock: Socket, game: Game) {
 	sock.on('keyup', (key: any, id: string) => {
 		//p1
 		if (id === game.p1.id) {
