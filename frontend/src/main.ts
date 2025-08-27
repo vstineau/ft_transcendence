@@ -22,6 +22,7 @@ import { initThemeToggle, cleanupThemeToggle } from './theme/darkMode';
 import { snakeGame } from './snake/snake';
 import { localSnakeGame } from './snake/localSnake';
 import { localpongGame } from './pong/localPong';
+import {initProfilePage } from './utils/avatar';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -73,11 +74,15 @@ async function renderPage() {
 
 			setTimeout(() => {
 				initScrollAnimations();
-				initThemeToggle(); // ← Initialiser le thème après les animations
+				initThemeToggle();
 			}, 100);
 			break;
-		case '/dashborad':
+		case '/dashboard':
 			rootUser();
+			setTimeout(() => {
+				initThemeToggle(); // ← Initialiser le thème après les animations
+				initProfilePage();
+			}, 100);
 			break;
 		case '/updateInfos':
 			updateInfos();
@@ -114,7 +119,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 	});
 
 	// 5. Gère le bouton "Retour" du navigateur
-	window.addEventListener('popstate', renderPage);
+	window.addEventListener('popstate', () =>{
+		renderPage();
+	});
 
 	// 6. Rendu initial
 	await renderPage();

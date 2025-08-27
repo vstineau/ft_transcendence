@@ -41,8 +41,6 @@ export class User extends BaseEntity {
 	nickName!: string;
 
 	@Column()
-	//Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
-	@Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, {message : getIsInvalidMessage("password", "please use  password with at least 8 characters, one uppercase, one lowercase, one number and one special character")})
 	password: string;
 
 	@Column()
@@ -116,7 +114,10 @@ export class History {
 	score?: string;
 
 	@Column()
-	win?: boolean;
+	win?: string;
+
+	@Column()
+	finalLength?: number;
 
 	@ManyToOne(() => User, (user: User) => user.history)
     user: User;
@@ -124,10 +125,12 @@ export class History {
 	constructor(user: User , data?: UserHistory)
 	{
 		if (data) {
+			this.type = data.type;
 			this.date = data.date;
 			this.opponent = data.opponent;
 			this.score = data.score;
 			this.win = data.win;
+			this.finalLength = data.finalLength;
 		}
 		this.user = user;
 	}

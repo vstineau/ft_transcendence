@@ -185,3 +185,89 @@ dark .bg-black .text-white,
 .dark .bg-black * {
     color: #000000 !important;
 }
+
+/* effect neuromorphism */
+
+/* Variables pour le neumorphism */
+:root {
+    --neu-bg: #e0e5ec;
+    --neu-shadow-light: #ffffff;
+    --neu-shadow-dark: #a3b1c6;
+    --neu-text: #333333;
+}
+
+.dark {
+    --neu-bg: #2d3748;
+    --neu-shadow-light: #4a5568;
+    --neu-shadow-dark: #1a202c;
+    --neu-text: #e2e8f0;
+}
+
+/* Arrière-plan neumorphism */
+.neu-background {
+    background: var(--neu-bg);
+    transition: background 0.3s ease;
+}
+
+/* Effet neumorphism de base - éléments en relief */
+.neu-raised {
+    background: var(--neu-bg);
+    border-radius: 20px;
+    box-shadow:
+        8px 8px 16px var(--neu-shadow-dark),
+        -8px -8px 16px var(--neu-shadow-light);
+    border: none;
+    color: var(--neu-text);
+    transition: all 0.3s ease;
+}
+
+/* Effet au hover */
+.neu-raised:hover {
+    box-shadow:
+        12px 12px 20px var(--neu-shadow-dark),
+        -12px -12px 20px var(--neu-shadow-light);
+    transform: translateY(-2px);
+}
+
+/* Effet enfoncé */
+.neu-inset {
+    background: var(--neu-bg);
+    border-radius: 20px;
+    box-shadow:
+        inset 8px 8px 16px var(--neu-shadow-dark),
+        inset -8px -8px 16px var(--neu-shadow-light);
+    border: none;
+    color: var(--neu-text);
+    transition: all 0.3s ease;
+}
+
+/* Boutons neumorphism */
+.neu-button {
+    background: var(--neu-bg);
+    border-radius: 16px;
+    box-shadow:
+        6px 6px 12px var(--neu-shadow-dark),
+        -6px -6px 12px var(--neu-shadow-light);
+    border: none;
+    color: var(--neu-text);
+    padding: 12px 24px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.neu-button:hover {
+    box-shadow:
+        8px 8px 16px var(--neu-shadow-dark),
+        -8px -8px 16px var(--neu-shadow-light);
+    transform: translateY(-1px);
+}
+
+.neu-button:active {
+    box-shadow:
+        inset 3px 3px 6px var(--neu-shadow-dark),
+        inset -3px -3px 6px var(--neu-shadow-light);
+    transform: translateY(0);
+}

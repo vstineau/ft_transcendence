@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { User } from '../models.js'
 import { IUserReply, UserJson } from '../types/userTypes.js'
+import { comparePassword } from '../utils/hashPassword.js'
 
 export default {
   method: 'POST',
@@ -12,7 +13,11 @@ export default {
     try {
       const invalidInfoError = 'the provided user details are invalid'
       const user = await User.findOneBy({ login: request.body.login })
-      if (!user || !request.body.password || !user.comparePassword(request.body.password) || user.provider === 'github') {
+      let isPasswordValid = false;
+      if (user && request.body.password){
+      	isPasswordValid = await comparePassword(request.body.password, user.password);
+      }
+      if (!user || !request.body.password || !isPasswordValid || user.provider === 'github') {
         throw new Error(invalidInfoError)
       }
 	  if (user.twoFaAuth) {
@@ -20,18 +25,21 @@ export default {
 		reply.code(200).send(response);
 	  }
       const token = reply.server.jwt.sign(
-        { 
+        {
 		  login: user.login,
 		  email: user.email,
-		  id: user.id, 
+		  id: user.id,
 		  twoFaAuth: user.twoFaAuth
 		},
         { expiresIn: '4h' }
       )
-	  const response : IUserReply[200] = {success: true};
+	  const response : IUserReply[200] = {success: true, user:{avatar: user.avatar,
+															nickName: user.nickName,
+															login: user.login,
+															email: user.email}};
       reply
         .setCookie('token', token, {
-          httpOnly: true,
+          httpOnly: false,
           secure: true,
           path: '/',
           sameSite: 'lax',

@@ -8,6 +8,7 @@ import { readFile } from 'fs/promises'
 import speakeasy from 'speakeasy';
 import { encryptSecret} from '../utils/encryption.js'
 import QRCode from 'qrcode';
+import { comparePassword } from '../utils/hashPassword.js'
 
 export default {
   method: 'POST',
@@ -38,10 +39,14 @@ export default {
 			user.twoFaAuth = false;
 			user.twoFaSecret = '';
 		  }
+		  let isPasswordValid = false;
+      	  if (user && request.body.password){
+      	  	isPasswordValid = await comparePassword(request.body.password, user.password);
+      	  }
           if (
             request.body.password &&
             request.body.newPassword &&
-            await user.comparePassword(request.body.password)
+            isPasswordValid
           ) {
             user.password = request.body.newPassword
           }
@@ -64,7 +69,7 @@ export default {
 	      const response : IUserReply[200] = {success: true, qrCode: qrCodeDataURL};
           reply
             .setCookie('token', token, {
-              httpOnly: true,
+              httpOnly: false,
               secure: true,
               path: '/',
               sameSite: 'lax',

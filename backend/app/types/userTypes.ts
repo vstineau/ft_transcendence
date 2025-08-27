@@ -1,4 +1,3 @@
-//import { User } from '../models.js'
 
 export interface IUserReply {
 	200: { success: boolean, user?: UserJson, qrCode?: string, twoFaAuth?: boolean };
@@ -25,7 +24,7 @@ export type UserJson = {
 	avatar?: string,
 	noAvatar?: boolean;
 	ext?: string;
-	twoFaAuth: boolean;
+	twoFaAuth?: boolean;
 	twoFaSecret?: string;
 	twoFaCode?: string;
 	provider?: string;
@@ -33,10 +32,12 @@ export type UserJson = {
 };
 
 export type UserHistory = {
+	type?: string,
 	date?: string,
 	opponent?: string,
 	score?: string,
-	win?: boolean,
+	finalLength?: number,
+	win?: string,
 };
 
 export type UserStats = {

@@ -5,6 +5,7 @@ import logout from './logout.js'
 import deleteAccount from './deleteAccount.js'
 import updateInfosGet from './updateInfosGet.js'
 import updateInfosPost from './updateInfosPost.js'
+import matchMaking from './matchMaking.js'
 import { FastifyPluginCallback } from 'fastify';
 
 export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
@@ -15,5 +16,6 @@ export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
   fastify.route(deleteAccount)
   fastify.route(updateInfosGet)
   fastify.route(updateInfosPost)
+  fastify.route(matchMaking)
   done()
 }

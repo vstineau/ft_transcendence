@@ -1,45 +1,49 @@
-// import { Game } from '../types/pongTypes';
-// import { navigateTo } from '../main';
-
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D | null;
 
 let win_width = window.innerWidth;
 let win_height = window.innerHeight;
+let gameWidth = win_width * 0.8;
+let gameHeight = win_height * 0.8;
 
 let p1 = {
 	name: 'player 1',
-	y: win_height / 2,
+	y: gameHeight / 2,
 	x: 20,
-	height: win_height / 9,
-	length: win_width / 90,
-	vy: win_height / 150,
+	height: gameHeight / 9,
+	length: gameWidth / 90,
+	vy: gameHeight / 150,
 	score: 0,
 };
+
 let p2 = {
 	name: 'player 2',
-	y: win_height / 2,
-	x: win_width * 0.98,
-	height: win_height / 9,
-	length: win_width / 90,
-	vy: win_height / 150,
+	y: gameHeight / 2,
+	x: gameWidth - 20,
+	height: gameHeight / 9,
+	length: gameWidth / 90,
+	vy: gameHeight / 150,
 	score: 0,
 };
+
 let ball = {
-	x: win_width / 2,
-	y: win_height / 2,
-	radius: (win_height * win_width) / 80000,
+	x: gameWidth / 2,
+	y: gameHeight / 2,
+	radius: (gameHeight * gameWidth) / 80000,
 	vx: 0,
 	vy: 0,
 };
+
 let key_w = false,
 	key_s = false,
 	key_up = false,
 	key_down = false;
 
+let gameOver = false;
+
 function updateInfos() {
-	ball.x = win_width / 2;
-	ball.y = win_height / 2;
+	ball.x = win_width / 2 - ball.radius / 2;
+	ball.y = win_height / 2 - ball.radius / 2;
 
 	// updting ball properties
 	ball.vx = (Math.random() < 0.5 ? -1 : 1) * (win_width / 280);
@@ -49,8 +53,8 @@ function updateInfos() {
 	if (ball.radius > 30) ball.radius = 30;
 
 	// updating players positions
-	p1.y = win_height / 2;
-	p2.y = win_height / 2;
+	p1.y = win_height / 2 - p1.height / 2;
+	p2.y = win_height / 2 - p1.height / 2;
 	p2.x = win_width * 0.98;
 
 	// updating players properties
@@ -64,56 +68,87 @@ function updateInfos() {
 }
 
 function drawGame() {
-	ctx!.fillStyle = 'black';
-	ctx!.fillRect(0, 0, win_width, win_height);
-	ctx!.save();
-	ctx!.beginPath();
-	ctx!.lineWidth = 5;
-	ctx!.fillStyle = 'white';
-	ctx!.fillRect(ball.x, ball.y, ball.radius, ball.radius);
-	ctx!.fill();
-	ctx!.lineWidth = 4;
-	ctx!.stroke();
-	ctx!.fillRect(p1.x, p1.y, p1.length, p1.height);
-	ctx!.fillRect(p2.x, p2.y, p2.length, p2.height);
-	ctx!.stroke();
-	for (let height = 0; height < win_height; height += 0) {
-		ctx!.fillRect(win_width / 2, height, 5, 10);
-		height += 15;
-		ctx!.stroke();
+	if (!ctx) return;
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	// Dessine le fond du jeu (zone centrale)
+	ctx.fillStyle = 'black';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	ctx.save();
+	// Dessine la balle (en ajoutant le décalage)
+	ctx.beginPath();
+	ctx.fillStyle = 'white';
+	ctx.lineWidth = 5;
+	ctx.fillRect(
+		(ball.x / win_width) * canvas.width,
+		(ball.y / win_height) * canvas.height,
+		(ball.radius / win_width) * canvas.width,
+		(ball.radius / win_height) * canvas.height
+	);
+	// Dessine les joueurs (en ajoutant le décalage)
+	ctx.fillRect(
+		(p1.x / win_width) * canvas.width,
+		(p1.y / win_height) * canvas.height,
+		(p1.length / win_width) * canvas.width,
+		(p1.height / win_height) * canvas.height
+	);
+	ctx.fillRect(
+		(p2.x / win_width) * canvas.width,
+		(p2.y / win_height) * canvas.height,
+		(p2.length / win_width) * canvas.width,
+		(p2.height / win_height) * canvas.height
+	);
+
+	// Ligne centrale en pointillés
+	for (let height = 0; height < canvas.height; height += 15) {
+		ctx.fillRect(canvas.width / 2 - 2, height, 5, 10);
 	}
-	ctx!.font = '50px Arial';
-	ctx!.fillText(p1.score.toString(), win_width * 0.25, win_height * 0.1);
-	ctx!.fillText(p2.score.toString(), win_width * 0.75, win_height * 0.1);
-	ctx!.fillStyle = 'white';
-	ctx!.textAlign = 'center';
+	// Scores en relatif à la zone de jeu
+	const px = (canvas.height * canvas.width) / 35000 > 20 ? (canvas.height * canvas.width) / 35000 : 20;
+	ctx.font = `${px}px Arial`;
+	// ctx.font = '50px Arial';
+	ctx.fillStyle = 'white';
+	ctx.textAlign = 'center';
+	ctx.fillText(p1.score.toString(), canvas.width * 0.25, canvas.height * 0.07);
+	ctx.fillText(p2.score.toString(), canvas.width * 0.75, canvas.height * 0.07);
+
+	ctx.restore();
 }
+// }
 
 function movePlayer() {
-	if (key_w === true && p1.y - p1.vy >= -10) p1.y -= p1.vy;
+	if (key_w === true && p1.y - p1.vy >= 1) p1.y -= p1.vy;
 	if (key_s === true && p1.y + p1.vy <= win_height - p1.height) p1.y += p1.vy;
-	if (key_up === true && p2.y - p2.vy >= -10) p2.y -= p2.vy;
+	if (key_up === true && p2.y - p2.vy >= 1) p2.y -= p2.vy;
 	if (key_down === true && p2.y + p2.vy <= win_height - p2.height) p2.y += p2.vy;
 }
 
 function checkWin() {
-	if (p1.score === 3 || p2.score === 3) {
+	if ((p1.score === 3 || p2.score === 3) && ctx) {
+		gameOver = true;
+		const px = (canvas.height * canvas.width) / 35000;
+		console.log(px);
 		ball.vx = 0;
 		ball.vy = 0;
-		ball.x = win_width / 2;
-		ball.y = win_height / 2;
-		ctx!.fillStyle = 'white';
-		ctx!.fillRect(win_width * 0.1, win_height * 0.25, win_width * 0.8, win_height * 0.12);
-		ctx!.fillStyle = 'black';
-		ctx!.fillRect(win_width * 0.105, win_height * 0.26, win_width * 0.79, win_height * 0.1);
-		ctx!.fillStyle = 'white';
-		ctx!.textAlign = 'center';
-		if (p1.score === 3) {
-			ctx!.fillText(p1.name + ' wins', win_width * 0.5, win_height * 0.33);
-		}
-		if (p2.score === 3) {
-			ctx!.fillText(p2.name + ' wins', win_width * 0.5, win_height * 0.33);
-		}
+		ball.x = win_width / 2 - ball.radius / 2;
+		ball.y = win_height / 2 - ball.radius / 2;
+		ctx.fillStyle = 'gray';
+		// Couleur de la bordure
+		ctx.strokeStyle = 'white';
+		ctx.lineWidth = 4; // épaisseur de la bordure
+
+		// Dessine le rectangle plein
+		ctx.fillRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
+		ctx.strokeRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
+
+		ctx.fillStyle = 'white';
+		ctx.textAlign = 'center';
+		ctx.font = `${px}px Arial`;
+		ctx.fillText(
+			(p1.score > p2.score ? p1.name : p2.name) + ' wins, press `Enter` to restart game',
+			canvas.width * 0.5,
+			canvas.height * 0.32
+		);
+
 		return;
 	}
 }
@@ -152,9 +187,9 @@ function handlePaddleCollisionP2() {
 }
 
 export function gameLoop(_socket: any) {
-	requestAnimationFrame(gameLoop);
-	win_width = window.innerWidth;
-	win_height = window.innerHeight;
+	// requestAnimationFrame(gameLoop);
+	// win_width = canvas.width;
+	// win_height = canvas.height;
 	drawGame();
 	movePlayer();
 	checkWin();
@@ -185,7 +220,7 @@ export function gameLoop(_socket: any) {
 	}
 }
 
-export function localpongGame() {
+function listenInputs() {
 	window.addEventListener('keydown', e => {
 		if (e.key === 'w' || e.key === 'W') key_w = true;
 		if (e.key === 's' || e.key === 'S') key_s = true;
@@ -197,16 +232,13 @@ export function localpongGame() {
 			e.preventDefault();
 			key_down = true;
 		}
+		if (e.key === 'Enter' && gameOver) {
+			gameOver = false;
+			updateInfos();
+			p1.score = 0;
+			p2.score = 0;
+		}
 	});
-
-	// window.addEventListener('keypress', e => {
-	// 	if (e.key === ' ') {
-	// 		e.preventDefault();
-	// 		p1.score = 0;
-	// 		p2.score = 0;
-	// 		updateInfos();
-	// 	}
-	// });
 
 	window.addEventListener('keyup', e => {
 		if (e.key === 'w' || e.key === 'W') key_w = false;
@@ -222,25 +254,43 @@ export function localpongGame() {
 	});
 
 	window.addEventListener('resize', () => {
-		canvas.width = window.innerWidth;
-		canvas.height = window.innerHeight;
-		win_width = window.innerWidth;
-		win_height = window.innerHeight;
+		canvas.width = window.innerWidth * 0.8;
+		canvas.height = window.innerHeight * 0.8;
+		win_width = canvas.width;
+		win_height = canvas.height;
+		// gameWidth = canvas.width;
+		// gameHeight = canvas.height;
 
 		updateInfos();
 	});
+}
 
-	const initGame = () => {
-		canvas = document.getElementById('localgameCanvas') as HTMLCanvasElement;
-		canvas.width = window.innerWidth;
-		canvas.height = window.innerHeight;
-		if (!canvas) {
-			console.error("Canvas 'game' not found");
-			return;
-		}
-		ctx = canvas.getContext('2d');
-		updateInfos();
+function initGame() {
+	canvas = document.getElementById('localgameCanvas') as HTMLCanvasElement;
+	canvas.width = window.innerWidth * 0.8;
+	canvas.height = window.innerHeight * 0.8;
+	if (!canvas) {
+		console.error("Canvas 'game' not found");
+		return;
+	}
+	ctx = canvas.getContext('2d');
+	updateInfos();
+}
+
+let mainLoop: NodeJS.Timeout | undefined;
+
+function startMainLoop() {
+	if (mainLoop) {
+		clearInterval(mainLoop);
+		mainLoop = undefined;
+	}
+	mainLoop = setInterval(() => {
 		gameLoop(canvas);
-	};
+	}, 1000 / 60);
+}
+
+export function localpongGame() {
+	listenInputs();
 	initGame();
+	startMainLoop();
 }
