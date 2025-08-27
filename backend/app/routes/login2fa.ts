@@ -1,9 +1,10 @@
 
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { User } from '../models.js'
-import { IUserReply } from '../types/userTypes.js'
+import { IUserReply, JwtPayload } from '../types/userTypes.js'
 import { decryptSecret } from '../utils/encryption.js'
 import speakeasy from 'speakeasy';
+
 
 // export default {
 //   method: 'POST',
@@ -73,6 +74,7 @@ import speakeasy from 'speakeasy';
 // }
 
 
+
 export default {
     method: 'POST',
     url: '/login2fa',
@@ -91,16 +93,17 @@ export default {
             }
 
             // Vérifiez le tmpToken pour la sécurité
-            const decoded = reply.server.jwt.verify(tmpToken) as any
+            const decoded = reply.server.jwt.verify<JwtPayload>(tmpToken) as any
 
             // Cherchez par login comme vous voulez
-            const user = await User.findOneBy({ login: login })
+            const user = await User.findOneBy({ id: decoded.id })
 
+            if(user) console.log('contenue login2fa:', user.login,);
             // Vérifiez que l'ID correspond au tmpToken (sécurité)
-            if (!user || user.id !== decoded.id) {
+            if (!user) {
                 throw new Error('Invalid session')
             }
-
+            if(user) console.log('2FA not cofig:', user.twoFaAuth, user.twoFaSecret);
             if (!user.twoFaAuth || !user.twoFaSecret) {
                 throw new Error('2FA not configured')
             }

@@ -179,7 +179,7 @@ export function initTwoFALogin() {
 			console.log('=== 2FA DEBUG ===');
             console.log('tmpToken from storage:', tmpToken);
             console.log('token from form:', token);
-            console.log('URL:', `${protocol}//${host}:${port}/login2fa`);
+            console.log('URL:', `${protocol}//${host}:${port}/api/login2fa`);
 
             if (!tmpToken) {
                 if (errorEl) {
@@ -195,7 +195,7 @@ export function initTwoFALogin() {
             //     credentials: 'include',
             //     body: JSON.stringify({ token, tmpToken }),
             // });
-			const res = await fetch(`${protocol}//${host}:${port}/login2fa`, {
+			const res = await fetch(`${protocol}//${host}:${port}/api/login2fa`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			credentials: 'include',
