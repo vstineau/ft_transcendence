@@ -61,7 +61,7 @@ export default {
           }
           await user.save()
           const token = reply.server.jwt.sign(await user.getInfos(), { expiresIn: '4h' })
-	        const response : IUserReply[200] = {success: true, qrCode: qrCodeDataURL};
+	      const response : IUserReply[200] = {success: true, qrCode: qrCodeDataURL};
           reply
             .setCookie('token', token, {
               httpOnly: false,

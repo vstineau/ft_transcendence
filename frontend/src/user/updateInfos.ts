@@ -743,6 +743,12 @@ function initProfilePictureUpload(): void {
 		console.log("Upload response:", reply);
 
 		if (reply.success) {
+			console.log("=== AVATAR UPDATE DEBUG ===");
+			console.log("Full reply:", reply);
+			console.log("reply.user exists:", !!reply.user);
+			console.log("reply.user.avatar exists:", !!reply.user?.avatar);
+			console.log("Avatar data length:", reply.user?.avatar?.length);
+
 			const currentUser = getCurrentUser();
 			console.log("Current user before update:", currentUser);
 
@@ -751,9 +757,10 @@ function initProfilePictureUpload(): void {
 				localStorage.setItem('currentUser', JSON.stringify(currentUser));
 				console.log("Updated localStorage with new avatar");
 
-				// Vérifier que la sauvegarde a fonctionne
+				// Vérifier que la sauvegarde a fonctionné
 				const savedUser = getCurrentUser();
-
+				console.log("Saved user after update:", savedUser);
+				console.log("Saved avatar length:", savedUser?.avatar?.length);
 			} else {
 				console.log("Missing data - reply.user:", !!reply.user, "avatar:", !!reply.user?.avatar);
 			}
