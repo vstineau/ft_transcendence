@@ -1,6 +1,6 @@
 // import { register } from 'ts-node';
 import { registerUser } from './user/register';
-import { logUser } from './user/login';
+import { logUser, initTwoFALogin } from './user/login';
 import { rootUser } from './user/root';
 import { updateInfos } from './user/updateInfos';
 import {
@@ -90,7 +90,6 @@ async function renderPage() {
 		try{
 			await authenticatedFetch('/api/updateInfos');
 		} catch {
-			// alert('Your session has expired. Please log in to access this page.');
 			showAuthMessage();
 			localStorage.clear();
 			navigateTo('/');
@@ -103,8 +102,6 @@ async function renderPage() {
 
 	const view = routes[path] ? await routes[path]() : '<h1>404 Not Found</h1>';
 	const rootElement: HTMLElement | null = document.getElementById('root');
-
-	// document.getElementById('root')!.innerHTML = view;
 
 	if (rootElement) {
 	rootElement.innerHTML = view;
@@ -122,7 +119,7 @@ async function renderPage() {
 		case '/dashboard':
 			rootUser();
 			setTimeout(() => {
-				initThemeToggle(); // ← Initialiser le thème après les animations
+				initThemeToggle(); // ← Initialiser le theme apres les animations
 				initProfilePage();
 			}, 100);
 			break;
@@ -146,6 +143,9 @@ async function renderPage() {
 			break;
 		case '/snake/local':
 			localSnakeGame();
+			break;
+		case '/2fa-verification':
+			initTwoFALogin();
 			break;
 	}
 }

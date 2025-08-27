@@ -23,6 +23,7 @@ export default {
               nickName: user.nickName,
               email: user.email,
               twoFaAuth: user.twoFaAuth,
+              avatar: user.avatar,
             }
           };
           reply.code(200).send(response);
