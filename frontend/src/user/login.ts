@@ -115,7 +115,6 @@ export async function logUser() {
                 if (result.user) {
                     saveUserData(result.user);
                 }
-
                 if (result.twoFaAuth) {
                     navigateTo('/2fa-verification');
                 } else {

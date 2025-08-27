@@ -52,9 +52,51 @@ export async function navigateTo(url: string) {
 	await renderPage();
 }
 
+export async function authenticatedFetch(url: string, options: RequestInit = {}): Promise<Response> {
+	const response = await fetch(url, {
+		...options,
+		credentials:'include'
+	})
+	if(response.status == 401){
+		console.log('Token expired, redirecting to login');
+		localStorage.clear();
+		navigateTo('/');
+		throw new Error('Authentification expired');
+	}
+	return response;
+}
+
+// Créer une notification toast au lieu d'une alerte
+function showAuthMessage() {
+    const message = document.createElement('div');
+    message.textContent = 'Session expired. Please log in to continue.';
+    message.style.cssText = `
+        position: fixed; top: 20px; right: 20px; background: #f87171; color: white;
+        padding: 12px 20px; border-radius: 8px; z-index: 1000;
+        font-family: system-ui; font-size: 14px;
+    `;
+    document.body.appendChild(message);
+    setTimeout(() => message.remove(), 3000);
+}
+
 async function renderPage() {
 	const path = window.location.pathname;
 	console.log(path);
+
+	//veriff pour si le tokens jws ne fonctionne plus,
+	// il y aura une redirection vers login pour se co a nouveau
+	const publicPaths = ['/', '/login', '/register', '/pong/matchmaking/game', '/pong/matchmaking/localgame', '/pong', '/pong/local' , '/snake', '/snake/local'];
+	if(!publicPaths.includes(path)){
+		try{
+			await authenticatedFetch('/api/updateInfos');
+		} catch {
+			// alert('Your session has expired. Please log in to access this page.');
+			showAuthMessage();
+			localStorage.clear();
+			navigateTo('/');
+			return;
+		}
+	}
 
 	cleanupScrollAnimations();
     cleanupThemeToggle();
@@ -127,3 +169,5 @@ document.addEventListener('DOMContentLoaded', async () => {
 	await renderPage();
 	// pongGame();
 });
+
+
