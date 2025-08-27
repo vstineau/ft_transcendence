@@ -17,6 +17,9 @@ export default {
     reply: FastifyReply
   ): Promise<void> => {
     try {
+		console.log('=== REGISTER DEBUG ===');
+		console.log('request.body:', request.body);
+		console.log('request.body type:', typeof request.body);
       const user = await User.createUser(request.body)
 	  let qrCodeDataURL: string = '';
 	  if (user.twoFaAuth) {

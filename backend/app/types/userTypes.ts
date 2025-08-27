@@ -1,7 +1,7 @@
 //import { User } from '../models.js'
 
 export interface IUserReply {
-	200: { success: boolean, user?: UserJson, qrCode?: string, twoFaAuth?: boolean };
+	200: { success: boolean, user?: UserJson, qrCode?: string, twoFaAuth?: boolean, tmpToken?: string };
 	401: { success: boolean, error: string };
 	400: { success: boolean, error: string };
 	500: { success: boolean, error: string };

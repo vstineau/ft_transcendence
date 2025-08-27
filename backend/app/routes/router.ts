@@ -7,6 +7,7 @@ import updateInfosGet from './updateInfosGet.js'
 import updateInfosPost from './updateInfosPost.js'
 import matchMaking from './matchMaking.js'
 import { FastifyPluginCallback } from 'fastify';
+import login2fa from './login2fa.js';
 
 export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
   fastify.route(register)
@@ -17,5 +18,6 @@ export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
   fastify.route(updateInfosGet)
   fastify.route(updateInfosPost)
   fastify.route(matchMaking)
+  fastify.route(login2fa)
   done()
 }

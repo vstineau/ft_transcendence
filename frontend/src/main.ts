@@ -1,6 +1,6 @@
 // import { register } from 'ts-node';
 import { registerUser } from './user/register';
-import { logUser } from './user/login';
+import { logUser, initTwoFALogin, TwoFAVerifyView} from './user/login';
 import { rootUser } from './user/root';
 import { updateInfos } from './user/updateInfos';
 import {
@@ -41,6 +41,7 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/snake/local': localSnakeCanvas,
 	'/register': RegisterView,
 	'/updateInfos': UpdateInfosview,
+	'/2fa-verification': TwoFAVerifyView,
 };
 
 export async function navigateTo(url: string) {
@@ -85,7 +86,7 @@ async function renderPage() {
 
 	//veriff pour si le tokens jws ne fonctionne plus,
 	// il y aura une redirection vers login pour se co a nouveau
-	const publicPaths = ['/', '/login', '/register', '/pong/matchmaking/game', '/pong/matchmaking/localgame', '/pong', '/pong/local' , '/snake', '/snake/local'];
+	const publicPaths = ['/', '/login', '/register', '/pong/matchmaking/game', '/pong/matchmaking/localgame', '/pong', '/2fa-verification', '/pong/local' , '/snake', '/snake/local'];
 	if(!publicPaths.includes(path)){
 		try{
 			await authenticatedFetch('/api/updateInfos');
@@ -146,6 +147,9 @@ async function renderPage() {
 			break;
 		case '/snake/local':
 			localSnakeGame();
+			break;
+		case '/2fa-verification':
+			initTwoFALogin();
 			break;
 	}
 }
