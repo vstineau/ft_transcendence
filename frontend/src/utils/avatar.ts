@@ -210,32 +210,6 @@ export async function fetchAndSaveUserInfo(): Promise<void> {
 	}
 }
 
-// export function updateAvatarDisplay(avatarData?: string): void {
-//   const container = document.getElementById('avatar-container');
-//   if (!container) return;
-
-//   container.innerHTML = '';
-
-//   if (!avatarData) {
-//     showFallback(container);
-//     return;
-//   }
-
-//   const img = document.createElement('img');
-//   img.id = 'profile-image';
-//   img.className = 'w-full h-full object-cover';
-//   img.alt = 'Profile picture';
-
-//   img.src = avatarData.startsWith('data:image/')
-//     ? avatarData
-//     : (avatarData.startsWith('iVBOR') ? `data:image/png;base64,${avatarData}`
-//        : avatarData.startsWith('/9j/') ? `data:image/jpeg;base64,${avatarData}`
-//        : `data:image/png;base64,${avatarData}`);
-
-//   img.onerror = () => showFallback(container);
-//   container.appendChild(img);
-// }
-
 function updateAvatarDisplay(avatarData?: string): void {
     console.log('=== updateAvatarDisplay called ===');
     const container = document.getElementById('avatar-container');

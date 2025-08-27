@@ -17,10 +17,6 @@ export default {
       if (!user || !request.body.password || !user.comparePassword(request.body.password)) {
         throw new Error(invalidInfoError)
       }
-	  // if (user.twoFaAuth) {
-		// const response : IUserReply[200] = {success: true, twoFaAuth: true};
-		// reply.code(200).send(response);
-	  // }
     if (user.twoFaAuth) {
       const tmpToken = reply.server.jwt.sign(
           { id: user.id, temp: true },
