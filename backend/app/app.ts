@@ -24,7 +24,7 @@ await app.register(import('./routes/monitoring.route.js'));
 
 
 await app.register(cors, {
-	origin: ['https://localhost:8080', 'http://localhost:8080'],
+	origin: [`https://${process.env.IP}:8080', 'https://localhost:8080`],
 	methods: ['GET', 'POST'],
 	credentials: true,
 });
