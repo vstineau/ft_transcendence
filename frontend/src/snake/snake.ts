@@ -1,5 +1,6 @@
 import io, { Socket } from 'socket.io-client';
-import { Game } from '../types/snakeTypes';
+import { Game ,Snake} from '../types/snakeTypes';
+import { navigateTo } from '../main'
 
 
 let canvas: HTMLCanvasElement;
@@ -8,7 +9,14 @@ let ctx: CanvasRenderingContext2D | null = null;
 let win_width = window.innerWidth;
 let win_height = window.innerHeight;
 let gameOver = false;
+let started = false;
 
+function getCookie(name: string) {
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop()?.split(';').shift();
+	return null;
+}
 
 export function createSnakeSocket(): Socket {
 	const host = window.location.hostname;
@@ -16,7 +24,8 @@ export function createSnakeSocket(): Socket {
 	const protocol = window.location.protocol;
 	let socket = io(`${protocol}//${host}:${port}`);
 	socket.on('connect', () => {
-		console.log('Socket connected!');
+		let cookie = getCookie('token');
+		socket.emit('isConnected', cookie);
 		socket.emit('initGame_snake');
 	});
     return socket;
@@ -29,8 +38,8 @@ function initCanvas() {
 		console.error("❌ Canvas 'SnakeGameCanvas' not found");
 		return;
 	}
-	canvas.width = win_width;
-	canvas.height = win_height;
+	canvas.width = win_height * 0.80;
+	canvas.height = win_height * 0.80;
 	ctx = canvas.getContext('2d');
 	if (!ctx) {
 		console.error('❌ Failed to get canvas context');
@@ -39,20 +48,14 @@ function initCanvas() {
 
 function drawAlert(winSize: number, alert: string) {
     if (!ctx) return;
-
-    // On utilise les mêmes scales que dans drawGame
-    const scale = canvas.width / winSize;
-
-    ctx.clearRect(0, 0, winSize * scale, winSize * scale);
-
+    ctx.clearRect(0, 0, winSize, winSize);
     ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, winSize * scale, winSize * scale);
-
-    ctx.font = `${40 * scale}px Arial`;
+    ctx.fillRect(0, 0, winSize, winSize);
+    ctx.font = `40px Arial`;
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(alert, (winSize * scale) / 2, (winSize * scale) / 2);
+    ctx.fillText(alert, winSize / 2, winSize / 2);
 }
 
 function drawGame(game: Game) {
@@ -99,21 +102,107 @@ function listenUserInputs(socket: Socket) {
 			e.key === 'ArrowRight') {
 			e.preventDefault();
 		}
+		if  (gameOver && e.key === 'Escape') {
+			gameOver = false;
+			started = false;
+			if (socket && socket.connected) {
+    	       socket.disconnect();
+    	   }
+			navigateTo('/');
+		}
+		else if (gameOver && e.key === 'Enter') {
+			gameOver = false;
+			started = false;
+			if (socket && socket.connected) {
+    	       socket.disconnect();
+    	   }
+			navigateTo('/snake');
+		}
 	});
 	// Resize handling
 	window.addEventListener('resize', () => {
 		win_width = window.innerWidth;
 		win_height = window.innerHeight;
 		if (canvas) {
-			canvas.width = win_width;
-			canvas.height = win_height;
+			canvas.width = win_height * 0.80;
+			canvas.height = win_height * 0.80;
 		}
 	});
 }
 
+function drawWinner(winner: Snake) {
+    if (!ctx) return;
+    ctx.fillStyle = 'white';
+    ctx.fillRect(canvas.width * 0.1, canvas.height * 0.25, canvas.width * 0.8, canvas.height * 0.12);
+    ctx.fillStyle = 'black';
+    ctx.fillRect(canvas.width * 0.105, canvas.height * 0.26, canvas.width * 0.79, canvas.height * 0.1);
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.font = `${Math.floor(canvas.height * 0.03)}px Arial`;
+    ctx.fillText(winner.name + ' wins! (Press Enter to restart)', canvas.width * 0.5, canvas.height * 0.33);
+}
+
+function endgameButtons(socket: Socket) {
+	const replayBtn = document.getElementById('replayBtn');
+    const quitBtn = document.getElementById('quitBtn');
+    if (replayBtn) {
+        replayBtn.onclick = () => {
+			gameOver = false;
+			started = false;
+			navigateTo('/snake');
+        };
+    }
+    if (quitBtn) {
+        quitBtn.onclick = () => {
+			gameOver = false;
+			started = false;
+			if (socket && socket.connected) {
+            socket.disconnect();
+        }
+			navigateTo('/');
+        };
+    }
+}
+
+function displayInfoPlayer(game: Game) {
+
+	const imgP1 = document.getElementById('avatarJoueur1') as HTMLImageElement;
+	const nameP1 = document.getElementById('nomJoueur1') as HTMLInputElement;
+	nameP1.value = game.p1.name;
+	if( game.p1.avatar) {
+		imgP1.src = game.p1.avatar;
+		if (!game.p1.avatar.startsWith('data:image/')) {
+			if (game.p1.avatar.startsWith('iVBOR')) {
+				imgP1.src = `data:image/png;base64,${game.p1.avatar}`;
+			} else if (game.p1.avatar.startsWith('/9j/')) {
+				imgP1.src = `data:image/jpeg;base64,${game.p1.avatar}`;
+			} else {
+				imgP1.src = `data:image/png;base64,${game.p1.avatar}`;
+			}
+		}
+	}
+	const imgP2 = document.getElementById('avatarJoueur2') as HTMLImageElement;
+	const nameP2 = document.getElementById('nomJoueur2') as HTMLInputElement;
+	nameP2.value = game.p2.name;
+	if( game.p2.avatar) {
+		imgP2.src = game.p2.avatar;
+		if (!game.p2.avatar.startsWith('data:image/')) {
+			if (game.p2.avatar.startsWith('iVBOR')) {
+				imgP2.src = `data:image/png;base64,${game.p2.avatar}`;
+			} else if (game.p2.avatar.startsWith('/9j/')) {
+				imgP2.src = `data:image/jpeg;base64,${game.p2.avatar}`;
+			} else {
+				imgP2.src = `data:image/png;base64,${game.p2.avatar}`;
+			}
+		}
+	}
+}
 
 export function snakeGame() {
 	const socket = createSnakeSocket();
+	socket.on('notLogged', () => {
+		navigateTo('/login?/snake');
+	});
 	initCanvas();
 	listenUserInputs(socket);
 	socket.on('waiting_snake', (game: Game) => {
@@ -121,25 +210,35 @@ export function snakeGame() {
 	})
 	socket.on('endGame_snake', (data) => {
 		drawAlert(data.winSize, `Game interrupted : ${data.reason}`);
-	    alert('La partie a été interrompue : ' + data.reason);
+	    drawAlert(data.winsize, 'La partie a été interrompue : ' + data.reason);
 	})
-	socket.on('playerWin_snake', (winner, game) => {
+	socket.on('draw', (game) => {
+		drawAlert(game.winSize, "DRAW")
+		if (socket && socket.connected) {
+            socket.disconnect();
+        }
+	});
+	socket.on('playerWin_snake', (winner, _game) => {
 		if (ctx) {
-		gameOver = true;
-		let scale = canvas.width / game.winSize;
-		//winner announcement
-			ctx.fillStyle = 'white';
-			ctx.fillRect(win_width * 0.1, win_height * 0.25, win_width * 0.8, win_height * 0.12);
-			ctx.fillStyle = 'black';
-			ctx.fillRect(win_width * 0.105, win_height * 0.26, win_width * 0.79, win_height * 0.1);
-			ctx.fillStyle = 'white';
-			ctx.textAlign = 'center';
-			ctx.fillText(winner.name + ' wins', game.winSize * scale * 0.5, game.winSize * scale * 0.33);
+			gameOver = true;
+			started = false;
+			//winner announcement
+			const btns = document.getElementById('snakeGameEndButtons');
+			if (btns) btns.style.display = 'flex';
+			endgameButtons(socket);
+			if (socket && socket.connected) {
+        	    socket.disconnect();
+        	}
+	    	drawWinner(winner);
 			return ;
 		}
 	});
 	// Main game loop (frame update)
 	socket.on('gameState_snake', (game: Game) => {
+		if (!started) {
+			displayInfoPlayer(game);
+			started = true;
+		}
 		drawGame(game);
 	});
 

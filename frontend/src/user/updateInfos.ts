@@ -111,6 +111,9 @@ function initUpdateInfosPage(): void {
 	// Initialiser les onglets
 	initTabs();
 	// Initialiser les menus
+	  initMenuItems();
+    // Afficher le contenu par défaut
+    showContent('change-password');
 	initMenuItems();
 	// Afficher le contenu par défaut
 	showContent('change-password');
@@ -480,7 +483,6 @@ function getContentHTML(contentKey: string): string {
 	return contents[contentKey] || '<p>Content not found</p>';
 }
 
-
 function initEditProfileForm(): void {
     console.log("=== DEBUGGING initEditProfileForm ===");
 
@@ -665,7 +667,6 @@ function initChangePasswordForm(): void {
 		});
 	}
 }
-
 
 function initProfilePictureUpload(): void {
 	const fileInput = document.getElementById('profile-upload-input') as HTMLInputElement;
@@ -862,7 +863,6 @@ function initDeleteAccountForm(): void {
         }
     });
 }
-
 
 
 function initEditProfileButton(): void {
