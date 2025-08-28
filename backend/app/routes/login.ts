@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { User } from '../models.js'
 import { IUserReply, UserJson } from '../types/userTypes.js'
+import { comparePassword } from '../utils/hashPassword.js'
 
 export default {
   method: 'POST',
@@ -10,11 +11,13 @@ export default {
     reply: FastifyReply
   ): Promise<void> => {
     try {
-      console.log(`login = ${request.body.login}`)
-      console.log(`password = ${request.body.password}`)
       const invalidInfoError = 'the provided user details are invalid'
       const user = await User.findOneBy({ login: request.body.login })
-      if (!user || !request.body.password || !user.comparePassword(request.body.password)) {
+      let isPasswordValid = false;
+      if (user && request.body.password){
+      	isPasswordValid = await comparePassword(request.body.password, user.password);
+      }
+      if (!user || !request.body.password || !isPasswordValid) {
         throw new Error(invalidInfoError)
       }
     if (user.twoFaAuth) {

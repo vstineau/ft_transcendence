@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { User } from '../models.js'
 import { IUserReply, JwtPayload } from '../types/userTypes.js'
+import { comparePassword } from '../utils/hashPassword.js'
 
 export default {
 	method: 'POST',
@@ -27,8 +28,11 @@ export default {
 
 			const payload = reply.server.jwt.verify<JwtPayload>(token);
 			const user = await User.findOneBy({ login: payload.login });
-
-			if (!user || user.email !== email) {
+			let isPasswordValid = false;
+			if (user){
+				isPasswordValid = await comparePassword(password, user.password);
+			}
+			if (!user || user.email !== email || !isPasswordValid) {
 				const response: IUserReply[401] = { success: false, error: 'Invalid credentials' };
 				reply.code(401).send(response);
 				return;
