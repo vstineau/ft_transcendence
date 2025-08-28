@@ -22,6 +22,7 @@ export default {
               login: user.login,
               nickName: user.nickName,
               email: user.email,
+              avatar: user.avatar,
               twoFaAuth: user.twoFaAuth,
             }
           };

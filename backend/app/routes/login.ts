@@ -20,10 +20,20 @@ export default {
       if (!user || !request.body.password || !isPasswordValid || user.provider === 'github') {
         throw new Error(invalidInfoError)
       }
-	  if (user.twoFaAuth) {
-		const response : IUserReply[200] = {success: true, twoFaAuth: true};
-		reply.code(200).send(response);
-	  }
+    if (user.twoFaAuth) {
+      const tmpToken = reply.server.jwt.sign(
+          { id: user.id, temp: true },
+          { expiresIn: '10m' }
+      )
+
+      const response: IUserReply[200] = {
+          success: true,
+          twoFaAuth: true,
+          tmpToken: tmpToken  // ← Ce champ manque !
+      };
+      reply.code(200).send(response);
+      return; // ← Et ce return aussi !
+  }
       const token = reply.server.jwt.sign(
         {
 		  login: user.login,

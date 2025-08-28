@@ -1,3 +1,5 @@
+import {authenticatedFetch} from '../main';
+
 interface UserData {
 	avatar?: string;
 	login?: string;
@@ -49,8 +51,12 @@ function updateProfileBlock(userData?: UserData): void {
 	}
 }
 
-function updateProfileAvatar(avatarData?: string): void {
-	console.log('=== updateProfileAvatar called ===');
+export function updateProfileAvatar(avatarData?: string): void {
+	console.log("=== initUserAvatar called ===");
+    const userData = getCurrentUser();
+    console.log("User data in initUserAvatar:", userData);
+    console.log("Has avatar:", !!userData?.avatar);
+    console.log("Avatar starts with:", userData?.avatar?.substring(0, 20));
 
 	const container = document.getElementById('profile-avatar-container');
 	if (!container) {
@@ -69,27 +75,40 @@ function updateProfileAvatar(avatarData?: string): void {
 
 		// Gérer le format base64
 		let imageSrc = avatarData;
-		if (!avatarData.startsWith('data:image/')) {
-			if (avatarData.startsWith('iVBOR')) {
-				imageSrc = `data:image/png;base64,${avatarData}`;
-			} else if (avatarData.startsWith('/9j/')) {
-				imageSrc = `data:image/jpeg;base64,${avatarData}`;
-			} else {
-				imageSrc = `data:image/png;base64,${avatarData}`;
-			}
+		if (avatarData.startsWith('data:application/octet-stream')) {
+		// Extraire juste la partie base64
+		const base64Data = avatarData.split(',')[1];
+
+		// Détecter le format à partir des premiers bytes
+		if (base64Data.startsWith('iVBOR')) {
+			imageSrc = `data:image/png;base64,${base64Data}`;
+		} else if (base64Data.startsWith('/9j/')) {
+			imageSrc = `data:image/jpeg;base64,${base64Data}`;
+		} else {
+			imageSrc = `data:image/png;base64,${base64Data}`;
 		}
+	} else if (!avatarData.startsWith('data:image/')) {
+		// Logique existante pour les cas sans préfixe
+		if (avatarData.startsWith('iVBOR')) {
+			imageSrc = `data:image/png;base64,${avatarData}`;
+		} else if (avatarData.startsWith('/9j/')) {
+			imageSrc = `data:image/jpeg;base64,${avatarData}`;
+		} else {
+			imageSrc = `data:image/png;base64,${avatarData}`;
+		}
+	}
+
+	console.log('Final image src:', imageSrc.substring(0, 50) + '...');
 
 		img.src = imageSrc;
 
 		img.onload = () => {
 			console.log('✅ Profile avatar loaded successfully!');
 		};
-
 		img.onerror = () => {
 			console.error('❌ Profile avatar failed to load, showing fallback');
 			showProfileFallback(container);
 		};
-
 		container.appendChild(img);
 	} else {
 		// Pas d'avatar, afficher le fallback
@@ -97,7 +116,7 @@ function updateProfileAvatar(avatarData?: string): void {
 	}
 }
 
-function showProfileFallback(container: HTMLElement): void {
+export function showProfileFallback(container: HTMLElement): void {
 	const userData = getCurrentUser();
 	const initial = userData ? getFirstLetter(userData) : 'U';
 
@@ -153,7 +172,7 @@ export async function fetchAndSaveUserInfo(): Promise<void> {
 		const host = window.location.hostname;
 		const port = window.location.port;
 		const protocol = window.location.protocol;
-		const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
+		const response = await authenticatedFetch('https://localhost:8080/api/updateInfos', {
 			method: 'GET',
 			credentials: 'include',
 		});
@@ -192,58 +211,52 @@ export async function fetchAndSaveUserInfo(): Promise<void> {
 }
 
 function updateAvatarDisplay(avatarData?: string): void {
-	console.log('=== updateAvatarDisplay called ===');
-	console.log('Avatar data received:', avatarData ? 'Yes' : 'No');
+    console.log('=== updateAvatarDisplay called ===');
+    const container = document.getElementById('avatar-container');
 
-	// Chercher le container par ID (plus fiable)
-	const container = document.getElementById('avatar-container');
+    if (!container) {
+        console.error('Avatar container not found!');
+        return;
+    }
 
-	if (!container) {
-		console.error('Avatar container not found!');
-		return;
-	}
+    container.innerHTML = '';
 
-	console.log('Container found:', container);
+    if (avatarData) {
+        const img = document.createElement('img');
+        img.className = 'w-full h-full object-cover';
+        img.alt = 'Profile picture';
 
-	// Vider complètement le container
-	container.innerHTML = '';
+        // AJOUTEZ LA MÊME LOGIQUE DE CORRECTION ICI
+        let imageSrc = avatarData;
+        if (avatarData.startsWith('data:application/octet-stream')) {
+            const base64Data = avatarData.split(',')[1];
+            if (base64Data.startsWith('iVBOR')) {
+                imageSrc = `data:image/png;base64,${base64Data}`;
+            } else if (base64Data.startsWith('/9j/')) {
+                imageSrc = `data:image/jpeg;base64,${base64Data}`;
+            } else {
+                imageSrc = `data:image/png;base64,${base64Data}`;
+            }
+        } else if (!avatarData.startsWith('data:image/')) {
+            if (avatarData.startsWith('iVBOR')) {
+                imageSrc = `data:image/png;base64,${avatarData}`;
+            } else if (avatarData.startsWith('/9j/')) {
+                imageSrc = `data:image/jpeg;base64,${avatarData}`;
+            } else {
+                imageSrc = `data:image/png;base64,${avatarData}`;
+            }
+        }
 
-	if (avatarData) {
-		// Créer l'image
-		const img = document.createElement('img');
-		img.id = 'profile-image';
-		img.className = 'w-full h-full object-cover';
-		img.alt = 'Profile picture';
+        img.src = imageSrc;
+        img.onload = () => console.log('Avatar loaded in updateInfos');
+        img.onerror = () => console.error('Avatar failed in updateInfos');
 
-		// Gérer le format base64
-		let imageSrc = avatarData;
-		if (!avatarData.startsWith('data:image/')) {
-			if (avatarData.startsWith('iVBOR')) {
-				imageSrc = `data:image/png;base64,${avatarData}`;
-			} else if (avatarData.startsWith('/9j/')) {
-				imageSrc = `data:image/jpeg;base64,${avatarData}`;
-			} else {
-				imageSrc = `data:image/png;base64,${avatarData}`;
-			}
-		}
-
-		img.src = imageSrc;
-
-		img.onload = () => {
-			console.log('✅ Avatar loaded successfully!');
-		};
-
-		img.onerror = () => {
-			console.error('❌ Avatar failed to load, showing fallback');
-			showFallback(container);
-		};
-
-		container.appendChild(img);
-	} else {
-		// Pas d'avatar
-		showFallback(container);
-	}
+        container.appendChild(img);
+    } else {
+        showFallback(container);
+    }
 }
+
 
 function showFallback(container: HTMLElement): void {
 	const userData = getCurrentUser();
@@ -257,31 +270,31 @@ function showFallback(container: HTMLElement): void {
 }
 
 export function initUserAvatar(): void {
-	console.log('=== initUserAvatar called ===');
+	console.log("=== initUserAvatar called ===");
 
-	const userData = getCurrentUser();
-	if (!userData) {
-		console.log('No user data found');
-		updateAvatarDisplay(); // Affiche le fallback
-		return;
-	}
+		const userData = getCurrentUser();
+		if (!userData) {
+			updateAvatarDisplay(); // fallback
+			return;
+		}
+		console.log("User data in initUserAvatar:", userData);
+		console.log("Has avatar:", !!userData?.avatar);
+		console.log("Avatar starts with:", userData?.avatar?.substring(0, 20));
 
-	console.log('User data found:', userData);
+  // MAJ nom/email si présents
+  const userName = document.getElementById('user-name') as HTMLElement | null;
+  if (userName) userName.textContent = getDisplayName(userData);
 
-	// Mettre à jour le nom
-	const userName = document.getElementById('user-name') as HTMLElement;
-	if (userName) {
-		userName.textContent = getDisplayName(userData);
-	}
+  const userEmail = document.getElementById('user-email') as HTMLElement | null;
+  if (userEmail && userData.email) userEmail.textContent = userData.email;
 
-	// Mettre à jour l'email
-	const userEmail = document.getElementById('user-email') as HTMLElement;
-	if (userEmail && userData.email) {
-		userEmail.textContent = userData.email;
-	}
-
-	// Mettre à jour l'avatar
-	updateAvatarDisplay(userData.avatar);
+  const container = document.getElementById('avatar-container');
+  if (!container) {
+    // Attendre que la vue soit montée (SPA)
+    setTimeout(initUserAvatar, 100);
+    return;
+  }
+  updateAvatarDisplay(userData.avatar);
 }
 
 // Fonction pour obtenir le nom d'affichage

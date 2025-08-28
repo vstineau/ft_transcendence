@@ -9,6 +9,7 @@ import matchMaking from './matchMaking.js'
 import oauth2 from './oauth2.js'
 //import oauth2Redir from './oauth2Redir.js'
 import { FastifyPluginCallback } from 'fastify';
+import login2fa from './login2fa.js';
 
 export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
   fastify.route(register);
@@ -20,6 +21,7 @@ export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
   fastify.route(updateInfosPost);
   fastify.route(matchMaking);
   fastify.route(oauth2);
+  fastify.route(login2fa)
  // fastify.route(oauth2Redir);
   done()
 }
