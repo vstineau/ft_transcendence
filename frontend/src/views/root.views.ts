@@ -1,3 +1,5 @@
+import { promises } from 'readline';
+
 export async function RootView() {
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
@@ -717,23 +719,32 @@ export async function localSnakeCanvas() {
 export async function pongTournament() {
 	return /* HTML */ `
 		<div>
-			<h2>Tournoi - Saisie des joueurs</h2>
-			<form>
-				<label for="nbPlayers">Nombre de joueurs :</label>
-				<select id="nbPlayers" name="nbPlayers">
-					<option value="4">4 joueurs</option>
-					<option value="5">5 joueurs</option>
-					<option value="6">6 joueurs</option>
-					<option value="7">7 joueurs</option>
-					<option value="8">8 joueurs</option>
-				</select>
+			<div id="formNb">
+				<form id="playersForm">
+					<div>
+						<h2>Tournoi - Saisie des joueurs</h2>
+						<label for="nbPlayers">Nombre de joueurs :</label>
+						<select id="nbPlayers" name="nbPlayers" class="inline-block">
+							<option value="4">4 joueurs</option>
+							<option value="5">5 joueurs</option>
+							<option value="6">6 joueurs</option>
+							<option value="7">7 joueurs</option>
+							<option value="8">8 joueurs</option>
+						</select>
+					</div>
 
-				<div id="playersZone">
-					<!-- Inputs générés dynamiquement -->
-				</div>
+					<div id="playersZone">
+						<!-- Champs joueurs générés dynamiquement -->
+					</div>
 
-				<button type="submit">Valider la liste</button>
-			</form>
+					<div>
+						<button type="submit" class="bg-gray-600 hover:bg-gray-500">Valider la liste et démarrer</button>
+					</div>
+
+					<div id="liveRegion" aria-live="polite" aria-atomic="true"></div>
+					<noscript>Activez JavaScript pour générer automatiquement les champs de joueurs.</noscript>
+				</form>
+			</div>
 		</div>
 	`;
 }
