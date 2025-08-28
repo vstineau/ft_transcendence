@@ -4,15 +4,17 @@ import { FastifyRequest, FastifyReply } from 'fastify'
 import { User } from '../models.js'
 import { IUserReply, UserJson, defaultAvatars, mimeTypes } from '../types/userTypes.js';
 
-interface OAuth2Request extends FastifyRequest {
-  githubOAuth2: any;
+declare module 'fastify' {
+  interface FastifyRequest {
+    githubOAuth2?: any;
+  }
 }
 
 export default {
 	method: 'GET',
 	url: '/login/github/callback',
 	handler: async (
-		request: OAuth2Request,
+		request: FastifyRequest,
 		reply: FastifyReply
 	) : Promise<void> => {
 		try {

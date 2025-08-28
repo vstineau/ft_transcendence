@@ -7,6 +7,7 @@ services:
       - "3000:3000"
     networks:
       - transcendence
+    env_file: .env
     develop:
       watch:
         - action: sync
