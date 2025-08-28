@@ -54,13 +54,6 @@ function showQRCodeModal(qrCodeDataURL: string): void {
 }
 
 export async function registerUser() {
-	const response = await fetch('https://localhost:8080/api/', {
-		method: 'GET',
-	});
-	const reply = await response.json();
-	if (reply.success) {
-		navigateTo('/');
-	}
 	const form = document.getElementById('register-form') as HTMLFormElement | null;
 	if (!form) return true;
 	form?.addEventListener('submit', async e => {
@@ -101,9 +94,6 @@ export async function registerUser() {
 			const host = window.location.hostname;
 			const port = window.location.port;
 			const protocol = window.location.protocol;
-			// console.log(`protocol = ${protocol}`);
-			// console.log(`host = ${host}`);
-			// console.log(`port = ${port}`);
 			const response = await fetch(`${protocol}//${host}:${port}/api/register`, {
 				method: 'POST',
 				headers: {
