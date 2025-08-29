@@ -125,13 +125,6 @@ export function initTwoFALogin() {
                 }
                 return;
             }
-
-            // const res = await fetch(`${protocol}//${host}:${port}/login2fa`, {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     credentials: 'include',
-            //     body: JSON.stringify({ token, tmpToken }),
-            // });
 			const res = await fetch(`${protocol}//${host}:${port}/api/login2fa`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },

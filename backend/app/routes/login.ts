@@ -18,7 +18,7 @@ export default {
       if (user && request.body.password){
       	isPasswordValid = await comparePassword(request.body.password, user.password);
       }
-      if (!user || !request.body.password || !isPasswordValid ) {
+      if (!user || !request.body.password || !isPasswordValid || user.provider === 'github') {
         throw new Error(invalidInfoError)
       }
     if (user.twoFaAuth) {

@@ -172,7 +172,7 @@ export async function fetchAndSaveUserInfo(): Promise<void> {
 		const host = window.location.hostname;
 		const port = window.location.port;
 		const protocol = window.location.protocol;
-		const response = await authenticatedFetch('https://localhost:8080/api/updateInfos', {
+		const response = await authenticatedFetch(`${protocol}//${host}:${port}/api/updateInfos`, {
 			method: 'GET',
 			credentials: 'include',
 		});

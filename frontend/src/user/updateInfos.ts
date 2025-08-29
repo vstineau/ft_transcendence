@@ -2,6 +2,7 @@ import { navigateTo, authenticatedFetch} from '../main';
 import { displayError } from '../utils/error';
 import { readFileAsBase64 } from '../utils/userInfo';
 import { fetchAndSaveUserInfo, initUserAvatar, getCurrentUser, updateProfileAvatar} from '../utils/avatar';
+import { init2FASetup } from '../user/2fasetup';
 
 export async function updateInfos() {
 	await fetchAndSaveUserInfo();
@@ -111,7 +112,7 @@ function initUpdateInfosPage(): void {
 	// Initialiser les onglets
 	initTabs();
 	// Initialiser les menus
-	  initMenuItems();
+	initMenuItems();
     // Afficher le contenu par défaut
     showContent('change-password');
 	initMenuItems();
@@ -225,74 +226,67 @@ function showContent(contentKey: string): void {
 function getContentHTML(contentKey: string): string {
 	const contents: Record<string, string> = {
 		'change-password': `
-			<!--- ici les elements qui selon affiches selon l'onglet--->
 			<form id="change-password-form" class="space-y-4">
-
-				<!--email-->
 				<input
-				autocomplete="off"
-				type="email"
-				name="login"
-				id="mail"
-				placeholder="Email"
-				class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
-				required
+					autocomplete="off"
+					type="email"
+					name="email"
+					id="email"
+					placeholder="Email"
+					class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+					required
 				/>
-
-				<!-- Mot de passe -->
 				<input
-				type="password"
-				name="password"
-				id="password"
-				placeholder="Password"
-				class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
-				required
+					type="password"
+					name="current-password"
+					id="current-password"
+					placeholder="Current Password"
+					class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+					required
 				/>
-
-				<!-- nouveau mdp -->
 				<input
-				type="newpassword"
-				name="newpassword"
-				id="newpassword"
-				placeholder="New password"
-				class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
-				required
+					type="password"
+					name="new-password"
+					id="new-password"
+					placeholder="New Password"
+					class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+					required
 				/>
-
-				<!-- Bouton Submit-->
 				<div class="flex justify-center pt-4">
-				<button
-				type="submit"
-				class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-2 rounded-lg transition-colors"
-				>Submit</button>
-			</div>
-		</form>
-        `,
+					<button type="submit" class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-2 rounded-lg transition-colors">
+						Submit
+					</button>
+				</div>
+			</form>
+			`,
 
 		'dual-authentication': `
-            <div class="space-y-6">
-
-                <div class="flex items-start">
-                    <input type="checkbox" id="enable-2fa" class="w-5 h-5 mt-1 mr-4">
-                    <div>
-                        <h3 class="font-medium text-black text-medium mb-2">Turn on 2-Step Verification</h3>
-                        <p class="text-sm text-gray-600 mb-4">
-                            With 2-Step Verification, or two-factor authentication, you can add  an extra layer of security to your account in case your password is stolen.<br><br>
-							After you set up 2-Step Verification, you can sign in to your account with:
-                        </p>
-                        <ul class="text-sm text-gray-600 mb-6 space-y-1">
-                            <li>• Your password and a second step</li>
-                            <li>• Your passkey</li>
-                        </ul>
-                        <div class="flex justify-center pt-4">
+		<div class="space-y-6">
+			<div class="flex items-start">
+			<input type="checkbox" id="settings-enable2fa" class="w-5 h-5 mt-1 mr-4">
+				<div>
+					<h3 class="font-medium text-black text-medium mb-2">Turn on 2-Step Verification</h3>
+					<p class="text-sm text-gray-600 mb-4">
+						With 2-Step Verification, or two-factor authentication, you can add an extra layer of security to your account in case your password is stolen.<br><br>
+						After you set up 2-Step Verification, you can sign in to your account with:
+					</p>
+					<ul class="text-sm text-gray-600 mb-6 space-y-1">
+						<li>• Your password and a second step</li>
+						<li>• Your passkey</li>
+					</ul>
+					<form id="enable-2fa-form">
+						<div class="flex justify-center pt-4">
 							<button
-							type="submit"
-							class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-2 rounded-lg transition-colors">Submit</button>
+								type="submit"
+								class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-2 rounded-lg transition-colors">
+								Submit
+							</button>
 						</div>
-                    </div>
-                </div>
-            </div>
-        `,
+					</form>
+				</div>
+			</div>
+		</div>
+		`,
 
 		'profile-picture': `
 		<div class="w-full h-full flex items-center justify-center">
@@ -573,8 +567,8 @@ function initEditProfileForm(): void {
 
 // Ajoutez cette fonction pour tester l'authentification
 async function testAuth(): Promise<void> {
-    console.log("=== TESTING AUTHENTICATION ===");
-    console.log("Cookies:", document.cookie);
+    // console.log("=== TESTING AUTHENTICATION ===");
+    // console.log("Cookies:", document.cookie);
 
     try {
         const host = window.location.hostname;
@@ -602,7 +596,7 @@ function initContentFeatures(contentKey: string): void {
 			initChangePasswordForm();
 			break;
 		case 'dual-authentication':
-            initProfilePictureUpload();
+            init2FASetup();
             break;
         case 'profile-picture':
             initProfilePictureUpload();
@@ -617,55 +611,56 @@ function initContentFeatures(contentKey: string): void {
 }
 
 function initChangePasswordForm(): void {
-	const form = document.getElementById('change-password-form') as HTMLFormElement;
-	if (form) {
-		form.addEventListener('submit', async e => {
-			e.preventDefault();
+    const form = document.getElementById('change-password-form') as HTMLFormElement;
+    if (form) {
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const email = formData.get('email')?.toString().trim();
+            const currentPassword = formData.get('current-password')?.toString().trim();
+            const newPassword = formData.get('new-password')?.toString().trim();
 
-			const formData = new FormData(form);
-			const email = formData.get('email')?.toString().trim();
-			const currentPassword = formData.get('current-password')?.toString().trim();
-			const newPassword = formData.get('new-password')?.toString().trim();
+            if (!email || !currentPassword || !newPassword) {
+                displayError('All fields are required');
+                return;
+            }
 
-			// Votre logique existante adaptée
-			const body = {
-				login: '',
-				nickName: '',
-				password: currentPassword,
-				newPassword: newPassword,
-				email: email,
-				avatar: '',
-				noAvatar: false,
-				ext: '',
-			};
+            const body = {
+                login: '',
+                nickName: '',
+                password: currentPassword,
+                newPassword: newPassword,
+                email: email,
+                avatar: '',
+                noAvatar: false,
+                ext: '',
+            };
 
-			try {
-				const host = window.location.hostname;
-				const port = window.location.port;
-				const protocol = window.location.protocol;
-				const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					credentials: 'include',
-					body: JSON.stringify(body),
-				});
-
-				const reply = await response.json();
-
-				if (reply.success) {
-					alert('Password changed successfully!');
-					form.reset();
-				} else {
-					displayError(reply.error || 'Password change failed');
-				}
-			} catch (err) {
-				console.error(err);
-				displayError('Network error occurred');
-			}
-		});
-	}
+            try {
+                const host = window.location.hostname;
+                const port = window.location.port;
+                const protocol = window.location.protocol;
+                const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(body),
+                });
+                const reply = await response.json();
+                if (reply.success) {
+                    alert('Password changed successfully!');
+                    form.reset();
+                } else {
+                    displayError(reply.error || 'Password change failed');
+                }
+            } catch (err) {
+                console.error(err);
+                displayError('Network error occurred');
+            }
+        });
+    }
 }
 
 function initProfilePictureUpload(): void {

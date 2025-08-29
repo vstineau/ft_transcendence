@@ -41,7 +41,7 @@ export class User extends BaseEntity {
 	nickName!: string;
 
 	@Column()
-	password!: string;
+	password: string;
 
 	@Column()
 	@IsEmail(undefined, {message: getIsInvalidMessage('Email')})
@@ -52,6 +52,9 @@ export class User extends BaseEntity {
 
 	@Column({ nullable: true })
 	twoFaSecret?: string;
+
+	@Column({ nullable: true })
+	provider?: string;
 
 	static async createUser(data: UserJson): Promise<User> {
 		return new User(data);
@@ -68,6 +71,7 @@ export class User extends BaseEntity {
 			email: this.email,
 			twoFaAuth: this.twoFaAuth,
 			twoFaSecret: twoFaSecret,
+			provider: this.provider,
 		};
 	}
 
@@ -84,6 +88,7 @@ export class User extends BaseEntity {
 		this.password = obj?.password ?? '';
 		this.email = obj?.email ?? '';
 		this.twoFaAuth = obj?.twoFaAuth ?? false;
+		this.provider = obj?.provider ?? '';
 	}
 
 	@OneToMany(() => History, (history: History) => history.user, { cascade: true })

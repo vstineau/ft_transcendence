@@ -13,8 +13,7 @@ export default {
         reply: FastifyReply
     ): Promise<void> => {
         try {
-            console.log('=== LOGIN2FA BACKEND ===');
-            console.log('request.body:', request.body);
+            // console.log('request.body:', request.body);
 
             const { token, login, tmpToken } = request.body
 
