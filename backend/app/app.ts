@@ -18,6 +18,14 @@ export const app = Fastify({
 	ignoreDuplicateSlashes: true
 });
 
+app.addHook('onRequest', async (request, _reply) => {
+    console.log(`${request.method} ${request.url}`);
+    if (request.url === '/api/enable2fa' || request.url === '/enable2fa') {
+        console.log('=== ENABLE2FA REQUEST DETECTED ===');
+        console.log('Headers:', request.headers);
+        console.log('Cookies:', request.cookies);
+    }
+});
 
 // Enregistre les métriques par défaut (CPU, mémoire, etc.) (prometheus)
 await app.register(import('./routes/monitoring.route.js'));
