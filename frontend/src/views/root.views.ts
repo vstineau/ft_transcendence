@@ -718,13 +718,17 @@ export async function localSnakeCanvas() {
 
 export async function pongTournament() {
 	return /* HTML */ `
-		<div>
-			<div id="formNb">
+		<div class="flex items-center justify-center w-screen h-screen bg-gray-900">
+			<div id="formNb" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black p-8">
 				<form id="playersForm">
-					<div>
-						<h2>Tournoi - Saisie des joueurs</h2>
-						<label for="nbPlayers">Nombre de joueurs :</label>
-						<select id="nbPlayers" name="nbPlayers" class="inline-block">
+					<div class="text-white">
+						<h2 class="text-2xl font-bold mb-4">Tournoi - Saisie des joueurs</h2>
+						<label for="nbPlayers" class="block mb-2">Nombre de joueurs :</label>
+						<select
+							id="nbPlayers"
+							name="nbPlayers"
+							class="bg-gray-800 text-white px-4 py-2 rounded mb-6 w-full border border-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+						>
 							<option value="4">4 joueurs</option>
 							<option value="5">5 joueurs</option>
 							<option value="6">6 joueurs</option>
@@ -733,16 +737,18 @@ export async function pongTournament() {
 						</select>
 					</div>
 
-					<div id="playersZone">
+					<div id="playersZone" class="mb-6 text-white">
 						<!-- Champs joueurs générés dynamiquement -->
 					</div>
 
 					<div>
-						<button type="submit" class="bg-gray-600 hover:bg-gray-500">Valider la liste et démarrer</button>
+						<button
+							type="submit"
+							class="w-full bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-150"
+						>
+							Valider la liste et démarrer
+						</button>
 					</div>
-
-					<div id="liveRegion" aria-live="polite" aria-atomic="true"></div>
-					<noscript>Activez JavaScript pour générer automatiquement les champs de joueurs.</noscript>
 				</form>
 			</div>
 		</div>

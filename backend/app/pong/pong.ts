@@ -20,7 +20,7 @@ const WIN_WIDTH = 1280;
 // let game: Game;
 let intervalStarted = false;
 
-export function initPlayer(socket: Socket, user: User, room: Room): Player {
+function initPlayer(socket: Socket, user: User, room: Room): Player {
 	let player: Player = {
 		nickName: user.nickName,
 		id: socket.id,
