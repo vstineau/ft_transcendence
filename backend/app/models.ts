@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique, BeforeInser
 import { IsEmail, Length, Matches, validateOrReject } from 'class-validator'
 import { getIsInvalidMessage } from "./utils/errorMessages.js";
 import type { UserJson , UserHistory } from './types/userTypes.js'
+import {v4 as uuidv4} from 'uuid';
 
 //https://github.com/typestack/class-validator
 @Entity()
@@ -20,7 +21,10 @@ export class User extends BaseEntity {
 	}
 
 	@PrimaryGeneratedColumn()
-	id!: number;
+	index!: number;
+
+	@Column()
+	id!: string;
 
 	//blob for binary large object
 	@Column({
@@ -83,6 +87,7 @@ export class User extends BaseEntity {
 	constructor(obj?: UserJson)
 	{
 		super();
+		this.id = uuidv4();
 		this.login = obj?.login ?? '';
 		this.nickName = obj?.nickName ?? '';
 		this.password = obj?.password ?? '';

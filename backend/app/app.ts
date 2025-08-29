@@ -32,9 +32,11 @@ await app.register(import('./routes/monitoring.route.js'));
 
 
 await app.register(cors, {
-    origin: [`https://${process.env.IP}:8080', 'https://localhost:8080`],
-    methods: ['GET', 'POST'],
-    credentials: true,
+	origin: [`https://${process.env.IP}:8080`,
+		`https://localhost:8080`,
+		`https://${process.env.POSTE}:8080`],
+	methods: ['GET', 'POST'],
+	credentials: true,
 });
 
 await app.register(fastifyCookie);
