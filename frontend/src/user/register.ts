@@ -2,7 +2,7 @@ import { navigateTo } from '../main';
 import { displayError } from '../utils/error';
 import { readFileAsBase64 } from '../utils/userInfo';
 
-function showQRCodeModal(qrCodeDataURL: string): void {
+export function showQRCodeModal(qrCodeDataURL: string): void {
 	// Créer la modale
 	const modal = document.createElement('div');
 	modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
@@ -90,12 +90,10 @@ export async function registerUser() {
 		}
 		// sending token to backend then wait response
 		try {
+			const queryString = !window.location.search ? '/login' : window.location.search.substring(1);
 			const host = window.location.hostname;
 			const port = window.location.port;
 			const protocol = window.location.protocol;
-			// console.log(`protocol = ${protocol}`);
-			// console.log(`host = ${host}`);
-			// console.log(`port = ${port}`);
 			const response = await fetch(`${protocol}//${host}:${port}/api/register`, {
 				method: 'POST',
 				headers: {
@@ -109,7 +107,7 @@ export async function registerUser() {
 				if (reply.qrCode && twoFaAuth?.checked) {
 					showQRCodeModal(reply.qrCode);
 				} else {
-					navigateTo('/login');
+					navigateTo(queryString);
 				}
 			} else {
 				displayError(reply.error || 'registration failed please try again');
@@ -121,3 +119,4 @@ export async function registerUser() {
 		}
 	});
 }
+// ah ouais mon vscode c'est une areme met nous sur le .env stp

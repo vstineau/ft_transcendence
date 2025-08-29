@@ -39,8 +39,6 @@ export function initScrollAnimations() {
             title.style.setProperty('top', `${currentY}px`, 'important');
             title.style.setProperty('transform', `translateX(-50%) scale(${scale})`, 'important');
 
-            console.log('Animation - progress:', progress.toFixed(2), 'Y:', currentY.toFixed(1), 'scale:', scale.toFixed(2));
-
         } else {
             // Complètement en haut de page - retour à la position normale
             title.style.removeProperty('position');

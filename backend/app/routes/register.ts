@@ -8,6 +8,9 @@ import { readFile } from 'fs/promises';
 import speakeasy from 'speakeasy';
 import { encryptSecret} from '../utils/encryption.js';
 import QRCode from 'qrcode';
+import { hashPassword } from '../utils/hashPassword.js'
+
+//Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
 
 export default {
   method: 'POST',
@@ -17,6 +20,13 @@ export default {
     reply: FastifyReply
   ): Promise<void> => {
     try {
+	  if (request.body.password) {
+		 const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+		 if (!regex.test(request.body.password)) {
+					throw Error('Invalid Password: please use  password with at least 8 characters, one uppercase, one lowercase, one number and one special character');
+		 };
+		 request.body.password = await hashPassword(request.body.password);
+      }
       const user = await User.createUser(request.body)
 	  let qrCodeDataURL: string = '';
 	  if (user.twoFaAuth) {

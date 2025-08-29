@@ -3,6 +3,7 @@ all:
 down:
 	docker compose -f docker-compose.yml down
 prune:
+	rm ./backend/app/db
 	docker system prune -a -f --volumes
 dev:
 	cd frontend && npm run dev

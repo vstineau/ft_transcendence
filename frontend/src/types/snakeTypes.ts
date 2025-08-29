@@ -16,6 +16,7 @@ export interface Snake {
 	pendingDir: pos;
 	color: string;
 	id: string;
+	avatar?: string;
 }
 
 export interface Food {

@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique, BeforeInser
 import { IsEmail, Length, Matches, validateOrReject } from 'class-validator'
 import { getIsInvalidMessage } from "./utils/errorMessages.js";
 import type { UserJson , UserHistory } from './types/userTypes.js'
+import {v4 as uuidv4} from 'uuid';
 
 //https://github.com/typestack/class-validator
 @Entity()
@@ -20,7 +21,10 @@ export class User extends BaseEntity {
 	}
 
 	@PrimaryGeneratedColumn()
-	id!: number;
+	index!: number;
+
+	@Column()
+	id!: string;
 
 	//blob for binary large object
 	@Column({
@@ -41,9 +45,7 @@ export class User extends BaseEntity {
 	nickName!: string;
 
 	@Column()
-	//Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
-	@Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, {message : getIsInvalidMessage("password", "please use  password with at least 8 characters, one uppercase, one lowercase, one number and one special character")})
-	password!: string;
+	password: string;
 
 	@Column()
 	@IsEmail(undefined, {message: getIsInvalidMessage('Email')})
@@ -54,6 +56,9 @@ export class User extends BaseEntity {
 
 	@Column({ nullable: true })
 	twoFaSecret?: string;
+
+	@Column({ nullable: true })
+	provider?: string;
 
 	static async createUser(data: UserJson): Promise<User> {
 		return new User(data);
@@ -70,6 +75,7 @@ export class User extends BaseEntity {
 			email: this.email,
 			twoFaAuth: this.twoFaAuth,
 			twoFaSecret: twoFaSecret,
+			provider: this.provider,
 		};
 	}
 
@@ -81,11 +87,13 @@ export class User extends BaseEntity {
 	constructor(obj?: UserJson)
 	{
 		super();
+		this.id = uuidv4();
 		this.login = obj?.login ?? '';
 		this.nickName = obj?.nickName ?? '';
 		this.password = obj?.password ?? '';
 		this.email = obj?.email ?? '';
 		this.twoFaAuth = obj?.twoFaAuth ?? false;
+		this.provider = obj?.provider ?? '';
 	}
 
 	@OneToMany(() => History, (history: History) => history.user, { cascade: true })
@@ -111,7 +119,10 @@ export class History {
 	score?: string;
 
 	@Column()
-	win?: boolean;
+	win?: string;
+
+	@Column()
+	finalLength?: number;
 
 	@ManyToOne(() => User, (user: User) => user.history)
     user: User;
@@ -119,10 +130,12 @@ export class History {
 	constructor(user: User , data?: UserHistory)
 	{
 		if (data) {
+			this.type = data.type;
 			this.date = data.date;
 			this.opponent = data.opponent;
 			this.score = data.score;
 			this.win = data.win;
+			this.finalLength = data.finalLength;
 		}
 		this.user = user;
 	}

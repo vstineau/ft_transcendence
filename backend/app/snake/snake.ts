@@ -1,9 +1,14 @@
 import { pos, Game, Snake , Room} from '../types/snakeTypes.js';
+import { app } from '../app.js'
+import { JwtPayload, UserHistory } from '../types/userTypes.js'
 import { Socket } from 'socket.io';
 import { FastifyInstance } from 'fastify';
+import { User, History} from '../models.js'
 //import { v4 as uuidv4 } from "uuid";
 
 const WIN = 600;
+const SEG_SIZE = 10;
+const FPS = 30;
 let snakeRooms: Room[] = [];
 let roomcount = 0;
 
@@ -11,26 +16,29 @@ function getRoom() {
     return snakeRooms.find(room => room.playersNb === 1);
 }
 
-function initRoom(socket: Socket) {
+function initRoom(socket: Socket, user: User) {
     const room = getRoom();
-    if (room) {
+    if (room && user.login != room.game.p1.login) {
         socket.join(room.name);
         room.playersNb = 2;
         room.game.p2.id = socket.id;
+		room.game.p2.name = user.nickName;
+		room.game.p2.login = user.login;
+		room.game.p2.avatar = user.avatar;
 		return room;
     } else {
-        const newRoom = createRoom(socket);
+        const newRoom = createRoom(socket, user);
         socket.join(newRoom.name);
 		newRoom.playersNb = 1;
 		return newRoom;
     }
 }
 
-function createRoom(socket: Socket): Room {
+function createRoom(socket: Socket, user: User): Room {
     let newRoom: Room = {
         name: `room_${roomcount++}`,
         playersNb: 1,
-        game: initGame(),
+        game: initGame(user),
     };
     newRoom.game.p1.id = socket.id;
     snakeRooms.push(newRoom);
@@ -49,7 +57,6 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 
             // Remove room from list
             snakeRooms = snakeRooms.filter(r => r !== room);
-            roomcount--;
         }
     });
 }
@@ -97,67 +104,68 @@ export function eatFood(snake: Snake, g: Game): boolean {
   return false;
 }
 
-export function wrap(pos: pos, winSize: number): pos {
-  return {
-    x: (pos.x + winSize ) % winSize,
-    y: (pos.y + winSize) % winSize
-  };
+function wrap(pos: pos, winSize: number): pos {
+    let x = pos.x;
+    let y = pos.y;
+    if (x < 0) x = winSize - SEG_SIZE;
+    else if (x >= winSize) x = 0;
+    if (y < 0) y = winSize - SEG_SIZE;
+    else if (y >= winSize) y = 0;
+    return { x, y };
 }
 
-export function moveSnake(snake: Snake, winSize: number) {
-  snake.dir = snake.pendingDir;
-  for (let i = 0; i < 8; i++) {
-	const head = wrap({
-  	  x: snake.segments[0].x + snake.dir.x,
-  	  y: snake.segments[0].y + snake.dir.y
-  	}, winSize);
-  	snake.segments.unshift(head);
-  }
+function moveSnake(snake: Snake, winSize: number) {
+    snake.dir = snake.pendingDir;
+    const head = wrap({
+        x: snake.segments[0].x + snake.dir.x * SEG_SIZE,
+        y: snake.segments[0].y + snake.dir.y * SEG_SIZE
+    }, winSize);
+    snake.segments.unshift(head);
 }
 
-export function checkCollision(snake: Snake, other: Snake): boolean {
-const [head, ...body] = snake.segments;
-  // Self collision
-  if (body.some(seg => seg.x === head.x && seg.y === head.y)) return true;
-  // Other collision
-  if (other.segments.some(seg => seg.x === head.x && seg.y === head.y)) return true;
-  return false;
+function areSegmentsColliding(a: pos, b: pos): boolean {
+    return (
+        Math.abs(a.x - b.x) < (SEG_SIZE / 2) &&
+        Math.abs(a.y - b.y) < (SEG_SIZE / 2)
+    );
 }
 
-export function resetGame(g: Game) {
-  g.p1.segments = [{ x: g.winSize * 0.25, y: g.winSize * 0.5 }];
-  g.p1.dir = { x: 0, y: 1 };
-  g.p1.pendingDir = { x: 0, y: 1 };
-  g.p2.segments = [{ x: g.winSize * 0.75, y: g.winSize * 0.5 }];
-  g.p2.dir = { x: 0, y: -1 };
-  g.p2.pendingDir = { x: 0, y: -1 };
-  g.foods = [];
-  spawnFoods(g);
+function checkCollision(snake: Snake, other: Snake): "other" | "head-on" | null {
+    const [head, ..._body] = snake.segments;
+    const [otherHead, ...otherBody] = other.segments;
+
+    if (otherBody.some(seg => areSegmentsColliding(seg, head))) return "other";
+    if (areSegmentsColliding(head, otherHead)) return "head-on";
+    return null;
 }
 
-export function initGame(): Game {
-	let game = {
-		p1: {
-			name: 'player 1',
-			segments: [{ x: WIN * 0.25, y: WIN * 0.5 }],
-			dir: { x: 0, y: 1},
-			pendingDir: { x: 0, y: 1},
-			color: "blue",
-			id: '',
-		},
-		p2: {
-			name: 'player 2',
-			segments: [{ x: WIN * 0.75, y: WIN * 0.5 }],
-			dir: { x: 0, y: -1},
-			pendingDir: { x: 0, y: -1},
-			color: "red",
-			id: '',
-		},
-		foods: [],
-		winSize: WIN
-	}
-	spawnFoods(game);
-	return game;
+function initGame(user: User): Game {
+    let game: Game = {
+        p1: {
+            name: user.nickName,
+            segments: [{ x: Math.floor(WIN * 0.25 / SEG_SIZE) * SEG_SIZE, y: Math.floor(WIN * 0.5 / SEG_SIZE) * SEG_SIZE }],
+            dir: { x: 0, y: -1 },
+            pendingDir: { x: 0, y: -1 },
+            color: "blue",
+            id: 'p1',
+			login: user.login,
+			avatar: user.avatar,
+        },
+        p2: {
+            name: 'Player 2',
+            segments: [{ x: Math.floor(WIN * 0.75 / SEG_SIZE) * SEG_SIZE, y: Math.floor(WIN * 0.5 / SEG_SIZE) * SEG_SIZE }],
+            dir: { x: 0, y: 1 },
+            pendingDir: { x: 0, y: 1 },
+            color: "red",
+            id: 'p2',
+			login: '',
+			avatar: '',
+        },
+        foods: [],
+        winSize: WIN
+    };
+    spawnFoods(game);
+    return game;
 }
 
 export function getInputs(sock: Socket, game: Game) {
@@ -200,36 +208,110 @@ export function getInputs(sock: Socket, game: Game) {
 	});
 }
 
+async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
 
-export function update(g: Game, app: FastifyInstance, roomId: string) {
-    [g.p1, g.p2].forEach(snake => {
-        moveSnake(snake, g.winSize);
-        if (!eatFood(snake, g)) for (let i = 0; i < 8; i++) snake.segments.pop();
+	const user1 = await User.findOneBy({login: game.p1.login});
+	if (!user1 ) {
+		console.log('cant get user1');
+		return ;
+	}
+	const user2 = await User.findOneBy({login: game.p2.login});
+	if (!user2 ) {
+		console.log('cant get user2');
+		return ;
+	}
+	const historyp1: UserHistory = {
+		type: 'snake',
+		date: Date(),
+		win: winner === 'P1' ? 'WIN' : 'LOOSE',
+		opponent: user2.login,
+		score: '',
+		finalLength: game.p1.segments.length,
+	}
+	const historyp2: UserHistory = {
+		type: 'snake',
+		date: Date(),
+		win: winner === 'P2' ? 'WIN' : 'LOOSE',
+		opponent: user1.login,
+		score: '',
+		finalLength: game.p2.segments.length,
+	}
+	if (winner === 'DRAW') {
+		historyp1.win = 'DRAW';
+		historyp2.win = 'DRAW';
+	}
+	if (!user1.history) user1.history = [];
+	user1.history.push(new History(user1, historyp1));
+	if (!user2.history) user2.history = [];
+	user2.history.push(new History(user2, historyp2));
+	user1.save();
+	user2.save();
+}
+
+
+export function update(game: Game, app: FastifyInstance, roomId: string) {
+    [game.p1, game.p2].forEach(snake => {
+        moveSnake(snake, game.winSize);
     });
-    if (checkCollision(g.p1, g.p2)) {
-        app.io.to(roomId).emit('playerWin_snake', g.p2, g);
-        //resetGame(g);
+
+    const col1 = checkCollision(game.p1, game.p2);
+    const col2 = checkCollision(game.p2, game.p1);
+
+    if (col1 === "head-on" || col2 === "head-on" || (col1 === "other" && col2 === "other")) {
+        app.io.to(roomId).emit('draw', game);
+		saveDataInHistory(game, 'DRAW');
         return;
     }
-    if (checkCollision(g.p2, g.p1)) {
-        app.io.to(roomId).emit('playerWin_snake', g.p1, g);
-        //resetGame(g);
+
+    if (col1 === "other") {
+        app.io.to(roomId).emit('playerWin_snake', game.p2, game);
+		saveDataInHistory(game, 'P2');
         return;
     }
+    if (col2 === "other") {
+        app.io.to(roomId).emit('playerWin_snake', game.p1, game);
+		saveDataInHistory(game, 'P1');
+        return;
+    }
+    [game.p1, game.p2].forEach(snake => {
+        if (!eatFood(snake, game)) {
+            snake.segments.pop();
+        }
+    });
+}
+
+
+async function getUser(socket: Socket, cookie: string): Promise<User | undefined> {
+				
+	let user;
+	if (cookie) {
+		const payload = app.jwt.verify<JwtPayload>(cookie);
+		user = await User.findOneBy({ login: payload.login });
+		if (!user) {
+			socket.emit('notLogged');
+			return undefined;
+		}
+		return user;
+	}
+	socket.emit('notLogged');
+	return undefined;
 }
 
 export async function startSnakeGame(app: FastifyInstance) {
     app.ready().then(() => {
         app.io.on('connection', (socket: Socket) => {
-            const room = initRoom(socket);
-			handleDisconnect(app, socket);
+            socket.on('isConnected', async (cookie: string) => {
+                const user = await getUser(socket, cookie);
+                if (!user) return; // non connecté
+                const room = initRoom(socket, user);
+                handleDisconnect(app, socket);
+                getInputs(socket, room.game);
 
-            getInputs(socket, room.game);
-            socket.on('initGame_snake', () => {
-					const room = snakeRooms.find(r  => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
-					    if (!room) return;
-					    if (room.interval) return;
-                   room.interval = setInterval(() => {
+                socket.on('initGame_snake', () => {
+                    const room = snakeRooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
+                    if (!room) return;
+                    if (room.interval) return;
+                    room.interval = setInterval(() => {
                         for (const room of snakeRooms) {
                             if (room.playersNb === 2) { 
                                 update(room.game, app, room.name);
@@ -238,7 +320,8 @@ export async function startSnakeGame(app: FastifyInstance) {
                                 app.io.to(room.name).emit('waiting_snake', room.game);
                             }
                         }
-                    }, 1000 / 60);
+                    }, 1000 / FPS);
+                });
             });
         });
     });
