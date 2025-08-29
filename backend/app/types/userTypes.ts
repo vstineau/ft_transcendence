@@ -8,6 +8,7 @@ export interface IUserReply {
 }
 
 export type JwtPayload = {
+	id: string,
 	login: string,
 	password: string,
 	iat: string,
@@ -15,7 +16,7 @@ export type JwtPayload = {
 };
 
 export type UserJson = {
-	id?: number,
+	id?: string,
 	login?: string,
 	nickName?: string,
 	password?: string,
