@@ -727,13 +727,11 @@ export async function pongTournament() {
 						<select
 							id="nbPlayers"
 							name="nbPlayers"
-							class="bg-gray-800 text-white px-4 py-2 rounded mb-6 w-full border border-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+							class="bg-gray-800 hover:bg-gray-600 text-white px-4 py-2 rounded mb-6 w-full border border-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
 						>
-							<option value="4">4 joueurs</option>
-							<option value="5">5 joueurs</option>
-							<option value="6">6 joueurs</option>
-							<option value="7">7 joueurs</option>
-							<option value="8">8 joueurs</option>
+							<option value="4">4 players</option>
+							<option value="6">6 players</option>
+							<option value="8">8 players</option>
 						</select>
 					</div>
 
