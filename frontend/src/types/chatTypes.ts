@@ -3,7 +3,7 @@ export interface Message {
     userId: string;
     username: string;
     content: string;
-    timestamp: Date;
+    timestamp: Date | string;
     type: 'text' | 'system' | 'game-invitation';
 }
 
@@ -24,7 +24,7 @@ export interface User {
 
 export interface ChatState {
     isOpen: boolean;
-    activeTab: 'global' | 'private';
+    activeTab: 'global' | 'pong' | 'snake';
     currentRoom: ChatRoom | null;
     messages: Message[];
     unreadCount: number;

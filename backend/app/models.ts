@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique, BeforeInsert, BeforeUpdate, ManyToOne, OneToMany } from "typeorm"
-import { IsEmail, Length, Matches, validateOrReject } from 'class-validator'
+import { IsEmail, Length, Matches, validateOrReject, IsNotEmpty } from 'class-validator'
 import { getIsInvalidMessage } from "./utils/errorMessages.js";
 import type { UserJson , UserHistory } from './types/userTypes.js'
 import {v4 as uuidv4} from 'uuid';
@@ -60,6 +60,9 @@ export class User extends BaseEntity {
 	@Column({ nullable: true })
 	provider?: string;
 
+	@Column({type: 'boolean', default: false})
+	isOnline!: boolean;
+
 	static async createUser(data: UserJson): Promise<User> {
 		return new User(data);
 	}
@@ -76,6 +79,7 @@ export class User extends BaseEntity {
 			twoFaAuth: this.twoFaAuth,
 			twoFaSecret: twoFaSecret,
 			provider: this.provider,
+			isOnline: this.isOnline,
 		};
 	}
 
@@ -94,10 +98,14 @@ export class User extends BaseEntity {
 		this.email = obj?.email ?? '';
 		this.twoFaAuth = obj?.twoFaAuth ?? false;
 		this.provider = obj?.provider ?? '';
+		this.isOnline = obj?.isOnline ?? false;
 	}
 
 	@OneToMany(() => History, (history: History) => history.user, { cascade: true })
     history?: History[];
+
+	@OneToMany(() => ChatMessage, (chatMessage: ChatMessage) => chatMessage.user, { cascade: true })
+    chatMessages?: ChatMessage[];
 };
 
 @Entity()
@@ -140,3 +148,35 @@ export class History {
 		this.user = user;
 	}
 };
+
+@Entity()
+export class ChatMessage {
+	@PrimaryGeneratedColumn()
+	id!: number;
+
+	@Column({ length: 500 })
+	@IsNotEmpty()
+	content!: string;
+
+	@Column()
+	timestamp!: Date;
+
+	@Column()
+	room!: string;
+
+	@Column({ default: 'text' })
+	type!: string; // 'text', 'image', 'system', etc.
+
+	@ManyToOne(() => User, (user: User) => user.chatMessages)
+	user!: User;
+
+	constructor(user?: User, content?: string, room?: string, type: string = 'text') {
+		if (user && content && room) {
+			this.user = user;
+			this.content = content;
+			this.room = room;
+			this.type = type;
+			this.timestamp = new Date();
+		}
+	}
+}

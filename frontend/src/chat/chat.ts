@@ -1,5 +1,7 @@
 import { ChatState, Message, ChatRoom } from '../types/chatTypes';
 import { ChatPanel } from '../views/chat.views';
+import io, { Socket } from 'socket.io-client';
+import { getCookie } from '../pong/pong';
 
 class ChatManager {
     private state: ChatState = {
@@ -9,6 +11,74 @@ class ChatManager {
         messages: [],
         unreadCount: 3
     };
+    
+    private socket: Socket | null = null;
+
+    constructor() {
+        this.initializeChat();
+    }
+
+    private createSocketClient() {
+        const host = window.location.hostname;
+        const port = window.location.port;
+        const protocol = window.location.protocol;
+
+        this.socket = io(`${protocol}//${host}:${port}/chat`);
+        
+        this.socket.on('connect', () => {
+            console.log('💬 Chat socket connected');
+            let cookie = getCookie('token');
+            if (cookie) {
+                this.socket!.emit('initUser', cookie);
+            }
+        });
+
+        // Écouter les événements du serveur
+        this.socket.on('userConnected', (data: any) => {
+            console.log('✅ Chat user connected:', data);
+            this.state.messages = data.recentMessages || [];
+            this.updateMessagesDisplay();
+        });
+
+        this.socket.on('newMessage', (message: Message) => {
+            console.log('📩 New message received:', message);
+            this.state.messages.push(message);
+            this.updateMessagesDisplay();
+            
+            // Incrémenter les non-lus si le chat est fermé
+            if (!this.state.isOpen) {
+                this.state.unreadCount++;
+                this.updateNotificationBadge();
+            }
+        });
+
+        this.socket.on('userJoined', (user: any) => {
+            console.log('👋 User joined chat:', user);
+            // TODO: Mettre à jour la liste des utilisateurs en ligne
+        });
+
+        this.socket.on('userLeft', (user: any) => {
+            console.log('👋 User left chat:', user);
+            // TODO: Mettre à jour la liste des utilisateurs en ligne
+        });
+
+        this.socket.on('authError', (error: string) => {
+            console.error('❌ Chat auth error:', error);
+        });
+
+        this.socket.on('error', (error: any) => {
+            console.error('❌ Chat error:', error);
+        });
+    }
+
+    private initializeChat() {
+        // Créer la connexion socket
+        this.createSocketClient();
+        
+        // Simuler des messages pour le développement (sera remplacé par les vrais messages du serveur)
+        this.state.messages = this.mockMessages;
+        this.setupEventListeners();
+    }
 
     private mockMessages: Message[] = [
         {
@@ -36,16 +106,6 @@ class ChatManager {
             type: 'text'
         }
     ];
-
-    constructor() {
-        this.initializeChat();
-    }
-
-    private initializeChat() {
-        // Simuler des messages pour le développement
-        this.state.messages = this.mockMessages;
-        this.setupEventListeners();
-    }
 
     private setupEventListeners() {
         const chatFab = document.getElementById('chat-fab');
@@ -129,7 +189,8 @@ class ChatManager {
 
         // Gestion des onglets
         const tabGlobal = document.getElementById('tab-global');
-        const tabPrivate = document.getElementById('tab-private');
+        const tabPong = document.getElementById('tab-pong');
+        const tabSnake = document.getElementById('tab-snake')
         
         if (tabGlobal) {
             tabGlobal.addEventListener('click', () => {
@@ -137,10 +198,16 @@ class ChatManager {
             });
         }
         
-        if (tabPrivate) {
-            tabPrivate.addEventListener('click', () => {
-                this.switchTab('private');
+        if (tabPong) {
+            tabPong.addEventListener('click', () => {
+                this.switchTab('pong');
             });
+        }
+
+        if (tabSnake) {
+            tabSnake.addEventListener('click', () => {
+                this.switchTab('snake');
+            })
         }
     }
 
@@ -148,60 +215,105 @@ class ChatManager {
         return this.state.messages.map(message => {
             const isOwn = message.userId === 'current-user';
             const time = this.formatTime(message.timestamp);
+            const avatarColor = this.getAvatarColor(message.username);
+            const initial = message.username.charAt(0).toUpperCase();
             
-            return `
-                <div class="flex ${isOwn ? 'justify-end' : 'justify-start'}">
-                    <div class="max-w-xs">
-                        ${!isOwn ? `<div class="text-xs text-gray-500 mb-1">${message.username}</div>` : ''}
-                        <div class="px-3 py-2 rounded-lg text-sm ${
-                            isOwn 
-                                ? 'bg-blue-600 text-white' 
-                                : 'bg-white border border-gray-200'
-                        }">
-                            ${this.escapeHtml(message.content)}
+            if (isOwn) {
+                // Message envoyé (à droite)
+                return `
+                    <div class="flex items-start justify-end gap-2.5">
+                        <div class="flex flex-col gap-1">
+                            <div class="flex flex-col w-full max-w-[240px] leading-1.5 p-3 border border-gray-200 bg-black text-white rounded-s-xl rounded-ee-xl">
+                                <div class="flex items-center justify-between space-x-2 mb-1">
+                                    <span class="text-sm font-semibold">Moi</span>
+                                    <span class="text-xs font-normal text-gray-300">${time}</span>
+                                </div>
+                                <p class="text-sm font-normal">
+                                    ${this.escapeHtml(message.content)}
+                                </p>
+                                <span class="text-xs font-normal text-gray-300 mt-1">Vu</span>
+                            </div>
                         </div>
-                        <div class="text-xs text-gray-400 mt-1 ${isOwn ? 'text-right' : 'text-left'}">
-                            ${time}
+                        <div class="w-8 h-8 rounded-full ${avatarColor} flex items-center justify-center text-white text-sm font-bold shrink-0">
+                            ${initial}
                         </div>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                // Message reçu (à gauche)
+                return `
+                    <div class="flex items-start gap-2.5">
+                        <div class="w-8 h-8 rounded-full ${avatarColor} flex items-center justify-center text-white text-sm font-bold shrink-0">
+                            ${initial}
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <div class="flex flex-col w-full max-w-[240px] leading-1.5 p-3 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl">
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <span class="text-sm font-semibold text-gray-900">${this.escapeHtml(message.username)}</span>
+                                    <span class="text-xs font-normal text-gray-500">${time}</span>
+                                </div>
+                                <p class="text-sm font-normal text-gray-900">
+                                    ${this.escapeHtml(message.content)}
+                                </p>
+                                <span class="text-xs font-normal text-gray-500 mt-1">Delivered</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
         }).join('');
+    }
+
+    private getAvatarColor(username: string): string {
+        // Générer une couleur basée sur le nom d'utilisateur
+        const colors = [
+            'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-red-500', 
+            'bg-yellow-500', 'bg-indigo-500', 'bg-pink-500', 'bg-gray-500'
+        ];
+        
+        let hash = 0;
+        for (let i = 0; i < username.length; i++) {
+            hash = username.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        
+        return colors[Math.abs(hash) % colors.length];
     }
 
     private sendMessage(content: string) {
         if (!content.trim()) return;
 
-        const message: Message = {
-            id: Date.now().toString(),
-            userId: 'current-user',
-            username: 'Toi',
-            content: content.trim(),
-            timestamp: new Date(),
-            type: 'text'
-        };
-
-        this.state.messages.push(message);
-        this.updateMessagesDisplay();
-
-        // TODO: Envoyer via Socket.IO
-        console.log('Message envoyé:', message);
+        // Envoyer via Socket.IO au serveur
+        if (this.socket && this.socket.connected) {
+            this.socket.emit('sendMessage', {
+                content: content.trim(),
+                room: this.state.activeTab === 'global' ? 'global' : this.state.currentRoom?.id
+            });
+        } else {
+            console.error('❌ Socket not connected');
+        }
     }
 
-    private switchTab(tab: 'global' | 'private') {
+    private switchTab(tab: 'global' | 'pong' | 'snake') {
         this.state.activeTab = tab;
         
         // Mettre à jour l'UI des onglets
         const tabGlobal = document.getElementById('tab-global');
-        const tabPrivate = document.getElementById('tab-private');
+        const tabSnake = document.getElementById('tab-snake');
+        const tabPong = document.getElementById('tab-pong');
         
-        if (tabGlobal && tabPrivate) {
+        if (tabGlobal && tabPong && tabSnake ) {
             if (tab === 'global') {
                 tabGlobal.className = 'px-3 py-1 rounded text-sm bg-blue-700 text-white';
-                tabPrivate.className = 'px-3 py-1 rounded text-sm text-blue-200 hover:bg-blue-700 hover:text-white';
-            } else {
-                tabPrivate.className = 'px-3 py-1 rounded text-sm bg-blue-700 text-white';
+                tabPong.className = 'px-3 py-1 rounded text-sm text-blue-200 hover:bg-blue-700 hover:text-white';
+                tabSnake.className = 'px-3 py-1 rounded text-sm text-blue-200 hover:bg-blue-700 hover:text-white';
+            } else if (tab === 'pong') {
                 tabGlobal.className = 'px-3 py-1 rounded text-sm text-blue-200 hover:bg-blue-700 hover:text-white';
+                tabPong.className = 'px-3 py-1 rounded text-sm bg-blue-700 text-white';
+                tabSnake.className = 'px-3 py-1 rounded text-sm text-blue-200 hover:bg-blue-700 hover:text-white';
+            } else if (tab === 'snake') {
+                tabGlobal.className = 'px-3 py-1 rounded text-sm text-blue-200 hover:bg-blue-700 hover:text-white';
+                tabPong.className = 'px-3 py-1 rounded text-sm text-blue-200 hover:bg-blue-700 hover:text-white';
+                tabSnake.className = 'px-3 py-1 rounded text-sm bg-blue-700 text-white';
             }
         }
 
@@ -229,9 +341,17 @@ class ChatManager {
         }
     }
 
-    private formatTime(date: Date): string {
+    private formatTime(date: Date | string): string {
+        // S'assurer que nous avons un objet Date
+        const dateObj = typeof date === 'string' ? new Date(date) : date;
+        
+        // Vérifier que la conversion s'est bien passée
+        if (isNaN(dateObj.getTime())) {
+            return 'Invalid date';
+        }
+        
         const now = new Date();
-        const diff = now.getTime() - date.getTime();
+        const diff = now.getTime() - dateObj.getTime();
         
         if (diff < 60000) {
             return 'À l\'instant';
@@ -239,7 +359,7 @@ class ChatManager {
             const minutes = Math.floor(diff / 60000);
             return `${minutes}min`;
         } else {
-            return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            return dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
         }
     }
 

@@ -29,6 +29,7 @@ export type UserJson = {
 	twoFaSecret?: string;
 	twoFaCode?: string;
 	provider?: string;
+	isOnline?: boolean;
 	stats?: UserStats;
 };
 

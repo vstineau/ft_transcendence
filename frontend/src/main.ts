@@ -3,6 +3,7 @@ import { registerUser } from './user/register';
 import { logUser, initTwoFALogin, TwoFAVerifyView} from './user/login';
 import { rootUser } from './user/root';
 import { updateInfos } from './user/updateInfos';
+import { displayChatButton } from './utils/chat_tools';
 import {
 	LoginView,
 	PongView,
@@ -114,7 +115,7 @@ async function renderPage() {
 	switch (path) {
 		case '/':
 			WelcomeView();
-
+			displayChatButton(); // Affichage debbug.
 			setTimeout(() => {
 				initScrollAnimations();
 				initThemeToggle();
@@ -122,12 +123,14 @@ async function renderPage() {
 			break;
 		case '/dashboard':
 			rootUser();
+			displayChatButton();
 			setTimeout(() => {
 				initThemeToggle(); // ← Initialiser le thème après les animations
 				initProfilePage();
 			}, 100);
 			break;
 		case '/updateInfos':
+			displayChatButton();
 			updateInfos();
 			break;
 		case '/register':
@@ -137,15 +140,19 @@ async function renderPage() {
 			logUser();
 			break;
 		case '/pong/matchmaking/game':
+			displayChatButton();
 			pongGame();
 			break;
 		case '/pong/matchmaking/localgame':
+			displayChatButton();
 			localpongGame();
 			break;
 		case '/snake':
+			displayChatButton();
 			snakeGame();
 			break;
 		case '/snake/local':
+			displayChatButton();
 			localSnakeGame();
 			break;
 		case '/2fa-verification':

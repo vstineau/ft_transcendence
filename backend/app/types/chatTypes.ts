@@ -1,0 +1,18 @@
+export interface ChatUser {
+  id: string;
+  socketId: string;
+  login: string;
+  nickName: string;
+  avatar: string;
+  status: 'online' | 'offline' | 'in-game';
+}
+
+export interface ChatMessage {
+  id: string;
+  userId: string;
+  username: string;
+  content: string;
+  timestamp: Date;
+  type: 'text' | 'system' | 'game-invitation';
+  room: string;
+}

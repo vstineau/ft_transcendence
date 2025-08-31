@@ -1,6 +1,5 @@
 import { navigateTo } from '../main';
 import { displayError } from '../utils/error';
-import { displayChatButton } from '../utils/chat_tools';
 
 
 export async function logUser() {
