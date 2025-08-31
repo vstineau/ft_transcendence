@@ -162,7 +162,7 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 
 export function startPongGame(app: FastifyInstance) {
 	app.ready().then(() => {
-		app.io.on('connection', (socket: Socket) => {
+		app.io.of('/pong').on('connection', (socket: Socket) => {
 			socket.on('initGame', (cookie: string) => {
 				initRoom(socket, cookie);
 				handleDisconnect(app, socket);
@@ -173,9 +173,9 @@ export function startPongGame(app: FastifyInstance) {
 						for (const room of rooms) {
 							if (room.playersNb === 2 && room.locked) {
 								gameLoop(room.game, app);
-								app.io.to(room.name).emit('gameState', room.game);
+								app.io.of('/pong').to(room.name).emit('gameState', room.game);
 							} else if (!room.locked && room.playersNb === 1) {
-								app.io.to(room.name).emit('waiting', room);
+								app.io.of('/pong').to(room.name).emit('waiting', room);
 							}
 						}
 					}, 1000 / 60);
@@ -235,7 +235,7 @@ function checkWin(game: Game, app: FastifyInstance) {
 		game.ball.y = WIN_HEIGHT / 2;
 		const room = rooms.find(r => r.game.p1.id === game.p1.id || r.game.p2.id === game.p2.id);
 		if (room) {
-			app.io.to(room.name).emit('playerWin', game.p1.score > game.p2.score ? game.p1.nickName : game.p2.nickName, game);
+			app.io.of('/pong').to(room.name).emit('playerWin', game.p1.score > game.p2.score ? game.p1.nickName : game.p2.nickName, game);
 		}
 	}
 }

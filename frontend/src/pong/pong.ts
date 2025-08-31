@@ -14,7 +14,7 @@ export function createPongSocket(): Socket {
 	const port = window.location.port;
 	const protocol = window.location.protocol;
 
-	let socket = io(`${protocol}//${host}:${port}`);
+	let socket = io(`${protocol}//${host}:${port}/pong`);
 	socket.on('connect', () => {
 		let cookie = getCookie('token');
 		socket.emit('initGame', cookie);
