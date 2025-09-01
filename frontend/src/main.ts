@@ -5,6 +5,9 @@ import { rootUser } from './user/root';
 import { updateInfos } from './user/updateInfos';
 import {
 	LoginView,
+	GamesView,
+	PongChoice,
+	SnakeChoice,
 	PongView,
 	RegisterView,
 	UpdateInfosview,
@@ -28,6 +31,9 @@ import {initProfilePage } from './utils/avatar';
 const routes: { [key: string]: () => Promise<string> } = {
 	'/': WelcomeView,
 	'/dashboard': RootView,
+	'/games': GamesView,
+	'/pong-choice': PongChoice,
+	'/snake-choice': SnakeChoice,
 	'/pong': PongView,
 	'/pong/matchmaking': PongMatchMakingView,
 	'/pong/matchmaking/game': PongCanvas,

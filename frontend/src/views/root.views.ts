@@ -53,17 +53,17 @@ export async function RootView() {
 					<!-- Bloc Pong Game - 3 colonnes, 2 lignes -->
 					<div class="row-span-2 bg-white rounded-xl shadow-lg p-4" style="grid-column: 3 / 5">
 						<div class="flex items-center justify-items-center mb-4">
-							<h3 class="font-montserrat font-bold text-6xl">Pong</h3>
+							<h3 class="font-montserrat font-bold text-6xl">Games</h3>
 						</div>
 
 						<p class="font-montserrat font-medium text-gray-700 text-sm leading-5 mb-4">
-							Pong is one of the first computer games that ever created, the goal is to defeat your opponent by
-							being the first one to gain a point when he misses the ball.
+							Pong is one of the first computer games that ever created, the goal is to defeat your opponent.<br><br>
+							For Snake you must keep the snake from colliding with both other obstacles and itself.
 						</p>
 
 						<div class="flex mt-4">
 							<a
-								href="/pong"
+								href="/games"
 								class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition"
 								>Play</a
 							>
@@ -199,7 +199,7 @@ export async function WelcomeView() {
 				</div>
 
                     <!-- Bloc Games - Carré -->
-                    <a href="/pong" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
+                    <a href="/games" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
 					<p class="font-montserrat font-medium text-base text-gray-600">Games</p>
 					<div class="flex-1 flex items-center justify-center">
 						<span class="text-2xl">▶</span>
@@ -216,6 +216,112 @@ export async function WelcomeView() {
         </div>
     </div>
 `;
+}
+
+export async function PongChoice() {
+	return /* HTML */ `
+	<!-- Titre FT_TRANSCENDENCE en haut -->
+		<div class="bg-gray-100 py-2">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+				FT<span class="text-blue-600">_</span>TRANSCENDENCE
+			</h1>
+		</div>
+
+		<!-- Section avec les blocs -->
+        <div class="content-section min-h-screen bg-gray-100 py-16">
+            <div class="max-w-4xl mx-auto px-8">
+                <!-- Container des blocs en grid simple -->
+                <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 200px 200px 200px; max-width: 600px;">
+
+					<a href="/pong/matchmaking/localgame" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors">
+					<p class="font-montserrat font-medium text-base text-gray-600">Local</p>
+						<div class="flex-1 flex items-center justify-center">
+							<span class="text-2xl">🏠</span>
+						</div>
+					</a>
+
+                    <a href="/pong/matchmaking/game" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
+					<p class="font-montserrat font-medium text-base text-gray-600">On Line</p>
+						<div class="flex-1 flex items-center justify-center">
+							<span class="text-2xl">🌏</span>
+						</div>
+					</a>
+
+                    <a href="/pong/tournament" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
+					<p class="font-montserrat font-medium text-base text-gray-600">Tournament</p>
+						<div class="flex-1 flex items-center justify-center">
+							<span class="text-2xl">🏆</span>
+						</div>
+					</a>
+            	</div>
+			</div>
+	`;
+}
+
+export async function SnakeChoice() {
+	return /* HTML */ `
+	<!-- Titre FT_TRANSCENDENCE en haut -->
+		<div class="bg-gray-100 py-2">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+				FT<span class="text-blue-600">_</span>TRANSCENDENCE
+			</h1>
+		</div>
+
+		<div class="content-section min-h-screen bg-gray-100 py-16">
+            <div class="max-w-4xl mx-auto px-8">
+                <!-- Container des blocs en grid simple -->
+                <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 300px 300px; max-width: 600px;">
+
+					<a href="/snake/local" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors">
+					<p class="font-montserrat font-medium text-base text-gray-600">Local</p>
+						<div class="flex-1 flex items-center justify-center">
+							<span class="text-2xl">🏠</span>
+						</div>
+					</a>
+
+                    <!-- Bloc Games - Carré -->
+                    <a href="/snake" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
+					<p class="font-montserrat font-medium text-base text-gray-600">On line</p>
+						<div class="flex-1 flex items-center justify-center">
+							<span class="text-2xl">🌏</span>
+						</div>
+					</a>
+            	</div>
+			</div>
+	`;
+}
+
+export async function GamesView() {
+	return /* HTML */ `
+	<!-- Titre FT_TRANSCENDENCE en haut -->
+		<div class="bg-gray-100 py-2">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+				FT<span class="text-blue-600">_</span>TRANSCENDENCE
+			</h1>
+		</div>
+
+		<div class="content-section min-h-screen bg-gray-100 py-16">
+            <div class="max-w-4xl mx-auto px-8">
+                <!-- Container des blocs en grid simple -->
+                <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 300px 300px; max-width: 600px;">
+
+					<a href="/pong-choice" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors">
+					<p class="font-montserrat font-medium text-base text-gray-600">Pong</p>
+						<div class="flex-1 flex items-center justify-center">
+							<span class="text-2xl">🏓</span>
+						</div>
+					</a>
+
+                    <!-- Bloc Games - Carré -->
+                    <a href="/snake-choice" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
+					<p class="font-montserrat font-medium text-base text-gray-600">Snake</p>
+						<div class="flex-1 flex items-center justify-center">
+							<span class="text-2xl">🐍</span>
+						</div>
+					</a>
+            	</div>
+			</div>
+	`;
 }
 
 // <img src="https://i.gifer.com/QgxJ.gif" alt="pong" />
@@ -602,82 +708,6 @@ export async function UpdateInfosview() {
 			</style>
 	`;
 }
-
-
-// export async function UpdateInfosview() {
-// 	return /* HTML */ `
-// 		<div class="max-w-md mx-auto p-6 rounded-lg shadow-lg animate-fade-in">
-// 			<h2 class="text-2xl font-bold mb-4 text-center text-purple-700">Modifier le compte</h2>
-// 			<form id="register-form" class="space-y-4">
-// 				<input
-// 					autocomplete="off"
-// 					type="text"
-// 					name="login"
-// 					id="login"
-// 					placeholder="Login"
-// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-// 				/>
-// 				<input
-// 					autocomplete="off"
-// 					type="text"
-// 					name="nickname"
-// 					id="nickname"
-// 					placeholder="Nickname"
-// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-// 				/>
-// 				<input
-// 					autocomplete="off"
-// 					type="email"
-// 					name="email"
-// 					id="mail"
-// 					placeholder="Email"
-// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-// 				/>
-// 				<input
-// 					type="password"
-// 					name="password"
-// 					id="password"
-// 					placeholder="Mot de passe"
-// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-// 				/>
-// 				<input
-// 					type="password"
-// 					name="newPassword"
-// 					id="newPassword"
-// 					placeholder="Nouveau Mot de passe"
-// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-// 				/>
-// 				<input
-// 					type="file"
-// 					name="avatar"
-// 					id="avatar"
-// 					placeholder="inserer avatar"
-// 					accept="image/jpeg, image/png, image/jgp, image/gif"
-// 					class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-// 				/>
-// 				<button
-// 					type="save updates"
-// 					class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
-// 				>
-// 				Save updates
-// 				</button>
-// 			</form>
-// 			<button
-// 				id="defaultAvatars"
-// 				class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
-// 			>
-// 			No avatar
-// 			</button>
-// 			<div
-// 				id="error-message"
-// 				class="w-full px-4 hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative z-20"
-// 				style="display: none;"
-// 				role="alert"
-// 			></div>
-// 		</div>
-// 	`;
-// }
-
 
 export async function PongCanvas(){ // gameCanvas
 	return /* HTML */ `
