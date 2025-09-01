@@ -24,17 +24,15 @@ export function ChatPanel() {
 						<input id="chat-user-search" type="text" placeholder="Rechercher..." class="w-full px-2 py-1 rounded bg-gray-800 text-xs focus:outline-none focus:ring-1 focus:ring-gray-500" />
 						<div id="chat-search-results" class="max-h-32 overflow-y-auto space-y-1 hidden"></div>
 					</div>
-					<!-- Utilisateurs en ligne -->
+					<!-- Utilisateurs en ligne (première moitié) -->
 					<div class="flex-1 overflow-hidden flex flex-col">
 						<div class="uppercase tracking-wide text-[10px] text-gray-400 px-1 mb-1">En ligne</div>
 						<div id="chat-online-users" class="space-y-1 overflow-y-auto pr-1 custom-scrollbar flex-1"></div>
-						<div class="uppercase tracking-wide text-[10px] text-gray-400 px-1 mt-2">Rooms</div>
-						<div id="chat-rooms-list" class="space-y-1 overflow-y-auto pr-1 custom-scrollbar"></div>
 					</div>
-					<!-- Actions -->
-					<div class="pt-1 border-t border-gray-800 flex flex-col space-y-2">
-						<button id="chat-new-conv" class="w-full bg-blue-600 hover:bg-blue-500 text-white rounded px-2 py-1 text-xs font-semibold">Nouvelle conversation</button>
-						<button id="chat-add-friend" class="w-full bg-gray-700 hover:bg-gray-600 text-white rounded px-2 py-1 text-xs">Ajouter un ami</button>
+					<!-- Conversations privées (deuxième moitié) -->
+					<div class="flex-1 overflow-hidden flex flex-col border-t border-gray-800 pt-2">
+						<div class="uppercase tracking-wide text-[10px] text-gray-400 px-1 mb-1">Messages</div>
+						<div id="chat-private-history" class="space-y-1 overflow-y-auto pr-1 custom-scrollbar flex-1"></div>
 					</div>
 				</div>
 				<!-- Zone principale -->

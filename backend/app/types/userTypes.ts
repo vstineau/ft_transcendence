@@ -30,6 +30,8 @@ export type UserJson = {
 	twoFaCode?: string;
 	provider?: string;
 	isOnline?: boolean;
+	friends?: string[];
+	blocklist?: string[];
 	stats?: UserStats;
 };
 

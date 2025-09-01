@@ -63,6 +63,12 @@ export class User extends BaseEntity {
 	@Column({type: 'boolean', default: false})
 	isOnline!: boolean;
 
+	@Column({ type: 'simple-array', nullable: true })
+	friends?: string[];
+
+	@Column({ type: 'simple-array', nullable: true })
+	blocklist?: string[];
+
 	static async createUser(data: UserJson): Promise<User> {
 		return new User(data);
 	}
@@ -99,6 +105,8 @@ export class User extends BaseEntity {
 		this.twoFaAuth = obj?.twoFaAuth ?? false;
 		this.provider = obj?.provider ?? '';
 		this.isOnline = obj?.isOnline ?? false;
+		this.friends = obj?.friends ?? [];
+		this.blocklist = obj?.blocklist ?? [];
 	}
 
 	@OneToMany(() => History, (history: History) => history.user, { cascade: true })
