@@ -3,6 +3,7 @@ export interface Message {
     userId: string;
     username: string;
     content: string;
+    avatarPath: string;
     timestamp: Date | string;
     type: 'text' | 'system' | 'game-invitation';
 }
@@ -23,6 +24,8 @@ export interface User {
 }
 
 export interface ChatState {
+    currentUserId: string;
+    avatar: string;
     isOpen: boolean;
     activeTab: 'global' | 'pong' | 'snake';
     currentRoom: ChatRoom | null;

@@ -5,13 +5,15 @@ import { getCookie } from '../pong/pong';
 
 class ChatManager {
     private state: ChatState = {
+        currentUserId: '',
+        avatar: '',
         isOpen: false,
         activeTab: 'global',
         currentRoom: null,
         messages: [],
         unreadCount: 3
     };
-    
+
     private socket: Socket | null = null;
 
     constructor() {
@@ -36,6 +38,8 @@ class ChatManager {
         // Écouter les événements du serveur
         this.socket.on('userConnected', (data: any) => {
             console.log('✅ Chat user connected:', data);
+            this.state.currentUserId = data.user.id; // à adapter selon la structure de data
+            this.state.avatar = data.user.avatar || '';
             this.state.messages = data.recentMessages || [];
             this.updateMessagesDisplay();
         });
@@ -44,6 +48,7 @@ class ChatManager {
             console.log('📩 New message received:', message);
             this.state.messages.push(message);
             this.updateMessagesDisplay();
+            
             
             // Incrémenter les non-lus si le chat est fermé
             if (!this.state.isOpen) {
@@ -86,6 +91,7 @@ class ChatManager {
             userId: 'user1',
             username: 'Alice',
             content: 'Salut tout le monde ! 👋',
+            avatarPath: '',
             timestamp: new Date(Date.now() - 1000 * 60 * 5),
             type: 'text'
         },
@@ -94,6 +100,7 @@ class ChatManager {
             userId: 'user2',
             username: 'Bob',
             content: 'Hey ! Quelqu\'un pour une partie de Pong ?',
+            avatarPath: '',
             timestamp: new Date(Date.now() - 1000 * 60 * 3),
             type: 'text'
         },
@@ -102,6 +109,7 @@ class ChatManager {
             userId: 'current-user',
             username: 'Toi',
             content: 'Je suis chaud ! 🏓',
+            avatarPath: '',
             timestamp: new Date(Date.now() - 1000 * 60 * 2),
             type: 'text'
         }
@@ -213,11 +221,21 @@ class ChatManager {
 
     private renderMessages(): string {
         return this.state.messages.map(message => {
-            const isOwn = message.userId === 'current-user';
+            const isOwn = message.userId === this.state.currentUserId;
             const time = this.formatTime(message.timestamp);
             const avatarColor = this.getAvatarColor(message.username);
             const initial = message.username.charAt(0).toUpperCase();
             
+            let avatar;
+            if (isOwn && this.state.avatar) {
+                avatar = `<img src="${this.state.avatar}" alt="avatar" class="w-8 h-8 rounded-full object-cover shrink-0" />`;
+            } else if (message.avatarPath) {
+            avatar = `<img src="${message.avatarPath}" alt="avatar" class="w-8 h-8 rounded-full object-cover shrink-0" />`;
+            } else {
+                avatar = `<div class="w-8 h-8 rounded-full ${avatarColor} flex items-center justify-center text-white text-sm font-bold shrink-0">${initial}</div>`;
+            }
+
+
             if (isOwn) {
                 // Message envoyé (à droite)
                 return `
@@ -234,18 +252,14 @@ class ChatManager {
                                 <span class="text-xs font-normal text-gray-300 mt-1">Vu</span>
                             </div>
                         </div>
-                        <div class="w-8 h-8 rounded-full ${avatarColor} flex items-center justify-center text-white text-sm font-bold shrink-0">
-                            ${initial}
-                        </div>
+                        ${avatar}
                     </div>
                 `;
             } else {
                 // Message reçu (à gauche)
                 return `
                     <div class="flex items-start gap-2.5">
-                        <div class="w-8 h-8 rounded-full ${avatarColor} flex items-center justify-center text-white text-sm font-bold shrink-0">
-                            ${initial}
-                        </div>
+                        ${avatar}
                         <div class="flex flex-col gap-1">
                             <div class="flex flex-col w-full max-w-[240px] leading-1.5 p-3 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl">
                                 <div class="flex items-center space-x-2 mb-1">

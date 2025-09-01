@@ -11,6 +11,7 @@ export interface ChatMessage {
   id: string;
   userId: string;
   username: string;
+  avatarPath: string;
   content: string;
   timestamp: Date;
   type: 'text' | 'system' | 'game-invitation';

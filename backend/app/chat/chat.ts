@@ -124,6 +124,7 @@ export function setupChat(app: FastifyInstance) {
           id: chatMessage.id.toString(),
           userId: user.id,
           username: user.nickName,
+          avatarPath: user.avatar || '',
           content: data.content,
           timestamp: chatMessage.timestamp,
           type: 'text',
