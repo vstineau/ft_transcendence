@@ -83,8 +83,11 @@ export function setupChat(app: FastifyInstance) {
         });
         console.log('User connected to chat:', user.login);
 
-        // Notifier les autres utilisateurs
+        // Notifier les autres utilisateurs ET envoyer la liste complète à tous
         socket.to('global').emit('userJoined', chatUser);
+        
+        // Envoyer la liste complète mise à jour à tous les utilisateurs connectés
+        chatNamespace.to('global').emit('onlineUsersUpdated', Array.from(connectedUsers.values()));
         
         app.log.info(`Chat user connected: ${user.login}`);
 
@@ -272,6 +275,9 @@ export function setupChat(app: FastifyInstance) {
         
         // Notifier les autres utilisateurs
         socket.to('global').emit('userLeft', user);
+        
+        // Envoyer la liste complète mise à jour à tous les utilisateurs connectés
+        chatNamespace.to('global').emit('onlineUsersUpdated', Array.from(connectedUsers.values()));
         
         app.log.info(`Chat user disconnected: ${user.login}`);
       }

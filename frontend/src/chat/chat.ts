@@ -12,6 +12,7 @@ class ChatManager {
         currentRoom: null,
         messages: [],
         unreadCount: 3,
+        onlineUsers: [],
         rooms: [
             { id: 'global', name: 'Global', type: 'global', unreadCount: 0 },
             { id: 'pong', name: 'Pong', type: 'private', unreadCount: 0 },
@@ -32,7 +33,7 @@ class ChatManager {
         const protocol = window.location.protocol;
 
         this.socket = io(`${protocol}//${host}:${port}/chat`);
-        
+
         this.socket.on('connect', () => {
             console.log('💬 Chat socket connected');
             let cookie = getCookie('token');
@@ -41,22 +42,13 @@ class ChatManager {
             }
         });
 
-        // Écouter les événements du serveur
+    // Écouter les événements du serveur
         this.socket.on('userConnected', (data: any) => {
             console.log('✅ Chat user connected:', data);
             this.state.currentUserId = data.user.id; // à adapter
             this.state.avatar = data.user.avatar || '';
             this.state.messages = data.recentMessages || [];
-            // initial online users list if provided
-            if (data.onlineUsers) {
-                this.state.onlineUsers = data.onlineUsers.map((u: any) => ({
-                    id: u.id,
-                    username: u.username || u.login,
-                    avatar: u.avatar,
-                    status: 'online'
-                }));
-                this.renderOnlineUsers();
-            }
+            this.state.onlineUsers = data.onlineUsers || [];
             this.updateMessagesDisplay();
         });
 
@@ -64,8 +56,7 @@ class ChatManager {
             console.log('📩 New message received:', message);
             this.state.messages.push(message);
             this.updateMessagesDisplay();
-            
-            
+
             // Incrémenter les non-lus si le chat est fermé
             if (!this.state.isOpen) {
                 this.state.unreadCount++;
@@ -79,7 +70,7 @@ class ChatManager {
             if (!this.state.onlineUsers.find(u => u.id === user.id)) {
                 this.state.onlineUsers.push({
                     id: user.id,
-                    username: user.username || user.login,
+                    username: user.nickName || user.login, // Corrected: use nickName instead of username
                     avatar: user.avatar,
                     status: 'online'
                 });
@@ -90,12 +81,23 @@ class ChatManager {
         this.socket.on('userLeft', (user: any) => {
             console.log('👋 User left chat:', user);
             if (this.state.onlineUsers) {
-                const u = this.state.onlineUsers.find(u => u.id === user.id);
-                if (u) {
-                    u.status = 'offline';
-                    this.renderOnlineUsers();
-                }
+                // Retirer l'utilisateur de la liste au lieu de juste changer le status
+                this.state.onlineUsers = this.state.onlineUsers.filter(u => u.id !== user.id);
+                this.renderOnlineUsers();
             }
+        });
+
+        // Écouter les mises à jour complètes de la liste des utilisateurs en ligne
+        this.socket.on('onlineUsersUpdated', (onlineUsers: any[]) => {
+            console.log('🔄 Online users list updated:', onlineUsers);
+            // Remplacer complètement la liste locale par celle du serveur
+            this.state.onlineUsers = onlineUsers.map(u => ({
+                id: u.id,
+                username: u.nickName || u.login,
+                avatar: u.avatar,
+                status: 'online'
+            }));
+            this.renderOnlineUsers();
         });
 
         this.socket.on('authError', (error: string) => {
@@ -193,7 +195,7 @@ class ChatManager {
         this.updateMessagesDisplay();
 
     // Render initial des rooms (sidebar)
-    this.renderRoomsSidebar();
+        this.renderRoomsSidebar();
         
         // Scroll vers le bas des messages
         const messagesContainer = document.getElementById('messages-container');
@@ -442,6 +444,7 @@ class ChatManager {
     }
 
     private renderOnlineUsers() {
+        console.log('je rentre ici');
         const container = document.getElementById('chat-online-users');
         if (!container) return;
         const online = (this.state.onlineUsers || []).filter(u => u.status === 'online');
