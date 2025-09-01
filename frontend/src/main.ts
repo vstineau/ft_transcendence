@@ -1,6 +1,7 @@
 // import { register } from 'ts-node';
 import { registerUser } from './user/register';
 import { logUser, initTwoFALogin, TwoFAVerifyView} from './user/login';
+import { loginGithub } from './user/loginGithub';
 import { rootUser } from './user/root';
 import { updateInfos } from './user/updateInfos';
 import {
@@ -86,7 +87,7 @@ async function renderPage() {
 
 	//veriff pour si le tokens jws ne fonctionne plus,
 	// il y aura une redirection vers login pour se co a nouveau
-	const publicPaths = ['/', '/login', '/register', '/pong/matchmaking/game', '/pong/matchmaking/localgame', '/pong', '/2fa-verification', '/pong/local' , '/snake', '/snake/local'];
+	const publicPaths = ['/', '/login', '/register', '/pong/matchmaking/game', '/pong/matchmaking/localgame', '/pong', '/2fa-verification', '/pong/local' , '/snake', '/snake/local', 'login/github/callback'];
 	if(!publicPaths.includes(path)){
 		try{
 			await authenticatedFetch('/api/updateInfos');
@@ -150,6 +151,9 @@ async function renderPage() {
 			break;
 		case '/2fa-verification':
 			initTwoFALogin();
+			break;
+		case '/login/github/callback':
+			loginGithub();
 			break;
 	}
 }
