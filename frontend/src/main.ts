@@ -15,7 +15,7 @@ import {
 	SnakeCanvas,
 	localSnakeCanvas,
 	WelcomeView,
-	pongTournament,
+	pongTournamentView,
 } from './views/root.views';
 import { pongGame } from './pong/pong';
 import { initScrollAnimations, cleanupScrollAnimations } from './utils/animations';
@@ -24,7 +24,7 @@ import { snakeGame } from './snake/snake';
 import { localSnakeGame } from './snake/localSnake';
 import { localpongGame } from './pong/localPong';
 import { initProfilePage } from './utils/avatar';
-import { tournament } from './pong/tournament';
+import { pongTournament } from './pong/tournament';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -36,7 +36,7 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/pong/matchmaking/localgame': localPongCanvas,
 	'/pong/leaderboard': async () => '<h1>leaderboard</h1>',
 	'/pong/stats': async () => '<h1>stats</h1>',
-	'/pong/tournament': pongTournament,
+	'/pong/tournament': pongTournamentView,
 	'/login': LoginView,
 	'/logout': async () => '<h1>LOGOUT</h1>',
 	'/snake': SnakeCanvas,
@@ -108,7 +108,7 @@ async function renderPage() {
 			localSnakeGame();
 			break;
 		case '/pong/tournament':
-			tournament();
+			pongTournament();
 			break;
 	}
 }

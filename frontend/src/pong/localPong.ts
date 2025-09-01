@@ -186,7 +186,7 @@ function handlePaddleCollisionP2() {
 	}
 }
 
-export function gameLoop(_socket: any) {
+export function gameLoop(canvas: HTMLCanvasElement) {
 	// requestAnimationFrame(gameLoop);
 	// win_width = canvas.width;
 	// win_height = canvas.height;

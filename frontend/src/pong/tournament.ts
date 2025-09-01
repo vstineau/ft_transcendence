@@ -4,16 +4,35 @@
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D | null;
 let form: HTMLFormElement;
+let tournament: Tournament;
 
-let win_width = window.innerWidth;
-let win_height = window.innerHeight;
-let gameWidth = win_width * 0.8;
-let gameHeight = win_height * 0.8;
+// let win_width = window.innerWidth;
+// let win_height = window.innerHeight;
+// let gameWidth = win_width * 0.8;
+// let gameHeight = win_height * 0.8;
 
-import { Player } from '../types/pongTypes';
+import { Tournament } from '../types/pongTypes';
 
 let names: string[] = [];
-let players: Player[] = [];
+// let players: PlayerTournament[] = [];
+// let matchs: Game[] = [];
+//                            1 2 3 4 5 6 7 8
+//                             2   4   5   8
+//                               2   4   5
+//                                 2   4
+//                                   4
+//
+//
+// let leaderboard: {
+
+// }
+// function shuffle(array: PlayerTournament[]) {
+// 	for (let i = array.length - 1; i > 0; i--) {
+// 		const j = Math.floor(Math.random() * (i + 1));
+// 		[array[i], array[j]] = [array[j], array[i]];
+// 	}
+// 	return array;
+// }
 
 function initGame() {
 	canvas = document.createElement('canvas');
@@ -26,24 +45,6 @@ function initGame() {
 	}
 	ctx = canvas.getContext('2d');
 	// updateInfos();
-}
-
-export function initPlayer(name: string, index: number): Player {
-	let player: Player = {
-		nickName: name,
-		id: index.toString(),
-		y: gameHeight / 2,
-		x: 20,
-		height: gameHeight / 9,
-		length: gameWidth / 90,
-		vy: gameHeight / 130,
-		score: 0,
-		key_up: false,
-		key_down: false,
-		avatar: '',
-		login: '',
-	};
-	return player;
 }
 
 function getPlayersName(nb: number) {
@@ -66,11 +67,17 @@ function getPlayersName(nb: number) {
 	return container;
 }
 
-// function displayPools() {
-// 	for (const name in names) {
-// 		let player: Player = initPlayer()
-// 	}
+// function drawBrackets(nbPlayers: Number) {
+// 	if (!ctx) return;
+
+// 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+// 	ctx.fillStyle = 'black';
+// 	ctx.fillRect(0, 0, canvas.width, canvas.height);
+// 	for(let i = 0; i < canvas.height; i)
 // }
+function displayBrackets() {
+
+}
 
 function submitNamesButton(container: HTMLDivElement) {
 	const button = document.createElement('button');
@@ -82,6 +89,7 @@ function submitNamesButton(container: HTMLDivElement) {
 		// Récupérer les noms et valider
 		const inputs = Array.from(container.querySelectorAll('input[type="text"]')) as HTMLInputElement[];
 		names = inputs.map(i => i.value.trim());
+		console.log(names);
 		const firstEmpty = inputs.find(i => i.value.trim().length === 0);
 		const duplicate = new Set(names).size !== names.length;
 		if (firstEmpty) {
@@ -94,48 +102,35 @@ function submitNamesButton(container: HTMLDivElement) {
 			alert(`You need ${inputs.length} differents players.`);
 			return;
 		}
-		names.forEach((name, index) => {
-			let player = initPlayer(name, index);
-			players.push(player);
-		});
-		for(const player of players)
-			console.log(player);
 		container.hidden = true;
 		button.hidden = true;
+		tournament = new Tournament(names);
 		initGame();
 		form.append(canvas);
-		console.log(players);
+		// while(tournament.players.length > 1){
+		tournament.fillMatchs();
+
+		// }
+		// }
+		// console.log(players);
 	});
 }
 
-export function tournament() {
-	console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+export function pongTournament() {
 	const playerForm = document.getElementById('playersForm') as HTMLFormElement;
 	form = document.getElementById('formNb') as HTMLFormElement;
 	form.className = 'flex items-center justify-center w-screen h-screen bg-gray-900';
 	const nbPlayersSelect = document.getElementById('nbPlayers') as HTMLSelectElement;
-	// let nbPlayers;
-	// saveState();
 	playerForm.addEventListener('submit', e => {
-		e.preventDefault(); // Empêche l'envoi classique du formulaire
-		const nbPlayers = parseInt(nbPlayersSelect.value, 10); // Récupère et convertit la valeur sélectionnée
+		e.preventDefault();
+		const nbPlayers = parseInt(nbPlayersSelect.value, 10);
 		if ((nbPlayers < 4 && nbPlayers > 8) || nbPlayers % 2) {
 			alert('You need pair number of players');
 			return;
 		}
 		console.log('Nombre de joueurs :', nbPlayers);
-		// form.reset;
-		// const btn = document.createElement('button');
-		// btn.textContent = 'Annuler';
-		// btn.onclick = undo;
-		// document.body.appendChild(btn);
 		const uiInput = getPlayersName(nbPlayers);
-		// let button: HTMLDivElement = submitNamesButton(uiInput);
-		// uiInput.appendChild(button);
-		// playerForm.reset();
 		playerForm.hidden = true;
 		form.append(uiInput);
-		// initGame();
-		// form.append(canvas);
 	});
 }

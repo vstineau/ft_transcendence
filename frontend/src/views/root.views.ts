@@ -716,7 +716,7 @@ export async function localSnakeCanvas() {
 	`;
 }
 
-export async function pongTournament() {
+export async function pongTournamentView() {
 	return /* HTML */ `
 		<div class="flex items-center justify-center w-screen h-screen bg-gray-900">
 			<div id="formNb" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black p-8">
@@ -730,7 +730,6 @@ export async function pongTournament() {
 							class="bg-gray-800 hover:bg-gray-600 text-white px-4 py-2 rounded mb-6 w-full border border-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
 						>
 							<option value="4">4 players</option>
-							<option value="6">6 players</option>
 							<option value="8">8 players</option>
 						</select>
 					</div>
