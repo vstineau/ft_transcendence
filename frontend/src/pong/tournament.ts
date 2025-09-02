@@ -53,7 +53,7 @@ function initGame() {
 
 function getPlayersName(nb: number) {
 	const container = document.createElement('div'); // conteneur global
-	container.id = ''
+	container.id = '';
 	for (let i = 1; i <= nb; i++) {
 		const input = document.createElement('input');
 		input.type = 'text';
@@ -64,7 +64,7 @@ function getPlayersName(nb: number) {
 			'center flex max-w-sm items-center gap-x-4 rounded-xl \
 			bg-white p-6 shadow-lg outline outline-black/5 \
 			dark:bg-gray-800 dark:hover:bg-gray-600 dark:shadow-none \
-			dark:-outline-offset-1 dark:outline-white/10';
+			dark:-outline-offset-1 dark:outline-white/10 my-2';
 		input.style.color = 'white';
 		container.appendChild(input);
 	}
@@ -160,21 +160,27 @@ function appendElem(id: string, add: HTMLDivElement) {
 
 function drawBrackets(matchs: Game[]) {
 	for (let i = 0; i < matchs.length; i++) {
+		console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
 		const match = document.createElement('div');
-		match.className = 'flex justify-between bg-gray-200 p-3 rounded shadow-sm';
+		match.className = 'flex space-x-4 justify-between bg-gray-600 p-3 rounded shadow-sm mx-4';
 
 		const player1 = document.createElement('div');
-		player1.className = 'w-5/12 text-center bg-white p-2 rounded shadow-inner';
-		player1.textContent = `Joueur ${i * 2 + 1}`;
+		player1.className = 'w-2/3 text-center align-center content-center bg-gray-400 rounded shadow-inner p-3';
+		player1.textContent = `${matchs[i].p1.nickName}`;
+
+		const vs = document.createElement('div');
+		vs.className = 'text-center align-center content-center';
+		vs.textContent = `VS`;
 
 		const player2 = document.createElement('div');
-		player2.className = 'w-5/12 text-center bg-white p-2 rounded shadow-inner';
-		player2.textContent = `Joueur ${i * 2 + 2}`;
+		player2.className = 'w-2/3 text-center align-center content-center bg-gray-400 rounded shadow-inner p-3';
+		player2.textContent = `${matchs[i].p2.nickName}`;
 
 		match.appendChild(player1);
+		match.appendChild(vs);
 		match.appendChild(player2);
 		form.appendChild(match);
-		form.replaceChildren(match);
+		// form.replaceChildren(match);
 	}
 	// if (!ctx) return;
 	// // 3. Dessiner une ligne
@@ -263,24 +269,24 @@ function checkSubmited(container: HTMLDivElement) {
 	const inputs = Array.from(container.querySelectorAll('input[type="text"]')) as HTMLInputElement[];
 	names = inputs.map(i => i.value.trim());
 	console.log(names);
-	const firstEmpty = inputs.find(i => i.value.trim().length === 0);
-	const duplicate = new Set(names).size !== names.length;
-	for (let i = 0; names[i]; i++) {
-		if (names[i].length > 15) {
-			alert(`${names[i]}: Name too long (15 characters maximum).`);
-			return true;
-		}
-	}
-	if (firstEmpty) {
-		alert(`You need ${inputs.length} players.`);
-		firstEmpty.focus();
-		return true;
-	}
-	if (duplicate) {
-		console.log('duplicate');
-		alert(`You need ${inputs.length} differents players.`);
-		return true;
-	}
+	// const firstEmpty = inputs.find(i => i.value.trim().length === 0);
+	// const duplicate = new Set(names).size !== names.length;
+	// for (let i = 0; names[i]; i++) {
+	// 	if (names[i].length > 15) {
+	// 		alert(`${names[i]}: Name too long (15 characters maximum).`);
+	// 		return true;
+	// 	}
+	// }
+	// if (firstEmpty) {
+	// 	alert(`You need ${inputs.length} players.`);
+	// 	firstEmpty.focus();
+	// 	return true;
+	// }
+	// if (duplicate) {
+	// 	console.log('duplicate');
+	// 	alert(`You need ${inputs.length} differents players.`);
+	// 	return true;
+	// }
 	return false;
 }
 
@@ -292,7 +298,7 @@ function submitNames(container: HTMLDivElement) {
 	button.className = 'mt-4 rounded-lg bg-gray-800 hover:bg-gray-600 px-4 py-2 text-white';
 	container.appendChild(button);
 	button.addEventListener('click', () => {
-		if(checkSubmited(container)) return;
+		if (checkSubmited(container)) return;
 		// Récupérer les noms et valider
 		container.hidden = true;
 		// button.hidden = true;
@@ -301,6 +307,7 @@ function submitNames(container: HTMLDivElement) {
 		// initGame(); que quand la game se lance
 		// while(tournament.players.length > 1){
 		tournament.fillMatchs();
+		console.log(tournament.matchs);
 		drawBrackets(tournament.matchs);
 
 		// }
