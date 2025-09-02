@@ -18,7 +18,7 @@ export function ChatPanel() {
 			<!-- Corps avec sidebar + zone messages -->
 			<div class="flex flex-1 overflow-hidden">
 				<!-- Sidebar -->
-				<div class="w-64 bg-gray-900 text-gray-200 flex flex-col p-2 text-sm space-y-3">
+				<div class="w-50 bg-gray-900 text-gray-200 flex flex-col p-2 text-sm space-y-3">
 					<!-- Recherche -->
 					<div class="space-y-2">
 						<input id="chat-user-search" type="text" placeholder="Rechercher..." class="w-full px-2 py-1 rounded bg-gray-800 text-xs focus:outline-none focus:ring-1 focus:ring-gray-500" />
