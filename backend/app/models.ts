@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique, BeforeInsert, BeforeUpdate, ManyToOne, OneToMany } from "typeorm"
-import { IsEmail, Length, Matches, validateOrReject } from 'class-validator'
+import { IsEmail, Length, validateOrReject } from 'class-validator'
 import { getIsInvalidMessage } from "./utils/errorMessages.js";
 import type { UserJson , UserHistory } from './types/userTypes.js'
 import {v4 as uuidv4} from 'uuid';
@@ -37,7 +37,6 @@ export class User extends BaseEntity {
 
 	@Column()
 	@Length(1, 50)
-	@Matches(/^[A-Za-z]+$/, {message: getIsInvalidMessage("firstname", "please only use alpabetic characters")})
 	login!: string;
 
 	@Column()
