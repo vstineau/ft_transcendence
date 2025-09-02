@@ -220,6 +220,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
 		console.log('cant get user2');
 		return ;
 	}
+	const gametime = game.gameStart? Date.now() - game.gameStart: 0;
 	const historyp1: UserHistory = {
 		type: 'snake',
 		date: Date(),
@@ -227,6 +228,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
 		opponent: user2.login,
 		score: '',
 		finalLength: game.p1.segments.length,
+		gameTime: gametime,
 	}
 	const historyp2: UserHistory = {
 		type: 'snake',
@@ -235,6 +237,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
 		opponent: user1.login,
 		score: '',
 		finalLength: game.p2.segments.length,
+		gameTime: gametime,
 	}
 	if (winner === 'DRAW') {
 		historyp1.win = 'DRAW';
@@ -314,6 +317,7 @@ export async function startSnakeGame(app: FastifyInstance) {
                     room.interval = setInterval(() => {
                         for (const room of snakeRooms) {
                             if (room.playersNb === 2) { 
+								!room.game.gameStart? room.game.gameStart = Date.now(): 0;
                                 update(room.game, app, room.name);
                                 app.io.to(room.name).emit('gameState_snake', room.game);
                             } else {

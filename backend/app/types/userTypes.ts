@@ -39,6 +39,7 @@ export type UserHistory = {
 	score?: string,
 	finalLength?: number,
 	win?: string,
+	gameTime?: number;
 };
 
 export type UserStats = {
@@ -53,7 +54,10 @@ export type UserStats = {
 export const defaultAvatars: Array<string> = [
 	'/app/app/avatar/dog-meme.gif',
 	'/app/app/avatar/singe_rio_de_janeiro.jpg',
-	'/app/app/avatar/samy.jpg'
+	'/app/app/avatar/samy.jpg',
+	'/app/app/avatar/uillysamy.png',
+	'/app/app/avatar/pikapika.png',
+	'/app/app/avatar/vieux.png',
 ];
 
 export const mimeTypes: { [key: string]: string } = {

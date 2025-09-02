@@ -124,6 +124,9 @@ export class History {
 	@Column()
 	finalLength?: number;
 
+	@Column()
+	gameTime?: number;
+
 	@ManyToOne(() => User, (user: User) => user.history)
     user: User;
 
@@ -136,6 +139,7 @@ export class History {
 			this.score = data.score;
 			this.win = data.win;
 			this.finalLength = data.finalLength;
+			this.gameTime = data.gameTime;
 		}
 		this.user = user;
 	}

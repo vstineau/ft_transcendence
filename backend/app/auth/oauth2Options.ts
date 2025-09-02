@@ -18,5 +18,5 @@ export default {
     },
   },
   startRedirectPath: '/login/github',
-  callbackUri: `https://${process.env.IP}:8080/api/login/github/callback`
+  callbackUri: `https://${process.env.POSTE}:8080/api/login/github/callback`
 }

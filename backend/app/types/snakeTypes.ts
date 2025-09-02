@@ -4,6 +4,7 @@ export interface Game {
     p2: Snake;
 	foods: Food[];
     winSize: number;
+	gameStart?: number;
 }
 
 export type pos = { x: number, y: number}
