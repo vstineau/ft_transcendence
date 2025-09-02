@@ -57,7 +57,8 @@ export const defaultAvatars: Array<string> = [
 	'/app/app/avatar/samy.jpg',
 	'/app/app/avatar/uillysamy.png',
 	'/app/app/avatar/vieux.png',
-	'/app/app/avatar/pikapika.png'
+	'/app/app/avatar/pikapika.png',
+	'/app/app/avatar/uilly93.png',
 ];
 
 export const mimeTypes: { [key: string]: string } = {
