@@ -144,7 +144,7 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 			// le ternaire c'est la vie
 			// room.game.p1.id === socket.id ? (room.game.p1.id = '') : (room.game.p2.id = '');
 			// if(!room.game.over){
-			const sock = app.io.sockets.sockets.get(room.game.p1.id === socket.id ? room.game.p2.id : room.game.p1.id) as Socket
+			const sock = app.io.of('/pong').sockets.get(room.game.p1.id === socket.id ? room.game.p2.id : room.game.p1.id) as Socket
 			// app.io
 			// 	.to(room.name)
 			sock.emit('playerWin', room.game.p1.id === socket.id ? room.game.p2.nickName : room.game.p1.nickName, room.game);
