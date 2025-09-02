@@ -11,7 +11,7 @@ class ChatManager {
         activeTab: 'global',
         currentRoom: null,
         messages: [],
-        unreadCount: 3,
+        unreadCount: 0,
         onlineUsers: [],
         rooms: [
             { id: 'global', name: 'Global', type: 'global', unreadCount: 0 },
@@ -97,7 +97,6 @@ class ChatManager {
                 avatar: u.avatar,
                 status: 'online'
             }));
-            this.renderOnlineUsers();
         });
 
         this.socket.on('authError', (error: string) => {
@@ -193,6 +192,8 @@ class ChatManager {
         
         // Render initial des messages
         this.updateMessagesDisplay();
+
+        this.renderOnlineUsers();
 
     // Render initial des rooms (sidebar)
         this.renderRoomsSidebar();
@@ -446,9 +447,13 @@ class ChatManager {
     private renderOnlineUsers() {
         console.log('je rentre ici');
         const container = document.getElementById('chat-online-users');
-        if (!container) return;
+        if (!container) {
+            console.log('pas d affichage');
+                return;
+        }
         const online = (this.state.onlineUsers || []).filter(u => u.status === 'online');
         if (!online.length) {
+            console.log('pas d\'affiche ici non plus');
             container.innerHTML = `<div class="text-[11px] text-gray-500 px-1">Personne</div>`;
             return;
         }
