@@ -44,10 +44,10 @@ export async function RootView() {
 
 					<!-- Bloc Games played - 1 colonne, 1 ligne -->
 					<div class="row-span-1 bg-white rounded-xl shadow-lg p-4">
-						<div class="text-left">
-							<p class="font-montserrat text-black text-base mb-2">Games played</p>
+						<a href="/statisticsSnake" class="text-left">
+							<p class="font-montserrat text-black text-base mb-2">Snake stats</p>
 							<p class="text-4xl font-bold text-black">20</p>
-						</div>
+						</a>
 					</div>
 
 					<!-- Bloc Pong Game - 3 colonnes, 2 lignes -->
@@ -72,12 +72,12 @@ export async function RootView() {
 
 					<!-- Bloc Success rate - 1 colonne, 1 ligne -->
 					<div class="row-span-1 bg-white rounded-xl shadow-lg p-4">
-						<div class="text-left">
-							<p class="font-montserrat text-black text-base mb-2">Success rate</p>
+						<a href="/statisticsPong" class="text-left">
+							<p class="font-montserrat text-black text-base mb-2">Pong stats</p>
 							<p class="text-4xl font-bold text-black">
 								86<span class="text-4xl font-normal text-gray-300">%</span>
 							</p>
-						</div>
+						</a>
 					</div>
 
 					<!-- Bloc Let's talk - 4 colonnes, 1 ligne -->
@@ -323,6 +323,73 @@ export async function GamesView() {
 			</div>
 	`;
 }
+
+export async function StatsPongView() {
+	return /* HTML */ `
+	<!-- Titre FT_TRANSCENDENCE en haut -->
+		<div class="bg-gray-100 py-2">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+				FT<span class="text-blue-600">_</span>TRANSCENDENCE
+			</h1>
+		</div>
+
+		<div class="content-section min-h-screen bg-gray-100 py-16">
+            <div class="max-w-4xl mx-auto px-8">
+                <!-- Container des blocs en grid simple -->
+                <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 300px 300px; max-width: 600px;">
+
+					<a href="/pong-choice" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors">
+					<p class="font-montserrat font-medium text-base text-gray-600">Pong</p>
+						<div class="flex-1 flex items-center justify-center">
+							<span class="text-2xl">🏓</span>
+						</div>
+					</a>
+
+                    <!-- Bloc Games - Carré -->
+                    <a href="/snake-choice" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
+					<p class="font-montserrat font-medium text-base text-gray-600">Snake</p>
+						<div class="flex-1 flex items-center justify-center">
+							<span class="text-2xl">🐍</span>
+						</div>
+					</a>
+            	</div>
+			</div>
+	`;
+}
+
+export async function StatsSnakeView() {
+	return /* HTML */ `
+	<!-- Titre FT_TRANSCENDENCE en haut -->
+		<div class="bg-gray-100 py-2">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+				FT<span class="text-blue-600">_</span>TRANSCENDENCE
+			</h1>
+		</div>
+
+		<div class="content-section min-h-screen bg-gray-100 py-16">
+            <div class="max-w-4xl mx-auto px-8">
+                <!-- Container des blocs en grid simple -->
+                <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 300px 300px; max-width: 600px;">
+
+					<a href="/pong-choice" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors">
+					<p class="font-montserrat font-medium text-base text-gray-600">Pong</p>
+						<div class="flex-1 flex items-center justify-center">
+							<span class="text-2xl">🏓</span>
+						</div>
+					</a>
+
+                    <!-- Bloc Games - Carré -->
+                    <a href="/snake-choice" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
+					<p class="font-montserrat font-medium text-base text-gray-600">Snake</p>
+						<div class="flex-1 flex items-center justify-center">
+							<span class="text-2xl">🐍</span>
+						</div>
+					</a>
+            	</div>
+			</div>
+	`;
+}
+
 
 // <img src="https://i.gifer.com/QgxJ.gif" alt="pong" />
 export async function PongView() {

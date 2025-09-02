@@ -10,6 +10,8 @@ import {
 	PongChoice,
 	SnakeChoice,
 	PongView,
+	StatsPongView,
+	StatsSnakeView,
 	RegisterView,
 	UpdateInfosview,
 	RootView,
@@ -49,6 +51,8 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/register': RegisterView,
 	'/updateInfos': UpdateInfosview,
 	'/2fa-verification': TwoFAVerifyView,
+	'/statisticsPong': StatsPongView,
+	'/statisticsSnake': StatsSnakeView,
 };
 
 export async function navigateTo(url: string) {
