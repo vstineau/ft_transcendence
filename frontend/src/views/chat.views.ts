@@ -29,10 +29,29 @@ export function ChatPanel() {
 						<div class="uppercase tracking-wide text-[10px] text-gray-400 px-1 mb-1">En ligne</div>
 						<div id="chat-online-users" class="space-y-1 overflow-y-auto pr-1 custom-scrollbar flex-1"></div>
 					</div>
-					<!-- Conversations privées (deuxième moitié) -->
+					<!-- rooms (deuxième moitié) -->
 					<div class="flex-1 overflow-hidden flex flex-col border-t border-gray-800 pt-2">
-						<div class="uppercase tracking-wide text-[10px] text-gray-400 px-1 mb-1">Messages</div>
-						<div id="chat-private-history" class="space-y-1 overflow-y-auto pr-1 custom-scrollbar flex-1"></div>
+						<div class="uppercase tracking-wide text-[10px] text-gray-400 px-1 mb-1">Rooms</div>
+						<div id="chat-private-history" class="space-y-1 overflow-y-auto pr-1 custom-scrollbar flex-1">
+							<!-- Room Global -->
+							<div class="flex items-center px-2 py-1.5 rounded hover:bg-gray-800 cursor-pointer group">
+								<div class="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+								<span class="text-xs font-medium">Global</span>
+								<span class="ml-auto text-[10px] text-gray-500">🌐</span>
+							</div>
+							<!-- Room Pong -->
+							<div class="flex items-center px-2 py-1.5 rounded hover:bg-gray-800 cursor-pointer group">
+								<div class="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+								<span class="text-xs font-medium">Pong</span>
+								<span class="ml-auto text-[10px] text-gray-500">🏓</span>
+							</div>
+							<!-- Room Snake -->
+							<div class="flex items-center px-2 py-1.5 rounded hover:bg-gray-800 cursor-pointer group">
+								<div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+								<span class="text-xs font-medium">Snake</span>
+								<span class="ml-auto text-[10px] text-gray-500">🐍</span>
+							</div>
+						</div>
 					</div>
 				</div>
 				<!-- Zone principale -->
