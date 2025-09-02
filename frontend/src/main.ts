@@ -115,7 +115,7 @@ async function renderPage() {
 	switch (path) {
 		case '/':
 			WelcomeView();
-			displayChatButton(); // Affichage debbug.
+			//displayChatButton(); // Affichage debbug.
 			setTimeout(() => {
 				initScrollAnimations();
 				initThemeToggle();

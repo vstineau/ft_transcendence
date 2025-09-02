@@ -292,12 +292,12 @@ class ChatManager {
                 return `
                     <div class="flex items-start justify-end gap-2.5">
                         <div class="flex flex-col gap-1">
-                            <div class="flex flex-col w-full max-w-[240px] leading-1.5 p-3 border border-gray-200 bg-black text-white rounded-s-xl rounded-ee-xl">
+                            <div class="flex flex-col w-full max-w-[280px] leading-1.5 p-3 border border-gray-200 bg-black text-white rounded-s-xl rounded-ee-xl">
                                 <div class="flex items-center justify-between space-x-2 mb-1">
                                     <span class="text-sm font-semibold">Moi</span>
                                     <span class="text-xs font-normal text-gray-300">${time}</span>
                                 </div>
-                                <p class="text-sm font-normal">
+                                <p class="text-sm font-normal break-words">
                                     ${this.escapeHtml(message.content)}
                                 </p>
                                 <span class="text-xs font-normal text-gray-300 mt-1">Vu</span>
@@ -312,12 +312,12 @@ class ChatManager {
                     <div class="flex items-start gap-2.5">
                         ${avatar}
                         <div class="flex flex-col gap-1">
-                            <div class="flex flex-col w-full max-w-[240px] leading-1.5 p-3 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl">
+                            <div class="flex flex-col w-full max-w-[280px] leading-1.5 p-3 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl">
                                 <div class="flex items-center space-x-2 mb-1">
                                     <span class="text-sm font-semibold text-gray-900">${this.escapeHtml(message.username)}</span>
                                     <span class="text-xs font-normal text-gray-500">${time}</span>
                                 </div>
-                                <p class="text-sm font-normal text-gray-900">
+                                <p class="text-sm font-normal text-gray-900 break-words">
                                     ${this.escapeHtml(message.content)}
                                 </p>
                                 <span class="text-xs font-normal text-gray-500 mt-1">Delivered</span>

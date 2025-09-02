@@ -5,7 +5,7 @@
 // Panel de chat flottant (popup)
 export function ChatPanel() {
 	return /* HTML */ `
-		<div id="chat-panel" class="fixed bottom-24 right-6 w-[560px] h-[520px] bg-white rounded-xl shadow-2xl z-40 font-montserrat flex flex-col overflow-hidden">
+		<div id="chat-panel" class="fixed bottom-24 right-6 w-[700px] h-[600px] bg-white rounded-xl shadow-2xl z-40 font-montserrat flex flex-col overflow-hidden">
 			<!-- Header du chat -->
 			<div class="bg-black text-white p-4 rounded-t-xl flex items-center justify-between">
 				<h3 class="font-bold text-lg">Chat</h3>
@@ -24,15 +24,23 @@ export function ChatPanel() {
 						<input id="chat-user-search" type="text" placeholder="Rechercher..." class="w-full px-2 py-1 rounded bg-gray-800 text-xs focus:outline-none focus:ring-1 focus:ring-gray-500" />
 						<div id="chat-search-results" class="max-h-32 overflow-y-auto space-y-1 hidden"></div>
 					</div>
-					<!-- Utilisateurs en ligne (première moitié) -->
+					<!-- Utilisateurs en ligne -->
 					<div class="flex-1 overflow-hidden flex flex-col">
 						<div class="uppercase tracking-wide text-[10px] text-gray-400 px-1 mb-1">En ligne</div>
 						<div id="chat-online-users" class="space-y-1 overflow-y-auto pr-1 custom-scrollbar flex-1"></div>
+							<!-- Les en lignes seront ajoutés dynamiquement -->
 					</div>
-					<!-- rooms (deuxième moitié) -->
-					<div class="flex-1 overflow-hidden flex flex-col border-t border-gray-800 pt-2">
-						<div class="uppercase tracking-wide text-[10px] text-gray-400 px-1 mb-1">Rooms</div>
-						<div id="chat-private-history" class="space-y-1 overflow-y-auto pr-1 custom-scrollbar flex-1">
+					<!-- Friends (au milieu) -->
+					<div class="border-t border-gray-800 pt-2">
+						<div class="uppercase tracking-wide text-[10px] text-gray-400 px-1 mb-1">Friends</div>
+						<div id="chat-friends-list" class="space-y-1 max-h-32 overflow-y-auto pr-1 custom-scrollbar">
+							<!-- Les amis seront ajoutés dynamiquement -->
+						</div>
+					</div>
+					<!-- rooms (tout en bas) -->
+					<div class="border-t border-gray-800 pt-2">
+						<div class="uppercase 	tracking-wide text-[10px] text-gray-400 px-1 mb-1">Rooms</div>
+						<div id="chat-private-history" class="space-y-1">
 							<!-- Room Global -->
 							<div class="flex items-center px-2 py-1.5 rounded hover:bg-gray-800 cursor-pointer group">
 								<div class="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
