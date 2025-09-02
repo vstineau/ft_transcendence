@@ -29,6 +29,7 @@ import { snakeGame } from './snake/snake';
 import { localSnakeGame } from './snake/localSnake';
 import { localpongGame } from './pong/localPong';
 import {initProfilePage } from './utils/avatar';
+import {initSnakeStats } from './graph/init';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -165,6 +166,9 @@ async function renderPage() {
 		case '/login/github/callback':
 			loginGithub();
 			break;
+		// case '/statisticsSnake':
+		// 	initSnakeStats();
+		// 	break;
 	}
 }
 

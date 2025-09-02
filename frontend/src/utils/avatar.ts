@@ -226,7 +226,6 @@ function updateAvatarDisplay(avatarData?: string): void {
         img.className = 'w-full h-full object-cover';
         img.alt = 'Profile picture';
 
-        // AJOUTEZ LA MÊME LOGIQUE DE CORRECTION ICI
         let imageSrc = avatarData;
         if (avatarData.startsWith('data:application/octet-stream')) {
             const base64Data = avatarData.split(',')[1];
@@ -317,3 +316,5 @@ function getFirstLetter(userData: UserData): string {
 export function isUserLoggedIn(): boolean {
 	return getCurrentUser() !== null;
 }
+
+
