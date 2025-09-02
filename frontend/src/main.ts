@@ -166,6 +166,10 @@ async function renderPage() {
 		case '/login/github/callback':
 			loginGithub();
 			break;
+		case '/statisticsSnake':
+			updateInfos();
+			initProfilePage();
+			break;
 		// case '/statisticsSnake':
 		// 	initSnakeStats();
 		// 	break;

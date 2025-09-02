@@ -379,9 +379,11 @@ export async function StatsSnakeView() {
                         	<!-- L'avatar ou le fallback sera injecté ici -->
 						</div>
 
-						<div class="ml-4">
-							<p class="font-semibold">Theo le terreur</p>
-							<p class="text-gray-500 text-sm">@theo</p>
+						<div class="ml-2 mt-12">
+							 <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
+
+							<!-- NOM UTILISATEUR -->
+							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
 						</div>
 					</div>
 					<div class="space-y-2 text-sm">

@@ -210,12 +210,12 @@ export async function fetchAndSaveUserInfo(): Promise<void> {
 	}
 }
 
-function updateAvatarDisplay(avatarData?: string): void {
-    console.log('=== updateAvatarDisplay called ===');
-    const container = document.getElementById('avatar-container');
+function updateAvatarDisplay(avatarData?: string, containerId: string = 'avatar-container'): void {
+    console.log(`=== updateAvatar called for container: ${containerId} ===`);
 
+    const container = document.getElementById(containerId);
     if (!container) {
-        console.error('Avatar container not found!');
+        console.error(`Avatar container with ID '${containerId}' not found!`);
         return;
     }
 
@@ -247,9 +247,11 @@ function updateAvatarDisplay(avatarData?: string): void {
         }
 
         img.src = imageSrc;
-        img.onload = () => console.log('Avatar loaded in updateInfos');
-        img.onerror = () => console.error('Avatar failed in updateInfos');
-
+        img.onload = () => console.log('✅ Avatar loaded successfully!');
+        img.onerror = () => {
+            console.error('❌ Avatar failed to load, showing fallback');
+            showProfileFallback(container);
+		};
         container.appendChild(img);
     } else {
         showFallback(container);
@@ -293,7 +295,7 @@ export function initUserAvatar(): void {
     setTimeout(initUserAvatar, 100);
     return;
   }
-  updateAvatarDisplay(userData.avatar);
+  updateAvatarDisplay(userData.avatar, 'avatar-container');
 }
 
 // Fonction pour obtenir le nom d'affichage
