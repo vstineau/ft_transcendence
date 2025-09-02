@@ -65,7 +65,7 @@ export default {
       			)
       			reply
       			  .setCookie('token', token, {
-      			    httpOnly: true,
+      			    httpOnly: false,
       			    secure: true,
       			    path: '/',
       			    sameSite: 'lax',
@@ -108,7 +108,7 @@ export default {
       			)
       			reply
       			  .setCookie('token', token, {
-      			    httpOnly: true,
+      			    httpOnly: false,
       			    secure: true,
       			    path: '/',
       			    sameSite: 'lax',

@@ -287,9 +287,11 @@ export function update(game: Game, app: FastifyInstance, roomId: string) {
 async function getUser(socket: Socket, cookie: string): Promise<User | undefined> {
 				
 	let user;
+	console.log(cookie);
 	if (cookie) {
 		const payload = app.jwt.verify<JwtPayload>(cookie);
-		user = await User.findOneBy({ login: payload.login });
+		console.log(payload);
+		user = await User.findOneBy({ id: payload.id });
 		if (!user) {
 			socket.emit('notLogged');
 			return undefined;

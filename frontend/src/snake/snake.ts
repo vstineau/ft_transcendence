@@ -11,11 +11,11 @@ let win_height = window.innerHeight;
 let gameOver = false;
 let started = false;
 
-function getCookie(name: string) {
-	const value = `; ${document.cookie}`;
-	const parts = value.split(`; ${name}=`);
-	if (parts.length === 2) return parts.pop()?.split(';').shift();
-	return null;
+function getCookie(name: string): string | null {
+	return document.cookie
+		.split('; ')
+		.find(row => row.startsWith(name + '='))
+		?.split('=')[1] || null;
 }
 
 export function createSnakeSocket(): Socket {
@@ -25,6 +25,7 @@ export function createSnakeSocket(): Socket {
 	let socket = io(`${protocol}//${host}:${port}`);
 	socket.on('connect', () => {
 		let cookie = getCookie('token');
+		console.log(cookie);
 		socket.emit('isConnected', cookie);
 		socket.emit('initGame_snake');
 	});
