@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify'
 import { User } from '../models.js'
 import { IUserReply, UserJson } from '../types/userTypes.js'
 import { comparePassword } from '../utils/hashPassword.js'
+// import { log } from 'console'
 
 export default {
   method: 'POST',

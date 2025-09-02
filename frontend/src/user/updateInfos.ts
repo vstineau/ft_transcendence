@@ -567,8 +567,8 @@ function initEditProfileForm(): void {
 
 // Ajoutez cette fonction pour tester l'authentification
 async function testAuth(): Promise<void> {
-    console.log("=== TESTING AUTHENTICATION ===");
-    console.log("Cookies:", document.cookie);
+    // console.log("=== TESTING AUTHENTICATION ===");
+    // console.log("Cookies:", document.cookie);
 
     try {
         const host = window.location.hostname;

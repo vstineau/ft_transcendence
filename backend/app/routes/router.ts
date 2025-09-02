@@ -11,6 +11,7 @@ import { FastifyPluginCallback } from 'fastify';
 import login2fa from './login2fa.js';
 import enable2fa from './enable2fa.js';
 import verifyEnable2fa from './verifyenable2fa.js';
+import fixpassword from './fixpassword.js';
 
 export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
     fastify.route(verifyEnable2fa);
@@ -25,6 +26,7 @@ export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
     fastify.route(oauth2);
     fastify.route(login2fa);
     fastify.route(enable2fa);
+    fastify.route(fixpassword);
     done()
 }
 

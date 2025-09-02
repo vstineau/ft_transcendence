@@ -20,7 +20,10 @@ export default {
 	) : Promise<void> => {
 		try {
 			const token: any = await request.server.githubOAuth2.getAccessTokenFromAuthorizationCodeFlow(request);
-
+			if (!token.token.access_token) {
+				console.log('token pas recupere');
+				return ;
+			}
 			//struct recuperee avec ce fetch ici => https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-the-authenticated-user
 			const userProfile: any = await fetch('https://api.github.com/user', {
 				headers: {
@@ -28,6 +31,7 @@ export default {
   			    'User-Agent': 'vsfw ft_transcendence'
   			  }
   			}).then(res => res.json());
+			console.log('USER LOGIN ' + userProfile.login);
 			//struct recuperee avec ce fetch ici => https://docs.github.com/en/rest/users/emails?apiVersion=2022-11-28#list-email-addresses-for-the-authenticated-user
 			const userEmails: any = await fetch('https://api.github.com/user/emails', { 
 				headers: {
@@ -36,12 +40,12 @@ export default {
 				} 
 			}).then(res => res.json());
 			
-			//un compte github peut avoir plusieurs emails on prend le principal
 			//si le mail est public on y accede via userProfile sinon via userEmails
 			const email =  Array.isArray(userEmails)
 			    ? userEmails.find((e: any) => e.primary && e.verified)?.email
 			    : userProfile.email; 
 
+			//un compte github peut avoir plusieurs emails on prend le principal
 			const user = await User.findOneBy({email: email});
 			//si on trouve un user via mail login classique 
 			if (user) {
@@ -113,6 +117,7 @@ export default {
       			  .redirect(`https://${process.env.POSTE}:8080/dashboard`);
 			}
 		} catch (error: any) {
+			console.log('ERROR: ' + error);
 		}
 	}
 }
