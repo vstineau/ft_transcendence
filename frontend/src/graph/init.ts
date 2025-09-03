@@ -102,6 +102,14 @@ async function fetchSnakeHistory(): Promise<SnakeGameHistory[]> {
 
         const response = await authenticatedFetch(`http://localhost:3000/api/user/history?type=snake`);
 
+        // const response = await fetch('/api/user/history?type=snake', {
+        //     method: 'GET',
+        //     credentials: 'include',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     }
+        // });
+
         console.log('Response status:', response.status);
         console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
