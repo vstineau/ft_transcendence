@@ -103,28 +103,28 @@ export class User extends BaseEntity {
 export class History {
 
 	@PrimaryGeneratedColumn()
-	gamecount?: number;
+	gamecount?: number; 
 
 	@Column()
-	type?: string;
+	type?: string; //snake ou pong
 
 	@Column()
-	date?: string;
+	date?: string; //date de jeu
 
 	@Column()
-	opponent?: string;
+	opponent?: string; //login
 
 	@Column()
 	score?: string;
 
 	@Column()
-	win?: string;
+	win?: string; //qui a gagner/perdu
 
 	@Column()
-	finalLength?: number;
+	finalLength?: number; //taille finale
 
 	@Column()
-	gameTime?: number;
+	gameTime?: number; //en ms
 
 	@ManyToOne(() => User, (user: User) => user.history)
     user: User;

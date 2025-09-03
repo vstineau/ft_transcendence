@@ -375,7 +375,7 @@ export async function StatsSnakeView() {
 					<h3 class="font-bold text-lg mb-4">My profil</h3>
 					<div class="flex items-center mb-4">
 
-						<div id="avatar-container" class="w-32 h-32 bg-gray-200 rounded-xl overflow-hidden">
+						<div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden">
                         	<!-- L'avatar ou le fallback sera injecté ici -->
 						</div>
 
@@ -386,17 +386,21 @@ export async function StatsSnakeView() {
 							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
 						</div>
 					</div>
-					<div class="space-y-2 text-sm">
-						<div class="flex justify-between">
+					<div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
+						<div class="flex flex-col">
 							<span class="text-gray-600">Classement</span>
 							<span class="font-semibold">4</span>
 						</div>
-						<div class="flex justify-between">
-							<span class="text-gray-600">Jeu préféré</span>
-							<span class="font-semibold">Snake</span>
+						<div class="flex flex-col">
+							<span class="text-gray-600">Max size</span>
+							<span class="font-semibold">25</span>
 						</div>
-						<div class="flex justify-between">
-							<span class="text-gray-600">Total parties jouées</span>
+						<div class="flex flex-col">
+							<span class="text-gray-600">Average size</span>
+							<span class="font-semibold">52</span>
+						</div>
+						<div class="flex flex-col">
+							<span class="text-gray-600">Eaten apples</span>
 							<span class="font-semibold">52</span>
 						</div>
 					</div>
@@ -404,46 +408,11 @@ export async function StatsSnakeView() {
 
 				<!-- Bloc Last Games -->
 				<div class="bg-white rounded-xl shadow-lg p-6">
-					<h3 class="font-bold text-lg mb-4">Last games</h3>
-					<div class="space-y-3">
-						<div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-							<div>
-								<p class="font-semibold text-sm">PATITEK</p>
-								<p class="text-gray-500 text-xs">01.12.24</p>
-							</div>
-							<div class="text-center">
-								<span class="text-lg font-bold">VS</span>
-							</div>
-							<div class="text-right">
-								<p class="font-semibold text-sm bg-orange-100 text-orange-600 px-2 py-1 rounded">100 gramy</p>
-								<p class="text-gray-500 text-xs">5 rangou</p>
-							</div>
-						</div>
-						<div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-							<div>
-								<p class="font-semibold text-sm">PATITEK</p>
-								<p class="text-gray-500 text-xs">01.12.24</p>
-							</div>
-							<div class="text-center">
-								<span class="text-lg font-bold">VS</span>
-							</div>
-							<div class="text-right">
-								<p class="font-semibold text-sm">LeSerpent</p>
-								<p class="text-gray-500 text-xs">et secondes</p>
-							</div>
-						</div>
-						<div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-							<div>
-								<p class="font-semibold text-sm">Theo le terreur</p>
-								<p class="text-gray-500 text-xs">01.12.24</p>
-							</div>
-							<div class="text-center">
-								<span class="text-lg font-bold">VS</span>
-							</div>
-							<div class="text-right">
-								<p class="font-semibold text-sm">Golden shower</p>
-								<p class="text-gray-500 text-xs">3 rangou</p>
-							</div>
+				<h3 class="font-bold text-lg mb-4">Last games</h3>
+					<div id="last-games-content" class="space-y-3">
+						<!-- Le contenu sera injecté ici par JavaScript -->
+						<div class="flex flex-col items-center justify-center py-8 text-center">
+							<p class="text-gray-500 text-sm">Loading...</p>
 						</div>
 					</div>
 				</div>
@@ -512,71 +481,6 @@ export async function StatsSnakeView() {
 			</div>
 		</div>
 	</div>
-
-	 <script>
-		// Configuration pour Distribution des scores (Histogram)
-		const scoreCtx = document.getElementById('scoreDistributionChart').getContext('2d');
-		new Chart(scoreCtx, {
-			type: 'bar',
-			data: {
-				labels: ['0-10', '11-20', '21-30', '31-40', '41-50', '51+'],
-				datasets: [{
-					label: 'Number of games',
-					data: [8, 12, 15, 10, 5, 2],
-					backgroundColor: [
-						'#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'
-					],
-					borderWidth: 1
-				}]
-			},
-			options: {
-				responsive: true,
-				maintainAspectRatio: false,
-				plugins: {
-					legend: {
-						display: false
-					}
-				},
-				scales: {
-					y: {
-						beginAtZero: true,
-						ticks: {
-							stepSize: 2
-						}
-					}
-				}
-			}
-		});
-
-		// Configuration pour Temps de survie (Doughnut chart)
-		const timeCtx = document.getElementById('survivalTimeChart').getContext('2d');
-		new Chart(timeCtx, {
-			type: 'doughnut',
-			data: {
-				labels: ['0-30s', '31-60s', '61-90s', '90s+'],
-				datasets: [{
-					data: [30, 35, 25, 10],
-					backgroundColor: ['#06B6D4', '#10B981', '#F59E0B', '#EF4444'],
-					borderWidth: 2,
-					borderColor: '#ffffff'
-				}]
-			},
-			options: {
-				responsive: true,
-				maintainAspectRatio: false,
-				plugins: {
-					legend: {
-						position: 'bottom',
-						labels: {
-							padding: 10,
-							fontSize: 12
-						}
-					}
-				},
-				cutout: '60%'
-			}
-		});
-	</script>
 	`;
 }
 

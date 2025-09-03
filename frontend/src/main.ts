@@ -94,7 +94,7 @@ function showAuthMessage() {
 
 async function renderPage() {
 	const path = window.location.pathname;
-	console.log(path);
+	console.log('Current path:', path);
 
 	//veriff pour si le tokens jws ne fonctionne plus,
 	// il y aura une redirection vers login pour se co a nouveau
@@ -167,12 +167,13 @@ async function renderPage() {
 			loginGithub();
 			break;
 		case '/statisticsSnake':
-			updateInfos();
-			initProfilePage();
+			setTimeout(() => {
+				console.log('About to call initSnakeStats');
+				initSnakeStats();
+				updateInfos();
+				initProfilePage();
+			}, 100);
 			break;
-		// case '/statisticsSnake':
-		// 	initSnakeStats();
-		// 	break;
 	}
 }
 

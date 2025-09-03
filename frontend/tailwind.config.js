@@ -18,6 +18,8 @@ module.exports = {
         slideUp: {
           '0%': { opacity: 0, transform: 'translateY(30px)' },
           '100%': { opacity: 1, transform: 'translateY(0)' },
+          'sans': ['Montserrat', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+
         },
       },
     },

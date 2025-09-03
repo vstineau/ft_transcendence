@@ -54,9 +54,9 @@ function updateProfileBlock(userData?: UserData): void {
 export function updateProfileAvatar(avatarData?: string): void {
 	console.log("=== initUserAvatar called ===");
     const userData = getCurrentUser();
-    console.log("User data in initUserAvatar:", userData);
-    console.log("Has avatar:", !!userData?.avatar);
-    console.log("Avatar starts with:", userData?.avatar?.substring(0, 20));
+    // console.log("User data in initUserAvatar:", userData);
+    // console.log("Has avatar:", !!userData?.avatar);
+    // console.log("Avatar starts with:", userData?.avatar?.substring(0, 20));
 
 	const container = document.getElementById('profile-avatar-container');
 	if (!container) {
@@ -139,7 +139,7 @@ export async function initProfilePage(): Promise<void> {
 		const userData = getCurrentUser();
 
 		if (userData) {
-			console.log('User data found:', userData);
+			// console.log('User data found:', userData);
 			updateProfileBlock(userData);
 		} else {
 			console.log('No user data found, showing default');
@@ -278,9 +278,9 @@ export function initUserAvatar(): void {
 			updateAvatarDisplay(); // fallback
 			return;
 		}
-		console.log("User data in initUserAvatar:", userData);
-		console.log("Has avatar:", !!userData?.avatar);
-		console.log("Avatar starts with:", userData?.avatar?.substring(0, 20));
+		// console.log("User data in initUserAvatar:", userData);
+		// console.log("Has avatar:", !!userData?.avatar);
+		// console.log("Avatar starts with:", userData?.avatar?.substring(0, 20));
 
   // MAJ nom/email si présents
   const userName = document.getElementById('user-name') as HTMLElement | null;
