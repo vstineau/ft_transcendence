@@ -718,8 +718,8 @@ export async function localSnakeCanvas() {
 
 export async function pongTournamentView() {
 	return /* HTML */ `
-		<div class="flex items-center justify-center w-screen h-screen bg-gray-900">
-			<div id="formNb" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black p-8">
+		<div class="flex min-h-screen min-w-full items-center justify-center bg-gray-900">
+			<div id="formNb" class="min-h-screen min-w-full rounded-xl shadow-lg border-4 border-gray-800 bg-black p-8">
 				<form id="playersForm">
 					<div class="text-white">
 						<h2 class="text-2xl font-bold mb-4">Tournoi - Saisie des joueurs</h2>

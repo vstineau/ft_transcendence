@@ -158,47 +158,41 @@ function appendElem(id: string, add: HTMLDivElement) {
 	if (elem) elem.appendChild(add);
 }
 
-function drawBrackets(matchs: Game[]) {
+function drawBrackets(matchs: Game[], matchIdx: number) {
+	const matchsContainer = document.createElement('div');
+	matchsContainer.className = 'flex flex-row mb-2';
 	for (let i = 0; i < matchs.length; i++) {
-		console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
 		const match = document.createElement('div');
-		match.className = 'flex space-x-4 justify-between bg-gray-600 p-3 rounded shadow-sm mx-4';
-
+		match.className = 'flex flex-col duration-700 items-center bg-gray-600 p-2 rounded shadow-sm mx-4';
+		if (i === matchIdx) match.className += ' animate-bounce outline outline-yellow-500';
+		else match.className += ' border';
 		const player1 = document.createElement('div');
-		player1.className = 'w-2/3 text-center align-center content-center bg-gray-400 rounded shadow-inner p-3';
+		player1.className = 'w-40 text-center bg-gray-400 rounded shadow-inner mb-1 px-2 py-1';
 		player1.textContent = `${matchs[i].p1.nickName}`;
 
 		const vs = document.createElement('div');
-		vs.className = 'text-center align-center content-center';
+		vs.className = 'text-center mb-1';
 		vs.textContent = `VS`;
 
 		const player2 = document.createElement('div');
-		player2.className = 'w-2/3 text-center align-center content-center bg-gray-400 rounded shadow-inner p-3';
+		player2.className = 'w-40 text-center bg-gray-400 rounded shadow-inner px-2 py-1';
 		player2.textContent = `${matchs[i].p2.nickName}`;
 
 		match.appendChild(player1);
 		match.appendChild(vs);
 		match.appendChild(player2);
-		form.appendChild(match);
-		// form.replaceChildren(match);
+		matchsContainer.appendChild(match);
 	}
-	// if (!ctx) return;
-	// // 3. Dessiner une ligne
-	// ctx.beginPath(); // Commencer un nouveau chemin
-	// ctx.moveTo(canvas.width / 2, 0); // Point de départ (x=50, y=50)
-	// ctx.lineTo(canvas.width / 2, canvas.height); // Point d'arrivée (x=300, y=200)
-	// ctx.strokeStyle = 'gray'; // Couleur de la ligne
-	// ctx.lineWidth = 2; // Épaisseur de la ligne
-	// ctx.stroke(); // Dessiner le chemin
-	// const splitH = canvas.height / (matchs.length + 2);
-	// const splitW = canvas.width / (matchs.length + 2);
-	// let ratioW = splitW;
-	// let ratioH = splitH;
-	// let nbMatchs = matchs.length;
-	// drawEmptyBrackets(nbMatchs / 4);
-	// drawEmptyBrackets(nbMatchs / 2);
-	// drawEmptyBrackets(nbMatchs / 8);
-	// drawBrackets(matchs, currentMatch, splitW, splitH);
+	form.appendChild(matchsContainer);
+	const button = document.createElement('button');
+	button.type = 'button';
+	button.id = 'playNextRound';
+	button.textContent = `Play ${matchs[matchIdx].p1.nickName} VS ${matchs[matchIdx].p2.nickName}`;
+	button.className = 'mt-4 rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white';
+	form.appendChild(button);
+
+	// Style le form pour centrer verticalement
+	form.className = 'flex flex-col items-center';
 }
 
 function listenInputs() {
@@ -271,12 +265,12 @@ function checkSubmited(container: HTMLDivElement) {
 	console.log(names);
 	// const firstEmpty = inputs.find(i => i.value.trim().length === 0);
 	// const duplicate = new Set(names).size !== names.length;
-	// for (let i = 0; names[i]; i++) {
-	// 	if (names[i].length > 15) {
-	// 		alert(`${names[i]}: Name too long (15 characters maximum).`);
-	// 		return true;
-	// 	}
-	// }
+	for (let i = 0; names[i]; i++) {
+		if (names[i].length > 10) {
+			alert(`${names[i]}: Name too long (10 characters maximum).`);
+			return true;
+		}
+	}
 	// if (firstEmpty) {
 	// 	alert(`You need ${inputs.length} players.`);
 	// 	firstEmpty.focus();
@@ -308,7 +302,8 @@ function submitNames(container: HTMLDivElement) {
 		// while(tournament.players.length > 1){
 		tournament.fillMatchs();
 		console.log(tournament.matchs);
-		drawBrackets(tournament.matchs);
+		let matchIdx = 2;
+		drawBrackets(tournament.matchs, matchIdx);
 
 		// }
 		// }
