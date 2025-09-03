@@ -727,17 +727,12 @@ export async function pongTournamentView() {
 						<select
 							id="nbPlayers"
 							name="nbPlayers"
-							class="bg-gray-800 hover:bg-gray-600 text-white px-4 py-2 rounded mb-6 w-full border border-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+							class="bg-gray-800 hover:bg-gray-600 text-white px-4 py-2 rounded mb-4 w-full border border-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
 						>
 							<option value="4">4 players</option>
 							<option value="8">8 players</option>
 						</select>
 					</div>
-
-					<div id="playersZone" class="mb-6 text-white">
-						<!-- Champs joueurs générés dynamiquement -->
-					</div>
-
 					<div>
 						<button
 							type="submit"

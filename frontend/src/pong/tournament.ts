@@ -13,6 +13,7 @@ let tournament: Tournament;
 
 import { Game, PlayerTournament, Tournament } from '../types/pongTypes';
 // import { Matches } from 'class-validator';
+// import { startPongGame } from '../../../backend/app/pong/pong';
 
 let names: string[] = [];
 let bracket: boolean = false;
@@ -69,6 +70,7 @@ function getPlayersName(nb: number) {
 		container.appendChild(input);
 	}
 	submitNames(container);
+	console.log('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
 	return container;
 }
 
@@ -158,24 +160,43 @@ function appendElem(id: string, add: HTMLDivElement) {
 	if (elem) elem.appendChild(add);
 }
 
+function nextRoundButton(match: Game): HTMLButtonElement {
+	const button = document.createElement('button');
+	button.type = 'button';
+	button.id = 'playNextRound';
+	button.textContent = `Next Match !`;
+	button.className =
+		'mt-4 rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white';
+	button.addEventListener('click', () => {});
+	return button;
+}
+
+function drawTitle(title: string): HTMLHeadingElement {
+	const header = document.createElement('h2');
+	header.textContent = `Round`;
+	header.className = 'mb-10 text-2xl font-bold text-white'; // Ajoute les classes Tailwind que tu veux
+	return header;
+}
+
 function drawBrackets(matchs: Game[], matchIdx: number) {
+	// form.innerHTML = '';
 	const matchsContainer = document.createElement('div');
 	matchsContainer.className = 'flex flex-row mb-2';
 	for (let i = 0; i < matchs.length; i++) {
 		const match = document.createElement('div');
-		match.className = 'flex flex-col duration-700 items-center bg-gray-600 p-2 rounded shadow-sm mx-4';
+		match.className = 'flex flex-col hover:bg-gray-500 items-center bg-gray-600 p-2 rounded shadow-sm mx-4';
 		if (i === matchIdx) match.className += ' animate-bounce outline outline-yellow-500';
 		else match.className += ' border';
 		const player1 = document.createElement('div');
-		player1.className = 'w-40 text-center bg-gray-400 rounded shadow-inner mb-1 px-2 py-1';
+		player1.className = 'w-40 font-bold text-white text-center bg-gray-400 rounded shadow-inner mb-1 px-2 py-1';
 		player1.textContent = `${matchs[i].p1.nickName}`;
 
 		const vs = document.createElement('div');
-		vs.className = 'text-center mb-1';
+		vs.className = 'text-center mb-1 font-bold';
 		vs.textContent = `VS`;
 
 		const player2 = document.createElement('div');
-		player2.className = 'w-40 text-center bg-gray-400 rounded shadow-inner px-2 py-1';
+		player2.className = 'w-40 font-bold text-white text-center bg-gray-400 rounded shadow-inner px-2 py-1';
 		player2.textContent = `${matchs[i].p2.nickName}`;
 
 		match.appendChild(player1);
@@ -184,14 +205,6 @@ function drawBrackets(matchs: Game[], matchIdx: number) {
 		matchsContainer.appendChild(match);
 	}
 	form.appendChild(matchsContainer);
-	const button = document.createElement('button');
-	button.type = 'button';
-	button.id = 'playNextRound';
-	button.textContent = `Play ${matchs[matchIdx].p1.nickName} VS ${matchs[matchIdx].p2.nickName}`;
-	button.className = 'mt-4 rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white';
-	form.appendChild(button);
-
-	// Style le form pour centrer verticalement
 	form.className = 'flex flex-col items-center';
 }
 
@@ -300,10 +313,17 @@ function submitNames(container: HTMLDivElement) {
 		tournament = new Tournament(names);
 		// initGame(); que quand la game se lance
 		// while(tournament.players.length > 1){
-		tournament.fillMatchs();
+		tournament.fillMatchs(); /// improve
 		console.log(tournament.matchs);
-		let matchIdx = 2;
+		let matchIdx = 1;
+		const emptyMatchs: Game[] = []
+		const title = drawTitle('Round');
+		form.appendChild(title);
 		drawBrackets(tournament.matchs, matchIdx);
+		drawBrackets(tournament.matchs, -1);
+		const roundButton = nextRoundButton(tournament.matchs[matchIdx]);
+		form.appendChild(roundButton);
+		return;
 
 		// }
 		// }

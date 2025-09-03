@@ -1,5 +1,6 @@
 // import { initPlayer } from '../pong/tournament';
 // import { initGame } from '../../../backend/app/snake/snake';
+// import { playerEntrance } from '../../../backend/app/pong/tournament';
 
 export interface Game {
 	p1: Player | PlayerTournament;
@@ -38,10 +39,18 @@ export interface PlayerTournament {
 	eliminated: boolean;
 }
 
+interface Round {
+	games: Game[][];
+	max: number;
+	nb: number;
+}
+
 export class Tournament {
 	players: PlayerTournament[] = [];
+	qualified: PlayerTournament[] = [] // surement de la merde
 	matchs: Game[] = [];
 	leaderBoard: PlayerTournament[] = [];
+	rounds: Round; // pk pas?
 
 	// canvas: HTMLCanvasElement | null = null;
 	// ctx: CanvasRenderingContext2D | null = null;
@@ -53,6 +62,7 @@ export class Tournament {
 	gameHeight: number = this.win_height * 0.8;
 
 	constructor(names: string[]) {
+		this.rounds = { games: [], max: names.length === 8 ? 3 : 2, nb: 1 };
 		for (const name of names) {
 			let player: PlayerTournament = this.initPlayer(name);
 			this.leaderBoard.push(player);
@@ -121,14 +131,19 @@ export class Tournament {
 			const j = Math.floor(Math.random() * (i + 1));
 			[this.players[i], this.players[j]] = [this.players[j], this.players[i]];
 		}
+		this.qualified = this.players; // surement de la merde 
 	}
-	fillMatchs() {
+	fillMatchs(round: Game[]) {
 		for (let i = 0; i < this.players.length; i++) {
+			if (this.players[i].eliminated) continue;
 			if (!(i % 2)) {
 				let game: Game = this.gameInit(this.players[i], this.players[i + 1]);
 				this.matchs.push(game);
 			}
 		}
+		this.rounds.games.push(this.matchs);
+		let emptyPlayer = this.initPlayer('');
+		for (let i = 1; i < this.rounds.max; i++) {}
 	}
 	private gameInit(player1: PlayerTournament, player2: PlayerTournament): Game {
 		let newGame: Game = {
