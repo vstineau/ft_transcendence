@@ -38,15 +38,6 @@ await app.register(socketioServer);
 await app.register(fastifyOauth2, oauth2Options);
 
 
-
-
-await startPongGame(app);
-await startSnakeGame(app);
-setupChat(app); // <-- Register the chat setup function
-authJwt(app, {jwtSecret: config.jwt.secret});
-await app.register(userRoutes);
-
-
 await SqliteDataSource.initialize()
 .then(() => {
 	console.log("Data Source has been initialized!");
@@ -54,6 +45,14 @@ await SqliteDataSource.initialize()
 .catch((err) => {
 	console.error("Error during Data Source initialization", err);
 })
+
+
+await startPongGame(app);
+await startSnakeGame(app);
+setupChat(app); // <-- Register the chat setup function
+
+authJwt(app, {jwtSecret: config.jwt.secret});
+await app.register(userRoutes);
 
 app.listen({port: 3000, host: '0.0.0.0'});
 
