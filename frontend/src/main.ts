@@ -154,7 +154,7 @@ async function renderPage() {
 			localpongGame();
 			break;
 		case '/snake':
-			snakeGame();
+			window.location.search ? snakeGame(window.location.search): snakeGame();
 			break;
 		case '/snake/local':
 			localSnakeGame();

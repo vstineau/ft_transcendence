@@ -199,7 +199,7 @@ function displayInfoPlayer(game: Game) {
 	}
 }
 
-export function snakeGame() {
+export function snakeGame(private?: string) {
 	const socket = createSnakeSocket();
 	socket.on('notLogged', () => {
 		navigateTo('/login?/snake');

@@ -16,22 +16,47 @@ function getRoom() {
     return snakeRooms.find(room => room.playersNb === 1);
 }
 
-function initRoom(socket: Socket, user: User) {
+function isInvited(loginP1: string, loginP2: string, friend: string[2]): boolean {
+	if (loginP1 !== friend[0] || loginP1 !== friend[1])	
+		return false;
+	if (loginP2 !== friend[0] || loginP2 !== friend[1])	
+		return false;
+	return true;
+}
+
+function initRoom(socket: Socket, user: User, friend?: string[2]) {
     const room = getRoom();
     if (room && user.login != room.game.p1.login) {
-        socket.join(room.name);
-        room.playersNb = 2;
-        room.game.p2.id = socket.id;
-		room.game.p2.name = user.nickName;
-		room.game.p2.login = user.login;
-		room.game.p2.avatar = user.avatar;
-		return room;
+		if (!friend) {
+			socket.join(room.name);
+        	room.playersNb = 2;
+        	room.game.p2.id = socket.id;
+			room.game.p2.name = user.nickName;
+			room.game.p2.login = user.login;
+			room.game.p2.avatar = user.avatar;
+			return room;
+		}
+		else if (friend && isInvited(room.game.p1.login, user.login, friend)) {
+			socket.join(room.name);
+        	room.playersNb = 2;
+        	room.game.p2.id = socket.id;
+			room.game.p2.name = user.nickName;
+			room.game.p2.login = user.login;
+			room.game.p2.avatar = user.avatar;
+			return room;
+		}
+		else {
+			const newRoom = createRoom(socket, user);
+        	socket.join(newRoom.name);
+			newRoom.playersNb = 1;
+			return newRoom;
+		}
     } else {
         const newRoom = createRoom(socket, user);
         socket.join(newRoom.name);
 		newRoom.playersNb = 1;
 		return newRoom;
-    }
+	}
 }
 
 function createRoom(socket: Socket, user: User): Room {
@@ -305,10 +330,10 @@ async function getUser(socket: Socket, cookie: string): Promise<User | undefined
 export async function startSnakeGame(app: FastifyInstance) {
     app.ready().then(() => {
         app.io.on('connection', (socket: Socket) => {
-            socket.on('isConnected', async (cookie: string) => {
+            socket.on('isConnected', async (cookie: string, friend?: string) => {
                 const user = await getUser(socket, cookie);
                 if (!user) return; // non connecté
-                const room = initRoom(socket, user);
+                const room = initRoom(socket, user, friend);
                 handleDisconnect(app, socket);
                 getInputs(socket, room.game);
 
