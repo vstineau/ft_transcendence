@@ -18,11 +18,16 @@ function getCookie(name: string): string | null {
 		?.split('=')[1] || null;
 }
 
+
+function getFriends() {
+
+}
+
 export function createSnakeSocket(): Socket {
 	const host = window.location.hostname;
 	const port = window.location.port;
 	const protocol = window.location.protocol;
-	let socket = io(`${protocol}//${host}:${port}`);
+	let socket = io(`${protocol}//${host}:${port}/snake`);
 	socket.on('connect', () => {
 		let cookie = getCookie('token');
 		console.log(cookie);
@@ -199,7 +204,8 @@ function displayInfoPlayer(game: Game) {
 	}
 }
 
-export function snakeGame(private?: string) {
+export function snakeGame(custom?: string) {
+	if (custom) console.log(custom);
 	const socket = createSnakeSocket();
 	socket.on('notLogged', () => {
 		navigateTo('/login?/snake');
