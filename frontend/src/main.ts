@@ -4,6 +4,7 @@ import { logUser, initTwoFALogin, TwoFAVerifyView} from './user/login';
 //import { loginGithub } from './user/loginGithub';
 import { rootUser } from './user/root';
 import { updateInfos } from './user/updateInfos';
+import { displayChatButton } from './utils/chat_tools';
 import {
 	LoginView,
 	GamesView,
@@ -111,7 +112,7 @@ async function renderPage() {
 	}
 
 	cleanupScrollAnimations();
-    cleanupThemeToggle();
+	cleanupThemeToggle();
 
 	const view = routes[path] ? await routes[path]() : '<h1>404 Not Found</h1>';
 	const rootElement: HTMLElement | null = document.getElementById('root');
@@ -125,7 +126,7 @@ async function renderPage() {
 	switch (path) {
 		case '/':
 			WelcomeView();
-
+			//displayChatButton(); // Affichage debbug.
 			setTimeout(() => {
 				initScrollAnimations();
 				initThemeToggle();
@@ -133,12 +134,14 @@ async function renderPage() {
 			break;
 		case '/dashboard':
 			rootUser();
+			displayChatButton();
 			setTimeout(() => {
 				initThemeToggle(); // ← Initialiser le thème après les animations
 				initProfilePage();
 			}, 100);
 			break;
 		case '/updateInfos':
+			displayChatButton();
 			updateInfos();
 			break;
 		case '/register':
@@ -148,15 +151,19 @@ async function renderPage() {
 			logUser();
 			break;
 		case '/pong/matchmaking/game':
+			displayChatButton();
 			pongGame();
 			break;
 		case '/pong/matchmaking/localgame':
+			displayChatButton();
 			localpongGame();
 			break;
 		case '/snake':
+			displayChatButton();
 			snakeGame();
 			break;
 		case '/snake/local':
+			displayChatButton();
 			localSnakeGame();
 			break;
 		case '/2fa-verification':
@@ -166,6 +173,7 @@ async function renderPage() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+
 	document.body.addEventListener('click', async e => {
 		const target = e.target as HTMLElement;
 		// if (target instanceof HTMLAnchorElement)

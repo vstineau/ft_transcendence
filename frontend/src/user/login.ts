@@ -1,6 +1,7 @@
 import { navigateTo } from '../main';
 import { displayError } from '../utils/error';
 
+
 export async function logUser() {
     const form = document.getElementById('login-form') as HTMLFormElement | null;
     if (!form) return;

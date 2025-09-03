@@ -53,7 +53,7 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
                 clearInterval(room.interval);
                 room.interval = undefined;
             }
-            app.io.to(room.name).emit('endGame_snake', { reason: 'A player disconnected.', winSize: WIN });
+            app.io.of('/snake').to(room.name).emit('endGame_snake', { reason: 'A player disconnected.', winSize: WIN });
 
             // Remove room from list
             snakeRooms = snakeRooms.filter(r => r !== room);
@@ -261,18 +261,18 @@ export function update(game: Game, app: FastifyInstance, roomId: string) {
     const col2 = checkCollision(game.p2, game.p1);
 
     if (col1 === "head-on" || col2 === "head-on" || (col1 === "other" && col2 === "other")) {
-        app.io.to(roomId).emit('draw', game);
+        app.io.of('/snake').to(roomId).emit('draw', game);
 		saveDataInHistory(game, 'DRAW');
         return;
     }
 
     if (col1 === "other") {
-        app.io.to(roomId).emit('playerWin_snake', game.p2, game);
+        app.io.of('/snake').to(roomId).emit('playerWin_snake', game.p2, game);
 		saveDataInHistory(game, 'P2');
         return;
     }
     if (col2 === "other") {
-        app.io.to(roomId).emit('playerWin_snake', game.p1, game);
+        app.io.of('/snake').to(roomId).emit('playerWin_snake', game.p1, game);
 		saveDataInHistory(game, 'P1');
         return;
     }
@@ -304,7 +304,7 @@ async function getUser(socket: Socket, cookie: string): Promise<User | undefined
 
 export async function startSnakeGame(app: FastifyInstance) {
     app.ready().then(() => {
-        app.io.on('connection', (socket: Socket) => {
+        app.io.of('/snake').on('connection', (socket: Socket) => {
             socket.on('isConnected', async (cookie: string) => {
                 const user = await getUser(socket, cookie);
                 if (!user) return; // non connecté
@@ -321,9 +321,9 @@ export async function startSnakeGame(app: FastifyInstance) {
                             if (room.playersNb === 2) { 
 								!room.game.gameStart? room.game.gameStart = Date.now(): 0;
                                 update(room.game, app, room.name);
-                                app.io.to(room.name).emit('gameState_snake', room.game);
+                                app.io.of('/snake').to(room.name).emit('gameState_snake', room.game);
                             } else {
-                                app.io.to(room.name).emit('waiting_snake', room.game);
+                                app.io.of('/snake').to(room.name).emit('waiting_snake', room.game);
                             }
                         }
                     }, 1000 / FPS);
