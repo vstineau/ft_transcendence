@@ -9,11 +9,7 @@ import { messageService } from './services/messageService.js';
 import { handleInitUser } from './handlers/authHandlers.js';
 import { handleSendMessage, handleGetMessageHistory } from './handlers/messageHandlers.js';
 import { handleJoinPrivateRoom } from './handlers/roomHandlers.js';
-import { 
-  handleGameInvitation, 
-  handleGameInvitationResponse, 
-  handleStatusChange 
-} from './handlers/gameHandlers.js';
+import { handleGameInvitation, handleGameInvitationResponse, handleStatusChange } from './handlers/gameHandlers.js';
 import { handleDisconnect, handleSocketError } from './handlers/connectionHandlers.js';
 
 // Configuration
@@ -43,6 +39,11 @@ export function setupChat(app: FastifyInstance) {
     socket.on(CHAT_EVENTS.JOIN_PRIVATE_ROOM, (data: { targetUserId: string }) => 
       handleJoinPrivateRoom(socket, data, app)
     );
+
+    socket.on(CHAT_EVENTS.JOIN_PUBLIC_ROOM, (data: { room: 'global' | 'pong' | 'snake' }) => {
+      console.log(`🔄 Rejoindre la room publique: ${data.room}`);
+      socket.join(data.room);
+    });
 
     // ===== JEUX =====
     socket.on(CHAT_EVENTS.GAME_INVITATION, (data: { targetUserId: string; gameType: 'pong' | 'snake' }) => 

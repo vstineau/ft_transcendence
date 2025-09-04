@@ -37,8 +37,10 @@ export async function handleInitUser(
     const chatUser = userService.createChatUser(user, socket.id);
     userService.addUser(socket.id, chatUser);
     
-    // Rejoindre la room globale
+    // Rejoindre la room globale, Pong et snake
     socket.join(CHAT_CONFIG.ROOMS.GLOBAL);
+    socket.join(CHAT_CONFIG.ROOMS.PONG);
+    socket.join(CHAT_CONFIG.ROOMS.SNAKE);
     
     // Récupérer les messages récents
     const recentMessages = await messageService.getRecentMessages(CHAT_CONFIG.ROOMS.GLOBAL);

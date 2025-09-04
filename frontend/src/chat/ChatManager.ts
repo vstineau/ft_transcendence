@@ -5,6 +5,7 @@ import type { ChatState, Message, ChatRoom, Friend } from './types';
 import { ChatPanel } from './components/ChatPanel';
 import { SocketService, MessageService } from './services';
 import { formatTime, escapeHtml, createAvatarElement } from './utils';
+import { CHAT_EVENTS } from './config/chatConfig';
 
 export class ChatManager {
     private state: ChatState = {
@@ -99,6 +100,17 @@ export class ChatManager {
             }));
         });
 
+        // Écouter les messages d'une room spécifique
+        this.socketService.on(CHAT_EVENTS.MESSAGE_HISTORY, (data: any) => {
+            console.log(`📨 Messages reçus pour room ${data.room}:`, data.messages);
+            
+            // Remplacer les messages actuels par ceux de la room
+            this.state.messages = data.messages || [];
+            
+            // Mettre à jour l'affichage
+            this.updateMessagesDisplay();
+        });
+
         this.socketService.on('authError', (error: string) => {
             console.error('❌ Chat auth error:', error);
         });
@@ -186,6 +198,21 @@ export class ChatManager {
                 this.performUserSearch(term);
             });
         }
+
+        // Gestion des clics sur les rooms (Global, Pong, Snake)
+        const roomsContainer = document.getElementById('chat-private-history');
+        if (roomsContainer) {
+            roomsContainer.addEventListener('click', (e) => {
+                const target = e.target as HTMLElement;
+                const roomElement = target.closest('[data-room-id]') as HTMLElement;
+                
+                if (roomElement) {
+                    const roomId = roomElement.dataset.roomId;
+                    console.log(`🎯 Clic sur room: ${roomId}`);
+                    this.switchRoom(roomId!);
+                }
+            });
+        }
     }
 
     private sendMessage(content: string) {
@@ -253,10 +280,74 @@ export class ChatManager {
         }).join('');
     }
 
-    private switchRoom(roomId: string) {
+    private async switchRoom(roomId: string) {
+        console.log(`🔄 Changement vers room: ${roomId}`);
+        
+        // Mettre à jour l'état local
         this.state.activeTab = roomId as any;
         this.state.currentRoom = this.state.rooms?.find(r => r.id === roomId) || null;
+        
+        // Demander les messages de cette room au backend
+        await this.loadRoomMessages(roomId);
+        
+        // Actions spécifiques selon la room
+        switch (roomId) {
+            case 'global':
+                console.log('💬 Chat global activé');
+                break;
+                
+            case 'pong':
+                console.log('🏓 Room Pong activée');
+                // Rejoindre la room pong côté serveur
+                this.socketService.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: 'pong' });
+                break;
+                
+            case 'snake':
+                console.log('🐍 Room Snake activée');
+                this.socketService.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: 'snake' });
+                break;
+                
+            default:
+                console.log(`📁 Room personnalisée: ${roomId}`);
+                this.socketService.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: roomId });
+                break;
+        }
+        
+        // Mettre à jour la sélection visuelle
+        this.updateRoomSelection(roomId);
+        
+        // Mettre à jour l'affichage des messages avec ceux de la nouvelle room
         this.updateMessagesDisplay();
+    }
+    
+    private async loadRoomMessages(roomId: string) {
+        try {
+            console.log(`📥 Chargement des messages pour room: ${roomId}`);
+            
+            // Émettre une demande de messages au backend
+            this.socketService.emit(CHAT_EVENTS.GET_MESSAGE_HISTORY, { room: roomId });
+
+        } catch (error) {
+            console.error('❌ Erreur lors du chargement des messages:', error);
+        }
+    }
+    
+    private updateRoomSelection(activeRoomId: string) {
+        const roomsContainer = document.getElementById('chat-private-history');
+        if (!roomsContainer) return;
+        
+        // Retirer la sélection de toutes les rooms
+        roomsContainer.querySelectorAll('[data-room-id]').forEach(room => {
+            room.classList.remove('bg-gray-700', 'text-white');
+            room.classList.add('hover:bg-gray-800');
+        });
+        
+        // Ajouter la sélection à la room active
+        const activeRoom = roomsContainer.querySelector(`[data-room-id="${activeRoomId}"]`);
+        if (activeRoom) {
+            activeRoom.classList.add('bg-gray-700', 'text-white');
+            activeRoom.classList.remove('hover:bg-gray-800');
+        }
     }
 
     private renderRoomsSidebar() {

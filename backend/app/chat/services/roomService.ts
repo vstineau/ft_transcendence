@@ -12,6 +12,14 @@ class RoomService {
     return roomName === 'global';
   }
 
+  isPongRoom(roomName: string): boolean {
+    return roomName === 'pong';
+  }
+
+  isSnakeRoom(roomName: string): boolean {
+    return roomName === 'snake';
+  }
+
   extractUserIdsFromPrivateRoom(roomName: string): string[] | null {
     if (!this.isPrivateRoom(roomName)) {
       return null;
@@ -23,7 +31,7 @@ class RoomService {
 
   validateRoomAccess(userId: string, roomName: string): boolean {
     // Global room accessible à tous
-    if (this.isGlobalRoom(roomName)) {
+    if (this.isGlobalRoom(roomName) || this.isPongRoom(roomName) || this.isSnakeRoom(roomName)) {
       return true;
     }
 

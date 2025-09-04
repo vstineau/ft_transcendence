@@ -1,13 +1,7 @@
-export const CHAT_CONFIG = {
-  MAX_RECENT_MESSAGES: 50,
-  MAX_ROOM_MESSAGES: 100,
-  MESSAGE_CLEANUP_DAYS: 30,
-  CLEANUP_INTERVAL: 24 * 60 * 60 * 1000, // 24 heures
-  ROOMS: {
-    GLOBAL: 'global',
-    PONG: 'pong',
-    SNAKE: 'snake'
-  }
+export const CHAT_ROOMS = {
+	GLOBAL: 'global',
+  	PONG: 'pong',
+  	SNAKE: 'snake'
 } as const;
 
 export const CHAT_EVENTS = {
