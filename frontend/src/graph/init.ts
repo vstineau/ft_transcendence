@@ -99,16 +99,11 @@ async function fetchSnakeHistory(): Promise<SnakeGameHistory[]> {
     try {
         console.log('=== FETCHING SNAKE HISTORY ===');
         console.log('Current cookies:', document.cookie);
+        const host = window.location.hostname;
+        const port = window.location.port;
+        const protocol = window.location.protocol;
 
-        const response = await authenticatedFetch(`http://localhost:3000/api/user/history?type=snake`);
-
-        // const response = await fetch('/api/user/history?type=snake', {
-        //     method: 'GET',
-        //     credentials: 'include',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     }
-        // });
+        const response = await fetch(`${protocol}//${host}:${port}/api/user/history?type=snake`);
 
         console.log('Response status:', response.status);
         console.log('Response headers:', Object.fromEntries(response.headers.entries()));
