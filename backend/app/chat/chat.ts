@@ -61,7 +61,7 @@ export function setupChat(app: FastifyInstance) {
       handleDisconnect(socket, app, chatNamespace)
     );
 
-    socket.on('error', (error) => 
+    socket.on('error', (error: any) => 
       handleSocketError(error, app)
     );
   });

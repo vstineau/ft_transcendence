@@ -4,7 +4,9 @@ export const CHAT_CONFIG = {
   MESSAGE_CLEANUP_DAYS: 30,
   CLEANUP_INTERVAL: 24 * 60 * 60 * 1000, // 24 heures
   ROOMS: {
-    GLOBAL: 'global'
+    GLOBAL: 'global',
+    PONG: 'pong',
+    SNAKE: 'snake'
   }
 } as const;
 

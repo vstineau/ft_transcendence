@@ -16,7 +16,7 @@ class MessageService {
           relations: ['user']
         });
 
-      return recentMessages.reverse().map(msg => this.formatMessage(msg));
+      return recentMessages.reverse().map((msg: any) => this.formatMessage(msg));
     } catch (error) {
       console.error('Error fetching recent messages:', error);
       return [];
@@ -33,7 +33,7 @@ class MessageService {
           relations: ['user']
         });
 
-      return messages.map(msg => this.formatMessage(msg));
+      return messages.map((msg: any) => this.formatMessage(msg));
     } catch (error) {
       console.error('Error fetching room messages:', error);
       return [];
