@@ -1,4 +1,5 @@
 import { Game, pos, Snake } from '../types/snakeTypes';
+import { navigateTo } from '../main'
 
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D | null = null;
@@ -76,7 +77,7 @@ function areSegmentsColliding(a: pos, b: pos): boolean {
 }
 
 function checkCollision(snake: Snake, other: Snake): "self" | "other" | "head-on" | null {
-    const [head, ...body] = snake.segments;
+    const [head, ..._body] = snake.segments;
     const [otherHead, ...otherBody] = other.segments;
 
     if (otherBody.some(seg => areSegmentsColliding(seg, head))) return "other";
@@ -97,7 +98,7 @@ function resetGame(g: Game) {
 }
 
 function initGame(): Game {
-    let g: Game = {
+    let game: Game = {
         p1: {
             name: 'Player 1',
             segments: [{ x: Math.floor(WIN * 0.25 / SEG_SIZE) * SEG_SIZE, y: Math.floor(WIN * 0.5 / SEG_SIZE) * SEG_SIZE }],
@@ -117,8 +118,8 @@ function initGame(): Game {
         foods: [],
         winSize: WIN
     };
-    spawnFoods(g);
-    return g;
+    spawnFoods(game);
+    return game;
 }
 
 // --- Rendering ---
@@ -163,8 +164,26 @@ function drawGame(g: Game) {
     });
 }
 
+
+function endgameButtons() {
+	const replayBtn = document.getElementById('replayBtn');
+    const quitBtn = document.getElementById('quitBtn');
+    if (replayBtn) {
+        replayBtn.onclick = () => {
+			navigateTo('/snake/local');
+        };
+    }
+    if (quitBtn) {
+        quitBtn.onclick = () => {
+			navigateTo('/');
+        };
+    }
+}
+
+
 function listenUserInputs() {
     window.addEventListener('keydown', e => {
+		console.log(e.key);
         if ((e.key === 'w' || e.key === 'W') && game.p1.dir.y !== 1) game.p1.pendingDir = { x: 0, y: -1 };
         else if ((e.key === 's' || e.key === 'S') && game.p1.dir.y !== -1) game.p1.pendingDir = { x: 0, y: 1 };
         else if ((e.key === 'a' || e.key === 'A') && game.p1.dir.x !== 1) game.p1.pendingDir = { x: -1, y: 0 };
@@ -174,8 +193,15 @@ function listenUserInputs() {
         else if (e.key === 'ArrowLeft' && game.p2.dir.x !== 1) game.p2.pendingDir = { x: -1, y: 0 };
         else if (e.key === 'ArrowRight' && game.p2.dir.x !== -1) game.p2.pendingDir = { x: 1, y: 0 };
         else if (gameOver && e.key === 'Enter') {
+			const btns = document.getElementById('snakeGameEndButtons');
+			if (btns) btns.style.display = 'none';
             resetGame(game);
             startMainLoop();
+        }
+        else if (gameOver && e.key === 'Escape') {
+			const btns = document.getElementById('snakeGameEndButtons');
+			if (btns) btns.style.display = 'none';
+            navigateTo('/');
         }
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
             e.preventDefault();
@@ -211,7 +237,10 @@ function updateGame() {
     }
     if (col1 === "head-on" || col2 === "head-on") {
         gameOver = true;
-        drawAlert(game.winSize, "Match nul !");
+		const btns = document.getElementById('snakeGameEndButtons');
+    	if (btns) btns.style.display = 'flex';
+		endgameButtons();
+        drawAlert(game.winSize, "Draw !");
         if (mainLoop) clearInterval(mainLoop);
         return;
     }
@@ -224,6 +253,9 @@ function updateGame() {
 
 function endGame(winner: Snake) {
     gameOver = true;
+	const btns = document.getElementById('snakeGameEndButtons');
+    if (btns) btns.style.display = 'flex';
+	endgameButtons();
     drawWinner(winner);
     if (mainLoop) {
         clearInterval(mainLoop);
@@ -240,19 +272,22 @@ function drawWinner(winner: Snake) {
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
     ctx.font = `40px Arial`;
-    ctx.fillText(winner.name + ' wins! (Press Enter to restart)', canvas.width * 0.5, canvas.height * 0.33);
+    ctx.fillText(winner.name + ' wins!', canvas.width * 0.5, canvas.height * 0.33);
 }
 
 function initCanvas() {
     canvas = document.getElementById('localSnakeGameCanvas') as HTMLCanvasElement;
     if (!canvas) {
-        throw new Error("Canvas 'localSnakeGameCanvas' not found");
+		console.error("❌ Canvas 'SnakeGameCanvas' not found");
+		return;
     }
     WIN = Math.floor(window.innerHeight * 0.90);
     canvas.width = WIN;
     canvas.height = WIN;
     ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Failed to get canvas context');
+	if (!ctx) {
+		console.error('❌ Failed to get canvas context');
+	}
 }
 
 function startMainLoop() {
@@ -271,5 +306,5 @@ export function localSnakeGame() {
     game = initGame();
     listenUserInputs();
     startMainLoop();
-    drawAlert(game.winSize, 'Press WASD (P1) or Arrow keys (P2) to start!');
+    drawAlert(game.winSize, 'Press Enter to start!');
 }

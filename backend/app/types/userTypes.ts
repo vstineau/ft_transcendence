@@ -1,13 +1,14 @@
-//import { User } from '../models.js'
 
 export interface IUserReply {
-	200: { success: boolean, user?: UserJson, qrCode?: string, twoFaAuth?: boolean };
+	200: { success: boolean, user?: UserJson, qrCode?: string, twoFaAuth?: boolean, tmpToken?: string };
+	302: { success: boolean, message?: string ,user?: UserJson };
 	401: { success: boolean, error: string };
 	400: { success: boolean, error: string };
 	500: { success: boolean, error: string };
 }
 
 export type JwtPayload = {
+	id: string,
 	login: string,
 	password: string,
 	iat: string,
@@ -15,7 +16,7 @@ export type JwtPayload = {
 };
 
 export type UserJson = {
-	id?: number,
+	id?: string,
 	login?: string,
 	nickName?: string,
 	password?: string,
@@ -27,14 +28,21 @@ export type UserJson = {
 	twoFaAuth?: boolean;
 	twoFaSecret?: string;
 	twoFaCode?: string;
+	provider?: string;
+	isOnline?: boolean;
+	friends?: string[];
+	blocklist?: string[];
 	stats?: UserStats;
 };
 
 export type UserHistory = {
+	type?: string,
 	date?: string,
 	opponent?: string,
 	score?: string,
-	win?: boolean,
+	finalLength?: number,
+	win?: string,
+	gameTime?: number;
 };
 
 export type UserStats = {
@@ -48,7 +56,12 @@ export type UserStats = {
 
 export const defaultAvatars: Array<string> = [
 	'/app/app/avatar/dog-meme.gif',
-	'/app/app/avatar/singe_rio_de_janeiro.jpg'
+	'/app/app/avatar/singe_rio_de_janeiro.jpg',
+	'/app/app/avatar/samy.jpg',
+	'/app/app/avatar/uillysamy.png',
+	'/app/app/avatar/vieux.png',
+	'/app/app/avatar/pikapika.png',
+	'/app/app/avatar/uilly93.png',
 ];
 
 export const mimeTypes: { [key: string]: string } = {
@@ -56,5 +69,6 @@ export const mimeTypes: { [key: string]: string } = {
   '.jpeg': 'image/jpeg',
   '.gif': 'image/gif',
   '.png': 'image/png',
+  '.webp': 'image/webp',
 };
 

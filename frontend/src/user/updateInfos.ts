@@ -1,7 +1,8 @@
-import { navigateTo } from '../main';
+import { navigateTo, authenticatedFetch} from '../main';
 import { displayError } from '../utils/error';
 import { readFileAsBase64 } from '../utils/userInfo';
-import { fetchAndSaveUserInfo, initUserAvatar, getCurrentUser} from '../utils/avatar';
+import { fetchAndSaveUserInfo, initUserAvatar, getCurrentUser, updateProfileAvatar} from '../utils/avatar';
+import { init2FASetup } from '../user/2fasetup';
 
 export async function updateInfos() {
 	await fetchAndSaveUserInfo();
@@ -74,6 +75,8 @@ export async function updateInfos() {
 				const lastDot = fileName.lastIndexOf('.');
 				if (lastDot !== -1) {
 					body.ext = fileName.slice(lastDot + 1).toLowerCase();
+				} else {
+					body.ext = imageExtension(base64);
 				}
 			} catch (err) {
 				displayError('error with avatar');
@@ -105,12 +108,23 @@ export async function updateInfos() {
 	});
 }
 
+function imageExtension(base64: string): string {
+  if (base64.startsWith('iVBOR')) return 'png';
+  if (base64.startsWith('/9j/')) return 'jpeg';
+  if (base64.startsWith('R0lGOD')) return 'gif';
+  if (base64.startsWith('UklGR')) return 'webp';
+  return 'png'; // défaut
+}
+
 function initUpdateInfosPage(): void {
 	console.log('=== Initializing UpdateInfos page ===');
 
 	// Initialiser les onglets
 	initTabs();
 	// Initialiser les menus
+	initMenuItems();
+    // Afficher le contenu par défaut
+    showContent('change-password');
 	initMenuItems();
 	// Afficher le contenu par défaut
 	showContent('change-password');
@@ -222,74 +236,67 @@ function showContent(contentKey: string): void {
 function getContentHTML(contentKey: string): string {
 	const contents: Record<string, string> = {
 		'change-password': `
-			<!--- ici les elements qui selon affiches selon l'onglet--->
 			<form id="change-password-form" class="space-y-4">
-
-				<!--email-->
 				<input
-				autocomplete="off"
-				type="email"
-				name="login"
-				id="mail"
-				placeholder="Email"
-				class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
-				required
+					autocomplete="off"
+					type="email"
+					name="email"
+					id="email"
+					placeholder="Email"
+					class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+					required
 				/>
-
-				<!-- Mot de passe -->
 				<input
-				type="password"
-				name="password"
-				id="password"
-				placeholder="Password"
-				class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
-				required
+					type="password"
+					name="current-password"
+					id="current-password"
+					placeholder="Current Password"
+					class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+					required
 				/>
-
-				<!-- nouveau mdp -->
 				<input
-				type="newpassword"
-				name="newpassword"
-				id="newpassword"
-				placeholder="New password"
-				class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
-				required
+					type="password"
+					name="new-password"
+					id="new-password"
+					placeholder="New Password"
+					class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+					required
 				/>
-
-				<!-- Bouton Submit-->
 				<div class="flex justify-center pt-4">
-				<button
-				type="submit"
-				class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-2 rounded-lg transition-colors"
-				>Submit</button>
-			</div>
-		</form>
-        `,
+					<button type="submit" class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-2 rounded-lg transition-colors">
+						Submit
+					</button>
+				</div>
+			</form>
+			`,
 
 		'dual-authentication': `
-            <div class="space-y-6">
-
-                <div class="flex items-start">
-                    <input type="checkbox" id="enable-2fa" class="w-5 h-5 mt-1 mr-4">
-                    <div>
-                        <h3 class="font-medium text-black text-medium mb-2">Turn on 2-Step Verification</h3>
-                        <p class="text-sm text-gray-600 mb-4">
-                            With 2-Step Verification, or two-factor authentication, you can add  an extra layer of security to your account in case your password is stolen.<br><br>
-							After you set up 2-Step Verification, you can sign in to your account with:
-                        </p>
-                        <ul class="text-sm text-gray-600 mb-6 space-y-1">
-                            <li>• Your password and a second step</li>
-                            <li>• Your passkey</li>
-                        </ul>
-                        <div class="flex justify-center pt-4">
+		<div class="space-y-6">
+			<div class="flex items-start">
+			<input type="checkbox" id="settings-enable2fa" class="w-5 h-5 mt-1 mr-4">
+				<div>
+					<h3 class="font-medium text-black text-medium mb-2">Turn on 2-Step Verification</h3>
+					<p class="text-sm text-gray-600 mb-4">
+						With 2-Step Verification, or two-factor authentication, you can add an extra layer of security to your account in case your password is stolen.<br><br>
+						After you set up 2-Step Verification, you can sign in to your account with:
+					</p>
+					<ul class="text-sm text-gray-600 mb-6 space-y-1">
+						<li>• Your password and a second step</li>
+						<li>• Your passkey</li>
+					</ul>
+					<form id="enable-2fa-form">
+						<div class="flex justify-center pt-4">
 							<button
-							type="submit"
-							class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-2 rounded-lg transition-colors">Submit</button>
+								type="submit"
+								class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-2 rounded-lg transition-colors">
+								Submit
+							</button>
 						</div>
-                    </div>
-                </div>
-            </div>
-        `,
+					</form>
+				</div>
+			</div>
+		</div>
+		`,
 
 		'profile-picture': `
 		<div class="w-full h-full flex items-center justify-center">
@@ -445,6 +452,14 @@ function getContentHTML(contentKey: string): string {
 
 					<input
 						type="text"
+						name="username"
+						id="edit-username"
+						placeholder="Username (without @)"
+						class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-black transition-colors bg-transparent"
+					/>
+
+					<input
+						type="text"
 						name="nickName"
 						id="edit-nickName"
 						placeholder="Nick Name"
@@ -471,93 +486,6 @@ function getContentHTML(contentKey: string): string {
 
 	return contents[contentKey] || '<p>Content not found</p>';
 }
-
-// function initEditProfileForm(): void {
-// 	console.log("initEditProfileForm called ✅");
-//     const form = document.getElementById('edit-profile-form') as HTMLFormElement;
-// 		if (!form) {
-// 			console.log("❌ Form not found in DOM");
-// 			return;
-// 		}
-
-//     // Pré-remplir avec les données existantes
-//     const userData = getCurrentUser();
-//     if (userData) {
-//         // const firstNameInput = document.getElementById('edit-firstName') as HTMLInputElement;
-//         // const lastNameInput = document.getElementById('edit-lastName') as HTMLInputElement;
-//         const nickNameInput = document.getElementById('edit-nickName') as HTMLInputElement;
-// 		const usernameInput = document.getElementById('edit-username') as HTMLInputElement;
-//         const emailInput = document.getElementById('edit-email') as HTMLInputElement;
-
-//         // if (firstNameInput) firstNameInput.value = userData.firstName || '';
-//         // if (lastNameInput) lastNameInput.value = userData.lastName || '';
-//         if (nickNameInput) nickNameInput.value = userData.nickName || '';
-//         if (emailInput) emailInput.value = userData.email || '';
-// 		if (usernameInput && userData.login) {
-// 			usernameInput.value = userData.login;
-// 		}
-//     }
-
-//     form.addEventListener('submit', async (e) => {
-//         e.preventDefault();
-
-//         const formData = new FormData(form);
-//         // const body = {
-//         //     // firstName: formData.get('firstName')?.toString().trim(),
-//         //     // lastName: formData.get('lastName')?.toString().trim(),
-//         //     nickName: formData.get('nickName')?.toString().trim(),
-// 		// 	username: formData.get('username')?.toString().trim(),
-//         //     email: formData.get('email')?.toString().trim(),
-//         // };
-// 		const body = {
-//             login: formData.get('username')?.toString().trim(),
-//             nickName: formData.get('nickName')?.toString().trim(),
-//             password: '',
-//             newPassword: '',
-//             email: formData.get('email')?.toString().trim(),
-//             avatar: '',
-//             noAvatar: false,
-//             ext: '',
-//         };
-
-//         try {
-//             const host = window.location.hostname;
-//             const port = window.location.port;
-//             const protocol = window.location.protocol;
-
-//             const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                 },
-//                 credentials: 'include',
-//                 body: JSON.stringify(body),
-//             });
-
-//             const result = await response.json();
-// 			console.log("UpdateProfile result:", result);
-
-//             if (result.success) {
-//                 alert('Profile updated successfully!');
-//                 // Mettre à jour les données locales
-//                 const currentUser = getCurrentUser();
-//                 if (currentUser) {
-//                     Object.assign(currentUser, body);
-//                     localStorage.setItem('currentUser', JSON.stringify(currentUser));
-//                 }
-// 				updateProfileDisplay(body);
-
-// 				// Rafraîchir l'avatar et les infos utilisateur
-// 				initUserAvatar();
-//             } else {
-//                 displayError(result.error || 'Failed to update profile');
-//             }
-//         } catch (error) {
-//             console.error('Update profile error:', error);
-//             displayError('Network error occurred');
-//         }
-//     });
-// }
 
 function initEditProfileForm(): void {
     console.log("=== DEBUGGING initEditProfileForm ===");
@@ -597,7 +525,7 @@ function initEditProfileForm(): void {
 
         const formData = new FormData(form);
         const body = {
-            login: '',
+            login: formData.get('username')?.toString().trim(),
             nickName: formData.get('nickName')?.toString().trim(),
             password: '',
             newPassword: '',
@@ -619,8 +547,7 @@ function initEditProfileForm(): void {
             console.log("Request URL:", url);
             console.log("Request headers will include credentials");
 
-            const response = await fetch(url, {
-                method: 'POST',
+	const response = await authenticatedFetch(`${protocol}//${host}:${port}/api/updateInfos`, {                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -637,7 +564,6 @@ function initEditProfileForm(): void {
             if (result.success) {
                 console.log("✅ Success!");
                 alert('Profile updated successfully!');
-                // ... reste du code
             } else {
                 console.log("❌ Backend error:", result.error);
                 displayError(result.error || 'Failed to update profile');
@@ -651,8 +577,8 @@ function initEditProfileForm(): void {
 
 // Ajoutez cette fonction pour tester l'authentification
 async function testAuth(): Promise<void> {
-    console.log("=== TESTING AUTHENTICATION ===");
-    console.log("Cookies:", document.cookie);
+    // console.log("=== TESTING AUTHENTICATION ===");
+    // console.log("Cookies:", document.cookie);
 
     try {
         const host = window.location.hostname;
@@ -673,27 +599,6 @@ async function testAuth(): Promise<void> {
     }
 }
 
-// function updateProfileDisplay(userData: any): void {
-//     // Mettre à jour le nom affiché
-//     const displayNameEl = document.getElementById('user-name');
-//     if (displayNameEl) {
-//         displayNameEl.textContent = userData.nickName || 'User'; // Utilisez nickName directement
-//     }
-
-//     // CORRECTION : utilisez 'login' au lieu de 'username'
-//     const usernameEl = document.getElementById('profile-username');
-//     if (usernameEl && userData.login) {
-//         usernameEl.textContent = `@${userData.login}`;
-//     }
-
-//     // Mettre à jour l'email
-//     const locationEl = document.getElementById('profile-location');
-//     if (locationEl && userData.email) {
-//         locationEl.textContent = userData.email;
-//     }
-// }
-
-
 
 function initContentFeatures(contentKey: string): void {
 	switch (contentKey) {
@@ -701,7 +606,7 @@ function initContentFeatures(contentKey: string): void {
 			initChangePasswordForm();
 			break;
 		case 'dual-authentication':
-            initProfilePictureUpload();
+            init2FASetup();
             break;
         case 'profile-picture':
             initProfilePictureUpload();
@@ -716,85 +621,57 @@ function initContentFeatures(contentKey: string): void {
 }
 
 function initChangePasswordForm(): void {
-	const form = document.getElementById('change-password-form') as HTMLFormElement;
-	if (form) {
-		form.addEventListener('submit', async e => {
-			e.preventDefault();
+    const form = document.getElementById('change-password-form') as HTMLFormElement;
+    if (form) {
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const email = formData.get('email')?.toString().trim();
+            const currentPassword = formData.get('current-password')?.toString().trim();
+            const newPassword = formData.get('new-password')?.toString().trim();
 
-			const formData = new FormData(form);
-			const email = formData.get('email')?.toString().trim();
-			const currentPassword = formData.get('current-password')?.toString().trim();
-			const newPassword = formData.get('new-password')?.toString().trim();
+            if (!email || !currentPassword || !newPassword) {
+                displayError('All fields are required');
+                return;
+            }
 
-			// Votre logique existante adaptée
-			const body = {
-				login: '',
-				nickName: '',
-				password: currentPassword,
-				newPassword: newPassword,
-				email: email,
-				avatar: '',
-				noAvatar: false,
-				ext: '',
-			};
+            const body = {
+                login: '',
+                nickName: '',
+                password: currentPassword,
+                newPassword: newPassword,
+                email: email,
+                avatar: '',
+                noAvatar: false,
+                ext: '',
+            };
 
-			try {
-				const host = window.location.hostname;
-				const port = window.location.port;
-				const protocol = window.location.protocol;
-				const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					credentials: 'include',
-					body: JSON.stringify(body),
-				});
-
-				const reply = await response.json();
-
-				if (reply.success) {
-					alert('Password changed successfully!');
-					form.reset();
-				} else {
-					displayError(reply.error || 'Password change failed');
-				}
-			} catch (err) {
-				console.error(err);
-				displayError('Network error occurred');
-			}
-		});
-	}
+            try {
+                const host = window.location.hostname;
+                const port = window.location.port;
+                const protocol = window.location.protocol;
+                const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(body),
+                });
+                const reply = await response.json();
+                if (reply.success) {
+                    alert('Password changed successfully!');
+                    form.reset();
+                } else {
+                    displayError(reply.error || 'Password change failed');
+                }
+            } catch (err) {
+                console.error(err);
+                displayError('Network error occurred');
+            }
+        });
+    }
 }
-
-// function initProfilePictureUpload(): void {
-// 	const fileInput = document.getElementById('profile-upload') as HTMLInputElement;
-// 	const fileInfo = document.getElementById('file-info');
-// 	const preview = document.getElementById('preview-avatar');
-
-// 	if (fileInput && fileInfo) {
-// 		fileInput.addEventListener('change', e => {
-// 			const file = (e.target as HTMLInputElement).files?.[0];
-// 			if (file) {
-// 				fileInfo.textContent = file.name;
-
-// 				const reader = new FileReader();
-// 				reader.onload = e => {
-// 					if (preview && e.target?.result) {
-// 						preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded-lg">`;
-// 					}
-// 				};
-// 				reader.readAsDataURL(file);
-// 				// const form = document.getElementById('edit-profile-form') as HTMLFormElement;
-// 				if (!form) {
-// 					console.log("❌ Form not found");
-// 					return;
-// 				}
-
-// 			}
-// 		});
-// 	}
-// }
 
 function initProfilePictureUpload(): void {
 	const fileInput = document.getElementById('profile-upload-input') as HTMLInputElement;
@@ -872,7 +749,33 @@ function initProfilePictureUpload(): void {
 		console.log("Upload response:", reply);
 
 		if (reply.success) {
-			initUserAvatar(); // Rafraîchir l’affichage
+			console.log("=== AVATAR UPDATE DEBUG ===");
+			console.log("Full reply:", reply);
+			console.log("reply.user exists:", !!reply.user);
+			console.log("reply.user.avatar exists:", !!reply.user?.avatar);
+			console.log("Avatar data length:", reply.user?.avatar?.length);
+
+			const currentUser = getCurrentUser();
+			console.log("Current user before update:", currentUser);
+
+			if (currentUser && reply.user && reply.user.avatar) {
+				currentUser.avatar = reply.user.avatar;
+				localStorage.setItem('currentUser', JSON.stringify(currentUser));
+				console.log("Updated localStorage with new avatar");
+
+				// Vérifier que la sauvegarde a fonctionné
+				const savedUser = getCurrentUser();
+				console.log("Saved user after update:", savedUser);
+				console.log("Saved avatar length:", savedUser?.avatar?.length);
+			} else {
+				console.log("Missing data - reply.user:", !!reply.user, "avatar:", !!reply.user?.avatar);
+			}
+
+			setTimeout(() => {
+				console.log("Calling initUserAvatar...");
+				initUserAvatar();
+			}, 100);
+
 			alert("Profile picture updated!");
 		} else {
 			displayError(reply.error || "Upload failed");
@@ -965,7 +868,6 @@ function initDeleteAccountForm(): void {
         }
     });
 }
-
 
 
 function initEditProfileButton(): void {

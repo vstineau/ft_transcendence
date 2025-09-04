@@ -7,6 +7,8 @@ export async function displayLogout() {
     logoutButton.style.display = "block";
 }
 
+
+
 export async function readFileAsBase64(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();

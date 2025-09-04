@@ -1,11 +1,18 @@
 // import { register } from 'ts-node';
 import { registerUser } from './user/register';
-import { logUser } from './user/login';
+import { logUser, initTwoFALogin, TwoFAVerifyView} from './user/login';
+//import { loginGithub } from './user/loginGithub';
 import { rootUser } from './user/root';
 import { updateInfos } from './user/updateInfos';
+import { displayChatButton } from './utils/chat_tools';
 import {
 	LoginView,
+	GamesView,
+	PongChoice,
+	SnakeChoice,
 	PongView,
+	StatsPongView,
+	StatsSnakeView,
 	RegisterView,
 	UpdateInfosview,
 	RootView,
@@ -30,6 +37,9 @@ import { pongTournament } from './pong/tournament';
 const routes: { [key: string]: () => Promise<string> } = {
 	'/': WelcomeView,
 	'/dashboard': RootView,
+	'/games': GamesView,
+	'/pong-choice': PongChoice,
+	'/snake-choice': SnakeChoice,
 	'/pong': PongView,
 	'/pong/matchmaking': PongMatchMakingView,
 	'/pong/matchmaking/game': PongCanvas,
@@ -43,6 +53,9 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/snake/local': localSnakeCanvas,
 	'/register': RegisterView,
 	'/updateInfos': UpdateInfosview,
+	'/2fa-verification': TwoFAVerifyView,
+	'/statisticsPong': StatsPongView,
+	'/statisticsSnake': StatsSnakeView,
 };
 
 export async function navigateTo(url: string) {
@@ -54,9 +67,51 @@ export async function navigateTo(url: string) {
 	await renderPage();
 }
 
+export async function authenticatedFetch(url: string, options: RequestInit = {}): Promise<Response> {
+	const response = await fetch(url, {
+		...options,
+		credentials:'include'
+	})
+	if(response.status == 401){
+		console.log('Token expired, redirecting to login');
+		localStorage.clear();
+		navigateTo('/');
+		throw new Error('Authentification expired');
+	}
+	return response;
+}
+
+// Créer une notification toast au lieu d'une alerte
+function showAuthMessage() {
+    const message = document.createElement('div');
+    message.textContent = 'Session expired. Please log in to continue.';
+    message.style.cssText = `
+        position: fixed; top: 20px; right: 20px; background: #f87171; color: white;
+        padding: 12px 20px; border-radius: 8px; z-index: 1000;
+        font-family: system-ui; font-size: 14px;
+    `;
+    document.body.appendChild(message);
+    setTimeout(() => message.remove(), 3000);
+}
+
 async function renderPage() {
 	const path = window.location.pathname;
 	console.log(path);
+
+	//veriff pour si le tokens jws ne fonctionne plus,
+	// il y aura une redirection vers login pour se co a nouveau
+	const publicPaths = ['/', '/login', '/register', '/pong/matchmaking/game', '/pong/matchmaking/localgame', '/pong', '/2fa-verification', '/pong/local' , '/snake', '/snake/local'];
+	if(!publicPaths.includes(path)){
+		try{
+			await authenticatedFetch('/api/updateInfos');
+		} catch {
+			// alert('Your session has expired. Please log in to access this page.');
+			showAuthMessage();
+			localStorage.clear();
+			navigateTo('/');
+			return;
+		}
+	}
 
 	cleanupScrollAnimations();
 	cleanupThemeToggle();
@@ -73,7 +128,7 @@ async function renderPage() {
 	switch (path) {
 		case '/':
 			WelcomeView();
-
+			//displayChatButton(); // Affichage debbug.
 			setTimeout(() => {
 				initScrollAnimations();
 				initThemeToggle();
@@ -81,6 +136,7 @@ async function renderPage() {
 			break;
 		case '/dashboard':
 			rootUser();
+			displayChatButton();
 			setTimeout(() => {
 				initThemeToggle(); // ← Initialiser le thème après les animations
 				initProfilePage();
@@ -88,6 +144,7 @@ async function renderPage() {
 			break;
 		case '/updateInfos':
 			updateInfos();
+			displayChatButton();
 			break;
 		case '/register':
 			registerUser();
@@ -96,16 +153,23 @@ async function renderPage() {
 			logUser();
 			break;
 		case '/pong/matchmaking/game':
-			pongGame();
+			await pongGame();
+			await displayChatButton();
 			break;
 		case '/pong/matchmaking/localgame':
 			localpongGame();
+			displayChatButton();
 			break;
 		case '/snake':
-			snakeGame();
+			await snakeGame();
+			await displayChatButton();
 			break;
 		case '/snake/local':
 			localSnakeGame();
+			displayChatButton();
+			break;
+		case '/2fa-verification':
+			initTwoFALogin();
 			break;
 		case '/pong/tournament':
 			pongTournament();
@@ -114,6 +178,7 @@ async function renderPage() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+
 	document.body.addEventListener('click', async e => {
 		const target = e.target as HTMLElement;
 		// if (target instanceof HTMLAnchorElement)
@@ -132,3 +197,5 @@ document.addEventListener('DOMContentLoaded', async () => {
 	await renderPage();
 	// pongGame();
 });
+
+

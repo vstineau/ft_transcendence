@@ -4,6 +4,7 @@ export interface Game {
     p2: Snake;
 	foods: Food[];
     winSize: number;
+	gameStart?: number;
 }
 
 export type pos = { x: number, y: number}
@@ -15,6 +16,8 @@ export interface Snake {
 	pendingDir: pos;
 	color: string;
 	id: string;
+	login: string;
+	avatar?: string;
 }
 
 export interface Food {

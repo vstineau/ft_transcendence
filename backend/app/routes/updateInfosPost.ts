@@ -8,6 +8,7 @@ import { readFile } from 'fs/promises'
 import speakeasy from 'speakeasy';
 import { encryptSecret} from '../utils/encryption.js'
 import QRCode from 'qrcode';
+import { comparePassword, hashPassword } from '../utils/hashPassword.js'
 
 export default {
   method: 'POST',
@@ -17,33 +18,37 @@ export default {
     reply: FastifyReply
   ): Promise<void> => {
     try {
-      const token = request.cookies?.token
-      if (token) {
-        const payload = reply.server.jwt.verify<JwtPayload>(token)
-        const user = await User.findOneBy({ login: payload.login })
-        if (user) {
-		  let qrCodeDataURL: string = '';
-          // Mise à jour des infos si présent dans le body
-          if (request.body.login) user.login = request.body.login
-          if (request.body.nickName) user.nickName = request.body.nickName
-          if (request.body.email) user.email = request.body.email
-		  if (!user.twoFaAuth && request.body.twoFaAuth) {
-			const secret = speakeasy.generateSecret({name: `transcendence ${user.login}`});
-			user.twoFaSecret = encryptSecret(secret.base32);
-			if (secret.otpauth_url) {
-				qrCodeDataURL = await QRCode.toDataURL(secret.otpauth_url);
-			}
+        const token = request.cookies?.token
+        if (token) {
+          const payload = reply.server.jwt.verify<JwtPayload>(token)
+          const user = await User.findOneBy({ login: payload.login })
+          if (user) {
+        let qrCodeDataURL: string = '';
+            // Mise à jour des infos si présent dans le body
+            if (request.body.login) user.login = request.body.login
+            if (request.body.nickName) user.nickName = request.body.nickName
+            if (request.body.email) user.email = request.body.email
+        if (!user.twoFaAuth && request.body.twoFaAuth) {
+        const secret = speakeasy.generateSecret({name: `transcendence ${user.login}`});
+        user.twoFaSecret = encryptSecret(secret.base32);
+        if (secret.otpauth_url) {
+          qrCodeDataURL = await QRCode.toDataURL(secret.otpauth_url);
+        }
 		  }
 		  else if (user.twoFaAuth && request.body.twoFaAuth === false) {
 			user.twoFaAuth = false;
 			user.twoFaSecret = '';
 		  }
+		  let isPasswordValid = false;
+      	  if (user && request.body.password){
+      	  	isPasswordValid = await comparePassword(request.body.password, user.password);
+      	  }
           if (
             request.body.password &&
             request.body.newPassword &&
-            await user.comparePassword(request.body.password)
+            isPasswordValid
           ) {
-            user.password = request.body.newPassword
+            user.password = await hashPassword(request.body.newPassword)
           }
           if (request.body.avatar) {
             const buffer = request.body.avatar

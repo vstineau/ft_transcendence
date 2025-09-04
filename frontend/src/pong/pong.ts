@@ -2,7 +2,7 @@ import io, { Socket } from 'socket.io-client';
 import { Game, Player } from '../types/pongTypes';
 import { navigateTo } from '../main';
 
-function getCookie(name: string) {
+export function getCookie(name: string) {
 	const value = `; ${document.cookie}`;
 	const parts = value.split(`; ${name}=`);
 	if (parts.length === 2) return parts.pop()?.split(';').shift();
@@ -14,7 +14,7 @@ export function createPongSocket(): Socket {
 	const port = window.location.port;
 	const protocol = window.location.protocol;
 
-	let socket = io(`${protocol}//${host}:${port}`);
+	let socket = io(`${protocol}//${host}:${port}/pong`);
 	socket.on('connect', () => {
 		let cookie = getCookie('token');
 		socket.emit('initGame', cookie);
@@ -169,7 +169,7 @@ function drawWinner(winner: Player, game: Game) {
 
 let winner: Player | null = null;
 let lastGame: Game | null = null;
-export function pongGame() {
+export async function pongGame() {
 	const socket = createPongSocket();
 	listenUserInputs(socket);
 	socket.on('notLogged', () => {

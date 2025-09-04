@@ -7,7 +7,10 @@ import socketioServer from './plugins/socketIo.js'
 import {startPongGame} from './pong/pong.js'
 import {startSnakeGame} from './snake/snake.js'
 import fastifyCookie from '@fastify/cookie';
+import fastifyOauth2 from '@fastify/oauth2';
+import { setupChat } from './chat/chat.js';
 import {userRoutes} from './routes/router.js'
+import oauth2Options from './auth/oauth2Options.js'
 
 export const app = Fastify({
 	logger: true,
@@ -16,13 +19,14 @@ export const app = Fastify({
 	ignoreDuplicateSlashes: true
 });
 
-
 // Enregistre les métriques par défaut (CPU, mémoire, etc.) (prometheus)
 await app.register(import('./routes/monitoring.route.js'));
 
 
 await app.register(cors, {
-	origin: ['https://localhost:8080', 'http://localhost:8080'],
+	origin: [`https://${process.env.IP}:8080`,
+		`https://localhost:8080`,
+		`https://${process.env.POSTE}:8080`],
 	methods: ['GET', 'POST'],
 	credentials: true,
 });
@@ -31,10 +35,7 @@ await app.register(fastifyCookie);
 
 await app.register(socketioServer);
 
-await startPongGame(app);
-await startSnakeGame(app);
-authJwt(app, {jwtSecret: config.jwt.secret});
-await app.register(userRoutes);
+await app.register(fastifyOauth2, oauth2Options);
 
 
 await SqliteDataSource.initialize()
@@ -44,6 +45,14 @@ await SqliteDataSource.initialize()
 .catch((err) => {
 	console.error("Error during Data Source initialization", err);
 })
+
+
+await startPongGame(app);
+await startSnakeGame(app);
+setupChat(app); // <-- Register the chat setup function
+
+authJwt(app, {jwtSecret: config.jwt.secret});
+await app.register(userRoutes);
 
 app.listen({port: 3000, host: '0.0.0.0'});
 
