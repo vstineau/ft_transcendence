@@ -19,11 +19,7 @@ function getCookie(name: string): string | null {
 }
 
 
-function getFriends() {
-
-}
-
-export function createSnakeSocket(): Socket {
+export function createSnakeSocket(custom?: string[]): Socket {
 	const host = window.location.hostname;
 	const port = window.location.port;
 	const protocol = window.location.protocol;
@@ -31,7 +27,7 @@ export function createSnakeSocket(): Socket {
 	socket.on('connect', () => {
 		let cookie = getCookie('token');
 		console.log(cookie);
-		socket.emit('isConnected', cookie);
+		socket.emit('isConnected', cookie, custom);
 		socket.emit('initGame_snake');
 	});
     return socket;
@@ -204,9 +200,19 @@ function displayInfoPlayer(game: Game) {
 	}
 }
 
-export function snakeGame(custom?: string) {
-	if (custom) console.log(custom);
-	const socket = createSnakeSocket();
+export function snakeGame() {
+	const url = "https://example.com/game?player1=truc&player2=machin";
+	const myUrl = new URL(url);
+	
+	const params = new URLSearchParams(myUrl.search);
+	
+	const player1 = params.get("player1");
+	const player2 = params.get("player2");
+	let custom = undefined;
+	if (player1 && player2) {
+		custom = [player1, player2];
+	}
+	const socket = createSnakeSocket(custom);
 	socket.on('notLogged', () => {
 		navigateTo('/login?/snake');
 	});
