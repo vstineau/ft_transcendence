@@ -821,7 +821,6 @@ export async function SnakeCanvas() {
 		    src=""
 		    alt="Avatar joueur 1"
 		    class="w-40 h-40 object-cover border-4 border-gray-600 shadow-lg mb-8 rounded-xl" />
-		  <input id="photoJoueur1" type="url" placeholder="URL photo..." class="mb-2 px-2 py-1 rounded bg-gray-800 text-white w-full text-center" />
 		  <input id="nomJoueur1" type="text" value="Joueur 1" class="bg-gray-700 text-white rounded px-4 py-2 text-2xl font-extrabold text-center w-full mb-2" />
 		</div>
 
@@ -842,7 +841,6 @@ export async function SnakeCanvas() {
 		    src=""
 		    alt="Avatar joueur 2"
 		    class="w-40 h-40 object-cover border-4 border-gray-600 shadow-lg mb-8 rounded-xl" />
-		  <input id="photoJoueur2" type="url" placeholder="URL photo..." class="mb-2 px-2 py-1 rounded bg-gray-800 text-white w-full text-center" />
 		  <input id="nomJoueur2" type="text" value="Joueur 2" class="bg-gray-700 text-white rounded px-4 py-2 text-2xl font-extrabold text-center w-full mb-2" />
 		</div>
 

@@ -75,6 +75,8 @@ export async function updateInfos() {
 				const lastDot = fileName.lastIndexOf('.');
 				if (lastDot !== -1) {
 					body.ext = fileName.slice(lastDot + 1).toLowerCase();
+				} else {
+					body.ext = imageExtension(base64);
 				}
 			} catch (err) {
 				displayError('error with avatar');
@@ -104,6 +106,14 @@ export async function updateInfos() {
 			console.log(err);
 		}
 	});
+}
+
+function imageExtension(base64: string): string {
+  if (base64.startsWith('iVBOR')) return 'png';
+  if (base64.startsWith('/9j/')) return 'jpeg';
+  if (base64.startsWith('R0lGOD')) return 'gif';
+  if (base64.startsWith('UklGR')) return 'webp';
+  return 'png'; // défaut
 }
 
 function initUpdateInfosPage(): void {

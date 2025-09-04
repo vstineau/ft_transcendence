@@ -1,5 +1,6 @@
 import { navigateTo } from '../main';
 import { displayError } from '../utils/error';
+import { hideChatButton } from '../utils/chat_tools';
 
 export async function delogUser() {
 	const button = document.getElementById('logout') as HTMLFormElement | null;
@@ -17,6 +18,8 @@ export async function delogUser() {
 			});
 			const data = await response.json();
 			if (data.success) {
+				// Masquer le bouton chat après déconnexion
+				hideChatButton();
 				navigateTo('/');
 			} else {
 				displayError(data.error || 'Erreur inconnue');

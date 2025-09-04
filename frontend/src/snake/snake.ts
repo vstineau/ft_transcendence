@@ -173,31 +173,13 @@ function displayInfoPlayer(game: Game) {
 	nameP1.value = game.p1.name;
 	if( game.p1.avatar) {
 		imgP1.src = game.p1.avatar;
-		if (!game.p1.avatar.startsWith('data:image/')) {
-			if (game.p1.avatar.startsWith('iVBOR')) {
-				imgP1.src = `data:image/png;base64,${game.p1.avatar}`;
-			} else if (game.p1.avatar.startsWith('/9j/')) {
-				imgP1.src = `data:image/jpeg;base64,${game.p1.avatar}`;
-			} else {
-				imgP1.src = `data:image/png;base64,${game.p1.avatar}`;
-			}
-		}
 	}
 	const imgP2 = document.getElementById('avatarJoueur2') as HTMLImageElement;
 	const nameP2 = document.getElementById('nomJoueur2') as HTMLInputElement;
 	nameP2.value = game.p2.name;
 	if( game.p2.avatar) {
 		imgP2.src = game.p2.avatar;
-		if (!game.p2.avatar.startsWith('data:image/')) {
-			if (game.p2.avatar.startsWith('iVBOR')) {
-				imgP2.src = `data:image/png;base64,${game.p2.avatar}`;
-			} else if (game.p2.avatar.startsWith('/9j/')) {
-				imgP2.src = `data:image/jpeg;base64,${game.p2.avatar}`;
-			} else {
-				imgP2.src = `data:image/png;base64,${game.p2.avatar}`;
 			}
-		}
-	}
 }
 
 export function snakeGame() {
@@ -221,17 +203,17 @@ export function snakeGame() {
 	socket.on('waiting_snake', (game: Game) => {
 		drawAlert(game.winSize, 'Waiting for player ... (1 / 2)');
 	})
-	socket.on('endGame_snake', (data) => {
+	socket.on('endGame_snake', (data: any) => {
 		drawAlert(data.winSize, `Game interrupted : ${data.reason}`);
-	    drawAlert(data.winsize, 'La partie a été interrompue : ' + data.reason);
+	    //drawAlert(data.winSize, 'La partie a été interrompue : ' + data.reason);
 	})
-	socket.on('draw', (game) => {
+	socket.on('draw', (game: any) => {
 		drawAlert(game.winSize, "DRAW")
 		if (socket && socket.connected) {
             socket.disconnect();
         }
 	});
-	socket.on('playerWin_snake', (winner, _game) => {
+	socket.on('playerWin_snake', (winner: any, _game: any) => {
 		if (ctx) {
 			gameOver = true;
 			started = false;

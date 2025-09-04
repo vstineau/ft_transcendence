@@ -1,4 +1,3 @@
-
 FROM node:20-alpine
 WORKDIR /usr/share/nginx/html
 

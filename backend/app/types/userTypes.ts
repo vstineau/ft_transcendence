@@ -29,6 +29,9 @@ export type UserJson = {
 	twoFaSecret?: string;
 	twoFaCode?: string;
 	provider?: string;
+	isOnline?: boolean;
+	friends?: string[];
+	blocklist?: string[];
 	stats?: UserStats;
 };
 
@@ -66,5 +69,6 @@ export const mimeTypes: { [key: string]: string } = {
   '.jpeg': 'image/jpeg',
   '.gif': 'image/gif',
   '.png': 'image/png',
+  '.webp': 'image/webp',
 };
 
