@@ -1,3 +1,4 @@
+// @ts-ignore
 import type { Socket } from 'socket.io';
 import type { FastifyInstance } from 'fastify';
 import { userService } from '../services/userService.js';

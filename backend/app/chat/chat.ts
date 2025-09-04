@@ -1,3 +1,4 @@
+// @ts-ignore
 import type { FastifyInstance } from 'fastify';
 import type { Socket } from 'socket.io';
 

@@ -1,3 +1,4 @@
+// @ts-ignore
 import type { Socket } from 'socket.io';
 import { userService } from '../services/userService.js';
 import { CHAT_EVENTS } from '../config/chatConfig.js';

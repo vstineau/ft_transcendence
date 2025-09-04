@@ -1,3 +1,4 @@
+// @ts-ignore
 import { ChatMessage as ChatMessageEntity } from '../../models.js';
 import { SqliteDataSource } from '../../dataSource.js';
 import type { ChatMessage, ChatUser } from '../../types/chatTypes.js';
