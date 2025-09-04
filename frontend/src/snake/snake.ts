@@ -182,7 +182,7 @@ function displayInfoPlayer(game: Game) {
 			}
 }
 
-export function snakeGame() {
+export async function snakeGame() {
 	const url = window.location.href;
 	const myUrl = new URL(url);
 	

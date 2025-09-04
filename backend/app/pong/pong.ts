@@ -144,23 +144,33 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 			// le ternaire c'est la vie
 			// room.game.p1.id === socket.id ? (room.game.p1.id = '') : (room.game.p2.id = '');
 			// if(!room.game.over){
-			const sock = app.io.of('/pong').sockets.get(room.game.p1.id === socket.id ? room.game.p2.id : room.game.p1.id) as Socket
+				const sock = app.io.of('/pong').sockets.get(room.game.p1.id === socket.id ? room.game.p2.id : room.game.p1.id) as Socket
+			if (sock) {
+				sock.emit('playerWin', room.game.p1.id === socket.id ? room.game.p2.nickName : room.game.p1.nickName, room.game);
+				sock.leave(room.name);
+
+			}
+			if (socket) {
+
+				socket.leave(room.name);
+			}
 			// app.io
 			// 	.to(room.name)
-			sock.emit('playerWin', room.game.p1.id === socket.id ? room.game.p2.nickName : room.game.p1.nickName, room.game);
+			//console.log('data sock : ', sock);
+			//console.log('data socket : ', socket);
 			// }
 			// room.game.over = true;
-			socket.leave(room.name);
-			sock.leave(room.name);
 			rooms = rooms.filter(r => r !== room);
 			// roomcount--;
 		}
-		socket.off;
-		socket.disconnect;
+		if (socket) {
+			socket.off;
+			socket.disconnect;
+		}
 	});
 }
 
-export function startPongGame(app: FastifyInstance) {
+export async function startPongGame(app: FastifyInstance) {
 	app.ready().then(() => {
 		app.io.of('/pong').on('connection', (socket: Socket) => {
 			socket.on('initGame', (cookie: string) => {

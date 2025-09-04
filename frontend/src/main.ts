@@ -141,8 +141,8 @@ async function renderPage() {
 			}, 100);
 			break;
 		case '/updateInfos':
-			displayChatButton();
 			updateInfos();
+			displayChatButton();
 			break;
 		case '/register':
 			registerUser();
@@ -151,20 +151,20 @@ async function renderPage() {
 			logUser();
 			break;
 		case '/pong/matchmaking/game':
-			displayChatButton();
-			pongGame();
+			await pongGame();
+			await displayChatButton();
 			break;
 		case '/pong/matchmaking/localgame':
-			displayChatButton();
 			localpongGame();
+			displayChatButton();
 			break;
 		case '/snake':
-			displayChatButton();
-			snakeGame();
+			await snakeGame();
+			await displayChatButton();
 			break;
 		case '/snake/local':
-			displayChatButton();
 			localSnakeGame();
+			displayChatButton();
 			break;
 		case '/2fa-verification':
 			initTwoFALogin();
