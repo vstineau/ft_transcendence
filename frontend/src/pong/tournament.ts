@@ -70,7 +70,7 @@ function getPlayersName(nb: number) {
 		container.appendChild(input);
 	}
 	submitNames(container);
-	console.log('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
+	// console.log('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
 	return container;
 }
 
@@ -166,7 +166,7 @@ function nextRoundButton(match: Game): HTMLButtonElement {
 	button.id = 'playNextRound';
 	button.textContent = `Next Match !`;
 	button.className =
-		'mt-4 rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white';
+		'rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white';
 	button.addEventListener('click', () => {});
 	return button;
 }
@@ -178,18 +178,20 @@ function drawTitle(title: string): HTMLHeadingElement {
 	return header;
 }
 
-function drawBrackets(matchs: Game[], matchIdx: number) {
+function drawBrackets(matchs: Game[], matchIdx: number, roundnb: number) {
 	// form.innerHTML = '';
 	const matchsContainer = document.createElement('div');
-	matchsContainer.className = 'flex flex-row mb-2';
+	matchsContainer.className = 'flex flex-col'; // <-- flex-col ici !
 	for (let i = 0; i <= tournament.rounds.max; i++) {
+		// Chaque round est une ligne
 		const round = document.createElement('div');
-		round.className = 'flex flex-row mb-2';
+		round.className = 'flex flex-row rounded mb-10 justify-center items-center';
+		if(roundnb === i) round.className += ' outline outline-white-500'
 		for (let j = 0; j < tournament.rounds.games[i].length; j++) {
 			const match = document.createElement('div');
 			match.className = 'flex flex-col border hover:bg-gray-500 items-center bg-gray-600 p-2 rounded shadow-sm mx-4';
-			// if (j === matchIdx) match.className += ' animate-bounce outline outline-yellow-500';
-			// else match.className += ' border';
+			if (j === matchIdx && i === roundnb) match.className += ' animate-bounce outline outline-yellow-500';
+
 			const player1 = document.createElement('div');
 			player1.className = 'w-40 font-bold text-white text-center bg-gray-400 rounded shadow-inner mb-1 px-2 py-1';
 			player1.textContent = `${tournament.rounds.games[i][j].p1.nickName}`;
@@ -207,6 +209,7 @@ function drawBrackets(matchs: Game[], matchIdx: number) {
 			match.appendChild(player2);
 			round.appendChild(match);
 		}
+		matchsContainer.appendChild(round); // On ajoute chaque round en colonne !
 	}
 	form.appendChild(matchsContainer);
 	form.className = 'flex flex-col items-center';
@@ -279,7 +282,7 @@ function listenInputs() {
 function checkSubmited(container: HTMLDivElement) {
 	const inputs = Array.from(container.querySelectorAll('input[type="text"]')) as HTMLInputElement[];
 	names = inputs.map(i => i.value.trim());
-	console.log(names);
+	// console.log(names);
 	// const firstEmpty = inputs.find(i => i.value.trim().length === 0);
 	// const duplicate = new Set(names).size !== names.length;
 	for (let i = 0; names[i]; i++) {
@@ -315,22 +318,11 @@ function submitNames(container: HTMLDivElement) {
 		// button.hidden = true;
 		deleteElem('submitName');
 		tournament = new Tournament(names);
-		for (let i = 0; tournament.rounds.games[i]; i++) {
-			console.log(`round ${i + 1}`);
-			for (let j = 0; tournament.rounds.games[i][j]; j++) {
-				console.log(tournament.rounds.games[i][j]);
-			}
-		}
-		// initGame(); que quand la game se lance
-		// while(tournament.players.length > 1){
-		// tournament.fillMatchs(); /// improve
-		console.log(tournament.matchs);
 		let matchIdx = 1;
-		const emptyMatchs: Game[] = [];
+		tournament.fillRound();
 		const title = drawTitle('Round');
 		form.appendChild(title);
-		drawBrackets(tournament.matchs, matchIdx);
-		drawBrackets(tournament.matchs, -1);
+		drawBrackets(tournament.matchs, matchIdx, tournament.rounds.nb);
 		const roundButton = nextRoundButton(tournament.matchs[matchIdx]);
 		form.appendChild(roundButton);
 		return;
@@ -353,7 +345,7 @@ export function pongTournament() {
 			alert('You need pair number of players');
 			return;
 		}
-		console.log('Nombre de joueurs :', nbPlayers);
+		// console.log('Nombre de joueurs :', nbPlayers);
 		const uiInput = getPlayersName(nbPlayers);
 		playerForm.hidden = true;
 		form.append(uiInput);

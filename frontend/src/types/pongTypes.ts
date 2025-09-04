@@ -139,34 +139,34 @@ export class Tournament {
 		for (let i = 0; i <= this.rounds.max; i++) {
 			let newRound: Game[] = [];
 			for (let j = 0; j < nbgames; j++) {
-				console.log(`game ${j + 1} created`);
+				// console.log(`game ${j + 1} created`);
 				const newGame = this.gameInit(this.initPlayer('...'), this.initPlayer('...'));
 				newRound.push(newGame);
 			}
-			console.log(`round ${i + 1} pushed`);
+			// console.log(`round ${i + 1} pushed`);
 			this.rounds.games.push(newRound);
-			console.log(`nb games = ${nbgames}`);
+			// console.log(`nb games = ${nbgames}`);
 			nbgames /= 2;
 		}
 	}
-	fillMatchs(round: Game[]) {
-		for (let i = 0; i < this.players.length; i++) {
-			if (this.players[i].eliminated) continue;
-			if (!(i % 2)) {
-				let game: Game = this.gameInit(this.players[i], this.players[i + 1]);
-				this.matchs.push(game);
-			}
+	private fillMatchs(round: Game[], p: PlayerTournament[]) {
+		// Remplir chaque game avec deux joueurs successifs
+		for (let i = 0; i < round.length; i++) {
+			const idx = i * 2;
+			round[i].p1 = p[idx];
+			round[i].p2 = p[idx + 1];
 		}
-		this.rounds.games.push(this.matchs);
-		let emptyPlayer = this.initPlayer('...');
-		for (let i = 1; i < this.rounds.max; i++) {}
 	}
-	fillNextRound() {
+	fillRound() {
 		let qualified: PlayerTournament[] = this.players;
+		for (let i = 0; qualified[i]; i++) {
+			console.log(qualified[i].nickName);
+		}
 		if (this.rounds.nb < 1) {
 			qualified = qualified.filter(player => !player.eliminated);
 		}
-		for (let i = 0; this.rounds.games[this.rounds.nb][i]; i++) {}
+		this.fillMatchs(this.rounds.games[this.rounds.nb], qualified);
+		// this.rounds.nb++;
 	}
 	private gameInit(player1: PlayerTournament, player2: PlayerTournament): Game {
 		let newGame: Game = {
