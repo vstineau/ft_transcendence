@@ -16,7 +16,7 @@ function getRoom(friend?: string []) {
 	if (friend) {
 		return snakeRooms.find(room => room.playersNb === 1 && (room.game.p1.login === friend[0] || room.game.p1.login === friend[1]));
 	}
-    return snakeRooms.find(room => room.playersNb === 1);
+    return snakeRooms.find(room => room.playersNb === 1 && room.custom === false);
 }
 
 function isInvited(loginP1: string, loginP2: string, friend: string[]): boolean {
@@ -28,7 +28,8 @@ function isInvited(loginP1: string, loginP2: string, friend: string[]): boolean 
 }
 
 function initRoom(socket: Socket, user: User, friend?: string[]) {
-    const room = getRoom();
+    const room = getRoom(friend);
+	//console.log('ROOM = ', room);
     if (room && user.login != room.game.p1.login) {
 		if (!friend) {
 			console.log('NORMAL GAME');
@@ -40,7 +41,7 @@ function initRoom(socket: Socket, user: User, friend?: string[]) {
 			room.game.p2.avatar = user.avatar;
 			return room;
 		}
-		else if (room && friend && isInvited(room.game.p1.login, user.login, friend)) {
+		else if (room && friend && user.login != room.game.p1.login && isInvited(room.game.p1.login, user.login, friend)) {
 			console.log('CUSTOM GAME');
 			socket.join(room.name);
         	room.playersNb = 2;
@@ -51,13 +52,16 @@ function initRoom(socket: Socket, user: User, friend?: string[]) {
 			return room;
 		}
 		else {
+			console.log("ROOM MAIS PAS LA BONNE")
 			const newRoom = createRoom(socket, user);
         	socket.join(newRoom.name);
 			newRoom.playersNb = 1;
 			return newRoom;
 		}
     } else {
+		console.log("0 ROOM ON EN CREE UNE")
         const newRoom = createRoom(socket, user);
+		friend? newRoom.custom = true: newRoom.custom=false;
         socket.join(newRoom.name);
 		newRoom.playersNb = 1;
 		return newRoom;
@@ -317,10 +321,10 @@ export function update(game: Game, app: FastifyInstance, roomId: string) {
 async function getUser(socket: Socket, cookie: string): Promise<User | undefined> {
 				
 	let user;
-	console.log(cookie);
+	//console.log(cookie);
 	if (cookie) {
 		const payload = app.jwt.verify<JwtPayload>(cookie);
-		console.log(payload);
+		//console.log(payload);
 		user = await User.findOneBy({ id: payload.id });
 		if (!user) {
 			socket.emit('notLogged');
@@ -341,7 +345,9 @@ export async function startSnakeGame(app: FastifyInstance) {
                 if (!user) return; // non connecté
                 const room = initRoom(socket, user, friend);
                 handleDisconnect(app, socket);
+				console.log('HANDLEDISCONNECT');
                 getInputs(socket, room.game);
+				console.log('GETINPUT');
 
                 socket.on('initGame_snake', () => {
                     const room = snakeRooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);

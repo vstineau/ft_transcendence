@@ -30,4 +30,5 @@ export type Room = {
     playersNb: number;
     game: Game;
 	interval?: NodeJS.Timeout;
+	custom?: boolean;
 };
