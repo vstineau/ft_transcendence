@@ -169,7 +169,7 @@ function drawWinner(winner: string, game: Game) {
 
 let winner: string | null = null;
 let lastGame: Game | null = null;
-export function pongGame() {
+export async function pongGame() {
 	const socket = createPongSocket();
 	listenUserInputs(socket);
 	socket.on('notLogged', () => {

@@ -10,14 +10,20 @@ export async function displayChatButton() {
     const { ChatFloatingButton } = await import('../chat/components');
     document.body.insertAdjacentHTML('beforeend', ChatFloatingButton());
     
-    // NE PAS initialiser le chat ici - le faire au clic du bouton
+    // Initialiser le chat immédiatement (connexion Socket.IO, état initial)
+    const { chatManager } = await import('../chat');
+    
+    // Le bouton ne fait que toggle l'interface (ouvrir/fermer le panel)
     const chatFab = document.getElementById('chat-fab');
     if (chatFab) {
-        chatFab.addEventListener('click', async () => {
-            const { chatManager } = await import('../chat');
-            // Le chat s'initialise seulement quand on clique
+        chatFab.addEventListener('click', () => {
+            chatManager.toggleChat();
         });
     }
+    
+    // Petit délai pour s'assurer que la connexion Socket.IO s'établit
+    // avant l'initialisation d'autres composants (snake, pong)
+    await new Promise(resolve => setTimeout(resolve, 100));
 }
 
 // Masquer le bouton de chat après déconnexion

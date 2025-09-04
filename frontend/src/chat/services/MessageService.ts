@@ -37,10 +37,6 @@ export class MessageService {
         }
     ];
 
-    getMessages(): Message[] {
-        return this.messages.length > 0 ? this.messages : this.mockMessages;
-    }
-
     addMessage(message: Message): void {
         this.messages.push(message);
     }

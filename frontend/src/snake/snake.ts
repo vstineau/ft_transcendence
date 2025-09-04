@@ -181,7 +181,7 @@ function displayInfoPlayer(game: Game) {
 			}
 }
 
-export function snakeGame() {
+export async function snakeGame() {
 	const socket = createSnakeSocket();
 	socket.on('notLogged', () => {
 		navigateTo('/login?/snake');

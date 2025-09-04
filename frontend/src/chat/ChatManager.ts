@@ -30,7 +30,7 @@ export class ChatManager {
     constructor() {
         this.socketService = new SocketService();
         this.messageService = new MessageService();
-        this.initializeChat();
+		this.createSocketClient();
     }
 
     private createSocketClient() {
@@ -106,23 +106,6 @@ export class ChatManager {
         this.socketService.on('error', (error: any) => {
             console.error('❌ Chat error:', error);
         });
-    }
-
-    private initializeChat() {
-        this.createSocketClient();
-        
-        // Initialiser avec les messages de démo
-        this.state.messages = this.messageService.getMessages();
-        this.setupEventListeners();
-    }
-
-    private setupEventListeners() {
-        const chatFab = document.getElementById('chat-fab');
-        if (chatFab) {
-            chatFab.addEventListener('click', () => {
-                this.toggleChat();
-            });
-        }
     }
 
     public toggleChat() {
