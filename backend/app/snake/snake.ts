@@ -12,14 +12,17 @@ const FPS = 30;
 let snakeRooms: Room[] = [];
 let roomcount = 0;
 
-function getRoom() {
+function getRoom(friend?: string []) {
+	if (friend) {
+		return snakeRooms.find(room => room.playersNb === 1 && (room.game.p1.login === friend[0] || room.game.p1.login === friend[1]));
+	}
     return snakeRooms.find(room => room.playersNb === 1);
 }
 
 function isInvited(loginP1: string, loginP2: string, friend: string[]): boolean {
-	if (loginP1 !== friend[0] || loginP1 !== friend[1])	
+	if (loginP1 !== friend[0] && loginP1 !== friend[1])	
 		return false;
-	if (loginP2 !== friend[0] || loginP2 !== friend[1])	
+	if (loginP2 !== friend[0] && loginP2 !== friend[1])	
 		return false;
 	return true;
 }
@@ -28,6 +31,7 @@ function initRoom(socket: Socket, user: User, friend?: string[]) {
     const room = getRoom();
     if (room && user.login != room.game.p1.login) {
 		if (!friend) {
+			console.log('NORMAL GAME');
 			socket.join(room.name);
         	room.playersNb = 2;
         	room.game.p2.id = socket.id;
@@ -36,7 +40,8 @@ function initRoom(socket: Socket, user: User, friend?: string[]) {
 			room.game.p2.avatar = user.avatar;
 			return room;
 		}
-		else if (friend && isInvited(room.game.p1.login, user.login, friend)) {
+		else if (room && friend && isInvited(room.game.p1.login, user.login, friend)) {
+			console.log('CUSTOM GAME');
 			socket.join(room.name);
         	room.playersNb = 2;
         	room.game.p2.id = socket.id;
@@ -331,6 +336,7 @@ export async function startSnakeGame(app: FastifyInstance) {
     app.ready().then(() => {
         app.io.of('/snake').on('connection', (socket: Socket) => {
             socket.on('isConnected', async (cookie: string, friend?: string[]) => {
+				console.log("FRIEND = ", friend);
                 const user = await getUser(socket, cookie);
                 if (!user) return; // non connecté
                 const room = initRoom(socket, user, friend);

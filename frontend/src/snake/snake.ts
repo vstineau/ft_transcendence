@@ -183,7 +183,7 @@ function displayInfoPlayer(game: Game) {
 }
 
 export function snakeGame() {
-	const url = "https://example.com/game?player1=truc&player2=machin";
+	const url = window.location.href;
 	const myUrl = new URL(url);
 	
 	const params = new URLSearchParams(myUrl.search);
