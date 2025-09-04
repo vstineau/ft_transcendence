@@ -16,6 +16,7 @@ export function createPongSocket(): Socket {
 
 	let socket = io(`${protocol}//${host}:${port}/pong`);
 	socket.on('connect', () => {
+		console.log('socket pong create');
 		let cookie = getCookie('token');
 		socket.emit('initGame', cookie);
 		initCanvas(socket);
@@ -172,6 +173,8 @@ let lastGame: Game | null = null;
 export async function pongGame() {
 	const socket = createPongSocket();
 	listenUserInputs(socket);
+	socket.onAny((eventName, ...args) => {
+	})
 	socket.on('notLogged', () => {
 		navigateTo('/login?/pong/matchmaking/game');
 	});
