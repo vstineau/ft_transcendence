@@ -182,27 +182,31 @@ function drawBrackets(matchs: Game[], matchIdx: number) {
 	// form.innerHTML = '';
 	const matchsContainer = document.createElement('div');
 	matchsContainer.className = 'flex flex-row mb-2';
-	for (let i = 0; i < matchs.length; i++) {
-		const match = document.createElement('div');
-		match.className = 'flex flex-col hover:bg-gray-500 items-center bg-gray-600 p-2 rounded shadow-sm mx-4';
-		if (i === matchIdx) match.className += ' animate-bounce outline outline-yellow-500';
-		else match.className += ' border';
-		const player1 = document.createElement('div');
-		player1.className = 'w-40 font-bold text-white text-center bg-gray-400 rounded shadow-inner mb-1 px-2 py-1';
-		player1.textContent = `${matchs[i].p1.nickName}`;
+	for (let i = 0; i <= tournament.rounds.max; i++) {
+		const round = document.createElement('div');
+		round.className = 'flex flex-row mb-2';
+		for (let j = 0; j < tournament.rounds.games[i].length; j++) {
+			const match = document.createElement('div');
+			match.className = 'flex flex-col border hover:bg-gray-500 items-center bg-gray-600 p-2 rounded shadow-sm mx-4';
+			// if (j === matchIdx) match.className += ' animate-bounce outline outline-yellow-500';
+			// else match.className += ' border';
+			const player1 = document.createElement('div');
+			player1.className = 'w-40 font-bold text-white text-center bg-gray-400 rounded shadow-inner mb-1 px-2 py-1';
+			player1.textContent = `${tournament.rounds.games[i][j].p1.nickName}`;
 
-		const vs = document.createElement('div');
-		vs.className = 'text-center mb-1 font-bold';
-		vs.textContent = `VS`;
+			const vs = document.createElement('div');
+			vs.className = 'text-center mb-1 font-bold';
+			vs.textContent = `VS`;
 
-		const player2 = document.createElement('div');
-		player2.className = 'w-40 font-bold text-white text-center bg-gray-400 rounded shadow-inner px-2 py-1';
-		player2.textContent = `${matchs[i].p2.nickName}`;
+			const player2 = document.createElement('div');
+			player2.className = 'w-40 font-bold text-white text-center bg-gray-400 rounded shadow-inner px-2 py-1';
+			player2.textContent = `${tournament.rounds.games[i][j].p2.nickName}`;
 
-		match.appendChild(player1);
-		match.appendChild(vs);
-		match.appendChild(player2);
-		matchsContainer.appendChild(match);
+			match.appendChild(player1);
+			match.appendChild(vs);
+			match.appendChild(player2);
+			round.appendChild(match);
+		}
 	}
 	form.appendChild(matchsContainer);
 	form.className = 'flex flex-col items-center';
@@ -311,12 +315,18 @@ function submitNames(container: HTMLDivElement) {
 		// button.hidden = true;
 		deleteElem('submitName');
 		tournament = new Tournament(names);
+		for (let i = 0; tournament.rounds.games[i]; i++) {
+			console.log(`round ${i + 1}`);
+			for (let j = 0; tournament.rounds.games[i][j]; j++) {
+				console.log(tournament.rounds.games[i][j]);
+			}
+		}
 		// initGame(); que quand la game se lance
 		// while(tournament.players.length > 1){
-		tournament.fillMatchs(); /// improve
+		// tournament.fillMatchs(); /// improve
 		console.log(tournament.matchs);
 		let matchIdx = 1;
-		const emptyMatchs: Game[] = []
+		const emptyMatchs: Game[] = [];
 		const title = drawTitle('Round');
 		form.appendChild(title);
 		drawBrackets(tournament.matchs, matchIdx);

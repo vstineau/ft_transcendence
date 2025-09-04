@@ -47,7 +47,7 @@ interface Round {
 
 export class Tournament {
 	players: PlayerTournament[] = [];
-	qualified: PlayerTournament[] = [] // surement de la merde
+	qualified: PlayerTournament[] = []; // surement de la merde
 	matchs: Game[] = [];
 	leaderBoard: PlayerTournament[] = [];
 	rounds: Round; // pk pas?
@@ -62,13 +62,14 @@ export class Tournament {
 	gameHeight: number = this.win_height * 0.8;
 
 	constructor(names: string[]) {
-		this.rounds = { games: [], max: names.length === 8 ? 3 : 2, nb: 1 };
+		this.rounds = { games: [], max: names.length === 8 ? 2 : 1, nb: 0 };
 		for (const name of names) {
 			let player: PlayerTournament = this.initPlayer(name);
 			this.leaderBoard.push(player);
 			this.players.push(player);
 		}
 		this.shufflePlayers();
+		this.initRounds();
 	}
 
 	private initPlayer(name: string): PlayerTournament {
@@ -131,7 +132,22 @@ export class Tournament {
 			const j = Math.floor(Math.random() * (i + 1));
 			[this.players[i], this.players[j]] = [this.players[j], this.players[i]];
 		}
-		this.qualified = this.players; // surement de la merde 
+		this.qualified = this.players; // surement de la merde
+	}
+	private initRounds() {
+		let nbgames = this.players.length === 8 ? 4 : 2;
+		for (let i = 0; i <= this.rounds.max; i++) {
+			let newRound: Game[] = [];
+			for (let j = 0; j < nbgames; j++) {
+				console.log(`game ${j + 1} created`);
+				const newGame = this.gameInit(this.initPlayer('...'), this.initPlayer('...'));
+				newRound.push(newGame);
+			}
+			console.log(`round ${i + 1} pushed`);
+			this.rounds.games.push(newRound);
+			console.log(`nb games = ${nbgames}`);
+			nbgames /= 2;
+		}
 	}
 	fillMatchs(round: Game[]) {
 		for (let i = 0; i < this.players.length; i++) {
@@ -142,8 +158,15 @@ export class Tournament {
 			}
 		}
 		this.rounds.games.push(this.matchs);
-		let emptyPlayer = this.initPlayer('');
+		let emptyPlayer = this.initPlayer('...');
 		for (let i = 1; i < this.rounds.max; i++) {}
+	}
+	fillNextRound() {
+		let qualified: PlayerTournament[] = this.players;
+		if (this.rounds.nb < 1) {
+			qualified = qualified.filter(player => !player.eliminated);
+		}
+		for (let i = 0; this.rounds.games[this.rounds.nb][i]; i++) {}
 	}
 	private gameInit(player1: PlayerTournament, player2: PlayerTournament): Game {
 		let newGame: Game = {
