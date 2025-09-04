@@ -8,6 +8,7 @@ import {v4 as uuidv4} from 'uuid';
 @Entity()
 @Unique(['email'])
 @Unique(['login'])
+
 export class User extends BaseEntity {
 
 	@BeforeInsert()
@@ -99,47 +100,103 @@ export class User extends BaseEntity {
     history?: History[];
 };
 
+// @Entity()
+// export class History {
+
+// 	@PrimaryGeneratedColumn()
+// 	gamecount?: number;
+
+// 	@Column()
+// 	type?: string; //snake ou pong
+
+// 	@Column()
+// 	date?: string; //date de jeu
+
+// 	@Column()
+// 	opponent?: string; //login
+
+// 	@Column()
+// 	score?: string;
+
+// 	@Column()
+// 	win?: string; //qui a gagner/perdu
+
+// 	@Column()
+// 	finalLength?: number; //taille finale
+
+// 	@Column()
+// 	gameTime?: number; //en ms
+
+// 	@ManyToOne(() => User, (user: User) => user.history)
+//     user: User;
+
+// 	constructor(user: User , data?: UserHistory)
+// 	{
+// 		if (data) {
+// 			this.type = data.type;
+// 			this.date = data.date;
+// 			this.opponent = data.opponent;
+// 			this.score = data.score;
+// 			this.win = data.win;
+// 			this.finalLength = data.finalLength;
+// 			this.gameTime = data.gameTime;
+// 		}
+// 		this.user = user;
+// 	}
+// };
+
+// Dans models.ts
+
+///BaseEntity de TypeORM fournit des méthodes a la classe :
+
+// .save() - sauvegarder l'entite
+// .remove() - supprimer l'entite
+// .find() - trouver des entites
+// .findOne() - trouver une entite
+// .delete() - supprimer par criteres
 @Entity()
-export class History {
+export class History extends BaseEntity { //extends : mot-cle d'héritage - History hérite de BaseEntity
 
-	@PrimaryGeneratedColumn()
-	gamecount?: number; 
+    @PrimaryGeneratedColumn()
+    gamecount?: number;
 
-	@Column()
-	type?: string; //snake ou pong
+    @Column()
+    type?: string;
 
-	@Column()
-	date?: string; //date de jeu
+    @Column()
+    date?: string;
 
-	@Column()
-	opponent?: string; //login
+    @Column()
+    opponent?: string;
 
-	@Column()
-	score?: string;
+    @Column()
+    score?: string;
 
-	@Column()
-	win?: string; //qui a gagner/perdu
+    @Column()
+    win?: string;
 
-	@Column()
-	finalLength?: number; //taille finale
+    @Column()
+    finalLength?: number;
 
-	@Column()
-	gameTime?: number; //en ms
+    @Column()
+    gameTime?: number;
 
-	@ManyToOne(() => User, (user: User) => user.history)
-    user: User;
+    @ManyToOne(() => User, (user: User) => user.history)
+    user!: User;
 
-	constructor(user: User , data?: UserHistory)
-	{
-		if (data) {
-			this.type = data.type;
-			this.date = data.date;
-			this.opponent = data.opponent;
-			this.score = data.score;
-			this.win = data.win;
-			this.finalLength = data.finalLength;
-			this.gameTime = data.gameTime;
-		}
-		this.user = user;
-	}
-};
+    constructor(user?: User, data?: UserHistory) {
+        super();
+        if (user) {
+            this.user = user;
+        }
+        if (data) {
+            this.type = data.type;
+            this.date = data.date;
+            this.opponent = data.opponent;
+            this.score = data.score;
+            this.win = data.win;
+            this.finalLength = data.finalLength;
+            this.gameTime = data.gameTime;
+        }
+    }
+}

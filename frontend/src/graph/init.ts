@@ -114,8 +114,11 @@ async function fetchSnakeHistory(): Promise<SnakeGameHistory[]> {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const data = await response.json();
-        console.log('History data received:', data);
+         const data = await response.json();
+        console.log('RAW History data received:', data);
+        console.log('Number of games:', data.length);
+        console.log('First game:', data[0]);
+        console.log('All games dates:', data.map((g: SnakeGameHistory) => ({ date: g.date, opponent: g.opponent })));
         return data;
     } catch (error) {
         console.log('Error fetching snake history', error);
@@ -145,36 +148,60 @@ function formatGameTime(timeInMs: number): string {
 }
 
 function generateLastGamesHTML(games: SnakeGameHistory[]): string {
-	if (games.length === 0) {
-		return `
-			<div class="flex flex-col items-center justify-center py-8 text-center">
-				<p class="text-gray-500 text-sm">Yes...😔 you have to play if you want data</p>
-			</div>
-		`;
-	}
+    console.log('=== generateLastGamesHTML ===');
+    console.log('Total games received:', games.length);
+    console.log('Games data:', games.map(g => ({
+        date: g.date,
+        opponent: g.opponent,
+        win: g.win
+    })));
+    if (games.length === 0) {
+        return `
+            <div class="flex flex-col items-center justify-center py-8 text-center">
+                <p class="text-gray-500 text-sm">Yes...😢 you have to play if you want data</p>
+            </div>
+        `;
+    }
 
-	// Prendre seulement les 3 dernieres parties
-	const lastGames = games.slice(-3).reverse();
+    // Prendre les 3 dernières parties
+    const lastGames = games.slice(0, 3);
+    console.log('Last games to display:', lastGames.length);
 
-	return lastGames.map(game => `
-		<div class="grid grid-cols-3 gap-4 items-center p-3 rounded-lg border-b">
-			<div class="min-w-0">
-				<p class="font-semibold text-sm truncate">YOU</p>
-				<p class="text-gray-500 text-xs">${formatDate(game.date || '')}</p>
-			</div>
-			<div class="text-center flex-shrink-0">
-				<span class="text-lg font-bold">VS</span>
-			</div>
-			<div class="text-right min-w-0">
-				<p class="font-semibold text-sm px-2 py-1 rounded truncate ${game.win === 'win' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
-					${game.opponent} pts
-				</p>
-				<p class="text-gray-500 text-xs truncate">
-					${formatGameTime(game.gameTime || 0)} • Length: ${game.finalLength}
-				</p>
-			</div>
-		</div>
-	`).join('');
+    return lastGames.map(game => {
+        let leftPlayer = 'YOU';
+        let rightPlayer = game.opponent || 'Opponent';
+
+        // Ajouter les couronnes selon le résultat
+        if (game.win === 'WIN') {
+            leftPlayer = '👑 YOU';
+        } else if (game.win === 'LOOSE') {
+            rightPlayer = '👑 ' + rightPlayer;
+        }
+
+        // Couleur selon le résultat
+        // const resultColor = game.win === 'WIN' ? 'text-green-600' :
+        //                    game.win === 'LOOSE' ? 'text-red-600' : 'text-gray-600';
+
+        return `
+            <div class="grid grid-cols-3 gap-4 items-center p-3 rounded-lg border-b">
+                <div class="min-w-0">
+                    <p class="font-semibold text-sm truncate">${leftPlayer}</p>
+                    <p class="text-gray-500 text-xs">${formatDate(game.date || '')}</p>
+                </div>
+                <div class="text-center flex-shrink-0">
+                    <span class="text-lg font-bold">VS</span>
+                </div>
+                <div class="text-right min-w-0">
+                    <p class="font-semibold text-sm truncate">
+                        ${rightPlayer}
+                    </p>
+                    <p class="text-gray-500 text-xs truncate">
+                        ${formatGameTime(game.gameTime || 0)} • Length: ${game.finalLength}
+                    </p>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
 export async function updateLastGames(): Promise<void> {
