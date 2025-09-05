@@ -30,3 +30,15 @@ export type Room = {
     game: Game;
 	interval?: NodeJS.Timeout;
 };
+
+export interface SnakeGameHistory{
+	gamecount?: number;
+	type?: string;
+	date?: string;
+	opponent?: string;
+	score?: string;
+	win?: string;
+	finalLength?: number;
+	gameTime?: number;
+}
+

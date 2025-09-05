@@ -8,6 +8,7 @@ import {v4 as uuidv4} from 'uuid';
 @Entity()
 @Unique(['email'])
 @Unique(['login'])
+
 export class User extends BaseEntity {
 
 	@BeforeInsert()
@@ -116,49 +117,51 @@ export class User extends BaseEntity {
 };
 
 @Entity()
-export class History {
+export class History extends BaseEntity { //extends : mot-cle d'héritage - History hérite de BaseEntity
 
-	@PrimaryGeneratedColumn()
-	gamecount?: number;
+    @PrimaryGeneratedColumn()
+    gamecount?: number;
 
-	@Column()
-	type?: string;
+    @Column()
+    type?: string;
 
-	@Column()
-	date?: string;
+    @Column()
+    date?: string;
 
-	@Column()
-	opponent?: string;
+    @Column()
+    opponent?: string;
 
-	@Column()
-	score?: string;
+    @Column()
+    score?: string;
 
-	@Column()
-	win?: string;
+    @Column()
+    win?: string;
 
-	@Column()
-	finalLength?: number;
+    @Column()
+    finalLength?: number;
 
-	@Column()
-	gameTime?: number;
+    @Column()
+    gameTime?: number;
 
-	@ManyToOne(() => User, (user: User) => user.history)
-    user: User;
+    @ManyToOne(() => User, (user: User) => user.history)
+    user!: User;
 
-	constructor(user: User , data?: UserHistory)
-	{
-		if (data) {
-			this.type = data.type;
-			this.date = data.date;
-			this.opponent = data.opponent;
-			this.score = data.score;
-			this.win = data.win;
-			this.finalLength = data.finalLength;
-			this.gameTime = data.gameTime;
-		}
-		this.user = user;
-	}
-};
+    constructor(user?: User, data?: UserHistory) {
+        super();
+        if (user) {
+            this.user = user;
+        }
+        if (data) {
+            this.type = data.type;
+            this.date = data.date;
+            this.opponent = data.opponent;
+            this.score = data.score;
+            this.win = data.win;
+            this.finalLength = data.finalLength;
+            this.gameTime = data.gameTime;
+        }
+    }
+}
 
 @Entity()
 export class ChatMessage {

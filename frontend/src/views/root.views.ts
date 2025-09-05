@@ -367,26 +367,120 @@ export async function StatsSnakeView() {
 		</div>
 
 		<div class="content-section min-h-screen bg-gray-100 py-16">
-            <div class="max-w-4xl mx-auto px-8">
-                <!-- Container des blocs en grid simple -->
-                <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 300px 300px; max-width: 600px;">
+        <div class="max-w-7xl mx-auto px-8">
+            <!-- Container des blocs en grid complexe -->
+            <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
+			 <!-- Bloc My Profile -->
+				<div class="bg-white rounded-xl shadow-lg p-6">
+					<h3 class="font-bold text-lg mb-4">My profil</h3>
+					<div class="flex items-center mb-4">
 
-					<a href="/pong-choice" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600">Pong</p>
-						<div class="flex-1 flex items-center justify-center">
-							<span class="text-2xl">🏓</span>
+						<div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden">
+                        	<!-- L'avatar ou le fallback sera injecté ici -->
 						</div>
-					</a>
 
-                    <!-- Bloc Games - Carré -->
-                    <a href="/snake-choice" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600">Snake</p>
-						<div class="flex-1 flex items-center justify-center">
-							<span class="text-2xl">🐍</span>
+						<div class="ml-2 mt-12">
+							 <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
+
+							<!-- NOM UTILISATEUR -->
+							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
 						</div>
-					</a>
-            	</div>
+					</div>
+					<div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
+						<div class="flex flex-col">
+							<span class="text-gray-600">Classement</span>
+							<span class="font-semibold">4</span>
+						</div>
+						<div class="flex flex-col">
+							<span class="text-gray-600">Max size</span>
+							<span class="font-semibold">25</span>
+						</div>
+						<div class="flex flex-col">
+							<span class="text-gray-600">Average size</span>
+							<span class="font-semibold">52</span>
+						</div>
+						<div class="flex flex-col">
+							<span class="text-gray-600">Eaten apples</span>
+							<span class="font-semibold">52</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Bloc Last Games -->
+				<div class="bg-white rounded-xl shadow-lg p-6">
+				<h3 class="font-bold text-lg mb-4">Last games</h3>
+					<div id="last-games-content" class="space-y-3">
+						<!-- Le contenu sera injecté ici par JavaScript -->
+						<div class="flex flex-col items-center justify-center py-8 text-center">
+							<p class="text-gray-500 text-sm">Loading...</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Bloc My Stats - Distribution des scores -->
+				<div class="bg-white rounded-xl shadow-lg p-6">
+					<h3 class="font-bold text-lg mb-4">My stats</h3>
+					<p class="text-gray-500 text-sm mb-4">Score distribution</p>
+					<canvas id="scoreDistributionChart" width="250" height="180"></canvas>
+				</div>
+
+				<!-- Bloc Global Ranking -->
+				<div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
+					<h3 class="font-bold text-lg mb-4">Global Ranking</h3>
+					<div class="overflow-x-auto">
+						<table class="w-full text-sm">
+							<thead>
+								<tr class="border-b">
+									<th class="text-left py-2">Rank</th>
+									<th class="text-left py-2">Player</th>
+									<th class="text-left py-2">Max Score</th>
+									<th class="text-left py-2">Max Length</th>
+									<th class="text-left py-2">Best Time</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="border-b">
+									<td class="py-2">01-09</td>
+									<td class="py-2 font-semibold">Theo le terreur</td>
+									<td class="py-2">50</td>
+									<td class="py-2">50</td>
+									<td class="py-2">1:05</td>
+								</tr>
+								<tr class="border-b">
+									<td class="py-2">01-09</td>
+									<td class="py-2 font-semibold">Arthur</td>
+									<td class="py-2">35</td>
+									<td class="py-2">50</td>
+									<td class="py-2">0:50</td>
+								</tr>
+								<tr class="border-b">
+									<td class="py-2">01-09</td>
+									<td class="py-2 font-semibold">OSETO</td>
+									<td class="py-2">28</td>
+									<td class="py-2">50</td>
+									<td class="py-2">0:20</td>
+								</tr>
+								<tr class="border-b">
+									<td class="py-2">01-09</td>
+									<td class="py-2 font-semibold">Theo</td>
+									<td class="py-2">27</td>
+									<td class="py-2">50</td>
+									<td class="py-2">0:15</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<!-- Bloc Time Game - Temps de survie -->
+				<div class="bg-white rounded-xl shadow-lg p-6">
+					<h3 class="font-bold text-lg mb-4">Time game</h3>
+					<p class="text-gray-500 text-sm mb-4">Survival time analysis</p>
+					<canvas id="survivalTimeChart" width="250" height="180"></canvas>
+				</div>
 			</div>
+		</div>
+	</div>
 	`;
 }
 
@@ -451,26 +545,6 @@ export async function LoginView() {
 							class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors">Sign in</button>
 					</div>
                 </form>
-
-				<!-- Séparateur -->
-				<div class="flex items-center pt-4 pb-2">
-					<div class="flex-grow border-t border-gray-300"></div>
-					<span class="flex-shrink mx-4 text-gray-400 text-sm">or</span>
-					<div class="flex-grow border-t border-gray-300"></div>
-				</div>
-
-				<!-- Bouton GitHub -->
-				<div class="flex justify-center pt-3">
-					<button
-						type="button"
-						onclick="window.location.href='/api/login/github'"
-						class="w-1/2 bg-gray-900 hover:bg-gray-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
-						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-							<path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-						</svg>
-						Sign in with GitHub
-					</button>
-				</div>
 
 				 <!-- Lien vers connexion -->
 				<div class="mt-4 text-center">
