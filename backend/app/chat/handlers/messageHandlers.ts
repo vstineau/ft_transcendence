@@ -71,6 +71,12 @@ export async function handleGetMessageHistory(
     return;
   }
 
+  // Émettre l'événement de chargement
+  socket.emit(CHAT_EVENTS.LOADING_MESSAGES, { 
+    room: data.room, 
+    message: CHAT_CONFIG.LOADING_MESSAGE 
+  });
+
   const limit = data.limit || CHAT_CONFIG.MAX_RECENT_MESSAGES;
   
   try {

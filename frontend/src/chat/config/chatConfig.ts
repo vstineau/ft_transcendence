@@ -23,6 +23,7 @@ export const CHAT_EVENTS = {
   NEW_MESSAGE: 'newMessage',
   ROOM_JOINED: 'roomJoined',
   MESSAGE_HISTORY: 'messageHistory',
+  LOADING_MESSAGES: 'loadingMessages',
   GAME_INVITATION_RECEIVED: 'gameInvitationReceived',
   GAME_INVITATION_ANSWER: 'gameInvitationAnswer',
   USER_STATUS_CHANGED: 'userStatusChanged',

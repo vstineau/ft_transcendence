@@ -17,3 +17,8 @@ export interface ChatMessage {
   type: 'text' | 'system' | 'game-invitation';
   roomId: string; // Changé de 'room' à 'roomId' pour correspondre au frontend
 }
+
+export interface LoadingMessage {
+  room: string;
+  message: string;
+}

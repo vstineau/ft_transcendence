@@ -3,6 +3,7 @@ export const CHAT_CONFIG = {
   MAX_ROOM_MESSAGES: 100,
   MESSAGE_CLEANUP_DAYS: 30,
   CLEANUP_INTERVAL: 24 * 60 * 60 * 1000, // 24 heures
+  LOADING_MESSAGE: 'Chargement des messages...',
   ROOMS: {
     GLOBAL: 'global',
     PONG: 'pong',
@@ -29,6 +30,7 @@ export const CHAT_EVENTS = {
   NEW_MESSAGE: 'newMessage',
   ROOM_JOINED: 'roomJoined',
   MESSAGE_HISTORY: 'messageHistory',
+  LOADING_MESSAGES: 'loadingMessages',
   GAME_INVITATION_RECEIVED: 'gameInvitationReceived',
   GAME_INVITATION_ANSWER: 'gameInvitationAnswer',
   USER_STATUS_CHANGED: 'userStatusChanged',

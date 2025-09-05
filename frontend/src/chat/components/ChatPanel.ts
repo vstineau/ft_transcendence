@@ -38,25 +38,8 @@ export function ChatPanel(): string {
                     <!-- rooms (tout en bas) -->
                     <div class="border-t border-gray-800 pt-2">
                         <div class="uppercase 	tracking-wide text-[10px] text-gray-400 px-1 mb-1">Rooms</div>
-                        <div id="chat-private-history" class="space-y-1">
-                            <!-- Room Global -->
-                            <div data-room-id="global" class="flex items-center px-2 py-1.5 rounded hover:bg-gray-800 cursor-pointer group">
-                                <div class="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                                <span class="text-xs font-medium">Global</span>
-                                <span class="ml-auto text-[10px] text-gray-500">🌐</span>
-                            </div>
-                            <!-- Room Pong -->
-                            <div data-room-id="pong" class="flex items-center px-2 py-1.5 rounded hover:bg-gray-800 cursor-pointer group">
-                                <div class="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-                                <span class="text-xs font-medium">Pong</span>
-                                <span class="ml-auto text-[10px] text-gray-500">🏓</span>
-                            </div>
-                            <!-- Room Snake -->
-                            <div data-room-id="snake" class="flex items-center px-2 py-1.5 rounded hover:bg-gray-800 cursor-pointer group">
-                                <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                                <span class="text-xs font-medium">Snake</span>
-                                <span class="ml-auto text-[10px] text-gray-500">🐍</span>
-                            </div>
+                        <div id="chat-rooms-list" class="space-y-1">
+                            <!-- Les rooms seront ajoutées dynamiquement -->
                         </div>
                     </div>
                 </div>
