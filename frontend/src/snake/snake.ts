@@ -91,11 +91,6 @@ function drawGame(game: Game) {
 
 function listenUserInputs(socket: Socket) {
 	// Key controls
-	window.addEventListener('beforeunload_snake', (e) => {
-		socket.emit('beforeunload_snake');
-		e.preventDefault();
-		gameOver = false;
-	});
 	window.addEventListener('keydown', e => {
 		socket.emit('keydown_snake', { key: e.key }, socket.id);
 		if (e.key === 'ArrowUp' ||

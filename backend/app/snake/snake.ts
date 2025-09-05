@@ -54,6 +54,7 @@ function initRoom(socket: Socket, user: User, friend?: string[]) {
 		else {
 			console.log("ROOM MAIS PAS LA BONNE")
 			const newRoom = createRoom(socket, user);
+			friend? newRoom.custom = true: newRoom.custom=false;
         	socket.join(newRoom.name);
 			newRoom.playersNb = 1;
 			return newRoom;
@@ -81,16 +82,27 @@ function createRoom(socket: Socket, user: User): Room {
 
 function handleDisconnect(app: FastifyInstance, socket: Socket) {
     socket.on('disconnect', () => {
+		console.log('SOCKET DISCONNECTED');
         const room = snakeRooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
         if (room) {
             if (room.interval) {
                 clearInterval(room.interval);
                 room.interval = undefined;
             }
-            app.io.of('/snake').to(room.name).emit('endGame_snake', { reason: 'A player disconnected.', winSize: WIN });
-
-            // Remove room from list
+			room.playersNb--;
+			const sock = app.io.of('snake').sockets.get(room.game.p1.id === socket.id ? room.game.p2.id : room.game.p1.id) as Socket;
+			if (sock) {
+				sock.emit('endGame_snake', { reason: 'A player disconnected.', winSize: WIN });
+				sock.leave(room.name);
+			}
+			if (socket) {
+				socket.leave(room.name);
+			}
             snakeRooms = snakeRooms.filter(r => r !== room);
+			if (socket) {
+				socket.off;
+				socket.disconnect;
+			}
         }
     });
 }
@@ -344,6 +356,7 @@ export async function startSnakeGame(app: FastifyInstance) {
                 const user = await getUser(socket, cookie);
                 if (!user) return; // non connecté
                 const room = initRoom(socket, user, friend);
+				//console.log('ROOM = ' + room.name + ' CONTAINING ' + room.game.p1.login + " AND " + room.game.p2.login);
                 handleDisconnect(app, socket);
 				console.log('HANDLEDISCONNECT');
                 getInputs(socket, room.game);
