@@ -108,7 +108,6 @@ function deleteElem(id: string) {
 	if (elem) elem.remove();
 }
 
-
 function nextMatchButton(game: Game): HTMLButtonElement {
 	const button = document.createElement('button');
 	button.type = 'button';
@@ -161,7 +160,6 @@ function drawBrackets(matchIdx: number, roundnb: number): HTMLDivElement {
 					player1.textContent += ' ❌';
 				}
 			}
-
 			match.appendChild(player1);
 			match.appendChild(vs);
 			match.appendChild(player2);
@@ -196,56 +194,89 @@ function updateInfos(game: Game) {
 	game.p2.vy = game.win.height / 100;
 }
 
-function listenInputs(game: Game) {
+let currentGame: Game | null = null
+
+function handleKeyDown(e: KeyboardEvent) {
+	if (!currentGame) return;
 	let keyUpP1 = document.getElementById('p1keyup');
 	let keyDownP1 = document.getElementById('p1keydown');
 	let keyUpP2 = document.getElementById('p2keyup');
 	let keyDownP2 = document.getElementById('p2keydown');
-	window.addEventListener('keydown', e => {
-		if (e.key === 'w' || e.key === 'W') {
-			game.p1.key_up = true;
-			if (keyUpP1) keyUpP1.className = 'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
-		}
-		if (e.key === 's' || e.key === 'S') {
-			game.p1.key_down = true;
-			if (keyDownP1) keyDownP1.className = 'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
-		}
-		if (e.key === 'ArrowUp') {
-			e.preventDefault();
-			game.p2.key_up = true;
-			if (keyUpP2) keyUpP2.className = 'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
-		}
-		if (e.key === 'ArrowDown') {
-			e.preventDefault();
-			game.p2.key_down = true;
-			if (keyDownP2) keyDownP2.className = 'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
-		}
-		if (e.key === 'Enter' && game.over) {
-			gameStart = false;
-		}
-	});
+	
+	if (e.key === 'w' || e.key === 'W') {
+		currentGame.p1.key_up = true;
+		if (keyUpP1)
+			keyUpP1.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	}
+	if (e.key === 's' || e.key === 'S') {
+		currentGame.p1.key_down = true;
+		if (keyDownP1)
+			keyDownP1.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	}
+	if (e.key === 'ArrowUp') {
+		e.preventDefault();
+		currentGame.p2.key_up = true;
+		if (keyUpP2)
+			keyUpP2.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	}
+	if (e.key === 'ArrowDown') {
+		e.preventDefault();
+		currentGame.p2.key_down = true;
+		if (keyDownP2)
+			keyDownP2.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	}
+	if (e.key === 'Enter' && currentGame.over) {
+		gameStart = false;
+	}
+}
 
-	window.addEventListener('keyup', e => {
-		if (e.key === 'w' || e.key === 'W') {
-			game.p1.key_up = false;
-			if (keyUpP1) keyUpP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
-		}
+function handleKeyUp(e: KeyboardEvent) {
+	if (!currentGame) return;
+	let keyUpP1 = document.getElementById('p1keyup');
+	let keyDownP1 = document.getElementById('p1keydown');
+	let keyUpP2 = document.getElementById('p2keyup');
+	let keyDownP2 = document.getElementById('p2keydown');
 
-		if (e.key === 's' || e.key === 'S') {
-			game.p1.key_down = false;
-			if (keyDownP1) keyDownP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
-		}
-		if (e.key === 'ArrowUp') {
-			e.preventDefault();
-			game.p2.key_up = false;
-			if (keyUpP2) keyUpP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
-		}
-		if (e.key === 'ArrowDown') {
-			e.preventDefault();
-			game.p2.key_down = false;
-			if (keyDownP2) keyDownP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
-		}
-	});
+	if (e.key === 'w' || e.key === 'W') {
+		currentGame.p1.key_up = false;
+		if (keyUpP1)
+			keyUpP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	}
+	if (e.key === 's' || e.key === 'S') {
+		currentGame.p1.key_down = false;
+		if (keyDownP1)
+			keyDownP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	}
+	if (e.key === 'ArrowUp') {
+		e.preventDefault();
+		currentGame.p2.key_up = false;
+		if (keyUpP2)
+			keyUpP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	}
+	if (e.key === 'ArrowDown') {
+		e.preventDefault();
+		currentGame.p2.key_down = false;
+		if (keyDownP2)
+			keyDownP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	}
+}
+
+// === MODIFICATION DE listenInputs ===
+function listenInputs(game: Game) {
+	// DÉTACHE les anciens listeners si présents
+	window.removeEventListener('keydown', handleKeyDown);
+	window.removeEventListener('keyup', handleKeyUp);
+
+	// MET À JOUR le jeu courant
+	currentGame = game;
+
+	// AJOUTE les nouveaux listeners
+	window.addEventListener('keydown', handleKeyDown);
+	window.addEventListener('keyup', handleKeyUp);
 
 	window.addEventListener('resize', () => {
 		canvas.width = window.innerWidth * 0.6;
@@ -253,6 +284,73 @@ function listenInputs(game: Game) {
 		updateInfos(game);
 	});
 }
+
+
+// function listenInputs(game: Game) {
+// 	let keyUpP1 = document.getElementById('p1keyup');
+// 	let keyDownP1 = document.getElementById('p1keydown');
+// 	let keyUpP2 = document.getElementById('p2keyup');
+// 	let keyDownP2 = document.getElementById('p2keydown');
+// 	window.addEventListener('keydown', e => {
+// 		if (e.key === 'w' || e.key === 'W') {
+// 			game.p1.key_up = true;
+// 			if (keyUpP1)
+// 				keyUpP1.className =
+// 					'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+// 		}
+// 		if (e.key === 's' || e.key === 'S') {
+// 			game.p1.key_down = true;
+// 			if (keyDownP1)
+// 				keyDownP1.className =
+// 					'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+// 		}
+// 		if (e.key === 'ArrowUp') {
+// 			e.preventDefault();
+// 			game.p2.key_up = true;
+// 			if (keyUpP2)
+// 				keyUpP2.className =
+// 					'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+// 		}
+// 		if (e.key === 'ArrowDown') {
+// 			e.preventDefault();
+// 			game.p2.key_down = true;
+// 			if (keyDownP2)
+// 				keyDownP2.className =
+// 					'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+// 		}
+// 		if (e.key === 'Enter' && game.over) {
+// 			gameStart = false;
+// 		}
+// 	});
+
+// 	window.addEventListener('keyup', e => {
+// 		if (e.key === 'w' || e.key === 'W') {
+// 			game.p1.key_up = false;
+// 			if (keyUpP1) keyUpP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+// 		}
+
+// 		if (e.key === 's' || e.key === 'S') {
+// 			game.p1.key_down = false;
+// 			if (keyDownP1) keyDownP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+// 		}
+// 		if (e.key === 'ArrowUp') {
+// 			e.preventDefault();
+// 			game.p2.key_up = false;
+// 			if (keyUpP2) keyUpP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+// 		}
+// 		if (e.key === 'ArrowDown') {
+// 			e.preventDefault();
+// 			game.p2.key_down = false;
+// 			if (keyDownP2) keyDownP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+// 		}
+// 	});
+
+// 	window.addEventListener('resize', () => {
+// 		canvas.width = window.innerWidth * 0.6;
+// 		canvas.height = window.innerHeight * 0.6;
+// 		updateInfos(game);
+// 	});
+// }
 
 function checkSubmited(container: HTMLDivElement) {
 	const inputs = Array.from(container.querySelectorAll('input[type="text"]')) as HTMLInputElement[];
@@ -558,6 +656,8 @@ function showNextMatch() {
 			startMainLoop(tournament.rounds.games[currentRound][currentMatch]);
 			if (!gameStart) {
 				// canvas.remove();
+				// window.removeEventListener('keydown', () => {});
+				// window.removeEventListener('keyup', () => {});
 				currentMatch++;
 				showNextMatch();
 			}
