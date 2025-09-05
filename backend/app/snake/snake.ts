@@ -4,6 +4,7 @@ import { JwtPayload, UserHistory } from '../types/userTypes.js'
 import { Socket } from 'socket.io';
 import { FastifyInstance } from 'fastify';
 import { User, History} from '../models.js'
+// import { AppDataSource } from '../dataSource.js';
 //import { v4 as uuidv4 } from "uuid";
 
 const WIN = 600;
@@ -91,7 +92,7 @@ export function spawnFoods(g: Game) {
 
 export function eatFood(snake: Snake, g: Game): boolean {
   const head = snake.segments[0];
-  const tolerance = 20; 
+  const tolerance = 20;
   const idx = g.foods.findIndex(f =>
     Math.abs(f.pos.x - head.x) <= tolerance &&
     Math.abs(f.pos.y - head.y) <= tolerance
@@ -211,44 +212,45 @@ export function getInputs(sock: Socket, game: Game) {
 async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
 
 	const user1 = await User.findOneBy({login: game.p1.login});
-	if (!user1 ) {
-		console.log('cant get user1');
-		return ;
-	}
-	const user2 = await User.findOneBy({login: game.p2.login});
-	if (!user2 ) {
-		console.log('cant get user2');
-		return ;
-	}
-	const gametime = game.gameStart? Date.now() - game.gameStart: 0;
-	const historyp1: UserHistory = {
-		type: 'snake',
-		date: Date(),
-		win: winner === 'P1' ? 'WIN' : 'LOOSE',
-		opponent: user2.login,
-		score: '',
-		finalLength: game.p1.segments.length,
-		gameTime: gametime,
-	}
-	const historyp2: UserHistory = {
-		type: 'snake',
-		date: Date(),
-		win: winner === 'P2' ? 'WIN' : 'LOOSE',
-		opponent: user1.login,
-		score: '',
-		finalLength: game.p2.segments.length,
-		gameTime: gametime,
-	}
-	if (winner === 'DRAW') {
-		historyp1.win = 'DRAW';
-		historyp2.win = 'DRAW';
-	}
-	if (!user1.history) user1.history = [];
-	user1.history.push(new History(user1, historyp1));
-	if (!user2.history) user2.history = [];
-	user2.history.push(new History(user2, historyp2));
-	user1.save();
-	user2.save();
+    if (!user1) {
+        console.log('cant get user1');
+        return;
+    }
+    const user2 = await User.findOneBy({login: game.p2.login});
+    if (!user2) {
+        console.log('cant get user2');
+        return;
+    }
+
+    const gametime = game.gameStart ? Date.now() - game.gameStart : 0;
+
+    const historyp1: UserHistory = {
+        type: 'snake',
+        date: new Date().toISOString(),
+        win: winner === 'P1' ? 'WIN' : winner === 'P2' ? 'LOOSE' : 'DRAW',
+        opponent: user2.login,
+        score: '',
+        finalLength: game.p1.segments.length,
+        gameTime: gametime,
+    }
+
+    const historyp2: UserHistory = {
+        type: 'snake',
+        date: new Date().toISOString(),
+        win: winner === 'P2' ? 'WIN' : winner === 'P1' ? 'LOOSE' : 'DRAW',
+        opponent: user1.login,
+        score: '',
+        finalLength: game.p2.segments.length,
+        gameTime: gametime,
+    }
+
+    const historyEntry1 = new History(user1, historyp1);
+    const historyEntry2 = new History(user2, historyp2);
+
+    await historyEntry1.save(); // ← Maintenant ça marche
+    await historyEntry2.save();
+
+    console.log('History saved for both players');
 }
 
 
@@ -285,7 +287,7 @@ export function update(game: Game, app: FastifyInstance, roomId: string) {
 
 
 async function getUser(socket: Socket, cookie: string): Promise<User | undefined> {
-				
+
 	let user;
 	console.log(cookie);
 	if (cookie) {
@@ -318,7 +320,7 @@ export async function startSnakeGame(app: FastifyInstance) {
                     if (room.interval) return;
                     room.interval = setInterval(() => {
                         for (const room of snakeRooms) {
-                            if (room.playersNb === 2) { 
+                            if (room.playersNb === 2) {
 								!room.game.gameStart? room.game.gameStart = Date.now(): 0;
                                 update(room.game, app, room.name);
                                 app.io.of('/snake').to(room.name).emit('gameState_snake', room.game);

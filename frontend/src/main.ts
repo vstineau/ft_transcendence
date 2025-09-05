@@ -30,6 +30,7 @@ import { snakeGame } from './snake/snake';
 import { localSnakeGame } from './snake/localSnake';
 import { localpongGame } from './pong/localPong';
 import {initProfilePage } from './utils/avatar';
+import {initSnakeStats } from './graph/init';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -94,7 +95,7 @@ function showAuthMessage() {
 
 async function renderPage() {
 	const path = window.location.pathname;
-	console.log(path);
+	console.log('Current path:', path);
 
 	//veriff pour si le tokens jws ne fonctionne plus,
 	// il y aura une redirection vers login pour se co a nouveau
@@ -168,6 +169,17 @@ async function renderPage() {
 			break;
 		case '/2fa-verification':
 			initTwoFALogin();
+			break;
+		case '/login/github/callback':
+			loginGithub();
+			break;
+		case '/statisticsSnake':
+			setTimeout(() => {
+				console.log('About to call initSnakeStats');
+				initSnakeStats();
+				updateInfos();
+				initProfilePage();
+			}, 100);
 			break;
 	}
 }
