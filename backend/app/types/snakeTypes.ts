@@ -16,7 +16,7 @@ export interface Snake {
 	pendingDir: pos;
 	color: string;
 	id: string;
-	login: string;
+	uid: string;
 	avatar?: string;
 }
 

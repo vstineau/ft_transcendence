@@ -6,6 +6,7 @@ import { ChatPanel } from './components/ChatPanel';
 import { SocketService, MessageService } from './services';
 import { formatTime, escapeHtml, createAvatarElement } from './utils';
 import { CHAT_EVENTS } from './config/chatConfig';
+import { navigateTo } from '../main'
 
 export class ChatManager {
     private state: ChatState = {
@@ -175,6 +176,28 @@ export class ChatManager {
                 this.sendMessage(messageInput.value);
                 messageInput.value = '';
             });
+
+		//boutons pour inviter dans une partie de snake ou pong 
+        const host = window.location.hostname;
+        const port = window.location.port;
+        const protocol = window.location.protocol;
+        const snakeBtn = document.getElementById('snake-button');
+		if (snakeBtn) {
+
+		const currentRoomId = this.state.currentRoom?.id;
+		const existingRoom = currentRoomId
+		  ? this.state.rooms?.find(r => r.id === currentRoomId)
+		  : null;
+			if (existingRoom) {
+				snakeBtn.addEventListener('click', () => {
+				if(!existingRoom.participants || !existingRoom.participants[0] || !existingRoom.participants[1]) { return ;}
+						this.sendMessage(`${protocol}://${host}:${port}/snake?player1=${existingRoom.participants[0]}&player2=${existingRoom.participants[1]}`);
+				});
+			}
+
+		}
+		//bouton pour le pong
+        //const pongBtn = document.getElementById('send-message');
 
             messageInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {

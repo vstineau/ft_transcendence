@@ -203,10 +203,18 @@ export async function snakeGame() {
 	    //drawAlert(data.winSize, 'La partie a été interrompue : ' + data.reason);
 	})
 	socket.on('draw', (game: any) => {
-		drawAlert(game.winSize, "DRAW")
-		if (socket && socket.connected) {
-            socket.disconnect();
-        }
+		if (ctx) {
+			gameOver = true;
+			started = false;
+			//winner announcement
+			const btns = document.getElementById('snakeGameEndButtons');
+			if (btns) btns.style.display = 'flex';
+			endgameButtons(socket);
+			if (socket && socket.connected) {
+        	    socket.disconnect();
+        	}
+			drawAlert(game.winSize, "DRAW")
+		}
 	});
 	socket.on('playerWin_snake', (winner: any, _game: any) => {
 		if (ctx) {
