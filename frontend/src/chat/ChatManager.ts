@@ -5,7 +5,7 @@ import type { ChatState, Message, ChatRoom, Friend } from './types';
 import { ChatPanel } from './components/ChatPanel';
 import { SocketService, MessageService } from './services';
 import { formatTime, escapeHtml, createAvatarElement } from './utils';
-import { CHAT_EVENTS } from './config/chatConfig';
+import { CHAT_EVENTS } from './config';
 
 export class ChatManager {
     private state: ChatState = {
