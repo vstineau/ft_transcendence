@@ -5,50 +5,37 @@ let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D | null;
 let form: HTMLFormElement;
 let tournament: Tournament;
-
-// let win_width = window.innerWidth;
-// let win_height = window.innerHeight;
-// let gameWidth = win_width * 0.8;
-// let gameHeight = win_height * 0.8;
-
-import { Game, PlayerTournament, Tournament } from '../types/pongTypes';
-// import { Matches } from 'class-validator';
-// import { startPongGame } from '../../../backend/app/pong/pong';
-
 let names: string[] = [];
 let bracket: boolean = false;
+let gameStart = false;
 
-// let players: PlayerTournament[] = [];
-// let matchs: Game[] = [];
-//                            1 2 3 4 5 6 7 8
-//                             2   4   5   8
-//                               2   4   5
-//                                 2   4
-//                                   4
-//
-//
-// let leaderboard: {
-
-// }
-// function shuffle(array: PlayerTournament[]) {
-// 	for (let i = array.length - 1; i > 0; i--) {
-// 		const j = Math.floor(Math.random() * (i + 1));
-// 		[array[i], array[j]] = [array[j], array[i]];
-// 	}
-// 	return array;
-// }
+import { navigateTo } from '../main';
+import { Game, PlayerTournament, Tournament } from '../types/pongTypes';
+// import { drawGame } from './pong';
+// import { localpongGame } from './localPong';
 
 function initGame() {
 	canvas = document.createElement('canvas');
-	canvas.width = window.innerWidth * 0.8;
-	canvas.height = window.innerHeight * 0.8;
-	canvas.className = 'rounded-xl shadow-lg border-4 border-gray-800 bg-black';
+	canvas.width = window.innerWidth * 0.6;
+	canvas.height = window.innerHeight * 0.6;
+	canvas.className = 'rounded-xl shadow-lg border-4 border-gray-800 bg-black md-4';
 	if (!canvas) {
 		console.error("Canvas 'game' not found");
 		return;
 	}
 	ctx = canvas.getContext('2d');
 	form.append(canvas);
+	const button = document.createElement('button');
+	button.type = 'button';
+	button.id = 'playNextRound';
+	button.textContent = `finish !`;
+	button.className = 'rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white';
+	button.addEventListener('click', () => {
+		console.log('button clicked');
+		gameStart = false;
+		console.log(gameStart);
+	});
+	form.appendChild(button);
 	// updateInfos();
 }
 
@@ -74,82 +61,6 @@ function getPlayersName(nb: number) {
 	return container;
 }
 
-// function drawBrackets(matchs: Game[], currentMatch: number, splitW: number, splitH: number) {
-// 	let ratioW = splitW;
-// 	let ratioH = splitH;
-// 	const px = (canvas.height * canvas.width) / 50000;
-// 	if (!ctx) return;
-// 	for (let i = 0; i < matchs.length; i++) {
-// 		ctx.strokeStyle = 'white';
-// 		ctx.lineWidth = 4; // épaisseur de la bordure
-// 		ctx.fillStyle = 'black';
-// 		if (i === currentMatch) {
-// 			ctx.strokeStyle = 'yellow';
-// 			ctx.lineWidth = 8; // épaisseur de la bordure
-// 		}
-// 		ctx.fillRect(ratioW * 0.9, ratioH * 1, splitW * 0.9, splitH * 0.9);
-// 		ctx.strokeRect(ratioW * 0.9, ratioH * 1, splitW * 0.9, splitH * 0.9);
-// 		ctx.fillStyle = 'white';
-// 		// ctx.
-// 		// 3. Dessiner une ligne
-// 		//   ctx.beginPath();            // Commencer un nouveau chemin
-// 		//   ctx.moveTo(50, 50);         // Point de départ (x=50, y=50)
-// 		//   ctx.lineTo(300, 200);       // Point d'arrivée (x=300, y=200)
-// 		//   ctx.strokeStyle = 'blue';   // Couleur de la ligne
-// 		//   ctx.lineWidth = 2;          // Épaisseur de la ligne
-// 		//   ctx.stroke();               // Dessiner le chemin
-// 		ctx.textAlign = 'center';
-// 		ctx.font = `${px}px Arial`;
-// 		ctx.fillText(matchs[i].p1.nickName, ratioW + splitW * 0.45, ratioH * 1.2, splitW * 0.8);
-// 		ctx.fillText('VS', ratioW + splitW * 0.45, ratioH * 1.5, ratioW * 0.8);
-// 		ctx.fillText(matchs[i].p2.nickName, ratioW + splitW * 0.45, ratioH * 1.8, splitW * 0.8);
-// 		ratioW += canvas.width / (matchs.length + 2) + splitW * 0.1;
-// 		// ratioH += canvas.width / (matchs.length + 2);
-// 	}
-// }
-
-function drawEmptyBrackets(nbMatchs: number): boolean {
-	//
-	const splitH = canvas.height / (nbMatchs + 2);
-	const splitW = canvas.width / (nbMatchs + 2);
-	let ratioW = splitW;
-	let ratioH = splitH;
-	if (nbMatchs < 1) return true;
-	if (!ctx) return false;
-	if (nbMatchs === 1) {
-		ctx.strokeStyle = 'white';
-		ctx.lineWidth = 4; // épaisseur de la bordure
-		ctx.fillStyle = 'black';
-		ctx.fillRect(canvas.width / 2 - (splitW * 1.1) / 2, ratioH * 1.7, splitW * 0.9, splitH * 0.6);
-		ctx.strokeRect(canvas.width / 2 - (splitW * 1.1) / 2, ratioH * 1.7, splitW * 0.9, splitH * 0.6);
-		return false;
-	}
-	for (let i = 0; i < nbMatchs; i++) {
-		//
-		ctx.strokeStyle = 'white';
-		ctx.lineWidth = 4; // épaisseur de la bordure
-		ctx.fillStyle = 'black';
-		// ctx.fillRect(ratioW * 1, ratioH * 1, splitW * 0.9, splitH * 0.9);
-		// ctx.strokeRect(ratioW * 1, ratioH * 1, splitW * 0.9, splitH * 0.9);
-		ctx.fillRect(ratioW * 0.9, ratioH * 1.4, splitW * 0.8, splitH * 0.8);
-		ctx.strokeRect(ratioW * 0.9, ratioH * 1.4, splitW * 0.8, splitH * 0.8);
-		// ctx.fillText(matchs[i].p1.nickName, splitW + splitW * 0.45, splitH * 1.2, splitW * 0.8);
-		// ctx.fillText('VS', splitW + splitW * 0.45, splitH * 1.5, splitW * 0.8);
-		ratioW += canvas.width / (nbMatchs + 2) + splitW * 0.5;
-	}
-	return false;
-}
-
-// function ajouterBouton() {
-//   const bouton = document.createElement('button');
-//   bouton.id = 'monBoutonTemporaire';
-//   bouton.textContent = 'Je suis temporaire';
-//   document.body.appendChild(bouton);
-// }
-
-// Pour le supprimer plus tard :
-// TypeScript
-
 function deleteElem(id: string) {
 	const elem = document.getElementById(id);
 	if (elem) elem.remove();
@@ -160,25 +71,26 @@ function appendElem(id: string, add: HTMLDivElement) {
 	if (elem) elem.appendChild(add);
 }
 
-function nextRoundButton(match: Game): HTMLButtonElement {
+function nextMatchButton(game: Game): HTMLButtonElement {
 	const button = document.createElement('button');
 	button.type = 'button';
 	button.id = 'playNextRound';
 	button.textContent = `Next Match !`;
-	button.className =
-		'rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white';
-	button.addEventListener('click', () => {});
+	button.className = 'rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white';
+	button.addEventListener('click', () => {
+		//
+	});
 	return button;
 }
 
 function drawTitle(title: string): HTMLHeadingElement {
 	const header = document.createElement('h2');
-	header.textContent = `Round`;
-	header.className = 'mb-10 text-2xl font-bold text-white'; // Ajoute les classes Tailwind que tu veux
+	header.textContent = title;
+	header.className = 'mb-10 text-2xl font-bold text-white';
 	return header;
 }
 
-function drawBrackets(matchs: Game[], matchIdx: number, roundnb: number) {
+function drawBrackets(matchIdx: number, roundnb: number): HTMLDivElement {
 	// form.innerHTML = '';
 	const matchsContainer = document.createElement('div');
 	matchsContainer.className = 'flex flex-col'; // <-- flex-col ici !
@@ -186,7 +98,7 @@ function drawBrackets(matchs: Game[], matchIdx: number, roundnb: number) {
 		// Chaque round est une ligne
 		const round = document.createElement('div');
 		round.className = 'flex flex-row rounded mb-10 justify-center items-center';
-		if(roundnb === i) round.className += ' outline outline-white-500'
+		// if (roundnb === i) round.className += ' outline outline-white-500';
 		for (let j = 0; j < tournament.rounds.games[i].length; j++) {
 			const match = document.createElement('div');
 			match.className = 'flex flex-col border hover:bg-gray-500 items-center bg-gray-600 p-2 rounded shadow-sm mx-4';
@@ -203,6 +115,20 @@ function drawBrackets(matchs: Game[], matchIdx: number, roundnb: number) {
 			const player2 = document.createElement('div');
 			player2.className = 'w-40 font-bold text-white text-center bg-gray-400 rounded shadow-inner px-2 py-1';
 			player2.textContent = `${tournament.rounds.games[i][j].p2.nickName}`;
+			if (tournament.rounds.games[i][j].over) {
+				match.className += ' brightness-50';
+				if (tournament.rounds.games[i][j].p1.score > tournament.rounds.games[i][j].p2.score) {
+					player1.className += ' outline outline-green-500';
+					player1.textContent += ' 🏆';
+					player2.className += ' outline outline-red-500';
+					player2.textContent += ' ❌';
+				} else {
+					player2.className += ' outline outline-green-500';
+					player2.textContent += ' 🏆';
+					player1.className += ' outline outline-red-500';
+					player1.textContent += ' ❌';
+				}
+			}
 
 			match.appendChild(player1);
 			match.appendChild(vs);
@@ -211,23 +137,29 @@ function drawBrackets(matchs: Game[], matchIdx: number, roundnb: number) {
 		}
 		matchsContainer.appendChild(round); // On ajoute chaque round en colonne !
 	}
-	form.appendChild(matchsContainer);
 	form.className = 'flex flex-col items-center';
+	return matchsContainer;
 }
 
-function listenInputs() {
+function listenInputs(game: Game) {
 	window.addEventListener('keydown', e => {
 		if (e.key === 'w' || e.key === 'W') {
-		} // key_w = true;
+			//key_w = true;
+			game.p1.key_up = true;
+		}
 		if (e.key === 's' || e.key === 'S') {
-		} //key_s = true;
+			//key_s = true;
+			game.p1.key_down = true;
+		}
 		if (e.key === 'ArrowUp') {
 			e.preventDefault();
-			// key_up = true;
+			//key_up = true;
+			game.p2.key_up = true;
 		}
 		if (e.key === 'ArrowDown') {
 			e.preventDefault();
-			// key_down = true;
+			//key_down = true;
+			game.p2.key_down = true;
 		}
 		if (e.key === 'Enter' && bracket) {
 			bracket = false;
@@ -238,15 +170,15 @@ function listenInputs() {
 	});
 
 	window.addEventListener('keyup', e => {
-		if (e.key === 'w' || e.key === 'W') []; //key_w = false;
-		if (e.key === 's' || e.key === 'S') []; //key_s = false;
+		if (e.key === 'w' || e.key === 'W') game.p1.key_up = false;
+		if (e.key === 's' || e.key === 'S') game.p1.key_down = false;
 		if (e.key === 'ArrowUp') {
 			e.preventDefault();
-			// key_up = false;
+			game.p2.key_up = false;
 		}
 		if (e.key === 'ArrowDown') {
 			e.preventDefault();
-			// key_down = false;
+			game.p2.key_down = false;
 		}
 	});
 
@@ -261,23 +193,6 @@ function listenInputs() {
 		// updateInfos();
 	});
 }
-// function drawBrackets(matchs: Game[]) {
-// 	switch (matchs.length) {
-// 		case 1:
-// 			break;
-// 		case 2:
-// 			break;
-// 		case 4:
-// 			break;
-// 	}
-// 	// let split = canvas.width * 0.6 / nbPlayers;
-// 	if (!ctx) return;
-
-// 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-// 	ctx.fillStyle = 'black';
-// 	ctx.fillRect(0, 0, canvas.width, canvas.height);
-// 	// for(let i = canvas.width * 0.2; i < canvas.height; i+= split)
-// }
 
 function checkSubmited(container: HTMLDivElement) {
 	const inputs = Array.from(container.querySelectorAll('input[type="text"]')) as HTMLInputElement[];
@@ -304,6 +219,318 @@ function checkSubmited(container: HTMLDivElement) {
 	return false;
 }
 
+// function tournamentLoop() {
+// 	for (; tournament.rounds.nb < tournament.rounds.max; tournament.rounds.nb) {
+// 		for (let i = 0; tournament.rounds.games[tournament.rounds.nb][i]; i++) {
+// 			//
+// 			tournament.fillRound();
+// 			const title = drawTitle(`Round ${tournament.rounds.nb + 1}`);
+// 			const brackets = drawBrackets(i, tournament.rounds.nb);
+// 			const roundButton = nextMatchButton(tournament.rounds.games[tournament.rounds.nb][0]);
+// 			form.appendChild(title);
+// 			form.appendChild(brackets);
+// 			form.appendChild(roundButton);
+// 			roundButton.addEventListener('click', () => {
+// 				//
+// 				showCountdown();
+// 				form.removeChild(title);
+// 				form.removeChild(brackets);
+// 				form.removeChild(roundButton);
+// 				initGame();
+// 			});
+// 		}
+// 	}
+// }
+
+export function showCountdown() {
+	const container = document.createElement('div');
+	container.className = `
+		fixed top-0 left-0 w-screen h-screen flex flex-col justify-center items-center
+		z-50
+	`;
+	const label = document.createElement('div');
+	label.textContent = 'Game start in';
+	label.className = `
+		text-4xl font-mono text-white
+		rounded-xl px-8 py-6 mb-6
+		shadow-lg
+	`;
+	const number = document.createElement('div');
+	number.className = `
+		text-8xl font-mono font-bold text-white
+		rounded-full px-12 py-4
+		shadow-2xl
+		transition-opacity duration-500 ease-in-out
+		opacity-0
+	`;
+	container.appendChild(label);
+	container.appendChild(number);
+	form.appendChild(container);
+	const values = ['3', '2', '1'];
+	let idx = 0;
+	const fadeIn = () => {
+		number.textContent = values[idx];
+		number.style.opacity = '1';
+	};
+	const fadeOut = () => {
+		number.style.opacity = '0';
+	};
+	const next = () => {
+		if (idx < values.length) {
+			fadeIn();
+			setTimeout(() => {
+				fadeOut();
+				idx++;
+				setTimeout(next, 300);
+			}, 1000);
+		} else {
+			container.remove();
+		}
+	};
+	next();
+}
+
+let currentMatch = 0;
+let currentRound = 0;
+let mainLoop: NodeJS.Timeout | undefined;
+
+function startMainLoop(game: Game) {
+	listenInputs(game);
+	if (mainLoop) {
+		clearInterval(mainLoop);
+		mainLoop = undefined;
+	}
+	mainLoop = setInterval(() => {
+		if (!gameStart) {
+			currentMatch++;
+			showNextMatch();
+			clearInterval(mainLoop);
+			return;
+		}
+		gameLoop(canvas, tournament.rounds.games[currentRound][currentMatch]);
+		// console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+		// gameLoop(canvas);
+	}, 1000 / 60);
+}
+
+function drawGame(game: Game) {
+	if (!ctx) return;
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.fillStyle = 'black';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	ctx.save();
+	ctx.beginPath();
+	ctx.fillStyle = 'white';
+	ctx.lineWidth = 5;
+	ctx.fillRect(
+		(game.ball.x / game.win.width) * canvas.width,
+		(game.ball.y / game.win.height) * canvas.height,
+		(game.ball.radius / game.win.width) * canvas.width,
+		(game.ball.radius / game.win.height) * canvas.height
+	);
+	// Dessine les joueurs (en ajoutant le décalage)
+	ctx.fillRect(
+		(game.p1.x / game.win.width) * canvas.width,
+		(game.p1.y / game.win.height) * canvas.height,
+		(game.p1.length / game.win.width) * canvas.width,
+		(game.p1.height / game.win.height) * canvas.height
+	);
+	ctx.fillRect(
+		(game.p2.x / game.win.width) * canvas.width,
+		(game.p2.y / game.win.height) * canvas.height,
+		(game.p2.length / game.win.width) * canvas.width,
+		(game.p2.height / game.win.height) * canvas.height
+	);
+
+	// Ligne centrale en pointillés
+	for (let height = 0; height < canvas.height; height += 15) {
+		ctx.fillRect(canvas.width / 2 - 2, height, 5, 10);
+	}
+	// Scores en relatif à la zone de jeu
+	const px = (canvas.height * canvas.width) / 35000 > 20 ? (canvas.height * canvas.width) / 35000 : 20;
+	ctx.font = `${px}px Arial`;
+	// ctx.font = '50px Arial';
+	ctx.fillStyle = 'white';
+	ctx.textAlign = 'center';
+	ctx.fillText(game.p1.score.toString(), canvas.width * 0.25, canvas.height * 0.07);
+	ctx.fillText(game.p2.score.toString(), canvas.width * 0.75, canvas.height * 0.07);
+
+	ctx.restore();
+}
+
+function movePlayer(game: Game) {
+	if (game.p1.key_up === true && game.p1.y - game.p1.vy >= 1) game.p1.y -= game.p1.vy;
+	if (game.p1.key_down === true && game.p1.y + game.p1.vy <= game.win.height - game.p1.height) game.p1.y += game.p1.vy;
+	if (game.p2.key_up === true && game.p2.y - game.p2.vy >= 1) game.p2.y -= game.p2.vy;
+	if (game.p2.key_down === true && game.p2.y + game.p2.vy <= game.win.height - game.p2.height) game.p2.y += game.p2.vy;
+}
+
+let gameOver = false;
+
+function checkWin(game: Game) {
+	if ((game.p1.score === 3 || game.p2.score === 3) && ctx) {
+		gameOver = true;
+		game.over = true;
+		const px = (canvas.height * canvas.width) / 35000;
+		console.log(px);
+		game.ball.vx = 0;
+		game.ball.vy = 0;
+		game.ball.x = game.win.width / 2 - game.ball.radius / 2;
+		game.ball.y = game.win.height / 2 - game.ball.radius / 2;
+		ctx.fillStyle = 'gray';
+		// Couleur de la bordure
+		ctx.strokeStyle = 'white';
+		ctx.lineWidth = 4; // épaisseur de la bordure
+
+		// Dessine le rectangle plein
+		ctx.fillRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
+		ctx.strokeRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
+
+		ctx.fillStyle = 'white';
+		ctx.textAlign = 'center';
+		ctx.font = `${px}px Arial`;
+		ctx.fillText(
+			(game.p1.score > game.p2.score ? game.p1.nickName : game.p2.nickName) + ' wins, press `Enter` to continue',
+			canvas.width * 0.5,
+			canvas.height * 0.32
+		);
+		game.p1.score > game.p2.score ? (game.p2.eliminated = true) : (game.p2.eliminated = true);
+	}
+}
+
+function handlePaddleCollisionP1(game: Game) {
+	const collision =
+		game.ball.x > game.p1.x &&
+		game.ball.x < game.p1.x + game.p1.length &&
+		game.ball.y + game.ball.radius > game.p1.y &&
+		game.ball.y - game.ball.radius < game.p1.y + game.p1.height;
+
+	if (collision) {
+		game.ball.vx = -game.ball.vx;
+
+		const impactPoint = (game.ball.y - (game.p1.y + game.p1.height / 2)) / (game.p1.height / 2);
+		game.ball.vy += impactPoint * 3;
+		console.log(game.ball.vy);
+
+		if (Math.abs(game.ball.vx) < 30) game.ball.vx += game.ball.vx > 0 ? 1.5 : -1.5;
+	}
+}
+
+function handlePaddleCollisionP2(game: Game) {
+	const collision =
+		game.ball.x + game.ball.radius > game.p2.x &&
+		game.ball.x - game.ball.radius < game.p2.x + game.p2.length &&
+		game.ball.y + game.ball.radius > game.p2.y &&
+		game.ball.y - game.ball.radius < game.p2.y + game.p2.height;
+
+	if (collision) {
+		game.ball.vx = -game.ball.vx;
+
+		const impactPoint = (game.ball.y - (game.p2.y + game.p2.height / 2)) / (game.p2.height / 2);
+		game.ball.vy += impactPoint * 3;
+		console.log(game.ball.vy);
+
+		if (Math.abs(game.ball.vx) < 30) game.ball.vx += game.ball.vx > 0 ? 1.5 : -1.5;
+	}
+}
+
+function gameLoop(canvas: HTMLCanvasElement, game: Game) {
+	// requestAnimationFrame(gameLoop);
+	// win_width = canvas.width;
+	// win_height = canvas.height;
+	drawGame(game);
+	movePlayer(game);
+	checkWin(game);
+
+	// ball movement
+	game.ball.x += game.ball.vx;
+	game.ball.y += game.ball.vy;
+
+	// collision celling
+	if (game.ball.y <= 0 || game.ball.y >= game.win.height - game.ball.radius) {
+		game.ball.vy = -game.ball.vy;
+	}
+	handlePaddleCollisionP1(game);
+	handlePaddleCollisionP2(game);
+	if (game.ball.x < 0) {
+		game.p2.score += 1;
+		game.ball.x = game.win.width / 2;
+		game.ball.y = game.win.height / 2;
+		game.ball.vx = (Math.random() < 0.5 ? -1 : 1) * (game.win.width / 280);
+		game.ball.vy = (Math.random() < 0.5 ? -1 : 1) * (game.win.height / 180);
+	}
+	if (game.ball.x > game.win.width) {
+		game.p1.score += 1;
+		game.ball.x = game.win.width / 2;
+		game.ball.y = game.win.height / 2;
+		game.ball.vx = (Math.random() < 0.5 ? -1 : 1) * (game.win.width / 280);
+		game.ball.vy = (Math.random() < 0.5 ? -1 : 1) * (game.win.height / 180);
+	}
+}
+
+function showNextMatch() {
+	// Nettoyage de l'UI précédente
+	form.innerHTML = '';
+
+	// Vérification fin de tournoi
+	if (currentRound > tournament.rounds.max) {
+		const winner = tournament.players.find(player => !player.eliminated);
+		const endTitle = drawTitle(`Tournament finished !`);
+		const end = drawTitle(`Winner is ${winner?.nickName}`);
+		form.appendChild(endTitle);
+		form.appendChild(end);
+		const button = document.createElement('button');
+		button.type = 'button';
+		button.id = 'returnDashboard';
+		button.textContent = `Return to Dashboard`;
+		button.className = 'rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white';
+		button.addEventListener('click', () => {
+			//
+			navigateTo('/dashboard');
+		});
+		form.appendChild(button);
+		return;
+	}
+
+	const roundGames = tournament.rounds.games[currentRound];
+	// Vérification fin de round
+	if (currentMatch >= roundGames.length) {
+		currentRound++;
+		currentMatch = 0;
+		tournament.rounds.nb = currentRound;
+		if (tournament.rounds.nb > tournament.rounds.max) {
+			showNextMatch();
+			return;
+		}
+		tournament.fillRound();
+		showNextMatch();
+		return;
+	}
+	// Affichage du match courant
+	const title = drawTitle(`Round ${currentRound + 1}`);
+	const brackets = drawBrackets(currentMatch, currentRound);
+	const roundButton = nextMatchButton(roundGames[currentMatch]);
+
+	form.appendChild(title);
+	form.appendChild(brackets);
+	form.appendChild(roundButton);
+
+	roundButton.addEventListener('click', () => {
+		form.innerHTML = '';
+		initGame();
+		showCountdown();
+		setTimeout(() => {
+			gameStart = true;
+			startMainLoop(tournament.rounds.games[currentRound][currentMatch]);
+			if (!gameStart) {
+				canvas.remove();
+				currentMatch++;
+				showNextMatch();
+			}
+		}, 3500);
+	});
+}
+
 function submitNames(container: HTMLDivElement) {
 	const button = document.createElement('button');
 	button.type = 'button';
@@ -318,18 +545,27 @@ function submitNames(container: HTMLDivElement) {
 		// button.hidden = true;
 		deleteElem('submitName');
 		tournament = new Tournament(names);
-		let matchIdx = 1;
+		//loop tournament
 		tournament.fillRound();
-		const title = drawTitle('Round');
-		form.appendChild(title);
-		drawBrackets(tournament.matchs, matchIdx, tournament.rounds.nb);
-		const roundButton = nextRoundButton(tournament.matchs[matchIdx]);
-		form.appendChild(roundButton);
-		return;
-
-		// }
-		// }
-		// console.log(players);
+		// const title = drawTitle('Round');
+		// const brackets = drawBrackets(0, tournament.rounds.nb);
+		// const roundButton = nextMatchButton(tournament.rounds.games[tournament.rounds.nb][0]);
+		// form.appendChild(title);
+		// form.appendChild(brackets);
+		// form.appendChild(roundButton);
+		showNextMatch();
+		// roundButton.addEventListener('click', () => {
+		// 	//
+		// 	// tournamentLoop();
+		// 	// showCountdown();
+		// 	// form.removeChild(title);
+		// 	// form.removeChild(brackets);
+		// 	// form.removeChild(roundButton);
+		// 	// initGame();
+		// 	// gameStart = true;
+		// 	// // gameLoop(canvas);
+		// 	// localpongGame();
+		// });
 	});
 }
 

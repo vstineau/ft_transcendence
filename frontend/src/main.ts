@@ -1,6 +1,6 @@
 // import { register } from 'ts-node';
 import { registerUser } from './user/register';
-import { logUser, initTwoFALogin, TwoFAVerifyView} from './user/login';
+import { logUser, initTwoFALogin, TwoFAVerifyView } from './user/login';
 //import { loginGithub } from './user/loginGithub';
 import { rootUser } from './user/root';
 import { updateInfos } from './user/updateInfos';
@@ -70,9 +70,9 @@ export async function navigateTo(url: string) {
 export async function authenticatedFetch(url: string, options: RequestInit = {}): Promise<Response> {
 	const response = await fetch(url, {
 		...options,
-		credentials:'include'
-	})
-	if(response.status == 401){
+		credentials: 'include',
+	});
+	if (response.status == 401) {
 		console.log('Token expired, redirecting to login');
 		localStorage.clear();
 		navigateTo('/');
@@ -83,15 +83,15 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
 
 // Créer une notification toast au lieu d'une alerte
 function showAuthMessage() {
-    const message = document.createElement('div');
-    message.textContent = 'Session expired. Please log in to continue.';
-    message.style.cssText = `
+	const message = document.createElement('div');
+	message.textContent = 'Session expired. Please log in to continue.';
+	message.style.cssText = `
         position: fixed; top: 20px; right: 20px; background: #f87171; color: white;
         padding: 12px 20px; border-radius: 8px; z-index: 1000;
         font-family: system-ui; font-size: 14px;
     `;
-    document.body.appendChild(message);
-    setTimeout(() => message.remove(), 3000);
+	document.body.appendChild(message);
+	setTimeout(() => message.remove(), 3000);
 }
 
 async function renderPage() {
@@ -100,9 +100,20 @@ async function renderPage() {
 
 	//veriff pour si le tokens jws ne fonctionne plus,
 	// il y aura une redirection vers login pour se co a nouveau
-	const publicPaths = ['/', '/login', '/register', '/pong/matchmaking/game', '/pong/matchmaking/localgame', '/pong', '/2fa-verification', '/pong/local' , '/snake', '/snake/local'];
-	if(!publicPaths.includes(path)){
-		try{
+	const publicPaths = [
+		'/',
+		'/login',
+		'/register',
+		'/pong/matchmaking/game',
+		'/pong/matchmaking/localgame',
+		'/pong',
+		'/2fa-verification',
+		'/pong/local',
+		'/snake',
+		'/snake/local',
+	];
+	if (!publicPaths.includes(path)) {
+		try {
 			await authenticatedFetch('/api/updateInfos');
 		} catch {
 			// alert('Your session has expired. Please log in to access this page.');
@@ -173,12 +184,12 @@ async function renderPage() {
 			break;
 		case '/pong/tournament':
 			pongTournament();
+			displayChatButton();
 			break;
 	}
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-
 	document.body.addEventListener('click', async e => {
 		const target = e.target as HTMLElement;
 		// if (target instanceof HTMLAnchorElement)
@@ -197,5 +208,3 @@ document.addEventListener('DOMContentLoaded', async () => {
 	await renderPage();
 	// pongGame();
 });
-
-

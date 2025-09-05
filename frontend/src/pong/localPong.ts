@@ -70,11 +70,9 @@ function updateInfos() {
 function drawGame() {
 	if (!ctx) return;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	// Dessine le fond du jeu (zone centrale)
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	ctx.save();
-	// Dessine la balle (en ajoutant le décalage)
 	ctx.beginPath();
 	ctx.fillStyle = 'white';
 	ctx.lineWidth = 5;
@@ -186,7 +184,7 @@ function handlePaddleCollisionP2() {
 	}
 }
 
-export function gameLoop(canvas: HTMLCanvasElement) {
+function gameLoop(canvas: HTMLCanvasElement) {
 	// requestAnimationFrame(gameLoop);
 	// win_width = canvas.width;
 	// win_height = canvas.height;

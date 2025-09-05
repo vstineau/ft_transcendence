@@ -45,7 +45,7 @@ function initCanvas(socket: Socket) {
 	}
 }
 
-function drawGame(game: Game) {
+export function drawGame(game: Game) {
 	if (!ctx || gameOver) return;
 	const scale_x = canvas.width / game.win.width;
 	const scale_y = canvas.height / game.win.height;
