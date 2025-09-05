@@ -15,5 +15,5 @@ export interface ChatMessage {
   content: string;
   timestamp: Date;
   type: 'text' | 'system' | 'game-invitation';
-  room: string;
+  roomId: string; // Changé de 'room' à 'roomId' pour correspondre au frontend
 }

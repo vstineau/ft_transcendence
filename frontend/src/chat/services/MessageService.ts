@@ -1,3 +1,4 @@
+// @ts-ignore
 import type { Message, Friend, ChatState } from '../types';
 
 /**

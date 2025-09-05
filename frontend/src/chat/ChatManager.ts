@@ -58,11 +58,16 @@ export class ChatManager {
         this.socketService.on('newMessage', (message: Message) => {
             console.log('📩 New message received:', message);
             this.messageService.addMessage(message);
-            this.state.messages.push(message);
-            this.updateMessagesDisplay();
+            
+            // Vérifier si le message appartient à la room active
+            const currentRoom = this.state.activeTab; // activeTab peut être 'global', 'pong' ou 'snake'
+            if (message.roomId === currentRoom) {
+                this.state.messages.push(message);
+                this.updateMessagesDisplay();
+            }
 
-            // Incrémenter les non-lus si le chat est fermé
-            if (!this.state.isOpen) {
+            // Incrémenter les non-lus si le chat est fermé OU si pas dans la bonne room
+            if (!this.state.isOpen || message.roomId !== currentRoom) {
                 this.state.unreadCount++;
                 this.updateNotificationBadge();
             }
@@ -221,15 +226,16 @@ export class ChatManager {
         if (this.socketService.isConnected()) {
             this.socketService.emit('sendMessage', {
                 content: content.trim(),
-                room: this.state.activeTab === 'global' ? 'global' : this.state.currentRoom?.id
+                room: this.state.activeTab // 'global', 'pong' ou 'snake'
             });
         } else {
             console.error('❌ Socket not connected');
         }
     }
 
-    private renderMessages(): string {
-        return this.state.messages.map(message => {
+    private renderMessages(messages?: Message[]): string {
+        const messagesToRender = messages || this.state.messages;
+        return messagesToRender.map(message => {
             const isOwn = message.userId === this.state.currentUserId;
             const time = formatTime(message.timestamp);
             
@@ -440,7 +446,11 @@ export class ChatManager {
     private updateMessagesDisplay() {
         const messagesContainer = document.getElementById('messages-container');
         if (messagesContainer) {
-            messagesContainer.innerHTML = this.renderMessages();
+            // Filtrer les messages pour afficher seulement ceux de la room active
+            const currentRoom = this.state.activeTab; // 'global', 'pong' ou 'snake'
+            const roomMessages = this.state.messages.filter(msg => msg.roomId === currentRoom);
+            
+            messagesContainer.innerHTML = this.renderMessages(roomMessages);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
     }

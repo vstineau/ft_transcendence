@@ -54,7 +54,7 @@ class MessageService {
         content: content,
         timestamp: savedMessage.timestamp,
         type: type,
-        room: room
+        roomId: room  // Changé de 'room' à 'roomId' pour correspondre au frontend
       };
     } catch (error) {
       console.error('Error saving message:', error);
@@ -71,7 +71,7 @@ class MessageService {
       content: msg.content,
       timestamp: msg.timestamp,
       type: msg.type as 'text' | 'system' | 'game-invitation',
-      room: msg.room
+      roomId: msg.room  // Changé de 'room' à 'roomId'
     };
   }
 
@@ -84,7 +84,7 @@ class MessageService {
       content: content,
       timestamp: new Date(),
       type: 'text',
-      room: room
+      roomId: room  // Changé de 'room' à 'roomId'
     };
   }
 
