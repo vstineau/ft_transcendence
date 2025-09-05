@@ -370,7 +370,8 @@ export async function StatsSnakeView() {
         <div class="max-w-7xl mx-auto px-8">
             <!-- Container des blocs en grid complexe -->
             <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
-			 <!-- Bloc My Profile -->
+
+			<!-- Bloc My Profile -->
 				<div class="bg-white rounded-xl shadow-lg p-6">
 					<h3 class="font-bold text-lg mb-4">My profil</h3>
 					<div class="flex items-center mb-4">
@@ -389,19 +390,19 @@ export async function StatsSnakeView() {
 					<div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
 						<div class="flex flex-col">
 							<span class="text-gray-600">Classement</span>
-							<span class="font-semibold">4</span>
+							<span class="font-semibold" data-stat="classement">-</span>
 						</div>
 						<div class="flex flex-col">
 							<span class="text-gray-600">Max size</span>
-							<span class="font-semibold">25</span>
+							<span class="font-semibold" data-stat="max-size">-</span>
 						</div>
 						<div class="flex flex-col">
 							<span class="text-gray-600">Average size</span>
-							<span class="font-semibold">52</span>
+							<span class="font-semibold" data-stat="average-size">-</span>
 						</div>
 						<div class="flex flex-col">
 							<span class="text-gray-600">Eaten apples</span>
-							<span class="font-semibold">52</span>
+							<span class="font-semibold" data-stat="eaten-apples">-</span>
 						</div>
 					</div>
 				</div>
@@ -420,7 +421,7 @@ export async function StatsSnakeView() {
 				<!-- Bloc My Stats - Distribution des scores -->
 				<div class="bg-white rounded-xl shadow-lg p-6">
 					<h3 class="font-bold text-lg mb-4">My stats</h3>
-					<p class="text-gray-500 text-sm mb-4">Score distribution</p>
+					<p class="text-gray-500 text-sm mb-4">Length distribution</p>
 					<canvas id="scoreDistributionChart" width="250" height="180"></canvas>
 				</div>
 
@@ -428,44 +429,21 @@ export async function StatsSnakeView() {
 				<div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
 					<h3 class="font-bold text-lg mb-4">Global Ranking</h3>
 					<div class="overflow-x-auto">
-						<table class="w-full text-sm">
+						<table id="ranking-table" class="w-full text-sm">
 							<thead>
 								<tr class="border-b">
-									<th class="text-left py-2">Rank</th>
+									<th class="text-left py-2">Date</th>
 									<th class="text-left py-2">Player</th>
-									<th class="text-left py-2">Max Score</th>
-									<th class="text-left py-2">Max Length</th>
+									<th class="text-left py-2">Match wins</th>
+									<th class="text-left py-2">Max size</th>
 									<th class="text-left py-2">Best Time</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr class="border-b">
-									<td class="py-2">01-09</td>
-									<td class="py-2 font-semibold">Theo le terreur</td>
-									<td class="py-2">50</td>
-									<td class="py-2">50</td>
-									<td class="py-2">1:05</td>
-								</tr>
-								<tr class="border-b">
-									<td class="py-2">01-09</td>
-									<td class="py-2 font-semibold">Arthur</td>
-									<td class="py-2">35</td>
-									<td class="py-2">50</td>
-									<td class="py-2">0:50</td>
-								</tr>
-								<tr class="border-b">
-									<td class="py-2">01-09</td>
-									<td class="py-2 font-semibold">OSETO</td>
-									<td class="py-2">28</td>
-									<td class="py-2">50</td>
-									<td class="py-2">0:20</td>
-								</tr>
-								<tr class="border-b">
-									<td class="py-2">01-09</td>
-									<td class="py-2 font-semibold">Theo</td>
-									<td class="py-2">27</td>
-									<td class="py-2">50</td>
-									<td class="py-2">0:15</td>
+								<tr>
+									<td colspan="5" class="py-8 text-center text-gray-500 text-sm">
+										Loading rankings...
+									</td>
 								</tr>
 							</tbody>
 						</table>

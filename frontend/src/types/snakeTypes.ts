@@ -42,3 +42,30 @@ export interface SnakeGameHistory{
 	gameTime?: number;
 }
 
+export interface PlayerRanking{
+	login: string;
+    nickName: string;
+    totalWins: number;
+    totalGames: number;
+    maxSize: number;
+    bestTime: number;
+    lastGameDate: string;
+}
+
+export interface ProfileSnake{
+	 user: {
+        login: string;
+        nickName: string;
+        avatar?: string;
+    };
+    stats: {
+        ranking: number;
+        maxSize: number;
+        averageSize: number;
+        eatenApples: number;
+        totalGames: number;
+        totalWins: number;
+    };
+}
+
+

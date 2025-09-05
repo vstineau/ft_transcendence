@@ -31,6 +31,7 @@ import { localSnakeGame } from './snake/localSnake';
 import { localpongGame } from './pong/localPong';
 import {initProfilePage } from './utils/avatar';
 import {initSnakeStats } from './graph/init';
+import { updateRanking } from './graph/rank';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -161,7 +162,7 @@ async function renderPage() {
 			break;
 		case '/snake':
 			await snakeGame();
-			await displayChatButton();
+			// await displayChatButton();
 			break;
 		case '/snake/local':
 			localSnakeGame();
@@ -174,6 +175,7 @@ async function renderPage() {
 			setTimeout(() => {
 				console.log('About to call initSnakeStats');
 				initSnakeStats();
+				updateRanking();
 				updateInfos();
 				initProfilePage();
 			}, 100);
