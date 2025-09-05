@@ -57,8 +57,8 @@ export class Tournament {
 
 	win_width: number = window.innerWidth;
 	win_height: number = window.innerHeight;
-	// gameWidth: number = this.win_width * 0.6;
-	// gameHeight: number = this.win_height * 0.6;
+	gameWidth: number = this.win_width * 0.6;
+	gameHeight: number = this.win_height * 0.6;
 
 	constructor(names: string[]) {
 		this.rounds = { games: [], max: names.length === 8 ? 2 : 1, nb: 0 };
@@ -78,7 +78,7 @@ export class Tournament {
 			x: 20,
 			height: this.win_height / 9,
 			length: this.win_width / 90,
-			vy: this.win_height / 130,
+			vy: this.win_height / 100,
 			score: 0,
 			key_up: false,
 			key_down: false,
@@ -124,10 +124,10 @@ export class Tournament {
 	fillRound() {
 		if (!this) return;
 		let qualified: PlayerTournament[] = this.players;
+		qualified = qualified.filter(player => !player.eliminated);
 		for (let i = 0; qualified[i]; i++) {
 			console.log(qualified[i].nickName);
 		}
-		qualified = qualified.filter(player => !player.eliminated);
 		this.fillMatchs(this.rounds.games[this.rounds.nb], qualified);
 		// this.rounds.nb++;
 	}
@@ -137,10 +137,10 @@ export class Tournament {
 			p2: player2,
 			ball: {
 				x: this.win_width / 2,
-				y: this.win_width / 2,
-				radius: (this.win_width * this.win_width) / 80000,
+				y: this.win_height / 2,
+				radius: (this.win_height * this.win_width) / 80000,
 				vx: (Math.random() < 0.5 ? -1 : 1) * (this.win_width / 280),
-				vy: (Math.random() < 0.5 ? -1 : 1) * (this.win_width / 180),
+				vy: (Math.random() < 0.5 ? -1 : 1) * (this.win_height / 180),
 			},
 			win: {
 				width: window.innerWidth, //this.win_width,

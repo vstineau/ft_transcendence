@@ -6,7 +6,7 @@ let ctx: CanvasRenderingContext2D | null;
 let form: HTMLFormElement;
 let tournament: Tournament;
 let names: string[] = [];
-let bracket: boolean = false;
+// let bracket: boolean = false;
 let gameStart = false;
 
 import { navigateTo } from '../main';
@@ -14,29 +14,72 @@ import { Game, PlayerTournament, Tournament } from '../types/pongTypes';
 // import { drawGame } from './pong';
 // import { localpongGame } from './localPong';
 
-function initGame() {
+function initGame(game: Game) {
+	// Nettoie le form
+	form.innerHTML = '';
+
+	const container = document.createElement('div');
+	container.className = 'flex flex-row items-center justify-center w-full h-full';
+
+	const leftPanel = document.createElement('div');
+	leftPanel.className = 'flex flex-col items-end mr-8';
+
+	const p1Name = document.createElement('div');
+	p1Name.textContent = game.p1.nickName;
+	p1Name.className = 'font-bold text-xl text-white mb-4';
+
+	const p1Keys = document.createElement('div');
+	p1Keys.className = 'flex flex-col items-end gap-2';
+	const keyW = document.createElement('div');
+	keyW.id = 'p1keyup';
+	keyW.textContent = 'W';
+	keyW.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	const keyS = document.createElement('div');
+	keyS.id = 'p1keydown';
+	keyS.textContent = 'S';
+	keyS.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow text-lg font-mono';
+
+	p1Keys.appendChild(keyW);
+	p1Keys.appendChild(keyS);
+
+	leftPanel.appendChild(p1Name);
+	leftPanel.appendChild(p1Keys);
+
 	canvas = document.createElement('canvas');
 	canvas.width = window.innerWidth * 0.6;
 	canvas.height = window.innerHeight * 0.6;
-	canvas.className = 'rounded-xl shadow-lg border-4 border-gray-800 bg-black md-4';
-	if (!canvas) {
-		console.error("Canvas 'game' not found");
-		return;
-	}
+	canvas.className = 'rounded-xl shadow-lg border-4 border-gray-800 bg-black md-4 mx-8';
 	ctx = canvas.getContext('2d');
-	form.append(canvas);
-	const button = document.createElement('button');
-	button.type = 'button';
-	button.id = 'playNextRound';
-	button.textContent = `finish !`;
-	button.className = 'rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white';
-	button.addEventListener('click', () => {
-		console.log('button clicked');
-		gameStart = false;
-		console.log(gameStart);
-	});
-	form.appendChild(button);
-	// updateInfos();
+
+	const rightPanel = document.createElement('div');
+	rightPanel.className = 'flex flex-col items-start ml-8';
+
+	const p2Name = document.createElement('div');
+	p2Name.textContent = game.p2.nickName;
+	p2Name.className = 'font-bold text-xl text-white mb-4';
+
+	const p2Keys = document.createElement('div');
+	p2Keys.className = 'flex flex-col items-start gap-2';
+	const keyUp = document.createElement('div');
+	keyUp.id = 'p2keyup';
+	keyUp.textContent = '↑';
+	keyUp.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	const keyDown = document.createElement('div');
+	keyDown.id = 'p2keydown';
+	keyDown.textContent = '↓';
+	keyDown.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow text-lg font-mono';
+
+	p2Keys.appendChild(keyUp);
+	p2Keys.appendChild(keyDown);
+
+	rightPanel.appendChild(p2Name);
+	rightPanel.appendChild(p2Keys);
+
+	container.appendChild(leftPanel);
+	container.appendChild(canvas);
+	container.appendChild(rightPanel);
+
+	form.appendChild(container);
 }
 
 function getPlayersName(nb: number) {
@@ -57,7 +100,6 @@ function getPlayersName(nb: number) {
 		container.appendChild(input);
 	}
 	submitNames(container);
-	// console.log('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
 	return container;
 }
 
@@ -66,10 +108,6 @@ function deleteElem(id: string) {
 	if (elem) elem.remove();
 }
 
-function appendElem(id: string, add: HTMLDivElement) {
-	const elem = document.getElementById(id);
-	if (elem) elem.appendChild(add);
-}
 
 function nextMatchButton(game: Game): HTMLButtonElement {
 	const button = document.createElement('button');
@@ -77,9 +115,6 @@ function nextMatchButton(game: Game): HTMLButtonElement {
 	button.id = 'playNextRound';
 	button.textContent = `Next Match !`;
 	button.className = 'rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white';
-	button.addEventListener('click', () => {
-		//
-	});
 	return button;
 }
 
@@ -91,14 +126,11 @@ function drawTitle(title: string): HTMLHeadingElement {
 }
 
 function drawBrackets(matchIdx: number, roundnb: number): HTMLDivElement {
-	// form.innerHTML = '';
 	const matchsContainer = document.createElement('div');
-	matchsContainer.className = 'flex flex-col'; // <-- flex-col ici !
+	matchsContainer.className = 'flex flex-col';
 	for (let i = 0; i <= tournament.rounds.max; i++) {
-		// Chaque round est une ligne
 		const round = document.createElement('div');
 		round.className = 'flex flex-row rounded mb-10 justify-center items-center';
-		// if (roundnb === i) round.className += ' outline outline-white-500';
 		for (let j = 0; j < tournament.rounds.games[i].length; j++) {
 			const match = document.createElement('div');
 			match.className = 'flex flex-col border hover:bg-gray-500 items-center bg-gray-600 p-2 rounded shadow-sm mx-4';
@@ -117,7 +149,7 @@ function drawBrackets(matchIdx: number, roundnb: number): HTMLDivElement {
 			player2.textContent = `${tournament.rounds.games[i][j].p2.nickName}`;
 			if (tournament.rounds.games[i][j].over) {
 				match.className += ' brightness-50';
-				if (tournament.rounds.games[i][j].p1.score > tournament.rounds.games[i][j].p2.score) {
+				if (tournament.rounds.games[i][j].p2.eliminated) {
 					player1.className += ' outline outline-green-500';
 					player1.textContent += ' 🏆';
 					player2.className += ' outline outline-red-500';
@@ -135,62 +167,90 @@ function drawBrackets(matchIdx: number, roundnb: number): HTMLDivElement {
 			match.appendChild(player2);
 			round.appendChild(match);
 		}
-		matchsContainer.appendChild(round); // On ajoute chaque round en colonne !
+		matchsContainer.appendChild(round);
 	}
 	form.className = 'flex flex-col items-center';
 	return matchsContainer;
 }
 
+function updateInfos(game: Game) {
+	game.ball.x = game.win.width / 2 - game.ball.radius / 2;
+	game.ball.y = game.win.height / 2 - game.ball.radius / 2;
+
+	game.ball.vx = (Math.random() < 0.5 ? -1 : 1) * (game.win.width / 280);
+	game.ball.vy = (Math.random() < 0.5 ? -1 : 1) * (game.win.height / 180);
+	game.ball.radius = (game.win.height * game.win.width) / 80000;
+	if (game.ball.radius < 5) game.ball.radius = 5;
+	if (game.ball.radius > 30) game.ball.radius = 30;
+
+	game.p1.y = game.win.height / 2 - game.p1.height / 2;
+	game.p2.y = game.win.height / 2 - game.p1.height / 2;
+	game.p2.x = game.win.width * 0.98;
+
+	game.p1.height = game.win.height / 9;
+	game.p1.length = game.win.width / 90;
+	game.p1.vy = game.win.height / 100;
+
+	game.p2.height = game.win.height / 9;
+	game.p2.length = game.win.width / 90;
+	game.p2.vy = game.win.height / 100;
+}
+
 function listenInputs(game: Game) {
+	let keyUpP1 = document.getElementById('p1keyup');
+	let keyDownP1 = document.getElementById('p1keydown');
+	let keyUpP2 = document.getElementById('p2keyup');
+	let keyDownP2 = document.getElementById('p2keydown');
 	window.addEventListener('keydown', e => {
 		if (e.key === 'w' || e.key === 'W') {
-			//key_w = true;
 			game.p1.key_up = true;
+			if (keyUpP1) keyUpP1.className = 'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
 		}
 		if (e.key === 's' || e.key === 'S') {
-			//key_s = true;
 			game.p1.key_down = true;
+			if (keyDownP1) keyDownP1.className = 'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
 		}
 		if (e.key === 'ArrowUp') {
 			e.preventDefault();
-			//key_up = true;
 			game.p2.key_up = true;
+			if (keyUpP2) keyUpP2.className = 'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
 		}
 		if (e.key === 'ArrowDown') {
 			e.preventDefault();
-			//key_down = true;
 			game.p2.key_down = true;
+			if (keyDownP2) keyDownP2.className = 'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
 		}
-		if (e.key === 'Enter' && bracket) {
-			bracket = false;
-			// updateInfos();
-			// p1.score = 0;
-			// p2.score = 0;
+		if (e.key === 'Enter' && game.over) {
+			gameStart = false;
 		}
 	});
 
 	window.addEventListener('keyup', e => {
-		if (e.key === 'w' || e.key === 'W') game.p1.key_up = false;
-		if (e.key === 's' || e.key === 'S') game.p1.key_down = false;
+		if (e.key === 'w' || e.key === 'W') {
+			game.p1.key_up = false;
+			if (keyUpP1) keyUpP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+		}
+
+		if (e.key === 's' || e.key === 'S') {
+			game.p1.key_down = false;
+			if (keyDownP1) keyDownP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+		}
 		if (e.key === 'ArrowUp') {
 			e.preventDefault();
 			game.p2.key_up = false;
+			if (keyUpP2) keyUpP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
 		}
 		if (e.key === 'ArrowDown') {
 			e.preventDefault();
 			game.p2.key_down = false;
+			if (keyDownP2) keyDownP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
 		}
 	});
 
 	window.addEventListener('resize', () => {
-		canvas.width = window.innerWidth * 0.8;
-		canvas.height = window.innerHeight * 0.8;
-		// win_width = canvas.width;
-		// win_height = canvas.height;
-		// gameWidth = canvas.width;
-		// gameHeight = canvas.height;
-
-		// updateInfos();
+		canvas.width = window.innerWidth * 0.6;
+		canvas.height = window.innerHeight * 0.6;
+		updateInfos(game);
 	});
 }
 
@@ -218,29 +278,6 @@ function checkSubmited(container: HTMLDivElement) {
 	// }
 	return false;
 }
-
-// function tournamentLoop() {
-// 	for (; tournament.rounds.nb < tournament.rounds.max; tournament.rounds.nb) {
-// 		for (let i = 0; tournament.rounds.games[tournament.rounds.nb][i]; i++) {
-// 			//
-// 			tournament.fillRound();
-// 			const title = drawTitle(`Round ${tournament.rounds.nb + 1}`);
-// 			const brackets = drawBrackets(i, tournament.rounds.nb);
-// 			const roundButton = nextMatchButton(tournament.rounds.games[tournament.rounds.nb][0]);
-// 			form.appendChild(title);
-// 			form.appendChild(brackets);
-// 			form.appendChild(roundButton);
-// 			roundButton.addEventListener('click', () => {
-// 				//
-// 				showCountdown();
-// 				form.removeChild(title);
-// 				form.removeChild(brackets);
-// 				form.removeChild(roundButton);
-// 				initGame();
-// 			});
-// 		}
-// 	}
-// }
 
 export function showCountdown() {
 	const container = document.createElement('div');
@@ -295,11 +332,11 @@ let currentRound = 0;
 let mainLoop: NodeJS.Timeout | undefined;
 
 function startMainLoop(game: Game) {
-	listenInputs(game);
 	if (mainLoop) {
 		clearInterval(mainLoop);
 		mainLoop = undefined;
 	}
+	listenInputs(game);
 	mainLoop = setInterval(() => {
 		if (!gameStart) {
 			currentMatch++;
@@ -394,7 +431,7 @@ function checkWin(game: Game) {
 			canvas.width * 0.5,
 			canvas.height * 0.32
 		);
-		game.p1.score > game.p2.score ? (game.p2.eliminated = true) : (game.p2.eliminated = true);
+		game.p1.score > game.p2.score ? (game.p2.eliminated = true) : (game.p1.eliminated = true);
 	}
 }
 
@@ -485,7 +522,6 @@ function showNextMatch() {
 		button.textContent = `Return to Dashboard`;
 		button.className = 'rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white';
 		button.addEventListener('click', () => {
-			//
 			navigateTo('/dashboard');
 		});
 		form.appendChild(button);
@@ -493,7 +529,6 @@ function showNextMatch() {
 	}
 
 	const roundGames = tournament.rounds.games[currentRound];
-	// Vérification fin de round
 	if (currentMatch >= roundGames.length) {
 		currentRound++;
 		currentMatch = 0;
@@ -506,7 +541,6 @@ function showNextMatch() {
 		showNextMatch();
 		return;
 	}
-	// Affichage du match courant
 	const title = drawTitle(`Round ${currentRound + 1}`);
 	const brackets = drawBrackets(currentMatch, currentRound);
 	const roundButton = nextMatchButton(roundGames[currentMatch]);
@@ -517,17 +551,17 @@ function showNextMatch() {
 
 	roundButton.addEventListener('click', () => {
 		form.innerHTML = '';
-		initGame();
+		initGame(tournament.rounds.games[currentRound][currentMatch]);
 		showCountdown();
 		setTimeout(() => {
 			gameStart = true;
 			startMainLoop(tournament.rounds.games[currentRound][currentMatch]);
 			if (!gameStart) {
-				canvas.remove();
+				// canvas.remove();
 				currentMatch++;
 				showNextMatch();
 			}
-		}, 3500);
+		}, 3400);
 	});
 }
 
@@ -540,32 +574,11 @@ function submitNames(container: HTMLDivElement) {
 	container.appendChild(button);
 	button.addEventListener('click', () => {
 		if (checkSubmited(container)) return;
-		// Récupérer les noms et valider
 		container.hidden = true;
-		// button.hidden = true;
 		deleteElem('submitName');
 		tournament = new Tournament(names);
-		//loop tournament
 		tournament.fillRound();
-		// const title = drawTitle('Round');
-		// const brackets = drawBrackets(0, tournament.rounds.nb);
-		// const roundButton = nextMatchButton(tournament.rounds.games[tournament.rounds.nb][0]);
-		// form.appendChild(title);
-		// form.appendChild(brackets);
-		// form.appendChild(roundButton);
 		showNextMatch();
-		// roundButton.addEventListener('click', () => {
-		// 	//
-		// 	// tournamentLoop();
-		// 	// showCountdown();
-		// 	// form.removeChild(title);
-		// 	// form.removeChild(brackets);
-		// 	// form.removeChild(roundButton);
-		// 	// initGame();
-		// 	// gameStart = true;
-		// 	// // gameLoop(canvas);
-		// 	// localpongGame();
-		// });
 	});
 }
 
