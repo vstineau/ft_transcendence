@@ -170,6 +170,7 @@ export class ChatManager {
         document.body.insertAdjacentHTML('beforeend', ChatPanel());
         this.setupPanelEventListeners();
         this.updateMessagesDisplay();
+        this.updateCurrentRoomIndicator(this.state.activeTab);
         this.renderOnlineUsers();
         this.renderRoomsSidebar();
         
@@ -354,6 +355,9 @@ export class ChatManager {
         // Mettre à jour la sélection visuelle
         this.updateRoomSelection(roomId);
         
+        // Mettre à jour l'indicateur de room courante
+        this.updateCurrentRoomIndicator(roomId);
+        
         // Mettre à jour l'affichage des messages avec ceux de la nouvelle room
         this.updateMessagesDisplay();
     }
@@ -374,6 +378,47 @@ export class ChatManager {
         // La sélection est maintenant gérée directement dans renderRoomsList()
         // Il suffit de re-rendre la liste des rooms
         this.renderRoomsList();
+    }
+
+    private updateCurrentRoomIndicator(roomId: string) {
+        const indicatorElement = document.getElementById('current-room-indicator');
+        const iconElement = document.getElementById('room-indicator-icon');
+        const textElement = document.getElementById('room-indicator-text');
+        
+        if (!indicatorElement || !iconElement || !textElement) return;
+
+        // Trouver la room correspondante
+        const room = this.state.rooms?.find(r => r.id === roomId);
+        
+        let icon = '💬';
+        let roomName = roomId;
+        let bgColor = 'bg-gray-700'; // couleur par défaut
+        
+        if (room) {
+            roomName = room.name;
+            
+            // Déterminer l'icône et la couleur selon le type de room
+            if (room.id === 'global') {
+                icon = '🌐';
+                bgColor = 'bg-blue-600';
+            } else if (room.id === 'pong') {
+                icon = '🏓';
+                bgColor = 'bg-red-600';
+            } else if (room.id === 'snake') {
+                icon = '🐍';
+                bgColor = 'bg-green-600';
+            } else if (room.type === 'private') {
+                icon = '👤';
+                bgColor = 'bg-purple-600';
+            }
+        }
+        
+        // Enlever toutes les classes de couleur et ajouter la nouvelle
+        indicatorElement.className = indicatorElement.className.replace(/bg-\w+-\d+/g, '');
+        indicatorElement.classList.add(bgColor);
+        
+        iconElement.textContent = icon;
+        textElement.textContent = roomName;
     }
 
     private renderRoomsSidebar() {

@@ -6,7 +6,13 @@ export function ChatPanel(): string {
         <div id="chat-panel" class="fixed bottom-24 right-6 w-[700px] h-[600px] bg-white rounded-xl shadow-2xl z-40 font-montserrat flex flex-col overflow-hidden">
             <!-- Header du chat -->
             <div class="bg-black text-white p-4 rounded-t-xl flex items-center justify-between">
-                <h3 class="font-bold text-lg">Chat</h3>
+                <div class="flex items-center space-x-3">
+                    <h3 class="font-bold text-lg">Chat</h3>
+                    <div id="current-room-indicator" class="bg-gray-700 px-2 py-1 rounded-md text-xs flex items-center space-x-1">
+                        <span id="room-indicator-icon">🌐</span>
+                        <span id="room-indicator-text">Global</span>
+                    </div>
+                </div>
                 <button id="chat-close" class="text-white hover:bg-gray-800 rounded p-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
