@@ -31,11 +31,10 @@ export class ChatManager {
     constructor() {
         this.socketService = new SocketService();
         this.messageService = new MessageService();
-		this.createSocketClient();
+		this.startListening();
     }
 
-    private createSocketClient() {
-        const socket = this.socketService.createConnection();
+    private startListening() {
 
         this.socketService.on('connect', () => {
             console.log('💬 Chat socket connected');
@@ -59,8 +58,19 @@ export class ChatManager {
             console.log('📩 New message received:', message);
             this.messageService.addMessage(message);
             
+            // Si c'est un message privé, gérer côté client
+            if (message.roomId?.startsWith('private_')) {
+                if (message.userId !== this.state.currentUserId) {
+                    // Message privé reçu - créer/afficher la room automatiquement
+                    this.createAndShowPrivateRoom(message);
+                } else {
+                    // Message privé envoyé par nous - s'assurer que la room existe côté serveur
+                    this.handleOutgoingPrivateMessage(message);
+                }
+            }
+            
             // Vérifier si le message appartient à la room active
-            const currentRoom = this.state.activeTab; // activeTab peut être 'global', 'pong' ou 'snake'
+            const currentRoom = this.state.activeTab;
             if (message.roomId === currentRoom) {
                 this.state.messages.push(message);
                 this.updateMessagesDisplay();
@@ -71,6 +81,7 @@ export class ChatManager {
                 this.state.unreadCount++;
                 this.updateNotificationBadge();
             }
+
         });
 
         this.socketService.on('userJoined', (user: any) => {
@@ -126,11 +137,36 @@ export class ChatManager {
 
         // Écouter la confirmation de rejoindre une room privée
         this.socketService.on(CHAT_EVENTS.ROOM_JOINED, (data: any) => {
-            console.log(`✅ Room privée rejointe: ${data.roomName}`, data.messages);
+            console.log(`✅ Room private rejointe: ${data.roomName}`, data.messages);
             
             // Mettre à jour les messages avec l'historique de la room privée
             this.state.messages = data.messages || [];
             this.updateMessagesDisplay();
+        });
+
+        // Écouter la création automatique d'une room privée par quelqu'un d'autre
+        this.socketService.on(CHAT_EVENTS.PRIVATE_ROOM_CREATED, (data: any) => {
+            console.log(`🔔 Room privée créée par ${data.withUser.username}:`, data.roomName);
+            
+            // Créer la room dans l'interface si elle n'existe pas
+            const existingRoom = this.state.rooms?.find(r => r.id === data.roomName);
+            if (!existingRoom) {
+                const newRoom: ChatRoom = {
+                    id: data.roomName,
+                    name: data.withUser.username,
+                    type: 'private',
+                    participants: [this.state.currentUserId, data.withUser.id],
+                    unreadCount: 0
+                };
+
+                if (!this.state.rooms) this.state.rooms = [];
+                this.state.rooms.push(newRoom);
+                
+                console.log(`✅ Room privée ajoutée automatiquement: ${data.roomName} avec ${data.withUser.username}`);
+                
+                // Mettre à jour l'affichage des rooms
+                this.renderRoomsSidebar();
+            }
         });
 
         this.socketService.on('authError', (error: string) => {
@@ -205,6 +241,7 @@ export class ChatManager {
                     messageInput.value = '';
                 }
             });
+
         }
 
         // Gestion de la recherche
@@ -259,7 +296,7 @@ export class ChatManager {
         if (this.socketService.isConnected()) {
             this.socketService.emit('sendMessage', {
                 content: content.trim(),
-                room: this.state.activeTab // 'global', 'pong' ou 'snake'
+                room: this.state.activeTab 
             });
         } else {
             console.error('❌ Socket not connected');
@@ -408,7 +445,48 @@ export class ChatManager {
                 icon = '🐍';
                 bgColor = 'bg-green-600';
             } else if (room.type === 'private') {
-                icon = '👤';
+
+                // Pour les rooms privées, afficher l'avatar avec le statut
+                const otherUserId = room.participants?.find(id => id !== this.state.currentUserId);
+                const otherUser = this.state.onlineUsers?.find(u => u.id === otherUserId);
+                
+                if (otherUser) {
+                    
+                    const avatar = createAvatarElement(otherUser.username, otherUser.avatar, 'sm');
+                    const statusColor =  otherUser.status === 'online' ? 'bg-green-500' : 'bg-gray-500';
+                    otherUser.status === 'in-game' ? 'bg-blue-500' : 'bg-green-500';
+                    if (otherUser.status === 'online') {
+                        iconElement.innerHTML = `
+                            <div class="relative w-4 h-4">
+                                <div class="w-full h-full overflow-hidden rounded-full" style="font-size: 8px;">
+                                    ${avatar.replace('w-7 h-7', 'w-4 h-4').replace('text-[10px]', 'text-[8px]')}
+                                </div>
+                                <span class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-gray-700 ${statusColor}"></span>
+                            </div>
+                        `;
+                    }
+                    else if (otherUser.status === 'in-game')
+                        iconElement.innerHTML = `
+                            <div class="relative w-4 h-4">
+                                <div class="w-full h-full overflow-hidden rounded-full" style="font-size: 8px;">
+                                    ${avatar.replace('w-7 h-7', 'w-4 h-4').replace('text-[10px]', 'text-[8px]')}
+                                </div>
+                                <span class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-gray-700 ${statusColor}"></span>
+                            </div>
+                    `;
+                    else if (otherUser.status === 'offline') {
+                        iconElement.innerHTML = `
+                            <div class="relative w-4 h-4">
+                                <div class="w-full h-full overflow-hidden rounded-full" style="font-size: 8px;">
+                                    ${avatar.replace('w-7 h-7', 'w-4 h-4').replace('text-[10px]', 'text-[8px]')}
+                                </div>
+                                <span class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-gray-700 ${statusColor}"></span>
+                            </div>
+                        `;
+                    }
+                } else {
+                    icon = '👤';
+                }
                 bgColor = 'bg-purple-600';
             }
         }
@@ -417,7 +495,11 @@ export class ChatManager {
         indicatorElement.className = indicatorElement.className.replace(/bg-\w+-\d+/g, '');
         indicatorElement.classList.add(bgColor);
         
-        iconElement.textContent = icon;
+        // Seulement mettre à jour l'icône si ce n'est pas une room privée (car on a déjà mis l'avatar)
+        if (!room || room.type !== 'private' || !room.participants?.find(id => id !== this.state.currentUserId)) {
+            iconElement.textContent = icon;
+        }
+        
         textElement.textContent = roomName;
     }
 
@@ -439,20 +521,39 @@ export class ChatManager {
             const activeClass = isActive ? 'bg-gray-700' : '';
             
             // Déterminer l'icône et la couleur selon le type de room
-            let icon = '💬';
+            let iconHtml = '';
             let colorClass = 'bg-gray-500';
             
             if (room.id === 'global') {
-                icon = '🌐';
+                iconHtml = '<span class="text-[10px] text-gray-500">🌐</span>';
                 colorClass = 'bg-blue-500';
             } else if (room.id === 'pong') {
-                icon = '🏓';
+                iconHtml = '<span class="text-[10px] text-gray-500">🏓</span>';
                 colorClass = 'bg-red-500';
             } else if (room.id === 'snake') {
-                icon = '🐍';
+                iconHtml = '<span class="text-[10px] text-gray-500">🐍</span>';
                 colorClass = 'bg-green-500';
             } else if (room.type === 'private') {
-                icon = '👤';
+                // Pour les rooms privées, afficher l'avatar avec le statut
+                const otherUserId = room.participants?.find(id => id !== this.state.currentUserId);
+                const otherUser = this.state.onlineUsers?.find(u => u.id === otherUserId);
+                
+                if (otherUser) {
+                    const avatar = createAvatarElement(otherUser.username, otherUser.avatar, 'sm');
+                    const statusColor = otherUser.status === 'online' ? 'bg-green-500' : 
+                                      otherUser.status === 'in-game' ? 'bg-yellow-500' : 'bg-gray-500';
+                    
+                    iconHtml = `
+                        <div class="relative w-5 h-5">
+                            <div class="w-full h-full overflow-hidden rounded-full">
+                                ${avatar.replace('w-7 h-7', 'w-5 h-5').replace('text-[10px]', 'text-[8px]')}
+                            </div>
+                            <span class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-gray-900 ${statusColor}"></span>
+                        </div>
+                    `;
+                } else {
+                    iconHtml = '<span class="text-[10px] text-gray-500">👤</span>';
+                }
                 colorClass = 'bg-purple-500';
             }
 
@@ -460,7 +561,7 @@ export class ChatManager {
                 <div data-room-id="${room.id}" class="flex items-center px-2 py-1.5 rounded hover:bg-gray-800 cursor-pointer group ${activeClass}">
                     <div class="w-2 h-2 ${colorClass} rounded-full mr-2"></div>
                     <span class="text-xs font-medium flex-1 truncate">${escapeHtml(room.name)}</span>
-                    <span class="ml-auto text-[10px] text-gray-500">${icon}</span>
+                    <div class="ml-auto">${iconHtml}</div>
                     ${room.unreadCount > 0 ? `<span class="ml-1 bg-red-500 text-white text-[10px] px-1 rounded-full">${room.unreadCount}</span>` : ''}
                 </div>
             `;
@@ -636,12 +737,7 @@ export class ChatManager {
             console.log(`✅ Nouvelle room privée créée: ${roomId} avec ${targetUser.username}`);
         }
 
-        // Rejoindre la room privée côté serveur
-        this.socketService.emit(CHAT_EVENTS.JOIN_PRIVATE_ROOM, { 
-            targetUserId: userId
-        });
-
-        // Changer vers cette room
+        // Changer vers cette room (la room sera créée côté serveur seulement lors de l'envoi du premier message)
         this.switchRoom(roomId);
 
         // Mettre à jour l'affichage des rooms
@@ -652,4 +748,62 @@ export class ChatManager {
         // Même logique que le backend pour s'assurer de la cohérence
         return `private_${[userId1, userId2].sort().join('_')}`;
     }
+
+    private createAndShowPrivateRoom(message: Message) {
+        console.log('💬 Message privé reçu, affichage de la room:', message.roomId);
+        
+        // Trouver l'expéditeur du message
+        const sender = this.state.onlineUsers?.find(u => u.id === message.userId);
+        if (!sender) {
+            console.warn('⚠️ Expéditeur non trouvé:', message.userId);
+            return;
+        }
+
+        const roomId = message.roomId!;
+        
+        // Vérifier si la room existe déjà dans la liste
+        const existingRoom = this.state.rooms?.find(r => r.id === roomId);
+        
+        if (!existingRoom) {
+            // Créer la room dans l'interface
+            const newRoom: ChatRoom = {
+                id: roomId,
+                name: sender.username,
+                type: 'private',
+                participants: [this.state.currentUserId, message.userId],
+                unreadCount: 0
+            };
+
+            if (!this.state.rooms) this.state.rooms = [];
+            this.state.rooms.push(newRoom);
+            
+            console.log(`✅ Room privée ajoutée: ${roomId} avec ${sender.username}`);
+            
+            // Mettre à jour l'affichage des rooms
+            this.renderRoomsSidebar();
+        }
+
+    }
+
+    private handleOutgoingPrivateMessage(message: Message) {
+        console.log('📤 Message privé envoyé, s\'assurer que la room existe côté serveur:', message.roomId);
+        
+        // Extraire l'ID de l'autre utilisateur depuis le roomId
+        const roomId = message.roomId;
+        if (!roomId?.startsWith('private_')) return;
+        
+        // Extraire les IDs des participants depuis l'ID de la room (format: private_userId1_userId2)
+        const userIds = roomId.replace('private_', '').split('_');
+        const otherUserId = userIds.find(id => id !== this.state.currentUserId);
+        
+        if (!otherUserId) return;
+        
+        // Déclencher startPrivateChat pour s'assurer que la room existe côté serveur
+        // Cela permettra au destinataire d'avoir la room même après un refresh
+        console.log(`🔄 Initialisation côté serveur de la room privée avec l'utilisateur ${otherUserId}`);
+        this.socketService.emit(CHAT_EVENTS.JOIN_PRIVATE_ROOM, { 
+            targetUserId: otherUserId
+        });
+    }
+
 }

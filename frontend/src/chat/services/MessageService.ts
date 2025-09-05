@@ -7,37 +7,6 @@ import type { Message, Friend, ChatState } from '../types';
 export class MessageService {
     private messages: Message[] = [];
 
-    // Messages de démo pour le développement
-    private mockMessages: Message[] = [
-        {
-            id: '1',
-            userId: 'user1',
-            username: 'Alice',
-            content: 'Salut tout le monde ! 👋',
-            avatarPath: '',
-            timestamp: new Date(Date.now() - 1000 * 60 * 5),
-            type: 'text'
-        },
-        {
-            id: '2',
-            userId: 'user2',
-            username: 'Bob',
-            content: 'Hey ! Quelqu\'un pour une partie de Pong ?',
-            avatarPath: '',
-            timestamp: new Date(Date.now() - 1000 * 60 * 3),
-            type: 'text'
-        },
-        {
-            id: '3',
-            userId: 'current-user',
-            username: 'Toi',
-            content: 'Je suis chaud ! 🏓',
-            avatarPath: '',
-            timestamp: new Date(Date.now() - 1000 * 60 * 2),
-            type: 'text'
-        }
-    ];
-
     addMessage(message: Message): void {
         this.messages.push(message);
     }

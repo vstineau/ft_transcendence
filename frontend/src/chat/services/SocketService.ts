@@ -18,6 +18,10 @@ export class SocketService {
         return this.socket;
     }
 
+    constructor() {
+        this.createConnection();
+    }
+
     getSocket(): Socket | null {
         return this.socket;
     }

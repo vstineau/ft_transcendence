@@ -54,7 +54,7 @@ class MessageService {
         content: content,
         timestamp: savedMessage.timestamp,
         type: type,
-        roomId: room  // Changé de 'room' à 'roomId' pour correspondre au frontend
+        roomId: room
       };
     } catch (error) {
       console.error('Error saving message:', error);

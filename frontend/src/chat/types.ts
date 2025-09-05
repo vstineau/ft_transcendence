@@ -5,7 +5,7 @@ export interface Message {
     content: string;
     avatarPath: string;
     timestamp: Date | string;
-    type: 'text' | 'system' | 'game-invitation';
+    type: 'public' | 'private' | 'system' | 'game-invitation';
     roomId?: string; // identifiant de la room (global, pong, snake ou id dynamique)
 }
 
@@ -35,7 +35,7 @@ export interface ChatState {
     currentUserId: string;
     avatar: string;
     isOpen: boolean;
-    activeTab: 'global' | 'pong' | 'snake';
+    activeTab: 'global' | 'pong' | 'snake' | 'private' | '';
     currentRoom: ChatRoom | null;
     messages: Message[];
     unreadCount: number;
