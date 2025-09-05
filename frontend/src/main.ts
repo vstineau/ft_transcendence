@@ -170,9 +170,6 @@ async function renderPage() {
 		case '/2fa-verification':
 			initTwoFALogin();
 			break;
-		case '/login/github/callback':
-			loginGithub();
-			break;
 		case '/statisticsSnake':
 			setTimeout(() => {
 				console.log('About to call initSnakeStats');
