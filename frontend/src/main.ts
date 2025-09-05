@@ -1,7 +1,6 @@
 // import { register } from 'ts-node';
 import { registerUser } from './user/register';
 import { logUser, initTwoFALogin, TwoFAVerifyView} from './user/login';
-//import { loginGithub } from './user/loginGithub';
 import { rootUser } from './user/root';
 import { updateInfos } from './user/updateInfos';
 import { displayChatButton } from './utils/chat_tools';
