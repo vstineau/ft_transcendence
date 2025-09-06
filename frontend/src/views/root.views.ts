@@ -421,7 +421,8 @@ export async function StatsSnakeView() {
 				<!-- Bloc My Stats - Distribution des scores -->
 				<div class="bg-white rounded-xl shadow-lg p-6">
 					<h3 class="font-bold text-lg mb-4">My stats</h3>
-					<p class="text-gray-500 text-sm mb-4">Length distribution</p>
+					<p class="text-gray-800 text-sm">Length distribution</p>
+					<p class="text-gray-500 text-sm mb-4">Your most common final sizes</p>
 					<canvas id="scoreDistributionChart" width="250" height="180"></canvas>
 				</div>
 
