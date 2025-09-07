@@ -40,6 +40,11 @@ export interface SnakeGameHistory{
 	win?: string;
 	finalLength?: number;
 	gameTime?: number;
+
+    opponentStats?: {
+        finalLength?: number;
+        gameTime?: number;
+    } | null;
 }
 
 export interface PlayerRanking{

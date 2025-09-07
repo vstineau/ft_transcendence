@@ -1,5 +1,6 @@
 import { SnakeGameHistory } from '../types/snakeTypes';
 import { formatGameTime, formatDate } from '../graph/init';
+// import { historySnake } from '../../../backend/app/snake/historySnake';
 
 export let currentGames: SnakeGameHistory[] = [];
 
@@ -17,24 +18,37 @@ export function showGameDetails(gameIndex: number): void {
     const currentUser = userData ? JSON.parse(userData) : { login: 'Player' };
 
     // Couleur selon le résultat
-    let bgColor, textColor;
+    let bgColor, textColor, accentColor;
     if (isDraw) {
-        bgColor = 'bg-blue-400';
-        textColor = 'text-white';
+        bgColor = 'bg-[#B7DBF1]';
+        textColor = 'text-[#72524A]';
+        accentColor = 'text-[#647458]';
     } else if (isWin) {
-        bgColor = 'bg-green-500';
+        bgColor = 'bg-[#96BD7B]';
         textColor = 'text-white';
+        accentColor = 'text-[#72524A]'
     } else {
-        bgColor = 'bg-red-800';
+        bgColor = 'bg-[#632024]';
         textColor = 'text-white';
+        accentColor = 'text-[#96BD7B]'
+    }
+
+
+    let shadowColor;
+    if (isDraw) {
+        shadowColor = 'shadow-[0_10px_25px_rgba(183,219,241,0.7)]';
+    } else if (isWin) {
+        shadowColor = 'shadow-[0_10px_25px_rgba(150,189,123,0.7)]';
+    } else {
+        shadowColor = 'shadow-[0_10px_25px_rgba(99,32,36,0.7)]';
     }
 
     // Texte du résultat
     const resultText = isDraw ? 'DRAW' : (isWin ? 'WIN' : 'LOSS');
 
     const popupHTML = `
-        <div id="game-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="closeGameDetails(event)">
-            <div class="${bgColor} ${textColor} rounded-xl p-6 max-w-xl h-[350px] w-full mx-4 transform transition-all duration-300 scale-95 relative" onclick="event.stopPropagation()">
+        <div id="game-popup" class="fixed inset-0 bg-white/10 backdrop-blur flex items-center justify-center z-50" onclick="closeGameDetails(event)">
+            <div class="${bgColor} rounded-xl p-4 max-w-xl h-[350px] w-full mx-4 transform transition-all duration-300 scale-95 relative flex flex-col flex flex-col justify-start ${textColor} ${shadowColor}" onclick="event.stopPropagation()">
 
 			<!-- Croix de fermeture -->
 				<button onclick="closeGameDetails()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
@@ -44,39 +58,50 @@ export function showGameDetails(gameIndex: number): void {
 				</button>
 
 			<!-- Header avec date et heure -->
-                <div class="rounded-lg pt-1 px-4 pb-4 mb-4 text-center">
-                    <div class="text-sm opacity-90">${formatDate(game.date || '')}</div>
-                    <div class="text-xs opacity-75">Game time: ${formatGameTime(game.gameTime || 0)}</div>
-                    ${isDraw ? '<div class="text-lg font-bold mt-2">DRAW</div>' : ''}
-                </div>
+                <div class="rounded-lg pt-2 px-4 pb-4 text-center">
+                <div class="text-sm ${accentColor}">${formatDate(game.date || '')}</div>
+                <div class="text-xs ${textColor}">Game time</div>
+                <div class="text-lg ${accentColor}">${formatGameTime(game.gameTime || 0)}</div>
+                
+            </div>
 
                 <!-- Section VS avec couronne -->
-                <div class="flex items-center justify-between mb-6">
-                    <div class="text-center flex-1 mt-12">
-                        ${(isWin && !isDraw) ? '<div class="text-2xl mb-2">👑</div>' : ''}
-                        <div class="font-bold text-lg">${currentUser.login}</div>
-                        <div class="text-sm text-gray-600 mb-2">You</div>
+                <div class="flex items-center justify-between">
+                    <div class="text-center flex-1">
+                        <!-- Espace couronne -->
+                        <div class="text-4xl mb-2 h-8 flex items-center justify-center">
+                            ${(isWin && !isDraw) ? '👑' : ''}
+                        </div>
+                        <div class="font-bold text-lg ">${currentUser.login}</div>
+                        <div class="text-sm mb-4 ${accentColor}">You</div>
+
                         <div class="text-sm mt-1">
-                            <span class="text-gray-500">Length:</span> ${game.finalLength || 0}
+                            <span class="${textColor}">Length: </span><span class="${accentColor}">${game.finalLength || 0}</span>
                         </div>
                         <div class="text-sm">
-                            <span class="text-gray-500">Max size:</span> ${game.finalLength || 0}
+                            <span class="${textColor}">Eaten apples: </span><span class="${accentColor}">${Math.max((game.finalLength || 1) - 1, 0)}</span>
                         </div>
                     </div>
 
                     <div class="text-center px-4">
-                        <div class="text-2xl font-bold text-gray-400">VS</div>
+                        <div class="text-4xl font-bold ${accentColor}">
+                            ${isDraw ? "DRAW" : "VS"}
+                        </div>
                     </div>
 
                     <div class="text-center flex-1">
-                        ${(!isWin && !isDraw) ? '<div class="text-2xl mb-2">👑</div>' : ''}
+                        <!-- Espace réservé pour la couronne (toujours présent) -->
+                        <div class="text-2xl mb-2 h-8 flex items-center justify-center">
+                            ${(!isWin && !isDraw) ? '👑' : ''}
+                        </div>
                         <div class="font-bold text-lg">${game.opponent || 'Opponent'}</div>
-                        <div class="text-sm text-gray-600">Opponent</div>
+                        <div class="text-sm mb-4 ${accentColor}">Opponent</div>
+
                         <div class="text-sm mt-1">
-                            <span class="text-gray-500">Length:</span> -
+                            <span class="${textColor}">Length: </span><span class="${accentColor}">${game.opponentStats?.finalLength || '-'}</span>
                         </div>
                         <div class="text-sm">
-                            <span class="text-gray-500">Max size:</span> -
+                            <span class="${textColor}">Etean apples: </span><span class="${accentColor}">${game.opponentStats ? Math.max((game.opponentStats.finalLength || 1) - 1, 0) : '-'}</span>
                         </div>
                     </div>
                 </div>

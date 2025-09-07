@@ -28,11 +28,35 @@ export default {
                 order: { date: 'DESC' }
             });
 
-            console.log('=== HISTORY DEBUG ===');
-            console.log('User ID:', payload.id);
-            console.log('Total history entries found:', history.length);
+            // console.log('=== HISTORY DEBUG ===');
+            // console.log('User ID:', payload.id);
+            // console.log('Total history entries found:', history.length);
 
-            return reply.send(history);
+            // return reply.send(history);
+
+            // Après avoir récupéré l'historique utilisateur
+            const processedHistory = await Promise.all(history.map(async (game) => {
+                if (game.opponent) {                    
+                    const opponentGame = await History.findOne({
+                        where: {
+                            user: { login: game.opponent },
+                            type: 'snake'
+                        },
+                        order: { date: 'DESC' }
+                    });
+                                        
+                    return {
+                        ...game,
+                        opponentStats: opponentGame ? {
+                            finalLength: opponentGame.finalLength,
+                            gameTime: opponentGame.gameTime
+                        } : null
+                    };
+                }
+                return game;
+            }));
+
+            return reply.send(processedHistory);
 
 
         } catch (error) {
