@@ -20,7 +20,7 @@ export interface ChatRoom {
 export interface Friend {
     id: string;
     username: string;
-    avatar?: string;
+    avatar: string;
     status: 'online' | 'offline' | 'in-game';
 }
 
@@ -28,16 +28,14 @@ export interface User {
     id: string;
     username: string;
     status: 'online' | 'offline' | 'in-game';
-    avatar?: string;
+    avatar: string;
 }
 
 export interface ChatState {
-    currentUserId: string;
-    avatar: string;
+    currentUserId: User;
     isOpen: boolean;
     activeTab: 'global' | 'pong' | 'snake' | 'private' | '';
     currentRoom: ChatRoom | null;
-    messages: Message[];
     unreadCount: number;
     rooms?: ChatRoom[]; // liste des rooms disponibles (incluant global)
     friends?: Friend[]; // liste des amis

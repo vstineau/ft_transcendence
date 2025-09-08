@@ -5,6 +5,7 @@ export * from './services';
 export * from './utils';
 export * from './types';
 export * from './config';
+export * from './eventsChat';
 
 // Instance globale du chat (pour compatibilité avec l'existant)
 import { ChatManager } from './ChatManager';

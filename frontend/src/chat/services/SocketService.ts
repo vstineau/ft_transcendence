@@ -1,13 +1,14 @@
 // @ts-ignore
 import io, { Socket } from 'socket.io-client';
 import type { Message, Friend } from '../types';
+import { MessageService } from './MessageService';
 
 /**
  * Service de gestion des connexions Socket.IO pour le chat
  */
-export class SocketService {
-    private socket: Socket | null = null;
-    private eventHandlers: { [event: string]: Function[] } = {};
+export class SocketService extends MessageService {
+    protected socket: Socket | null = null;
+    protected eventHandlers: { [event: string]: Function[] } = {};
 
     createConnection(): Socket {
         const host = window.location.hostname;
@@ -19,6 +20,7 @@ export class SocketService {
     }
 
     constructor() {
+        super();
         this.createConnection();
     }
 

@@ -5,7 +5,7 @@ import type { Message, Friend, ChatState } from '../types';
  * Service de gestion des messages du chat
  */
 export class MessageService {
-    private messages: Message[] = [];
+    protected messages: Message[] = [];
 
     addMessage(message: Message): void {
         this.messages.push(message);
@@ -23,14 +23,7 @@ export class MessageService {
     searchUsers(term: string, onlineUsers: Friend[], friends: Friend[]): Friend[] {
         const base: Friend[] = [...(onlineUsers || []), ...(friends || [])];
         
-        // Ajouter quelques faux utilisateurs pour la démo
-        const mock: Friend[] = ['lucie','marc','patrick','zoe','lea'].map(name => ({ 
-            id: 'mock-' + name, 
-            username: name, 
-            status: 'offline' as const
-        }));
-        
-        const pool = [...base, ...mock];
+        const pool = [...base];
         const lower = term.toLowerCase();
         const filtered = pool.filter(u => u.username.toLowerCase().includes(lower));
         

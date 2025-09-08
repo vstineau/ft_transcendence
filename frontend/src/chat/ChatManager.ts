@@ -1,20 +1,19 @@
 // @ts-ignore
-import io, { Socket } from 'socket.io-client';
-import { getCookie } from '../pong/pong';
-import type { ChatState, Message, ChatRoom, Friend } from './types';
+//import io, { Socket } from 'socket.io-client';
+//import { getCookie } from '../pong/pong';
+import type { ChatState, Message, ChatRoom } from './types';
 import { ChatPanel } from './components/ChatPanel';
 import { SocketService, MessageService } from './services';
 import { formatTime, escapeHtml, createAvatarElement } from './utils';
+import { eventsSocket } from './eventsChat';
 import { CHAT_EVENTS } from './config';
 
-export class ChatManager {
+export class ChatManager extends SocketService {
     private state: ChatState = {
-        currentUserId: '',
-        avatar: '',
+        currentUserId: {} as any,
         isOpen: false,
         activeTab: 'global',
         currentRoom: null,
-        messages: [],
         unreadCount: 0,
         onlineUsers: [],
         rooms: [
@@ -25,42 +24,37 @@ export class ChatManager {
         friends: []
     };
 
-    private socketService: SocketService;
+    //private socketService: SocketService;
     private messageService: MessageService;
 
     constructor() {
-        this.socketService = new SocketService();
+        super();
+        //this.socketService = new SocketService();
         this.messageService = new MessageService();
+        eventsSocket.call(this);
 		this.startListening();
     }
 
     private startListening() {
 
-        this.socketService.on('connect', () => {
-            console.log('💬 Chat socket connected');
-            let cookie = getCookie('token');
-            if (cookie) {
-                this.socketService.emit('initUser', cookie);
-            }
-        });
 
-        // Écouter les événements du serveur
-        this.socketService.on('userConnected', (data: any) => {
-            console.log('✅ Chat user connected:', data);
-            this.state.currentUserId = data.user.id;
-            this.state.avatar = data.user.avatar || '';
-            this.state.messages = data.recentMessages || [];
-            this.state.onlineUsers = data.onlineUsers || [];
-            this.updateMessagesDisplay();
-        });
+        //// Écouter les événements du serveur
+        //this.on('userConnected', (data: any) => {
+        //    console.log('✅ Chat user connected:', data);
+        //    this.state.currentUserId = data.user.id;
+        //    this.state.avatar = data.user.avatar || '';
+        //    this.state.messages = data.recentMessages || [];
+        //    this.state.onlineUsers = data.onlineUsers || [];
+        //    this.updateMessagesDisplay();
+        //});
 
-        this.socketService.on('newMessage', (message: Message) => {
+        this.on('newMessage', (message: Message) => {
             console.log('📩 New message received:', message);
             this.messageService.addMessage(message);
             
             // Si c'est un message privé, gérer côté client
             if (message.roomId?.startsWith('private_')) {
-                if (message.userId !== this.state.currentUserId) {
+                if (message.userId !== this.state.currentUserId?.id) {
                     // Message privé reçu - créer/afficher la room automatiquement
                     this.createAndShowPrivateRoom(message);
                 } else {
@@ -72,7 +66,7 @@ export class ChatManager {
             // Vérifier si le message appartient à la room active
             const currentRoom = this.state.activeTab;
             if (message.roomId === currentRoom) {
-                this.state.messages.push(message);
+                this.messages.push(message);
                 this.updateMessagesDisplay();
             }
 
@@ -84,7 +78,7 @@ export class ChatManager {
 
         });
 
-        this.socketService.on('userJoined', (user: any) => {
+        this.on('userJoined', (user: any) => {
             console.log('👋 User joined chat:', user);
             if (!this.state.onlineUsers) this.state.onlineUsers = [];
             if (!this.state.onlineUsers.find(u => u.id === user.id)) {
@@ -98,7 +92,7 @@ export class ChatManager {
             }
         });
 
-        this.socketService.on('userLeft', (user: any) => {
+        this.on('userLeft', (user: any) => {
             console.log('👋 User left chat:', user);
             if (this.state.onlineUsers) {
                 this.state.onlineUsers = this.state.onlineUsers.filter(u => u.id !== user.id);
@@ -106,7 +100,7 @@ export class ChatManager {
             }
         });
 
-        this.socketService.on('onlineUsersUpdated', (onlineUsers: any[]) => {
+        this.on('onlineUsersUpdated', (onlineUsers: any[]) => {
             console.log('🔄 Online users list updated:', onlineUsers);
             this.state.onlineUsers = onlineUsers.map(u => ({
                 id: u.id,
@@ -117,35 +111,35 @@ export class ChatManager {
         });
 
         // Écouter les messages d'une room spécifique
-        this.socketService.on(CHAT_EVENTS.LOADING_MESSAGES, (data: any) => {
+        this.on(CHAT_EVENTS.LOADING_MESSAGES, (data: any) => {
             console.log(`⏳ Chargement des messages pour room ${data.room}:`, data.message);
             this.showLoadingMessage(data.room, data.message);
         });
 
-        this.socketService.on(CHAT_EVENTS.MESSAGE_HISTORY, (data: any) => {
+        this.on(CHAT_EVENTS.MESSAGE_HISTORY, (data: any) => {
             console.log(`📨 Messages reçus pour room ${data.room}:`, data.messages);
             
             // Cacher le message de chargement
             this.hideLoadingMessage();
             
             // Remplacer les messages actuels par ceux de la room
-            this.state.messages = data.messages || [];
-            
+            this.messages = data.messages || [];
+
             // Mettre à jour l'affichage
             this.updateMessagesDisplay();
         });
 
         // Écouter la confirmation de rejoindre une room privée
-        this.socketService.on(CHAT_EVENTS.ROOM_JOINED, (data: any) => {
+        this.on(CHAT_EVENTS.ROOM_JOINED, (data: any) => {
             console.log(`✅ Room private rejointe: ${data.roomName}`, data.messages);
             
             // Mettre à jour les messages avec l'historique de la room privée
-            this.state.messages = data.messages || [];
+            this.messages = data.messages || [];
             this.updateMessagesDisplay();
         });
 
         // Écouter la création automatique d'une room privée par quelqu'un d'autre
-        this.socketService.on(CHAT_EVENTS.PRIVATE_ROOM_CREATED, (data: any) => {
+        this.on(CHAT_EVENTS.PRIVATE_ROOM_CREATED, (data: any) => {
             console.log(`🔔 Room privée créée par ${data.withUser.username}:`, data.roomName);
             
             // Créer la room dans l'interface si elle n'existe pas
@@ -169,11 +163,11 @@ export class ChatManager {
             }
         });
 
-        this.socketService.on('authError', (error: string) => {
+        this.on('authError', (error: string) => {
             console.error('❌ Chat auth error:', error);
         });
 
-        this.socketService.on('error', (error: any) => {
+        this.on('error', (error: any) => {
             console.error('❌ Chat error:', error);
         });
     }
@@ -293,10 +287,10 @@ export class ChatManager {
     private sendMessage(content: string) {
         if (!content.trim()) return;
 
-        if (this.socketService.isConnected()) {
-            this.socketService.emit('sendMessage', {
+        if (this.isConnected()) {
+            this.emit('sendMessage', {
                 content: content.trim(),
-                room: this.state.activeTab 
+                room: this.state.activeTab
             });
         } else {
             console.error('❌ Socket not connected');
@@ -304,14 +298,15 @@ export class ChatManager {
     }
 
     private renderMessages(messages?: Message[]): string {
-        const messagesToRender = messages || this.state.messages;
+        const messagesToRender = messages || this.messages;
         return messagesToRender.map(message => {
-            const isOwn = message.userId === this.state.currentUserId;
+            const isOwn = message.userId === this.state.currentUserId.id;
             const time = formatTime(message.timestamp);
             
             let avatar;
-            if (isOwn && this.state.avatar) {
-                avatar = `<img src="${this.state.avatar}" alt="avatar" class="w-8 h-8 rounded-full object-cover shrink-0" />`;
+            console.log('isOwn ? : ', isOwn);
+            if (isOwn && this.state.currentUserId.avatar) {
+                avatar = `<img src="${this.state.currentUserId.avatar}" alt="avatar" class="w-8 h-8 rounded-full object-cover shrink-0" />`;
             } else {
                 avatar = createAvatarElement(message.username, message.avatarPath, 'md');
             }
@@ -375,17 +370,17 @@ export class ChatManager {
             case 'pong':
                 console.log('🏓 Room Pong activée');
                 // Rejoindre la room pong côté serveur
-                this.socketService.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: 'pong' });
+                this.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: 'pong' });
                 break;
                 
             case 'snake':
                 console.log('🐍 Room Snake activée');
-                this.socketService.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: 'snake' });
+                this.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: 'snake' });
                 break;
                 
             default:
                 console.log(`📁 Room personnalisée: ${roomId}`);
-                this.socketService.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: roomId });
+                this.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: roomId });
                 break;
         }
         
@@ -404,7 +399,7 @@ export class ChatManager {
             console.log(`📥 Chargement des messages pour room: ${roomId}`);
             
             // Émettre une demande de messages au backend
-            this.socketService.emit(CHAT_EVENTS.GET_MESSAGE_HISTORY, { room: roomId });
+            this.emit(CHAT_EVENTS.GET_MESSAGE_HISTORY, { room: roomId });
 
         } catch (error) {
             console.error('❌ Erreur lors du chargement des messages:', error);
@@ -447,7 +442,7 @@ export class ChatManager {
             } else if (room.type === 'private') {
 
                 // Pour les rooms privées, afficher l'avatar avec le statut
-                const otherUserId = room.participants?.find(id => id !== this.state.currentUserId);
+                const otherUserId = room.participants?.find(id => id !== this.state.currentUserId?.id);
                 const otherUser = this.state.onlineUsers?.find(u => u.id === otherUserId);
                 
                 if (otherUser) {
@@ -496,7 +491,7 @@ export class ChatManager {
         indicatorElement.classList.add(bgColor);
         
         // Seulement mettre à jour l'icône si ce n'est pas une room privée (car on a déjà mis l'avatar)
-        if (!room || room.type !== 'private' || !room.participants?.find(id => id !== this.state.currentUserId)) {
+        if (!room || room.type !== 'private' || !room.participants?.find(id => id !== this.state.currentUserId?.id)) {
             iconElement.textContent = icon;
         }
         
@@ -535,7 +530,7 @@ export class ChatManager {
                 colorClass = 'bg-green-500';
             } else if (room.type === 'private') {
                 // Pour les rooms privées, afficher l'avatar avec le statut
-                const otherUserId = room.participants?.find(id => id !== this.state.currentUserId);
+                const otherUserId = room.participants?.find(id => id !== this.state.currentUserId?.id);
                 const otherUser = this.state.onlineUsers?.find(u => u.id === otherUserId);
                 
                 if (otherUser) {
@@ -654,7 +649,7 @@ export class ChatManager {
         if (messagesContainer) {
             // Filtrer les messages pour afficher seulement ceux de la room active
             const currentRoom = this.state.activeTab; // 'global', 'pong' ou 'snake'
-            const roomMessages = this.state.messages.filter(msg => msg.roomId === currentRoom);
+            const roomMessages = this.messages.filter(msg => msg.roomId === currentRoom);
             
             messagesContainer.innerHTML = this.renderMessages(roomMessages);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -709,14 +704,14 @@ export class ChatManager {
         }
 
         // Ne pas créer de room privée avec soi-même
-        if (userId === this.state.currentUserId) {
+        if (userId === this.state.currentUserId?.id) {
             console.warn('⚠️ Impossible de créer une room privée avec soi-même');
             return;
         }
 
         // Créer un ID de room privée basé sur les IDs des deux utilisateurs (ordre alphabétique pour cohérence)
-        const roomId = this.createPrivateRoomId(this.state.currentUserId, userId);
-        
+        const roomId = this.createPrivateRoomId(this.state.currentUserId?.id, userId);
+
         // Vérifier si la room existe déjà
         const existingRoom = this.state.rooms?.find(r => r.id === roomId);
         
@@ -726,7 +721,7 @@ export class ChatManager {
                 id: roomId,
                 name: targetUser.username,
                 type: 'private',
-                participants: [this.state.currentUserId, userId],
+                participants: [this.state.currentUserId?.id, userId],
                 unreadCount: 0
             };
 
@@ -770,7 +765,7 @@ export class ChatManager {
                 id: roomId,
                 name: sender.username,
                 type: 'private',
-                participants: [this.state.currentUserId, message.userId],
+                participants: [this.state.currentUserId?.id, message.userId],
                 unreadCount: 0
             };
 
@@ -794,14 +789,14 @@ export class ChatManager {
         
         // Extraire les IDs des participants depuis l'ID de la room (format: private_userId1_userId2)
         const userIds = roomId.replace('private_', '').split('_');
-        const otherUserId = userIds.find(id => id !== this.state.currentUserId);
-        
+        const otherUserId = userIds.find(id => id !== this.state.currentUserId?.id);
+
         if (!otherUserId) return;
         
         // Déclencher startPrivateChat pour s'assurer que la room existe côté serveur
         // Cela permettra au destinataire d'avoir la room même après un refresh
         console.log(`🔄 Initialisation côté serveur de la room privée avec l'utilisateur ${otherUserId}`);
-        this.socketService.emit(CHAT_EVENTS.JOIN_PRIVATE_ROOM, { 
+        this.emit(CHAT_EVENTS.JOIN_PRIVATE_ROOM, { 
             targetUserId: otherUserId
         });
     }
