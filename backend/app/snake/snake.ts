@@ -4,8 +4,6 @@ import { JwtPayload, UserHistory } from '../types/userTypes.js'
 import { Socket } from 'socket.io';
 import { FastifyInstance } from 'fastify';
 import { User, History} from '../models.js'
-// import { AppDataSource } from '../dataSource.js';
-//import { v4 as uuidv4 } from "uuid";
 
 const WIN = 600;
 const SEG_SIZE = 10;
@@ -30,7 +28,6 @@ function isInvited(uidP1: string, uidP2: string, friend: string[]): boolean {
 
 function initRoom(socket: Socket, user: User, friend?: string[]) {
     const room = getRoom(friend);
-	//console.log('ROOM = ', room);
     if (room && user.id != room.game.p1.uid) {
 		if (!friend) {
 			console.log('NORMAL GAME');
@@ -293,7 +290,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
     const historyEntry1 = new History(user1, historyp1);
     const historyEntry2 = new History(user2, historyp2);
 
-    await historyEntry1.save(); // ← Maintenant ça marche
+    await historyEntry1.save(); 
     await historyEntry2.save();
 
     console.log('History saved for both players');
@@ -335,10 +332,8 @@ export function update(game: Game, app: FastifyInstance, roomId: string) {
 async function getUser(socket: Socket, cookie: string): Promise<User | undefined> {
 
 	let user;
-	//console.log(cookie);
 	if (cookie) {
 		const payload = app.jwt.verify<JwtPayload>(cookie);
-		//console.log(payload);
 		user = await User.findOneBy({ id: payload.id });
 		if (!user) {
 			socket.emit('notLogged');
