@@ -6,6 +6,7 @@ import { JwtPayload } from '../../types/userTypes.js';
 import { userService } from '../services/userService.js';
 import { messageService } from '../services/messageService.js';
 import { CHAT_CONFIG, CHAT_EVENTS } from '../config/chatConfig.js';
+import { buildFriendList } from './friendHandlers.js';
 
 export async function handleInitUser(
   socket: Socket, 
@@ -42,14 +43,16 @@ export async function handleInitUser(
     socket.join(CHAT_CONFIG.ROOMS.PONG);
     socket.join(CHAT_CONFIG.ROOMS.SNAKE);
     
-    // Récupérer les messages récents
-    const recentMessages = await messageService.getRecentMessages(CHAT_CONFIG.ROOMS.GLOBAL);
+  // Récupérer les messages récents et la friend list
+  const recentMessages = await messageService.getRecentMessages(CHAT_CONFIG.ROOMS.GLOBAL);
+  const friendList = await buildFriendList(user.id);
     
     // Confirmer la connexion
     socket.emit(CHAT_EVENTS.USER_CONNECTED, { 
       user: chatUser,
       onlineUsers: userService.getAllUsers(),
-      recentMessages: recentMessages
+      recentMessages,
+      friendList
     });
     
     console.log('User connected to chat:', user.login);

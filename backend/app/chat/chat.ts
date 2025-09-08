@@ -1,5 +1,6 @@
 // @ts-ignore
 import type { FastifyInstance } from 'fastify';
+// @ts-ignore
 import type { Socket } from 'socket.io';
 
 // Services
@@ -11,6 +12,7 @@ import { handleSendMessage, handleGetMessageHistory } from './handlers/messageHa
 import { handleJoinPrivateRoom } from './handlers/roomHandlers.js';
 import { handleGameInvitation, handleGameInvitationResponse, handleStatusChange } from './handlers/gameHandlers.js';
 import { handleDisconnect, handleSocketError } from './handlers/connectionHandlers.js';
+import { handleAddFriend } from './handlers/friendHandlers.js';
 
 // Configuration
 import { CHAT_CONFIG, CHAT_EVENTS } from './config/chatConfig.js';
@@ -22,9 +24,9 @@ export function setupChat(app: FastifyInstance) {
     app.log.info({ id: socket.id }, 'Chat client connected');
 
     // ===== AUTHENTIFICATION =====
-    socket.on(CHAT_EVENTS.INIT_USER, (token: string) => 
-      handleInitUser(socket, token, app, chatNamespace)
-    );
+    socket.on(CHAT_EVENTS.INIT_USER, async (token: string) => {
+      await handleInitUser(socket, token, app, chatNamespace);
+    });
 
     // ===== MESSAGES =====
     socket.on(CHAT_EVENTS.SEND_MESSAGE, (data: { content: string; room?: string }) => 
@@ -44,6 +46,11 @@ export function setupChat(app: FastifyInstance) {
       console.log(`🔄 Rejoindre la room publique: ${data.room}`);
       socket.join(data.room);
     });
+
+    // ===== FRIENDS =====
+    socket.on(CHAT_EVENTS.ADD_FRIEND, (data: { targetUserId: string }) => 
+      handleAddFriend(socket, data, app)
+    );
 
     // ===== JEUX =====
     socket.on(CHAT_EVENTS.GAME_INVITATION, (data: { targetUserId: string; gameType: 'pong' | 'snake' }) => 
