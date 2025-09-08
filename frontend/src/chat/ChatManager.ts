@@ -3,173 +3,98 @@
 //import { getCookie } from '../pong/pong';
 import type { ChatState, Message, ChatRoom } from './types';
 import { ChatPanel } from './components/ChatPanel';
-import { SocketService, MessageService } from './services';
+import { SocketService } from './services';
 import { formatTime, escapeHtml, createAvatarElement } from './utils';
-import { eventsSocket } from './eventsChat';
 import { CHAT_EVENTS } from './config';
+import { eventsSocket, eventsMessages, eventsUsers, eventsRooms } from './eventsChat';
 
 export class ChatManager extends SocketService {
     private state: ChatState = {
         currentUserId: {} as any,
         isOpen: false,
         activeTab: 'global',
-        currentRoom: null,
         unreadCount: 0,
         onlineUsers: [],
-        rooms: [
-            { id: 'global', name: 'Global', type: 'global', unreadCount: 0 },
-            { id: 'pong', name: 'Pong', type: 'private', unreadCount: 0 },
-            { id: 'snake', name: 'Snake', type: 'private', unreadCount: 0 }
-        ],
         friends: []
     };
 
     //private socketService: SocketService;
-    private messageService: MessageService;
+    //private messageService: MessageService;
 
     constructor() {
         super();
         //this.socketService = new SocketService();
-        this.messageService = new MessageService();
+        //this.messageService = new MessageService();
         eventsSocket.call(this);
+        eventsMessages.call(this);
+        eventsUsers.call(this);
+        eventsRooms.call(this);
 		this.startListening();
     }
 
     private startListening() {
 
 
-        //// Écouter les événements du serveur
-        //this.on('userConnected', (data: any) => {
-        //    console.log('✅ Chat user connected:', data);
-        //    this.state.currentUserId = data.user.id;
-        //    this.state.avatar = data.user.avatar || '';
-        //    this.state.messages = data.recentMessages || [];
-        //    this.state.onlineUsers = data.onlineUsers || [];
+        //// Écouter les messages d'une room spécifique
+        //this.on(CHAT_EVENTS.LOADING_MESSAGES, (data: any) => {
+        //    console.log(`⏳ Chargement des messages pour room ${data.room}:`, data.message);
+        //    this.showLoadingMessage(data.room, data.message);
+        //});
+
+        //this.on(CHAT_EVENTS.MESSAGE_HISTORY, (data: any) => {
+        //    console.log(`📨 Messages reçus pour room ${data.room}:`, data.messages);
+            
+        //    // Cacher le message de chargement
+        //    this.hideLoadingMessage();
+            
+        //    // Remplacer les messages actuels par ceux de la room
+        //    this.messages = data.messages || [];
+
+        //    // Mettre à jour l'affichage
         //    this.updateMessagesDisplay();
         //});
 
-        this.on('newMessage', (message: Message) => {
-            console.log('📩 New message received:', message);
-            this.messageService.addMessage(message);
+        //// Écouter la confirmation de rejoindre une room privée
+        //this.on(CHAT_EVENTS.ROOM_JOINED, (data: any) => {
+        //    console.log(`✅ Room private rejointe: ${data.roomName}`, data.messages);
             
-            // Si c'est un message privé, gérer côté client
-            if (message.roomId?.startsWith('private_')) {
-                if (message.userId !== this.state.currentUserId?.id) {
-                    // Message privé reçu - créer/afficher la room automatiquement
-                    this.createAndShowPrivateRoom(message);
-                } else {
-                    // Message privé envoyé par nous - s'assurer que la room existe côté serveur
-                    this.handleOutgoingPrivateMessage(message);
-                }
-            }
+        //    // Mettre à jour les messages avec l'historique de la room privée
+        //    this.messages = data.messages || [];
+        //    this.updateMessagesDisplay();
+        //});
+
+        //// Écouter la création automatique d'une room privée par quelqu'un d'autre
+        //this.on(CHAT_EVENTS.PRIVATE_ROOM_CREATED, (data: any) => {
+        //    console.log(`🔔 Room privée créée par ${data.withUser.username}:`, data.roomName);
             
-            // Vérifier si le message appartient à la room active
-            const currentRoom = this.state.activeTab;
-            if (message.roomId === currentRoom) {
-                this.messages.push(message);
-                this.updateMessagesDisplay();
-            }
+        //    // Créer la room dans l'interface si elle n'existe pas
+        //    const existingRoom = this.rooms?.find(r => r.id === data.roomName);
+        //    if (!existingRoom) {
+        //        const newRoom: ChatRoom = {
+        //            id: data.roomName,
+        //            name: data.withUser.username,
+        //            type: 'private',
+        //            participants: [this.state.currentUserId, data.withUser.id],
+        //            unreadCount: 0
+        //        };
 
-            // Incrémenter les non-lus si le chat est fermé OU si pas dans la bonne room
-            if (!this.state.isOpen || message.roomId !== currentRoom) {
-                this.state.unreadCount++;
-                this.updateNotificationBadge();
-            }
-
-        });
-
-        this.on('userJoined', (user: any) => {
-            console.log('👋 User joined chat:', user);
-            if (!this.state.onlineUsers) this.state.onlineUsers = [];
-            if (!this.state.onlineUsers.find(u => u.id === user.id)) {
-                this.state.onlineUsers.push({
-                    id: user.id,
-                    username: user.nickName || user.login,
-                    avatar: user.avatar,
-                    status: 'online'
-                });
-                this.renderOnlineUsers();
-            }
-        });
-
-        this.on('userLeft', (user: any) => {
-            console.log('👋 User left chat:', user);
-            if (this.state.onlineUsers) {
-                this.state.onlineUsers = this.state.onlineUsers.filter(u => u.id !== user.id);
-                this.renderOnlineUsers();
-            }
-        });
-
-        this.on('onlineUsersUpdated', (onlineUsers: any[]) => {
-            console.log('🔄 Online users list updated:', onlineUsers);
-            this.state.onlineUsers = onlineUsers.map(u => ({
-                id: u.id,
-                username: u.nickName || u.login,
-                avatar: u.avatar,
-                status: 'online'
-            }));
-        });
-
-        // Écouter les messages d'une room spécifique
-        this.on(CHAT_EVENTS.LOADING_MESSAGES, (data: any) => {
-            console.log(`⏳ Chargement des messages pour room ${data.room}:`, data.message);
-            this.showLoadingMessage(data.room, data.message);
-        });
-
-        this.on(CHAT_EVENTS.MESSAGE_HISTORY, (data: any) => {
-            console.log(`📨 Messages reçus pour room ${data.room}:`, data.messages);
-            
-            // Cacher le message de chargement
-            this.hideLoadingMessage();
-            
-            // Remplacer les messages actuels par ceux de la room
-            this.messages = data.messages || [];
-
-            // Mettre à jour l'affichage
-            this.updateMessagesDisplay();
-        });
-
-        // Écouter la confirmation de rejoindre une room privée
-        this.on(CHAT_EVENTS.ROOM_JOINED, (data: any) => {
-            console.log(`✅ Room private rejointe: ${data.roomName}`, data.messages);
-            
-            // Mettre à jour les messages avec l'historique de la room privée
-            this.messages = data.messages || [];
-            this.updateMessagesDisplay();
-        });
-
-        // Écouter la création automatique d'une room privée par quelqu'un d'autre
-        this.on(CHAT_EVENTS.PRIVATE_ROOM_CREATED, (data: any) => {
-            console.log(`🔔 Room privée créée par ${data.withUser.username}:`, data.roomName);
-            
-            // Créer la room dans l'interface si elle n'existe pas
-            const existingRoom = this.state.rooms?.find(r => r.id === data.roomName);
-            if (!existingRoom) {
-                const newRoom: ChatRoom = {
-                    id: data.roomName,
-                    name: data.withUser.username,
-                    type: 'private',
-                    participants: [this.state.currentUserId, data.withUser.id],
-                    unreadCount: 0
-                };
-
-                if (!this.state.rooms) this.state.rooms = [];
-                this.state.rooms.push(newRoom);
+        //        if (!this.rooms) this.rooms = [];
+        //        this.rooms.push(newRoom);
                 
-                console.log(`✅ Room privée ajoutée automatiquement: ${data.roomName} avec ${data.withUser.username}`);
+        //        console.log(`✅ Room privée ajoutée automatiquement: ${data.roomName} avec ${data.withUser.username}`);
                 
-                // Mettre à jour l'affichage des rooms
-                this.renderRoomsSidebar();
-            }
-        });
+        //        // Mettre à jour l'affichage des rooms
+        //        this.renderRoomsSidebar();
+        //    }
+        //});
 
-        this.on('authError', (error: string) => {
-            console.error('❌ Chat auth error:', error);
-        });
+        //this.on('authError', (error: string) => {
+        //    console.error('❌ Chat auth error:', error);
+        //});
 
-        this.on('error', (error: any) => {
-            console.error('❌ Chat error:', error);
-        });
+        //this.on('error', (error: any) => {
+        //    console.error('❌ Chat error:', error);
+        //});
     }
 
     public toggleChat() {
@@ -202,7 +127,7 @@ export class ChatManager extends SocketService {
         this.updateMessagesDisplay();
         this.updateCurrentRoomIndicator(this.state.activeTab);
         this.renderOnlineUsers();
-        this.renderRoomsSidebar();
+        this.renderSidebar();
         
         const messagesContainer = document.getElementById('messages-container');
         if (messagesContainer) {
@@ -235,7 +160,6 @@ export class ChatManager extends SocketService {
                     messageInput.value = '';
                 }
             });
-
         }
 
         // Gestion de la recherche
@@ -300,12 +224,12 @@ export class ChatManager extends SocketService {
     private renderMessages(messages?: Message[]): string {
         const messagesToRender = messages || this.messages;
         return messagesToRender.map(message => {
-            const isOwn = message.userId === this.state.currentUserId.id;
+            const isOwn = message.userId === this.state.currentUserId?.id;
             const time = formatTime(message.timestamp);
             
             let avatar;
             console.log('isOwn ? : ', isOwn);
-            if (isOwn && this.state.currentUserId.avatar) {
+            if (isOwn && this.state.currentUserId?.avatar) {
                 avatar = `<img src="${this.state.currentUserId.avatar}" alt="avatar" class="w-8 h-8 rounded-full object-cover shrink-0" />`;
             } else {
                 avatar = createAvatarElement(message.username, message.avatarPath, 'md');
@@ -356,8 +280,8 @@ export class ChatManager extends SocketService {
         
         // Mettre à jour l'état local
         this.state.activeTab = roomId as any;
-        this.state.currentRoom = this.state.rooms?.find(r => r.id === roomId) || null;
-        
+        this.currentRoom = this.rooms?.find(r => r.id === roomId) || null;
+
         // Demander les messages de cette room au backend
         await this.loadRoomMessages(roomId);
         
@@ -380,7 +304,16 @@ export class ChatManager extends SocketService {
                 
             default:
                 console.log(`📁 Room personnalisée: ${roomId}`);
-                this.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: roomId });
+                // Si c'est une room privée, joindre avec le bon payload
+                if (roomId.startsWith('private_')) {
+                    const parts = roomId.replace('private_', '').split('_');
+                    const otherUserId = parts.find(id => id !== this.state.currentUserId?.id);
+                    if (otherUserId) {
+                        this.emit(CHAT_EVENTS.JOIN_PRIVATE_ROOM, { targetUserId: otherUserId });
+                    }
+                } else {
+                    this.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: roomId });
+                }
                 break;
         }
         
@@ -420,7 +353,7 @@ export class ChatManager extends SocketService {
         if (!indicatorElement || !iconElement || !textElement) return;
 
         // Trouver la room correspondante
-        const room = this.state.rooms?.find(r => r.id === roomId);
+        const room = this.rooms?.find(r => r.id === roomId);
         
         let icon = '💬';
         let roomName = roomId;
@@ -448,8 +381,10 @@ export class ChatManager extends SocketService {
                 if (otherUser) {
                     
                     const avatar = createAvatarElement(otherUser.username, otherUser.avatar, 'sm');
-                    const statusColor =  otherUser.status === 'online' ? 'bg-green-500' : 'bg-gray-500';
-                    otherUser.status === 'in-game' ? 'bg-blue-500' : 'bg-green-500';
+                    let statusColor = 'bg-gray-500';
+                    if (otherUser.status === 'online') statusColor = 'bg-green-500';
+                    else if (otherUser.status === 'in-game') statusColor = 'bg-yellow-500';
+                    
                     if (otherUser.status === 'online') {
                         iconElement.innerHTML = `
                             <div class="relative w-4 h-4">
@@ -498,18 +433,18 @@ export class ChatManager extends SocketService {
         textElement.textContent = roomName;
     }
 
-    private renderRoomsSidebar() {
-        this.renderRoomsList();
+    private renderSidebar() {
         this.renderFriendsList();
         this.renderOnlineUsers();
         this.renderSearchResults();
+        this.renderRoomsList();
     }
 
     private renderRoomsList() {
         const container = document.getElementById('chat-rooms-list');
         if (!container) return;
 
-        const rooms = this.state.rooms || [];
+        const rooms = this.rooms || [];
         
         container.innerHTML = rooms.map(room => {
             const isActive = room.id === this.state.activeTab;
@@ -532,7 +467,7 @@ export class ChatManager extends SocketService {
                 // Pour les rooms privées, afficher l'avatar avec le statut
                 const otherUserId = room.participants?.find(id => id !== this.state.currentUserId?.id);
                 const otherUser = this.state.onlineUsers?.find(u => u.id === otherUserId);
-                
+
                 if (otherUser) {
                     const avatar = createAvatarElement(otherUser.username, otherUser.avatar, 'sm');
                     const statusColor = otherUser.status === 'online' ? 'bg-green-500' : 
@@ -639,7 +574,7 @@ export class ChatManager extends SocketService {
     }
 
     private performUserSearch(term: string) {
-        const results = this.messageService.searchUsers(term, this.state.onlineUsers || [], this.state.friends || []);
+        const results = this.searchUsers(term, this.state.onlineUsers || [], this.state.friends || []);
         this.state.searchResults = results;
         this.renderSearchResults();
     }
@@ -713,7 +648,7 @@ export class ChatManager extends SocketService {
         const roomId = this.createPrivateRoomId(this.state.currentUserId?.id, userId);
 
         // Vérifier si la room existe déjà
-        const existingRoom = this.state.rooms?.find(r => r.id === roomId);
+        const existingRoom = this.rooms?.find(r => r.id === roomId);
         
         if (!existingRoom) {
             // Créer une nouvelle room privée
@@ -725,9 +660,9 @@ export class ChatManager extends SocketService {
                 unreadCount: 0
             };
 
-            // Ajouter la room à la liste
-            if (!this.state.rooms) this.state.rooms = [];
-            this.state.rooms.push(newRoom);
+        // Ajouter la room à la liste
+        if (!this.rooms) this.rooms = [];
+            this.rooms.push(newRoom);
 
             console.log(`✅ Nouvelle room privée créée: ${roomId} avec ${targetUser.username}`);
         }
@@ -736,7 +671,7 @@ export class ChatManager extends SocketService {
         this.switchRoom(roomId);
 
         // Mettre à jour l'affichage des rooms
-        this.renderRoomsSidebar();
+        this.renderSidebar();
     }
 
     private createPrivateRoomId(userId1: string, userId2: string): string {
@@ -757,7 +692,7 @@ export class ChatManager extends SocketService {
         const roomId = message.roomId!;
         
         // Vérifier si la room existe déjà dans la liste
-        const existingRoom = this.state.rooms?.find(r => r.id === roomId);
+        const existingRoom = this.rooms?.find(r => r.id === roomId);
         
         if (!existingRoom) {
             // Créer la room dans l'interface
@@ -769,13 +704,13 @@ export class ChatManager extends SocketService {
                 unreadCount: 0
             };
 
-            if (!this.state.rooms) this.state.rooms = [];
-            this.state.rooms.push(newRoom);
+            if (!this.rooms) this.rooms = [];
+            this.rooms.push(newRoom);
             
             console.log(`✅ Room privée ajoutée: ${roomId} avec ${sender.username}`);
             
             // Mettre à jour l'affichage des rooms
-            this.renderRoomsSidebar();
+            this.renderSidebar();
         }
 
     }

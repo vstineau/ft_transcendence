@@ -1,10 +1,11 @@
 // @ts-ignore
 import type { Message, Friend, ChatState } from '../types';
+import { RoomsService } from './RoomsService';
 
 /**
  * Service de gestion des messages du chat
  */
-export class MessageService {
+export class MessageService extends RoomsService {
     protected messages: Message[] = [];
 
     addMessage(message: Message): void {

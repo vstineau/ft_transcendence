@@ -35,9 +35,7 @@ export interface ChatState {
     currentUserId: User;
     isOpen: boolean;
     activeTab: 'global' | 'pong' | 'snake' | 'private' | '';
-    currentRoom: ChatRoom | null;
     unreadCount: number;
-    rooms?: ChatRoom[]; // liste des rooms disponibles (incluant global)
     friends?: Friend[]; // liste des amis
     onlineUsers?: Friend[]; // utilisateurs actuellement connectés (non filtrés par amitié)
     searchResults?: Friend[]; // résultats de recherche coté UI

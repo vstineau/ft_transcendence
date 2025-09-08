@@ -21,8 +21,15 @@ export function eventsSocket(this: ChatManager) {
 		(this as any).messages = data.recentMessages || [];
 		(this as any).state.onlineUsers = data.onlineUsers || [];
 		(this as any).updateMessagesDisplay();
+		(this as any).renderOnlineUsers();
 	});
 
+	this.on('authError', (error: string) => {
+		console.error('❌ Chat auth error:', error);
+	});
 
+	this.on('error', (error: any) => {
+		console.error('❌ Chat error:', error);
+	});
 
 }
