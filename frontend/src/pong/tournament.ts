@@ -265,7 +265,6 @@ function listenInputs(game: Game) {
 function checkSubmited(container: HTMLDivElement) {
 	const inputs = Array.from(container.querySelectorAll('input[type="text"]')) as HTMLInputElement[];
 	names = inputs.map(i => i.value.trim());
-	console.log(names);
 	const firstEmpty = inputs.find(i => i.value.trim().length === 0);
 	const duplicate = new Set(names).size !== names.length;
 	for (let i = 0; names[i]; i++) {
@@ -274,15 +273,14 @@ function checkSubmited(container: HTMLDivElement) {
 			return true;
 		}
 	}
+	// comment to make tests
 	if (firstEmpty) {
-		// comment to make tests
 		alert(`You need ${inputs.length} players.`);
 		firstEmpty.focus();
 		return true;
 	}
+	//comment to make tests
 	if (duplicate) {
-		//comment to make tests
-		console.log('duplicate');
 		alert(`You need ${inputs.length} differents players.`);
 		return true;
 	}
@@ -414,20 +412,15 @@ function checkWin(game: Game) {
 	if ((game.p1.score === 3 || game.p2.score === 3) && ctx) {
 		gameOver = true;
 		const px = (canvas.height * canvas.width) / 35000;
-		// console.log(px);
 		game.ball.vx = 0;
 		game.ball.vy = 0;
 		game.ball.x = game.win.width / 2 - game.ball.radius / 2;
 		game.ball.y = game.win.height / 2 - game.ball.radius / 2;
 		ctx.fillStyle = 'gray';
-		// Couleur de la bordure
 		ctx.strokeStyle = 'white';
-		ctx.lineWidth = 4; // épaisseur de la bordure
-
-		// Dessine le rectangle plein
+		ctx.lineWidth = 4;
 		ctx.fillRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
 		ctx.strokeRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
-
 		ctx.fillStyle = 'white';
 		ctx.textAlign = 'center';
 		ctx.font = `${px}px Arial`;
@@ -456,11 +449,8 @@ function handlePaddleCollisionP1(game: Game) {
 
 	if (collision) {
 		game.ball.vx = -game.ball.vx;
-
 		const impactPoint = (game.ball.y - (game.p1.y + game.p1.height / 2)) / (game.p1.height / 2);
 		game.ball.vy += impactPoint * 3;
-		// console.log(game.ball.vy);
-
 		if (Math.abs(game.ball.vx) < 30) game.ball.vx += game.ball.vx > 0 ? 1.5 : -1.5;
 	}
 }
@@ -475,11 +465,8 @@ function handlePaddleCollisionP2(game: Game) {
 
 	if (collision) {
 		game.ball.vx = -game.ball.vx;
-
 		const impactPoint = (game.ball.y - (game.p2.y + game.p2.height / 2)) / (game.p2.height / 2);
 		game.ball.vy += impactPoint * 3;
-		// console.log(game.ball.vy);
-
 		if (Math.abs(game.ball.vx) < 30) game.ball.vx += game.ball.vx > 0 ? 1.5 : -1.5;
 	}
 }
@@ -605,11 +592,7 @@ function showNextMatch() {
 	form.appendChild(brackets);
 	form.appendChild(roundButton);
 	const sorted = tournament.players.sort((a, b) => b.totalScore - a.totalScore);
-	for (const sort of sorted) {
-		console.log(sort.nickName + ' = ' + sort.totalScore);
-	}
 	roundButton.addEventListener('click', () => {
-		console.log(`NEW MATCH`);
 		form.innerHTML = '';
 		initGame(tournament.rounds.games[currentRound][currentMatch]);
 		showCountdown();
