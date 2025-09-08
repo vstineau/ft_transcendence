@@ -41,6 +41,7 @@ export type UserHistory = {
 	opponent?: string,
 	score?: string,
 	finalLength?: number,
+	finalBallSpeed?: number,
 	win?: string,
 	gameTime?: number;
 };

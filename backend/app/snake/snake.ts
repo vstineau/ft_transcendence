@@ -274,6 +274,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
         opponent: user2.id,
         score: '',
         finalLength: game.p1.segments.length,
+        finalBallSpeed: 0,
         gameTime: gametime,
     }
 
@@ -284,6 +285,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
         opponent: user1.id,
         score: '',
         finalLength: game.p2.segments.length,
+        finalBallSpeed: 0,
         gameTime: gametime,
     }
 

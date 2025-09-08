@@ -141,6 +141,9 @@ export class History extends BaseEntity { //extends : mot-cle d'héritage - Hist
     finalLength?: number;
 
     @Column()
+    finalBallSpeed?: number;
+
+    @Column()
     gameTime?: number;
 
     @ManyToOne(() => User, (user: User) => user.history)
@@ -158,6 +161,7 @@ export class History extends BaseEntity { //extends : mot-cle d'héritage - Hist
             this.score = data.score;
             this.win = data.win;
             this.finalLength = data.finalLength;
+            this.finalBallSpeed = data.finalBallSpeed;
             this.gameTime = data.gameTime;
         }
     }
