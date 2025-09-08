@@ -58,7 +58,7 @@ services:
     depends_on:
       - backend
       - cadvisor
-  
+
   grafana:
     image: grafana/grafana-oss:latest
     container_name: grafana
@@ -71,7 +71,7 @@ services:
       - transcendence
     depends_on:
       - prometheus
-  
+
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
@@ -85,10 +85,10 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
     restart: unless-stopped
-  
-  volumes:
-    prometheus-data:
-    grafana-data:
+
+volumes:
+  prometheus-data:
+  grafana-data:
 
 networks:
   transcendence:
