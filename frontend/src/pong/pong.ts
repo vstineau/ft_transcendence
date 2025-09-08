@@ -16,6 +16,7 @@ export function createPongSocket(): Socket {
 
 	let socket = io(`${protocol}//${host}:${port}/pong`);
 	socket.on('connect', () => {
+		console.log('socket pong create');
 		let cookie = getCookie('token');
 		socket.emit('initGame', cookie);
 		initCanvas(socket);
@@ -44,7 +45,7 @@ function initCanvas(socket: Socket) {
 	}
 }
 
-function drawGame(game: Game) {
+export function drawGame(game: Game) {
 	if (!ctx || gameOver) return;
 	const scale_x = canvas.width / game.win.width;
 	const scale_y = canvas.height / game.win.height;
@@ -142,7 +143,7 @@ function drawWaitingScreen(room: any) {
 	ctx.fillText('Waiting for player ... (1 / 2)', (room.game.win.width * scale_x) / 2, (room.game.win.height * scale_y) / 2);
 }
 
-function drawWinner(winner: string, game: Game) {
+function drawWinner(winner: Player, game: Game) {
 	if (!ctx) return;
 	// game.over = true;
 	// gameOver = true;
@@ -163,22 +164,24 @@ function drawWinner(winner: string, game: Game) {
 	ctx.textAlign = 'center';
 	// const px = canvas.width * canvas.height / 30000;
 	ctx.font = `${40 * (scale_y < scale_x ? scale_y : scale_y)}px Arial`;
-	ctx.fillText(winner + ' wins', canvas.width * 0.5, canvas.height * 0.33, canvas.width * 0.4);
+	ctx.fillText(winner.nickName + ' wins', canvas.width * 0.5, canvas.height * 0.33, canvas.width * 0.4);
 	return;
 }
 
-let winner: string | null = null;
+let winner: Player | null = null;
 let lastGame: Game | null = null;
 export async function pongGame() {
 	const socket = createPongSocket();
 	listenUserInputs(socket);
+	socket.onAny((eventName, ...args) => {
+	})
 	socket.on('notLogged', () => {
 		navigateTo('/login?/pong/matchmaking/game');
 	});
 	socket.on('waiting', (room: any) => {
 		drawWaitingScreen(room);
 	});
-	socket.on('playerWin', (player, game) => {
+	socket.on('playerWin', (player :Player, game) => {
 		if (!gameOver) {
 			lastGame = game;
 			winner = player;

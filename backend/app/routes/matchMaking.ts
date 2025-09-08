@@ -2,6 +2,8 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import { User } from '../models.js';
 import { IUserReply, JwtPayload } from '../types/userTypes.js';
 
+
+// remove this file (no need, using WS)
 export default {
 	method: 'GET',
 	url: '/game/matchmaking',
