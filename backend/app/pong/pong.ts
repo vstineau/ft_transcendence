@@ -8,7 +8,7 @@ import { User, History} from '../models.js'
 // import { Player } from '../types/pongTypes';
 
 const SCORETOWIN = 3;
-
+let stored:boolean = false;
 
 // EventEmitter.defaultMaxListeners = 30;
 declare module 'fastify' {
@@ -171,7 +171,6 @@ export function launchGame(rooms: Room[]) {
 			// Pour chaque room prête, broadcast son état de jeu à tous ses joueurs
 			for (const room of rooms) {
 				if (room.playersNb === 2 && room.locked && !room.game!.over) {
-					room.game.stored = false;
 					!room.game.gameStart? room.game.gameStart = Date.now(): 0;
 					gameLoop(room.game!, app);
 					app.io.of('/pong').to(room.name).emit('gameState', room.game);
@@ -239,10 +238,9 @@ function movePlayer(game: Game) {
 
 async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
 
-	console.log(game.stored)
-	if (game.stored)
+	if (stored)
 		return;
-	game.stored = true;
+	stored = true;
 	const user1 = await User.findOneBy({id: game.p1.uid});
     if (!user1) {
         console.log('cant get user1');

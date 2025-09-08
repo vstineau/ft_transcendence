@@ -5,7 +5,6 @@ export interface Game {
     win: Window;
     over: boolean;
 	gameStart?: number;
-	stored?: boolean;
 }
 
 export interface Player {
