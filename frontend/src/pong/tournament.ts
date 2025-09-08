@@ -1,33 +1,23 @@
-// let canvas = document.getElementById('tournamentCanvas') as HTMLCanvasElement;
-// let ctx = canvas.getContext('2d');
-
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D | null;
 let form: HTMLFormElement;
 let tournament: Tournament;
 let names: string[] = [];
-// let bracket: boolean = false;
 let gameStart = false;
 
 import { navigateTo } from '../main';
-import { Game, PlayerTournament, Tournament } from '../types/pongTypes';
-// import { drawGame } from './pong';
-// import { localpongGame } from './localPong';
+import { Game, Tournament } from '../types/pongTypes';
 
+// init game canvas with player button and names
 function initGame(game: Game) {
-	// Nettoie le form
 	form.innerHTML = '';
-
 	const container = document.createElement('div');
 	container.className = 'flex flex-row items-center justify-center w-full h-full';
-
 	const leftPanel = document.createElement('div');
 	leftPanel.className = 'flex flex-col items-end mr-8';
-
 	const p1Name = document.createElement('div');
 	p1Name.textContent = game.p1.nickName;
 	p1Name.className = 'font-bold text-xl text-white mb-4';
-
 	const p1Keys = document.createElement('div');
 	p1Keys.className = 'flex flex-col items-end gap-2';
 	const keyW = document.createElement('div');
@@ -38,26 +28,20 @@ function initGame(game: Game) {
 	keyS.id = 'p1keydown';
 	keyS.textContent = 'S';
 	keyS.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow text-lg font-mono';
-
 	p1Keys.appendChild(keyW);
 	p1Keys.appendChild(keyS);
-
 	leftPanel.appendChild(p1Name);
 	leftPanel.appendChild(p1Keys);
-
 	canvas = document.createElement('canvas');
 	canvas.width = window.innerWidth * 0.6;
 	canvas.height = window.innerHeight * 0.6;
 	canvas.className = 'rounded-xl shadow-lg border-4 border-gray-800 bg-black md-4 mx-8';
 	ctx = canvas.getContext('2d');
-
 	const rightPanel = document.createElement('div');
 	rightPanel.className = 'flex flex-col items-start ml-8';
-
 	const p2Name = document.createElement('div');
 	p2Name.textContent = game.p2.nickName;
 	p2Name.className = 'font-bold text-xl text-white mb-4';
-
 	const p2Keys = document.createElement('div');
 	p2Keys.className = 'flex flex-col items-start gap-2';
 	const keyUp = document.createElement('div');
@@ -68,21 +52,18 @@ function initGame(game: Game) {
 	keyDown.id = 'p2keydown';
 	keyDown.textContent = '↓';
 	keyDown.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow text-lg font-mono';
-
 	p2Keys.appendChild(keyUp);
 	p2Keys.appendChild(keyDown);
-
 	rightPanel.appendChild(p2Name);
 	rightPanel.appendChild(p2Keys);
-
 	container.appendChild(leftPanel);
 	container.appendChild(canvas);
 	container.appendChild(rightPanel);
-
 	form.appendChild(container);
 }
 
 function getPlayersName(nb: number) {
+	// create user inputs to fill players name
 	const container = document.createElement('div'); // conteneur global
 	container.id = '';
 	for (let i = 1; i <= nb; i++) {
@@ -124,6 +105,7 @@ function drawTitle(title: string): HTMLHeadingElement {
 	return header;
 }
 
+// draw brackets for next round matchs
 function drawBrackets(matchIdx: number, roundnb: number): HTMLDivElement {
 	const matchsContainer = document.createElement('div');
 	matchsContainer.className = 'flex flex-col';
@@ -171,6 +153,7 @@ function drawBrackets(matchIdx: number, roundnb: number): HTMLDivElement {
 	return matchsContainer;
 }
 
+// update game info when resizing window
 function updateInfos(game: Game) {
 	game.ball.x = game.win.width / 2 - game.ball.radius / 2;
 	game.ball.y = game.win.height / 2 - game.ball.radius / 2;
@@ -184,25 +167,27 @@ function updateInfos(game: Game) {
 	game.p1.y = game.win.height / 2 - game.p1.height / 2;
 	game.p2.y = game.win.height / 2 - game.p1.height / 2;
 	game.p2.x = game.win.width * 0.98;
+	game.p1.x = 20;
 
 	game.p1.height = game.win.height / 9;
 	game.p1.length = game.win.width / 90;
-	game.p1.vy = game.win.height / 100;
+	game.p1.vy = game.win.height / 120;
 
 	game.p2.height = game.win.height / 9;
 	game.p2.length = game.win.width / 90;
-	game.p2.vy = game.win.height / 100;
+	game.p2.vy = game.win.height / 120;
 }
 
-let currentGame: Game | null = null
+let currentGame: Game | null = null;
 
+// key handler for key down (make the buttons shine when pressed)
 function handleKeyDown(e: KeyboardEvent) {
 	if (!currentGame) return;
 	let keyUpP1 = document.getElementById('p1keyup');
 	let keyDownP1 = document.getElementById('p1keydown');
 	let keyUpP2 = document.getElementById('p2keyup');
 	let keyDownP2 = document.getElementById('p2keydown');
-	
+
 	if (e.key === 'w' || e.key === 'W') {
 		currentGame.p1.key_up = true;
 		if (keyUpP1)
@@ -234,6 +219,7 @@ function handleKeyDown(e: KeyboardEvent) {
 	}
 }
 
+// key handler for key up
 function handleKeyUp(e: KeyboardEvent) {
 	if (!currentGame) return;
 	let keyUpP1 = document.getElementById('p1keyup');
@@ -243,41 +229,31 @@ function handleKeyUp(e: KeyboardEvent) {
 
 	if (e.key === 'w' || e.key === 'W') {
 		currentGame.p1.key_up = false;
-		if (keyUpP1)
-			keyUpP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+		if (keyUpP1) keyUpP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
 	}
 	if (e.key === 's' || e.key === 'S') {
 		currentGame.p1.key_down = false;
-		if (keyDownP1)
-			keyDownP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+		if (keyDownP1) keyDownP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
 	}
 	if (e.key === 'ArrowUp') {
 		e.preventDefault();
 		currentGame.p2.key_up = false;
-		if (keyUpP2)
-			keyUpP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+		if (keyUpP2) keyUpP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
 	}
 	if (e.key === 'ArrowDown') {
 		e.preventDefault();
 		currentGame.p2.key_down = false;
-		if (keyDownP2)
-			keyDownP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+		if (keyDownP2) keyDownP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
 	}
 }
 
-// === MODIFICATION DE listenInputs ===
+//listen user inputs to move pads W/S  arrowUp / arrowDown
 function listenInputs(game: Game) {
-	// DÉTACHE les anciens listeners si présents
 	window.removeEventListener('keydown', handleKeyDown);
 	window.removeEventListener('keyup', handleKeyUp);
-
-	// MET À JOUR le jeu courant
 	currentGame = game;
-
-	// AJOUTE les nouveaux listeners
 	window.addEventListener('keydown', handleKeyDown);
 	window.addEventListener('keyup', handleKeyUp);
-
 	window.addEventListener('resize', () => {
 		canvas.width = window.innerWidth * 0.6;
 		canvas.height = window.innerHeight * 0.6;
@@ -285,98 +261,35 @@ function listenInputs(game: Game) {
 	});
 }
 
-
-// function listenInputs(game: Game) {
-// 	let keyUpP1 = document.getElementById('p1keyup');
-// 	let keyDownP1 = document.getElementById('p1keydown');
-// 	let keyUpP2 = document.getElementById('p2keyup');
-// 	let keyDownP2 = document.getElementById('p2keydown');
-// 	window.addEventListener('keydown', e => {
-// 		if (e.key === 'w' || e.key === 'W') {
-// 			game.p1.key_up = true;
-// 			if (keyUpP1)
-// 				keyUpP1.className =
-// 					'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
-// 		}
-// 		if (e.key === 's' || e.key === 'S') {
-// 			game.p1.key_down = true;
-// 			if (keyDownP1)
-// 				keyDownP1.className =
-// 					'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
-// 		}
-// 		if (e.key === 'ArrowUp') {
-// 			e.preventDefault();
-// 			game.p2.key_up = true;
-// 			if (keyUpP2)
-// 				keyUpP2.className =
-// 					'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
-// 		}
-// 		if (e.key === 'ArrowDown') {
-// 			e.preventDefault();
-// 			game.p2.key_down = true;
-// 			if (keyDownP2)
-// 				keyDownP2.className =
-// 					'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
-// 		}
-// 		if (e.key === 'Enter' && game.over) {
-// 			gameStart = false;
-// 		}
-// 	});
-
-// 	window.addEventListener('keyup', e => {
-// 		if (e.key === 'w' || e.key === 'W') {
-// 			game.p1.key_up = false;
-// 			if (keyUpP1) keyUpP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
-// 		}
-
-// 		if (e.key === 's' || e.key === 'S') {
-// 			game.p1.key_down = false;
-// 			if (keyDownP1) keyDownP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
-// 		}
-// 		if (e.key === 'ArrowUp') {
-// 			e.preventDefault();
-// 			game.p2.key_up = false;
-// 			if (keyUpP2) keyUpP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
-// 		}
-// 		if (e.key === 'ArrowDown') {
-// 			e.preventDefault();
-// 			game.p2.key_down = false;
-// 			if (keyDownP2) keyDownP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
-// 		}
-// 	});
-
-// 	window.addEventListener('resize', () => {
-// 		canvas.width = window.innerWidth * 0.6;
-// 		canvas.height = window.innerHeight * 0.6;
-// 		updateInfos(game);
-// 	});
-// }
-
+// check if player names fill policy
 function checkSubmited(container: HTMLDivElement) {
 	const inputs = Array.from(container.querySelectorAll('input[type="text"]')) as HTMLInputElement[];
 	names = inputs.map(i => i.value.trim());
-	// console.log(names);
-	// const firstEmpty = inputs.find(i => i.value.trim().length === 0);
-	// const duplicate = new Set(names).size !== names.length;
+	console.log(names);
+	const firstEmpty = inputs.find(i => i.value.trim().length === 0);
+	const duplicate = new Set(names).size !== names.length;
 	for (let i = 0; names[i]; i++) {
 		if (names[i].length > 10) {
 			alert(`${names[i]}: Name too long (10 characters maximum).`);
 			return true;
 		}
 	}
-	// if (firstEmpty) {
-	// 	alert(`You need ${inputs.length} players.`);
-	// 	firstEmpty.focus();
-	// 	return true;
-	// }
-	// if (duplicate) {
-	// 	console.log('duplicate');
-	// 	alert(`You need ${inputs.length} differents players.`);
-	// 	return true;
-	// }
+	if (firstEmpty) {
+		// comment to make tests
+		alert(`You need ${inputs.length} players.`);
+		firstEmpty.focus();
+		return true;
+	}
+	if (duplicate) {
+		//comment to make tests
+		console.log('duplicate');
+		alert(`You need ${inputs.length} differents players.`);
+		return true;
+	}
 	return false;
 }
 
+// shows count down before game starts
 export function showCountdown() {
 	const container = document.createElement('div');
 	container.className = `
@@ -429,6 +342,7 @@ let currentMatch = 0;
 let currentRound = 0;
 let mainLoop: NodeJS.Timeout | undefined;
 
+// starts the game and init loop
 function startMainLoop(game: Game) {
 	if (mainLoop) {
 		clearInterval(mainLoop);
@@ -443,11 +357,10 @@ function startMainLoop(game: Game) {
 			return;
 		}
 		gameLoop(canvas, tournament.rounds.games[currentRound][currentMatch]);
-		// console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-		// gameLoop(canvas);
 	}, 1000 / 60);
 }
 
+// draw player and ball
 function drawGame(game: Game) {
 	if (!ctx) return;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -463,7 +376,6 @@ function drawGame(game: Game) {
 		(game.ball.radius / game.win.width) * canvas.width,
 		(game.ball.radius / game.win.height) * canvas.height
 	);
-	// Dessine les joueurs (en ajoutant le décalage)
 	ctx.fillRect(
 		(game.p1.x / game.win.width) * canvas.width,
 		(game.p1.y / game.win.height) * canvas.height,
@@ -476,20 +388,15 @@ function drawGame(game: Game) {
 		(game.p2.length / game.win.width) * canvas.width,
 		(game.p2.height / game.win.height) * canvas.height
 	);
-
-	// Ligne centrale en pointillés
 	for (let height = 0; height < canvas.height; height += 15) {
 		ctx.fillRect(canvas.width / 2 - 2, height, 5, 10);
 	}
-	// Scores en relatif à la zone de jeu
 	const px = (canvas.height * canvas.width) / 35000 > 20 ? (canvas.height * canvas.width) / 35000 : 20;
 	ctx.font = `${px}px Arial`;
-	// ctx.font = '50px Arial';
 	ctx.fillStyle = 'white';
 	ctx.textAlign = 'center';
 	ctx.fillText(game.p1.score.toString(), canvas.width * 0.25, canvas.height * 0.07);
 	ctx.fillText(game.p2.score.toString(), canvas.width * 0.75, canvas.height * 0.07);
-
 	ctx.restore();
 }
 
@@ -502,12 +409,12 @@ function movePlayer(game: Game) {
 
 let gameOver = false;
 
+// check if on of the players won
 function checkWin(game: Game) {
 	if ((game.p1.score === 3 || game.p2.score === 3) && ctx) {
 		gameOver = true;
-		game.over = true;
 		const px = (canvas.height * canvas.width) / 35000;
-		console.log(px);
+		// console.log(px);
 		game.ball.vx = 0;
 		game.ball.vy = 0;
 		game.ball.x = game.win.width / 2 - game.ball.radius / 2;
@@ -530,9 +437,16 @@ function checkWin(game: Game) {
 			canvas.height * 0.32
 		);
 		game.p1.score > game.p2.score ? (game.p2.eliminated = true) : (game.p1.eliminated = true);
+		if (!game.over) {
+			game.p1.totalScore += game.p1.score;
+			game.p2.totalScore += game.p2.score;
+			game.p2.eliminated === true ? (game.p1.totalScore += 2) : (game.p2.totalScore += 2);
+		}
+		game.over = true;
 	}
 }
 
+//check collision for player one
 function handlePaddleCollisionP1(game: Game) {
 	const collision =
 		game.ball.x > game.p1.x &&
@@ -545,12 +459,13 @@ function handlePaddleCollisionP1(game: Game) {
 
 		const impactPoint = (game.ball.y - (game.p1.y + game.p1.height / 2)) / (game.p1.height / 2);
 		game.ball.vy += impactPoint * 3;
-		console.log(game.ball.vy);
+		// console.log(game.ball.vy);
 
 		if (Math.abs(game.ball.vx) < 30) game.ball.vx += game.ball.vx > 0 ? 1.5 : -1.5;
 	}
 }
 
+//check collision for player two
 function handlePaddleCollisionP2(game: Game) {
 	const collision =
 		game.ball.x + game.ball.radius > game.p2.x &&
@@ -563,16 +478,14 @@ function handlePaddleCollisionP2(game: Game) {
 
 		const impactPoint = (game.ball.y - (game.p2.y + game.p2.height / 2)) / (game.p2.height / 2);
 		game.ball.vy += impactPoint * 3;
-		console.log(game.ball.vy);
+		// console.log(game.ball.vy);
 
 		if (Math.abs(game.ball.vx) < 30) game.ball.vx += game.ball.vx > 0 ? 1.5 : -1.5;
 	}
 }
 
+// main game loop
 function gameLoop(canvas: HTMLCanvasElement, game: Game) {
-	// requestAnimationFrame(gameLoop);
-	// win_width = canvas.width;
-	// win_height = canvas.height;
 	drawGame(game);
 	movePlayer(game);
 	checkWin(game);
@@ -603,29 +516,75 @@ function gameLoop(canvas: HTMLCanvasElement, game: Game) {
 	}
 }
 
-function showNextMatch() {
-	// Nettoyage de l'UI précédente
-	form.innerHTML = '';
+// draw score board after the game (different behavior for 1, 2, 3 winners)
+function drawScoreBoard() {
+	const sorted = [...tournament.players].sort((a, b) => b.totalScore - a.totalScore);
+	const scoreTable = document.createElement('table');
+	scoreTable.className = 'mx-auto my-6 border-collapse w-96 bg-gray-800 rounded-xl shadow-lg text-white';
+	const thead = document.createElement('thead');
+	const headerRow = document.createElement('tr');
+	headerRow.innerHTML = `
+        <th class="py-3 px-6 border-b border-gray-700 text-left">Player</th>
+        <th class="py-3 px-6 border-b border-gray-700 text-right">Score</th>
+    `;
+	thead.appendChild(headerRow);
+	scoreTable.appendChild(thead);
 
-	// Vérification fin de tournoi
+	// Corps du tableau
+	const tbody = document.createElement('tbody');
+	for (let i = 0; sorted[i]; i++) {
+		const row = document.createElement('tr');
+		row.className = 'mb-2 rounded bg-gray-700 hover:bg-gray-500';
+		const player = sorted[i];
+		if (i === 0) {
+			row.className += ' border border-yellow-500';
+			player.nickName = '🥇 ' + sorted[i].nickName;
+		}
+		if (i === 1) {
+			row.className += ' border border-gray-100';
+			player.nickName = '🥈 ' + sorted[i].nickName;
+		}
+		if (i === 2) {
+			row.className += ' border border-orange-500';
+			player.nickName = '🥉 ' + sorted[i].nickName;
+		}
+		row.innerHTML = `
+            <td class="py-2 px-6 border-b border-gray-700">${player.nickName}</td>
+            <td class="py-2 px-6 border-b border-gray-700 text-right font-bold">${player.totalScore}</td>
+        `;
+		tbody.appendChild(row);
+	}
+	scoreTable.appendChild(tbody);
+
+	form.appendChild(scoreTable);
+}
+
+function drawFinalBoard() {
+	const winner = tournament.players.find(player => !player.eliminated);
+	const endTitle = drawTitle(`Tournament finished !`);
+	let end = drawTitle(`Winner is ${winner?.nickName}`);
+	end.className = 'text-2xl font-bold text-white';
+	form.appendChild(endTitle);
+	form.appendChild(end);
+	drawScoreBoard();
+	const button = document.createElement('button');
+	button.type = 'button';
+	button.id = 'returnDashboard';
+	button.textContent = `Return to Dashboard`;
+	button.className = 'rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white';
+	button.addEventListener('click', () => {
+		navigateTo('/dashboard');
+	});
+	form.appendChild(button);
+}
+
+// display and fill next matchs of display scoreboard when finished
+function showNextMatch() {
+	form.innerHTML = '';
 	if (currentRound > tournament.rounds.max) {
-		const winner = tournament.players.find(player => !player.eliminated);
-		const endTitle = drawTitle(`Tournament finished !`);
-		const end = drawTitle(`Winner is ${winner?.nickName}`);
-		form.appendChild(endTitle);
-		form.appendChild(end);
-		const button = document.createElement('button');
-		button.type = 'button';
-		button.id = 'returnDashboard';
-		button.textContent = `Return to Dashboard`;
-		button.className = 'rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white';
-		button.addEventListener('click', () => {
-			navigateTo('/dashboard');
-		});
-		form.appendChild(button);
+		drawFinalBoard();
 		return;
 	}
-
 	const roundGames = tournament.rounds.games[currentRound];
 	if (currentMatch >= roundGames.length) {
 		currentRound++;
@@ -642,12 +601,15 @@ function showNextMatch() {
 	const title = drawTitle(`Round ${currentRound + 1}`);
 	const brackets = drawBrackets(currentMatch, currentRound);
 	const roundButton = nextMatchButton(roundGames[currentMatch]);
-
 	form.appendChild(title);
 	form.appendChild(brackets);
 	form.appendChild(roundButton);
-
+	const sorted = tournament.players.sort((a, b) => b.totalScore - a.totalScore);
+	for (const sort of sorted) {
+		console.log(sort.nickName + ' = ' + sort.totalScore);
+	}
 	roundButton.addEventListener('click', () => {
+		console.log(`NEW MATCH`);
 		form.innerHTML = '';
 		initGame(tournament.rounds.games[currentRound][currentMatch]);
 		showCountdown();
@@ -655,9 +617,6 @@ function showNextMatch() {
 			gameStart = true;
 			startMainLoop(tournament.rounds.games[currentRound][currentMatch]);
 			if (!gameStart) {
-				// canvas.remove();
-				// window.removeEventListener('keydown', () => {});
-				// window.removeEventListener('keyup', () => {});
 				currentMatch++;
 				showNextMatch();
 			}
@@ -665,6 +624,7 @@ function showNextMatch() {
 	});
 }
 
+// send names submited to create the tournament
 function submitNames(container: HTMLDivElement) {
 	const button = document.createElement('button');
 	button.type = 'button';
@@ -682,6 +642,7 @@ function submitNames(container: HTMLDivElement) {
 	});
 }
 
+// tournament function
 export function pongTournament() {
 	const playerForm = document.getElementById('playersForm') as HTMLFormElement;
 	form = document.getElementById('formNb') as HTMLFormElement;
@@ -694,7 +655,6 @@ export function pongTournament() {
 			alert('You need pair number of players');
 			return;
 		}
-		// console.log('Nombre de joueurs :', nbPlayers);
 		const uiInput = getPlayersName(nbPlayers);
 		playerForm.hidden = true;
 		form.append(uiInput);

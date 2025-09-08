@@ -57,8 +57,8 @@ export class Tournament {
 
 	win_width: number = window.innerWidth;
 	win_height: number = window.innerHeight;
-	gameWidth: number = this.win_width * 0.6;
-	gameHeight: number = this.win_height * 0.6;
+	// gameWidth: number = this.win_width * 0.6;
+	// gameHeight: number = this.win_height * 0.6;
 
 	constructor(names: string[]) {
 		this.rounds = { games: [], max: names.length === 8 ? 2 : 1, nb: 0 };
@@ -78,7 +78,7 @@ export class Tournament {
 			x: 20,
 			height: this.win_height / 9,
 			length: this.win_width / 90,
-			vy: this.win_height / 100,
+			vy: this.win_height / 120,
 			score: 0,
 			key_up: false,
 			key_down: false,
@@ -114,33 +114,44 @@ export class Tournament {
 		// Remplir chaque game avec deux joueurs successifs
 		for (let i = 0; i < round.length; i++) {
 			const idx = i * 2;
-			round[i].p1 = p[idx];
-			round[i].p2 = p[idx + 1];
-			round[i].p2.x = window.innerWidth * 0.98;
+			// if (p.length < this.players.length) {
+			// 	p[idx].totalScore += 2;
+			// 	p[idx + 1].totalScore += 2;
+			// }
+			// p[idx].totalScore += p[idx].score;
+			// p[idx + 1].totalScore += p[idx + 1].score;
+			round[i] = this.gameInit(p[idx], p[idx + 1]);
+			// round[i].p1 = this.initPlayer(p[idx].nickName);
+			// round[i].p2 = this.initPlayer(p[idx + 1].nickName);
+			// round[i].p2.x = window.innerWidth * 0.98;
+			// round[i].p1.x = 20;
 			round[i].p1.score = 0;
 			round[i].p2.score = 0;
 		}
+		// const sorted = this.players.sort((a, b) => b.totalScore - a.totalScore);
+		// for (const sort of sorted) {
+		// 	console.log(sort.nickName + ' = ' + sort.totalScore);
+		// }
 	}
 	fillRound() {
 		if (!this) return;
-		let qualified: PlayerTournament[] = this.players;
-		qualified = qualified.filter(player => !player.eliminated);
-		for (let i = 0; qualified[i]; i++) {
-			console.log(qualified[i].nickName);
-		}
+		// for(const player of this.players){
+		// 	player.totalScore += player.score
+		// 	player.score = 0;
+		// }
+		let qualified = this.players.filter(player => !player.eliminated);
 		this.fillMatchs(this.rounds.games[this.rounds.nb], qualified);
-		// this.rounds.nb++;
 	}
 	private gameInit(player1: PlayerTournament, player2: PlayerTournament): Game {
 		let newGame: Game = {
 			p1: player1,
 			p2: player2,
 			ball: {
-				x: this.win_width / 2,
-				y: this.win_height / 2,
-				radius: (this.win_height * this.win_width) / 80000,
-				vx: (Math.random() < 0.5 ? -1 : 1) * (this.win_width / 280),
-				vy: (Math.random() < 0.5 ? -1 : 1) * (this.win_height / 180),
+				x: window.innerWidth / 2,
+				y: window.innerHeight / 2,
+				radius: (window.innerWidth * window.innerHeight) / 80000,
+				vx: (Math.random() < 0.5 ? -1 : 1) * (window.innerWidth / 280),
+				vy: (Math.random() < 0.5 ? -1 : 1) * (window.innerHeight / 180),
 			},
 			win: {
 				width: window.innerWidth, //this.win_width,
@@ -148,10 +159,9 @@ export class Tournament {
 			},
 			over: false,
 		};
+		newGame.p1.x = 20;
+		newGame.p2.x = window.innerWidth * 0.98;
 		return newGame;
-	}
-	eliminatePlayers() {
-		this.players = this.players.filter(player => !player.eliminated);
 	}
 }
 
