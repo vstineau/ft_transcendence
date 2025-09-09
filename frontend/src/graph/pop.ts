@@ -1,6 +1,6 @@
 import { SnakeGameHistory } from '../types/snakeTypes';
 import { formatGameTime, formatDate } from '../graph/init';
-// import { historySnake } from '../../../backend/app/snake/historySnake';
+// import { history } from '../../../backend/app/snake/historySnake';
 
 export let currentGames: SnakeGameHistory[] = [];
 
@@ -62,7 +62,7 @@ export function showGameDetails(gameIndex: number): void {
                 <div class="text-sm ${accentColor}">${formatDate(game.date || '')}</div>
                 <div class="text-xs ${textColor}">Game time</div>
                 <div class="text-lg ${accentColor}">${formatGameTime(game.gameTime || 0)}</div>
-                
+
             </div>
 
                 <!-- Section VS avec couronne -->
@@ -94,7 +94,7 @@ export function showGameDetails(gameIndex: number): void {
                         <div class="text-2xl mb-2 h-8 flex items-center justify-center">
                             ${(!isWin && !isDraw) ? '👑' : ''}
                         </div>
-                        <div class="font-bold text-lg">${game.opponent || 'Opponent'}</div>
+                        <div class="font-bold text-lg">${game.opponentLogin || 'Opponent'}</div>
                         <div class="text-sm mb-4 ${accentColor}">Opponent</div>
 
                         <div class="text-sm mt-1">

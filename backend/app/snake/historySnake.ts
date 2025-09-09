@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { User, History } from '../models.js'
+import { User, History } from '../models.js';
 import { JwtPayload } from '../types/userTypes.js';
+// import { log } from 'console';
 
 export default {
     method: 'GET',
@@ -28,25 +29,30 @@ export default {
                 order: { date: 'DESC' }
             });
 
-            // console.log('=== HISTORY DEBUG ===');
-            // console.log('User ID:', payload.id);
-            // console.log('Total history entries found:', history.length);
-
-            // return reply.send(history);
-
             // Après avoir récupéré l'historique utilisateur
             const processedHistory = await Promise.all(history.map(async (game) => {
-                if (game.opponent) {                    
+                if (game.opponent) {
+
+                    console.log("Opponent value:", game.opponent);
+                    let opponentUser = await User.findOneBy({ id: game.opponent } );
+                    // if (!opponentUser) {
+                    //     // Si pas trouvé par ID, chercher par login (anciennes parties)
+                    //     opponentUser = await User.findOne({ where: { login: game.opponent } });
+                    // }
+
                     const opponentGame = await History.findOne({
                         where: {
-                            user: { login: game.opponent },
+                            user: opponentUser ? { id: opponentUser.id } : { login: game.opponent },
+                            date: game.date,
                             type: 'snake'
-                        },
-                        order: { date: 'DESC' }
+                        }
                     });
-                                        
+
+                    console.log("Found opponent user:", opponentUser?.login);
+
                     return {
                         ...game,
+                        opponentLogin: opponentUser?.login || 'Unknown',
                         opponentStats: opponentGame ? {
                             finalLength: opponentGame.finalLength,
                             gameTime: opponentGame.gameTime

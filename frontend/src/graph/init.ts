@@ -149,58 +149,6 @@ export function formatGameTime(timeInMs: number): string {
 	return `${seconds}s`;
 }
 
-// function generateLastGamesHTML(games: SnakeGameHistory[]): string {
-//     console.log('=== generateLastGamesHTML ===');
-//     console.log('Total games received:', games.length);
-//     console.log('Games data:', games.map(g => ({
-//         date: g.date,
-//         opponent: g.opponent,
-//         win: g.win
-//     })));
-//     if (games.length === 0) {
-//         return `
-//             <div class="flex flex-col items-center justify-center py-8 text-center">
-//                 <p class="text-gray-500 text-sm">Yes...😢 you have to play if you want data</p>
-//             </div>
-//         `;
-//     }
-
-//     // Prendre les 3 dernières parties
-//     const lastGames = games.slice(0, 3);
-//     console.log('Last games to display:', lastGames.length);
-
-//     return lastGames.map((game, index )=> {
-//         let leftPlayer = 'YOU';
-//         let rightPlayer = game.opponent || 'Opponent';
-
-//         // Ajouter les couronnes selon le résultat
-//         if (game.win === 'WIN') {
-//             leftPlayer = '👑 YOU';
-//         } else if (game.win === 'LOOSE') {
-//             rightPlayer = '👑 ' + rightPlayer;
-//         }
-
-//         return `
-//             <div class="grid grid-cols-3 gap-4 items-center p-3 rounded-lg border-b">
-//                 <div class="min-w-0">
-//                     <p class="font-semibold text-sm truncate">${leftPlayer}</p>
-//                     <p class="text-gray-500 text-xs">${formatDate(game.date || '')}</p>
-//                 </div>
-//                 <div class="text-center flex-shrink-0">
-//                     <span class="text-lg font-bold">VS</span>
-//                 </div>
-//                 <div class="text-right min-w-0">
-//                     <p class="font-semibold text-sm truncate">
-//                         ${rightPlayer}
-//                     </p>
-//                     <p class="text-gray-500 text-xs truncate">
-//                         ${formatGameTime(game.gameTime || 0)} • Length: ${game.finalLength}
-//                     </p>
-//                 </div>
-//             </div>
-//         `;
-//     }).join('');
-// }
 
 function generateLastGamesHTML(games: SnakeGameHistory[]): string {
     if (games.length === 0) {
@@ -215,7 +163,7 @@ function generateLastGamesHTML(games: SnakeGameHistory[]): string {
 
     return lastGames.map((game, index) => {
         let leftPlayer = 'YOU';
-        let rightPlayer = game.opponent || 'Opponent';
+        let rightPlayer = game.opponentLogin || 'Opponent';
 
         if (game.win === 'WIN') {
             leftPlayer = '👑 YOU';
@@ -263,28 +211,7 @@ export async function updateLastGames(): Promise<void> {
     }
 }
 
-// export async function updateLastGames(): Promise<void> {
-//     console.log('updateLastGames called');
 
-//     try {
-//         const games = await fetchSnakeHistory();
-//         console.log('Games fetched:', games);
-
-//         const lastGamesContainer = document.querySelector('#last-games-content');
-//         console.log('Container in updateLastGames:', lastGamesContainer);
-
-//         if (lastGamesContainer) {
-//             const html = generateLastGamesHTML(games);
-//             console.log('Generated HTML:', html);
-//             lastGamesContainer.innerHTML = html;
-//         }
-//     } catch (error) {
-//         console.error('Error updating last games:', error);
-//     }
-// }
-
-
-// À la fin de votre fichier init.ts, ajoutez :
 declare global {
     interface Window {
         showGameDetails: (index: number) => void;

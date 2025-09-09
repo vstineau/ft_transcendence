@@ -32,6 +32,7 @@ import { localpongGame } from './pong/localPong';
 import {initProfilePage } from './utils/avatar';
 import {initSnakeStats } from './graph/init';
 import { updateRanking } from './graph/rank';
+import { updateUserProfile } from './graph/profileSnakeFr';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -184,6 +185,7 @@ async function renderPage() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+	updateUserProfile();
 
 	document.body.addEventListener('click', async e => {
 		const target = e.target as HTMLElement;

@@ -17,6 +17,7 @@ export interface Snake {
 	color: string;
 	id: string;
 	login: string;
+	uid: string;
 	avatar?: string;
 }
 

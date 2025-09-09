@@ -40,10 +40,12 @@ export interface SnakeGameHistory{
 	win?: string;
 	finalLength?: number;
 	gameTime?: number;
+    opponentLogin?: string;
 
     opponentStats?: {
         finalLength?: number;
         gameTime?: number;
+
     } | null;
 }
 
