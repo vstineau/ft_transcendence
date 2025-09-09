@@ -19,12 +19,13 @@ function getRoom() {
 
 function initRoom(socket: Socket, user: User) {
     const room = getRoom();
-    if (room && user.login != room.game.p1.login) {
+    if (room && user.id != room.game.p1.id) {
         socket.join(room.name);
         room.playersNb = 2;
         room.game.p2.id = socket.id;
 		room.game.p2.name = user.nickName;
 		room.game.p2.login = user.login;
+        room.game.p2.uid = user.id;
 		room.game.p2.avatar = user.avatar;
 		return room;
     } else {
@@ -149,7 +150,8 @@ function initGame(user: User): Game {
             pendingDir: { x: 0, y: -1 },
             color: "blue",
             id: 'p1',
-			login: user.login,
+            login: user.login,
+			uid: user.id,
 			avatar: user.avatar,
         },
         p2: {
@@ -159,7 +161,8 @@ function initGame(user: User): Game {
             pendingDir: { x: 0, y: 1 },
             color: "red",
             id: 'p2',
-			login: '',
+            login: user.login,
+			uid: '',
 			avatar: '',
         },
         foods: [],
@@ -211,12 +214,12 @@ export function getInputs(sock: Socket, game: Game) {
 
 async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
 
-	const user1 = await User.findOneBy({login: game.p1.login});
+	const user1 = await User.findOneBy({id: game.p1.uid});
     if (!user1) {
         console.log('cant get user1');
         return;
     }
-    const user2 = await User.findOneBy({login: game.p2.login});
+    const user2 = await User.findOneBy({id: game.p2.uid});
     if (!user2) {
         console.log('cant get user2');
         return;
@@ -228,7 +231,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
         type: 'snake',
         date: new Date().toISOString(),
         win: winner === 'P1' ? 'WIN' : winner === 'P2' ? 'LOOSE' : 'DRAW',
-        opponent: user2.login,
+        opponent: user2.id,
         score: '',
         finalLength: game.p1.segments.length,
         gameTime: gametime,
@@ -238,7 +241,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
         type: 'snake',
         date: new Date().toISOString(),
         win: winner === 'P2' ? 'WIN' : winner === 'P1' ? 'LOOSE' : 'DRAW',
-        opponent: user1.login,
+        opponent: user1.id,
         score: '',
         finalLength: game.p2.segments.length,
         gameTime: gametime,
