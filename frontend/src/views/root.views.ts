@@ -1033,10 +1033,30 @@ export async function SnakeCanvas() {
 	`;
 }
 
+//localgameCanvas
 export async function localPongCanvas() {
 	return /* HTML */ `
-		<div class="flex items-center justify-center w-screen h-screen bg-green-900">
-			<canvas id="localgameCanvas" class="rounded-xl shadow-lg border-4 border-green-800 bg-black"></canvas>
+		<div class="flex items-center justify-center w-screen h-screen bg-gray-900">
+			<!-- Colonne gauche : Joueur 1 -->
+			<div id="playerOne" class="flex flex-col items-end mr-8">
+				<div id="p1Name" class="font-bold text-xl text-white mb-4"></div>
+				<div class="flex flex-col items-end gap-2">
+					<div id="p1keyup" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">W</div>
+					<div id="p1keydown" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">S</div>
+				</div>
+			</div>
+
+			<!-- Canvas central -->
+			<canvas id="localgameCanvas" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"></canvas>
+
+			<!-- Colonne droite : Joueur 2 -->
+			<div id="playerTwo" class="flex flex-col items-start ml-8">
+				<div id="p2Name" class="font-bold text-xl text-white mb-4"></div>
+				<div class="flex flex-col items-start gap-2">
+					<div id="p2keyup" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">↑</div>
+					<div id="p2keydown" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">↓</div>
+				</div>
+			</div>
 		</div>
 	`;
 }

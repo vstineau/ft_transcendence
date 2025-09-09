@@ -31,6 +31,7 @@ let ctx: CanvasRenderingContext2D | null = null;
 let win_width = window.innerWidth;
 let win_height = window.innerHeight;
 let gameOver = false;
+let started = false;
 
 function initCanvas(socket: Socket) {
 	canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
@@ -88,15 +89,30 @@ export function drawGame(game: Game) {
 function listenUserInputs(socket: Socket) {
 	window.addEventListener('keypress', e => {
 		socket.emit('keypress', { key: e.key });
-		if (e.key === ' ') {
-			e.preventDefault();
-			gameOver = false;
-		}
 	});
 	window.addEventListener('keydown', e => {
 		socket.emit('keydown', { key: e.key }, socket.id);
 		if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
 			e.preventDefault();
+		}
+		if (gameOver && e.key === 'Escape') {
+			gameOver = false;
+			started = false;
+			winner = null;
+			lastGame = null;
+			if (socket && socket.connected) {
+				socket.disconnect();
+			}
+			navigateTo('/dashboard');
+		} else if (gameOver && e.key === 'Enter') {
+			gameOver = false;
+			started = false;
+			winner = null;
+			lastGame = null;
+			if (socket && socket.connected) {
+				socket.disconnect();
+			}
+			navigateTo('/pong/matchmaking/game');
 		}
 	});
 
@@ -158,14 +174,19 @@ function drawWinner(winner: Player, game: Game) {
 	ctx.lineWidth = 4; // épaisseur de la bordure
 	ctx.fillRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
 	ctx.strokeRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
-	// ctx.fillRect(canvas.width * 0.1, canvas.height * 0.25, canvas.width * 0.6, canvas.height * 0.12);
-	// ctx.fillStyle = 'black';
-	// ctx.fillRect(canvas.width * 0.105, canvas.height * 0.26, canvas.width * 0.69, canvas.height * 0.1);
+	ctx.fillStyle = 'red';
+	ctx.fillRect(canvas.width * 0.25, canvas.height * 0.66, canvas.width * 0.5, canvas.height * 0.12);
+	ctx.strokeRect(canvas.width * 0.25, canvas.height * 0.66, canvas.width * 0.5, canvas.height * 0.12);
 	ctx.fillStyle = 'white';
 	ctx.textAlign = 'center';
-	// const px = canvas.width * canvas.height / 30000;
 	ctx.font = `${40 * (scale_y < scale_x ? scale_y : scale_y)}px Arial`;
-	ctx.fillText(winner.nickName + ' wins', canvas.width * 0.5, canvas.height * 0.33, canvas.width * 0.4);
+	ctx.fillText(
+		winner.nickName + ' wins press `Enter` to play again',
+		canvas.width * 0.5,
+		canvas.height * 0.33,
+		canvas.width * 0.4
+	);
+	ctx.fillText('Press `Escape` to return to dashboard', canvas.width * 0.5, canvas.height * 0.73, canvas.width * 0.4);
 	return;
 }
 
@@ -215,7 +236,6 @@ export function keyHandler(socket: Socket) {
 	});
 }
 
-
 export async function pongGame() {
 	const socket = createPongSocket();
 	listenUserInputs(socket);
@@ -238,6 +258,9 @@ export async function pongGame() {
 	});
 	// Main game loop (frame update)
 	socket.on('gameState', (game: Game) => {
+		if (!started) {
+			started = true;
+		}
 		drawGame(game);
 	});
 	socket.on('p1Name', (name: string) => {
@@ -252,5 +275,5 @@ export async function pongGame() {
 			p2name.textContent = name;
 		}
 	});
-	keyHandler(socket)
+	keyHandler(socket);
 }
