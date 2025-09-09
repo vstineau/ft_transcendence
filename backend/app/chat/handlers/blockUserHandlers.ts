@@ -25,6 +25,7 @@ export async function handleBlockUser(socket: Socket, data: { targetUserId: stri
 				user.blocklist = user.blocklist ? [...user.blocklist, blocked] : [blocked];
 				await User.save(user);
 				socket.emit(CHAT_EVENTS.USER_BLOCKED, { userId: blocked });
+				return;
 			}
 		}
 	} catch (error) {
