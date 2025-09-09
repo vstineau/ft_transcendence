@@ -20,16 +20,16 @@ export default {
             }
 
             // recup toutes les parties
-            const userSnakeGames = await History.find({
+            const userPongGames = await History.find({
                 where: {
                     user: { id: payload.id },
-                    type: 'snake'
+                    type: 'pong'
                 },
                 order: { date: 'DESC' }
             });
 
             // Calculer les statistiques
-            const totalGames = userSnakeGames.length;
+            const totalGames = userPongGames.length;
 
             if (totalGames === 0) {
                 // Aucune partie jouée - valeurs par défaut
@@ -50,22 +50,21 @@ export default {
                 });
             }
 
-            const totalWins = userSnakeGames.filter(g => g.win === 'WIN').length;
-            const maxSize = Math.max(...userSnakeGames.map(g => g.finalLength || 0), 0);
-            const averageSize = totalGames > 0 ?
-                Math.round(userSnakeGames.reduce((sum, g) => sum + (g.finalLength || 0), 0) / totalGames) : 0;
+            const totalWins = userPongGames.filter(g => g.win === 'WIN').length;
+            const maxSpeed = Math.max(...userPongGames.map(g => g.finalBallSpeed || 0), 0);
+            const averageSpeed = totalGames > 0 ?
+                    Math.round(userPongGames.reduce((sum, g) => sum + (g.finalBallSpeed || 0), 0) / totalGames) : 0;
 
-            // Calculer des pommes mangees (finalLength - 1 parce que le serpent commence avec 1 segment)
-            const totalApples = userSnakeGames.reduce((sum, g) => sum + Math.max((g.finalLength || 1) - 1, 0), 0);
-
+            // Calculer des pommes mangees (finalBallSpeed - 1 parce que le serpent commence avec 1 segment) calcul a revoir pas le meme que pour le snake
+            const totalGoals = userPongGames.reduce((sum, g) => sum + parseInt(g.score || '0'), 0);
             // Calculer le classement (nombre de joueurs avec moins de victoires + 1)
-            const allSnakeGames = await History.find({
-                where: { type: 'snake' },
+            const allPongGames = await History.find({
+                where: { type: 'pong' },
                 relations: ['user']
             });
 
             const playerStats = new Map();
-            allSnakeGames.forEach(game => {
+            allPongGames.forEach(game => {
                 if (!game.date || !game.user) return;
                 const playerLogin = game.user.login;
 
@@ -97,9 +96,9 @@ export default {
                     },
                     stats: {
                         ranking: userRanking,
-                        maxSize,
-                        averageSize,
-                        eatenApples: totalApples,
+                        maxSpeed: maxSpeed,
+                        averageSpeed: averageSpeed,
+                        totalGoals: totalGoals,
                         totalGames,
                         totalWins
                     }

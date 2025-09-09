@@ -3,7 +3,7 @@ import { updateUserProfilePong } from './profilePongFr';
 import { updateRankingPong } from './rankPong';
 import { formatDate, formatGameTime } from './init';
 import { analyzeGameTimes, analyzeLengthDistribution } from '../graph/gameTime';
-import { setCurrentGamesPong, showGameDetails, closeGameDetails } from '../graph/popPong';
+import { setCurrentGamesPong, showGameDetailsPong, closeGameDetailsPong } from '../graph/popPong';
 
 
 console.log('Snake stats file loaded');
@@ -79,7 +79,7 @@ export function initPongStats(){
 
 		if (lastGamesContainer) {
 			console.log('Calling updateLastGames...');
-			updateLastGames();
+			updateLastGamesPong();
 			updateRankingPong();
 			updateUserProfilePong();
 		} else {
@@ -89,7 +89,7 @@ export function initPongStats(){
 				const container = document.querySelector('#last-games-content');
 				if (container) {
 					console.log('Found container on retry, calling updateLastGames...');
-					updateLastGames();
+					updateLastGamesPong();
 				} else {
 					console.error('Still no #last-games-content found after retry');
 				}
@@ -150,7 +150,7 @@ function generateLastGamesHTML(games: SnakeGameHistory[]): string {
 		}
 
 			return `
-			<div class="grid grid-cols-3 gap-4 items-center p-3 rounded-lg border-b cursor-pointer hover:bg-gray-50 transition-colors" onclick="showGameDetails(${index})" data-game-index="${index}">
+			<div class="grid grid-cols-3 gap-4 items-center p-3 rounded-lg border-b cursor-pointer hover:bg-gray-50 transition-colors" onclick="showGameDetailsPong(${index})" data-game-index="${index}">
 				<div class="min-w-0">
 					<p class="font-semibold text-sm truncate">${leftPlayer}</p>
 					<p class="text-gray-500 text-xs">${formatDate(game.date || '')}</p>
@@ -173,7 +173,7 @@ function generateLastGamesHTML(games: SnakeGameHistory[]): string {
 }
 
 
-export async function updateLastGames(): Promise<void> {
+export async function updateLastGamesPong(): Promise<void> {
 	try {
 		const games = await fetchPongHistory();
 		setCurrentGamesPong(games); // ← Stocker les parties globalement
@@ -192,10 +192,10 @@ export async function updateLastGames(): Promise<void> {
 
 declare global {
 	interface Window {
-		showGameDetails: (index: number) => void;
-		closeGameDetails: (event?: Event) => void;
+		showGameDetailsPong: (index: number) => void;
+		closeGameDetailsPong: (event?: Event) => void;
 	}
 }
 
-window.showGameDetails = showGameDetails;
-window.closeGameDetails = closeGameDetails;
+window.showGameDetailsPong = showGameDetailsPong;
+window.closeGameDetailsPong = closeGameDetailsPong;

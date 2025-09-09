@@ -8,7 +8,7 @@ export function setCurrentGamesPong(games: PongGameHistory[]): void {
 	currentGames = games;
 }
 
-export function showGameDetails(gameIndex: number): void {
+export function showGameDetailsPong(gameIndex: number): void {
 	const game = currentGames[gameIndex];
 	if (!game) return;
 
@@ -51,7 +51,7 @@ export function showGameDetails(gameIndex: number): void {
 			<div class="${bgColor} rounded-xl p-4 max-w-xl h-[350px] w-full mx-4 transform transition-all duration-300 scale-95 relative flex flex-col flex flex-col justify-start ${textColor} ${shadowColor}" onclick="event.stopPropagation()">
 
 			<!-- Croix de fermeture -->
-				<button onclick="closeGameDetails()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
+				<button onclick="closeGameDetailsPong()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
@@ -76,10 +76,10 @@ export function showGameDetails(gameIndex: number): void {
 						<div class="text-sm mb-4 ${accentColor}">You</div>
 
 						<div class="text-sm mt-1">
-							<span class="${textColor}">Length: </span><span class="${accentColor}">${game.finalBallSpeed || 0}</span>
+							<span class="${textColor}">Final ball speed : </span><span class="${accentColor}">${game.finalBallSpeed || 0}</span>
 						</div>
 						<div class="text-sm">
-							<span class="${textColor}">Eaten apples: </span><span class="${accentColor}">${Math.max((game.finalBallSpeed || 1) - 1, 0)}</span>
+							<span class="${textColor}">Average speed : </span><span class="${accentColor}">${Math.max((game.finalBallSpeed || 1) - 1, 0)}</span>
 						</div>
 					</div>
 
@@ -98,10 +98,10 @@ export function showGameDetails(gameIndex: number): void {
 						<div class="text-sm mb-4 ${accentColor}">Opponent</div>
 
 						<div class="text-sm mt-1">
-							<span class="${textColor}">Length: </span><span class="${accentColor}">${game.opponentStats?.finalBallSpeed || '-'}</span>
+							<span class="${textColor}">Final ball speed : </span><span class="${accentColor}">${game.opponentStats?.finalBallSpeed || '-'}</span>
 						</div>
 						<div class="text-sm">
-							<span class="${textColor}">Etean apples: </span><span class="${accentColor}">${game.opponentStats ? Math.max((game.opponentStats.finalBallSpeed || 1) - 1, 0) : '-'}</span>
+							<span class="${textColor}">Average speed : </span><span class="${accentColor}">${game.opponentStats ? Math.max((game.opponentStats.finalBallSpeed || 1) - 1, 0) : '-'}</span>
 						</div>
 					</div>
 				</div>
@@ -123,7 +123,7 @@ export function showGameDetails(gameIndex: number): void {
 	}, 10);
 }
 
-export function closeGameDetails(event?: Event): void {
+export function closeGameDetailsPong(event?: Event): void {
 	if (event) {
 		event.preventDefault();
 	}
@@ -144,7 +144,7 @@ export function closeGameDetails(event?: Event): void {
 
 document.addEventListener('keydown', (event) => {
 	if (event.key === 'Escape') {
-		closeGameDetails();
+		closeGameDetailsPong();
 	}
 });
 

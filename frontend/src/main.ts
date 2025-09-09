@@ -37,6 +37,8 @@ import { updateRanking } from './graph/rank';
 import { updateRankingPong } from './graph/rankPong';
 import { updateUserProfile } from './graph/profileSnakeFr';
 import { updateUserProfilePong } from './graph/profilePongFr';
+import { updateRecentContacts } from './chat/recentContents';
+import { displayDarkModeButton } from './theme/lightButton'
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -154,18 +156,25 @@ async function renderPage() {
 			rootUser();
 			displayChatButton();
 			setTimeout(() => {
-				initThemeToggle(); // ← Initialiser le thème après les animations
+				initThemeToggle();
 				initProfilePage();
+				updateRecentContacts();
 			}, 100);
 			break;
 		case '/updateInfos':
+			initThemeToggle();
+			displayDarkModeButton();
 			updateInfos();
 			displayChatButton();
 			break;
 		case '/register':
+			initThemeToggle();
+			displayDarkModeButton();
 			registerUser();
 			break;
 		case '/login':
+			initThemeToggle();
+			displayDarkModeButton();
 			logUser();
 			break;
 		case '/pong/matchmaking/game':
@@ -180,6 +189,7 @@ async function renderPage() {
 			await snakeGame();
 			break;
 		case '/snake/local':
+			displayDarkModeButton();
 			localSnakeGame();
 			displayChatButton();
 			break;
@@ -189,6 +199,8 @@ async function renderPage() {
 		case '/statisticsSnake':
 			setTimeout(() => {
 				console.log('About to call initSnakeStats');
+				initThemeToggle();
+				displayDarkModeButton();
 				initSnakeStats();
 				updateRanking();
 				updateInfos();
@@ -198,6 +210,8 @@ async function renderPage() {
 		case '/statisticsPong':
 			setTimeout(() => {
 				console.log('About to call initPongStats');
+				initThemeToggle();
+				displayDarkModeButton();
 				initPongStats();
 				updateRankingPong();
 				updateInfos();

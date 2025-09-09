@@ -5,11 +5,15 @@ export function initThemeToggle(): void{
 	//ajout de l'event au bouton
 	const themeToggle: HTMLElement | null = document.getElementById('theme-toggle');
 	const dashToggle: HTMLElement | null = document.getElementById('dash-theme-toggle');
+	const darkmodeFab: HTMLElement | null = document.getElementById('darkmode-fab');
 	if(themeToggle){
 		themeToggle.addEventListener('click', toggleTheme);
 	}
 	if(dashToggle){
 		dashToggle.addEventListener('click', toggleTheme);
+	}
+	if(darkmodeFab){
+		darkmodeFab.addEventListener('click', toggleTheme);
 	}
 }
 
@@ -21,7 +25,7 @@ function toggleTheme(): void{
 	localStorage.setItem('theme', newTheme);
 }
 
-function applyTheme(theme: string): void {
+export function applyTheme(theme: string): void {
 	const html: HTMLElement = document.documentElement;
 
 	const themeText: HTMLElement | null = document.getElementById('theme-text');
