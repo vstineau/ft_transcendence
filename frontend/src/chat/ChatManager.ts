@@ -68,11 +68,11 @@ export class ChatManager extends SocketService {
         }
     }
 
-    private openChat() {
+    public openChat() {
         this.createChatPanel();
     }
 
-    private closeChat() {
+    public closeChat() {
         const chatPanel = document.getElementById('chat-panel');
         if (chatPanel) {
             chatPanel.remove();
@@ -165,6 +165,8 @@ export class ChatManager extends SocketService {
 
         // Gestion des clics sur les utilisateurs en ligne pour créer des rooms privées
         const onlineUsersContainer = document.getElementById('chat-online-users');
+        const friendsListContainer = document.getElementById('chat-friends-list');
+
         if (onlineUsersContainer) {
             onlineUsersContainer.addEventListener('click', (e) => {
                 const target = e.target as HTMLElement;
@@ -175,6 +177,17 @@ export class ChatManager extends SocketService {
                     console.log(`💬 Clic sur utilisateur: ${userId}`);
                     this.startPrivateChat(userId!);
                 }
+            });
+        }
+        if (friendsListContainer) {
+            friendsListContainer.addEventListener('click', (e) => {
+                const target = e.target as HTMLElement;
+                const userElement = target.closest('[data-friend-id]') as HTMLElement;
+                if (userElement) {
+                    const userId = userElement.dataset.friendId;
+                    console.log(`💬 Clic sur ami: ${userId}`)
+                    this.startPrivateChat(userId!)
+                    }
             });
         }
     }

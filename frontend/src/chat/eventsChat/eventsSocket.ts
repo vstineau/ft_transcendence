@@ -28,6 +28,7 @@ export function eventsSocket(this: ChatManager) {
 		if (data.blockedList) {
 			(this as any).state.currentUserId.blockedList = data.blockedList;
 		}
+		console.log('blockedList:', (this as any).state.currentUserId.blockedList);
 		(this as any).updateMessagesDisplay();
 		(this as any).renderOnlineUsers();
 	});

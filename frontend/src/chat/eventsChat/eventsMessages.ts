@@ -12,8 +12,9 @@ export function eventsMessages(this: ChatManager) {
 
 			if ((this as any).state.currentUserId.blockedList.includes(message.userId)) {
 				console.log('🚫 Message from blocked user ignored:', message.userId);
-				// envoyer un message systeme à l'utilisateur
-				return;
+				// (this as any).emit('deleteMessage', message.id); // demander au serveur de supprimer le message
+				//
+				return ;
 			}
 
 			if (message.userId !== (this as any).state.currentUserId?.id) {
