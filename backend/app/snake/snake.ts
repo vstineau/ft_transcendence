@@ -50,7 +50,6 @@ function initRoom(socket: Socket, user: User, friend?: string[]) {
 			return room;
 		}
 		else {
-			console.log("ROOM MAIS PAS LA BONNE")
 			const newRoom = createRoom(socket, user);
 			friend? newRoom.custom = true: newRoom.custom=false;
         	socket.join(newRoom.name);

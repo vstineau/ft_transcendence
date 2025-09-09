@@ -270,7 +270,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
         date: new Date().toISOString(),
         win: winner === 'P2' ? 'WIN' : 'LOOSE',
         opponent: user1.id,
-        score: `${game.p1.score}:${game.p2.score}`,
+        score: `${game.p2.score}:${game.p1.score}`,
         finalLength: 0,
         finalBallSpeed: game.ball.vx + game.ball.vy / 2,
         gameTime: gametime,

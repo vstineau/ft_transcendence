@@ -173,7 +173,7 @@ async function renderPage() {
 			break;
 		case '/snake':
 			await snakeGame();
-			await displayChatButton();
+		//	await displayChatButton();
 			break;
 		case '/snake/local':
 			localSnakeGame();

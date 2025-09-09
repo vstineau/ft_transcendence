@@ -69,7 +69,7 @@ class SnakeGame {
     }
 
     private drawGame(game: Game): void {
-        if (!this.ctx || this.gameOver || !this.canvas) return;
+        if (!this.ctx || this.gameOver || !this.canvas) {return;}
         
         const scale = this.canvas.height / game.winSize;
         const size = Math.floor(Math.min(this.canvas.width, this.canvas.height) / game.winSize) * 20;
@@ -96,7 +96,6 @@ class SnakeGame {
     private listenUserInputs(): void {
         this.beforeUnloadHandler = (e: BeforeUnloadEvent) => {
             this.cleanup();
-            //navigateTo('/snake-choice');
         };
 
         this.keydownHandler = (e: KeyboardEvent) => {
