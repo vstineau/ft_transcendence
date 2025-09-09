@@ -303,31 +303,29 @@ async function getUser(socket: Socket, cookie: string): Promise<User | undefined
 }
 
 export async function startSnakeGame(app: FastifyInstance) {
-    app.ready().then(() => {
-        app.io.of('/snake').on('connection', (socket: Socket) => {
-            socket.on('isConnected', async (cookie: string) => {
-                const user = await getUser(socket, cookie);
-                if (!user) return; // non connecté
-                const room = initRoom(socket, user);
-                handleDisconnect(app, socket);
-                getInputs(socket, room.game);
-
-                socket.on('initGame_snake', () => {
-                    const room = snakeRooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
-                    if (!room) return;
-                    if (room.interval) return;
-                    room.interval = setInterval(() => {
-                        for (const room of snakeRooms) {
-                            if (room.playersNb === 2) { 
-								!room.game.gameStart? room.game.gameStart = Date.now(): 0;
-                                update(room.game, app, room.name);
-                                app.io.of('/snake').to(room.name).emit('gameState_snake', room.game);
-                            } else {
-                                app.io.of('/snake').to(room.name).emit('waiting_snake', room.game);
-                            }
+    app.io.of('/snake').on('connection', (socket: Socket) => {
+        socket.on('isConnected', async (cookie: string) => {
+            const user = await getUser(socket, cookie);
+            if (!user) return; // non connecté
+            const room = initRoom(socket, user);
+            handleDisconnect(app, socket);
+            getInputs(socket, room.game);
+            socket.emit('roomJoined_snake', room.name); // eviter la course !
+            socket.on('initGame_snake', () => {
+                const room = snakeRooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
+                if (!room) return;
+                if (room.interval) return;
+                room.interval = setInterval(() => {
+                    for (const room of snakeRooms) {
+                        if (room.playersNb === 2) { 
+                            !room.game.gameStart? room.game.gameStart = Date.now(): 0;
+                            update(room.game, app, room.name);
+                            app.io.of('/snake').to(room.name).emit('gameState_snake', room.game);
+                        } else {
+                            app.io.of('/snake').to(room.name).emit('waiting_snake', room.game);
                         }
-                    }, 1000 / FPS);
-                });
+                    }
+                }, 1000 / FPS);
             });
         });
     });

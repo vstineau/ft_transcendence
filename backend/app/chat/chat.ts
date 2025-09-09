@@ -17,8 +17,8 @@ import { handleAddFriend } from './handlers/friendHandlers.js';
 // Configuration
 import { CHAT_CONFIG, CHAT_EVENTS } from './config/chatConfig.js';
 
-export function setupChat(app: FastifyInstance) {
-  const chatNamespace = (app as any).io.of('/chat');
+export async function startChat(app: FastifyInstance) {
+  const chatNamespace = app.io.of('/chat');
 
   chatNamespace.on('connection', (socket: Socket) => {
     app.log.info({ id: socket.id }, 'Chat client connected');

@@ -33,7 +33,7 @@ export class ChatManager extends SocketService {
         // Instanciation du mini UI profil (handlers à adapter selon ton routing/backend)
         this.profileUI = new UIprofileService({
             viewProfile: (userId: string) => {
-                //TODO: navigateTo('/profile/' + userId);
+                TODO: navigateTo('/pong/matchmaking/localgame');
             },
             privateMessage: (userId: string) => {
                 this.startPrivateChat(userId);

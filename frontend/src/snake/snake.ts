@@ -1,3 +1,4 @@
+// @ts-ignore
 import io, { Socket } from 'socket.io-client';
 import { Game ,Snake} from '../types/snakeTypes';
 import { navigateTo } from '../main'
@@ -27,7 +28,9 @@ export function createSnakeSocket(): Socket {
 		let cookie = getCookie('token');
 		console.log(cookie);
 		socket.emit('isConnected', cookie);
-		socket.emit('initGame_snake');
+		socket.on('roomJoined_snake', () => {
+			socket.emit('initGame_snake');
+		});
 	});
     return socket;
 }

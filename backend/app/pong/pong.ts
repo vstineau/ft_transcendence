@@ -171,26 +171,24 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 }
 
 export async function startPongGame(app: FastifyInstance) {
-	app.ready().then(() => {
-		app.io.of('/pong').on('connection', (socket: Socket) => {
-			socket.on('initGame', (cookie: string) => {
-				initRoom(socket, cookie);
-				handleDisconnect(app, socket);
-				if (!intervalStarted) {
-					intervalStarted = true;
-					setInterval(() => {
-						// Pour chaque room prête, broadcast son état de jeu à tous ses joueurs
-						for (const room of rooms) {
-							if (room.playersNb === 2 && room.locked) {
-								gameLoop(room.game, app);
-								app.io.of('/pong').to(room.name).emit('gameState', room.game);
-							} else if (!room.locked && room.playersNb === 1) {
-								app.io.of('/pong').to(room.name).emit('waiting', room);
-							}
+	app.io.of('/pong').on('connection', (socket: Socket) => {
+		socket.on('initGame', (cookie: string) => {
+			initRoom(socket, cookie);
+			handleDisconnect(app, socket);
+			if (!intervalStarted) {
+				intervalStarted = true;
+				setInterval(() => {
+					// Pour chaque room prête, broadcast son état de jeu à tous ses joueurs
+					for (const room of rooms) {
+						if (room.playersNb === 2 && room.locked) {
+							gameLoop(room.game, app);
+							app.io.of('/pong').to(room.name).emit('gameState', room.game);
+						} else if (!room.locked && room.playersNb === 1) {
+							app.io.of('/pong').to(room.name).emit('waiting', room);
 						}
-					}, 1000 / 60);
-				}
-			});
+					}
+				}, 1000 / 60);
+			}
 		});
 	});
 }

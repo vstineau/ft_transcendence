@@ -8,7 +8,7 @@ import {startPongGame} from './pong/pong.js'
 import {startSnakeGame} from './snake/snake.js'
 import fastifyCookie from '@fastify/cookie';
 import fastifyOauth2 from '@fastify/oauth2';
-import { setupChat } from './chat/chat.js';
+import { startChat } from './chat/chat.js';
 import {userRoutes} from './routes/router.js'
 import oauth2Options from './auth/oauth2Options.js'
 
@@ -49,7 +49,7 @@ await SqliteDataSource.initialize()
 
 await startPongGame(app);
 await startSnakeGame(app);
-setupChat(app); // <-- Register the chat setup function
+await startChat(app);
 
 authJwt(app, {jwtSecret: config.jwt.secret});
 await app.register(userRoutes);
