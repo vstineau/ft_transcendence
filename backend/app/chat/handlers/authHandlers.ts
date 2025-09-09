@@ -46,13 +46,15 @@ export async function handleInitUser(
   // Récupérer les messages récents et la friend list
   const recentMessages = await messageService.getRecentMessages(CHAT_CONFIG.ROOMS.GLOBAL);
   const friendList = await buildFriendList(user.id);
+  const blockedList = user.blocklist || [];
     
     // Confirmer la connexion
     socket.emit(CHAT_EVENTS.USER_CONNECTED, { 
       user: chatUser,
       onlineUsers: userService.getAllUsers(),
       recentMessages,
-      friendList
+      friendList,
+      blockedList
     });
     
     console.log('User connected to chat:', user.login);

@@ -25,6 +25,9 @@ export function eventsSocket(this: ChatManager) {
 			(this as any).state.currentUserId.friendList = data.friendList;
 			(this as any).renderFriendsList();
 		}
+		if (data.blockedList) {
+			(this as any).state.currentUserId.blockedList = data.blockedList;
+		}
 		(this as any).updateMessagesDisplay();
 		(this as any).renderOnlineUsers();
 	});

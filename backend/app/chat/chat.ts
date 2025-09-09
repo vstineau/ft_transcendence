@@ -13,6 +13,7 @@ import { handleJoinPrivateRoom } from './handlers/roomHandlers.js';
 import { handleGameInvitation, handleGameInvitationResponse, handleStatusChange } from './handlers/gameHandlers.js';
 import { handleDisconnect, handleSocketError } from './handlers/connectionHandlers.js';
 import { handleAddFriend } from './handlers/friendHandlers.js';
+import { handleBlockUser } from './handlers/blockUserHandlers.js';
 
 // Configuration
 import { CHAT_CONFIG, CHAT_EVENTS } from './config/chatConfig.js';
@@ -51,6 +52,17 @@ export async function startChat(app: FastifyInstance) {
     socket.on(CHAT_EVENTS.ADD_FRIEND, (data: { targetUserId: string }) => 
       handleAddFriend(socket, data, app)
     );
+
+    // ==== BLOCK / UNBLOCK =====
+    socket.on(CHAT_EVENTS.BLOCK_USER, (data: { targetUserId: string, currentUserId: string }) => {
+      handleBlockUser(socket, data, app);
+      console.log(`🔒 Bloquer l'utilisateur: ${data.targetUserId}`);
+    });
+
+    socket.on(CHAT_EVENTS.UNBLOCK_USER, (data: { targetUserId: string, currentUserId: string }) => {
+      handleBlockUser(socket, data, app);
+      console.log(`🔓 Débloquer l'utilisateur: ${data.targetUserId}`);
+    });
 
     // ===== JEUX =====
     socket.on(CHAT_EVENTS.GAME_INVITATION, (data: { targetUserId: string; gameType: 'pong' | 'snake' }) => 

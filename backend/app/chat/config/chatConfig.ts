@@ -22,7 +22,9 @@ export const CHAT_EVENTS = {
   STATUS_CHANGE: 'statusChange',
   JOIN_PUBLIC_ROOM: 'joinPublicRoom',
   ADD_FRIEND: 'addFriend',
-  
+  BLOCK_USER: 'blockUser',
+  UNBLOCK_USER: 'unblockUser',
+
   // Server -> Client
   USER_CONNECTED: 'userConnected',
   USER_JOINED: 'userJoined',
@@ -39,6 +41,8 @@ export const CHAT_EVENTS = {
   FRIEND_ADDED: 'friendAdded',
   FRIEND_ERROR: 'friendError',
   FRIEND_LIST_UPDATED: 'friendListUpdated',
+  USER_DEBLOCKED: 'userDeblocked',
+  USER_BLOCKED: 'userBlocked',
   AUTH_ERROR: 'authError',
   ERROR: 'error'
 } as const;

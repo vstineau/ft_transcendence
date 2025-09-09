@@ -41,11 +41,12 @@ export class ChatManager extends SocketService {
             block: (userId: string) => {
                 const set = new Set(this.state.currentUserId?.blockedList || []);
                 set.add(userId);
-                this.state.currentUserId.blockedList = Array.from(set);
+                this.emit(CHAT_EVENTS.BLOCK_USER, { targetUserId: userId, currentUserId: this.state.currentUserId?.id });
                 // Optionnel: rafraîchir UI si tu filtres des listes par bloqués
             },
             unblock: (userId: string) => {
                 this.state.currentUserId.blockedList = (this.state.currentUserId?.blockedList || []).filter(id => id !== userId);
+                this.emit(CHAT_EVENTS.UNBLOCK_USER, { targetUserId: userId, currentUserId: this.state.currentUserId?.id });
             },
             isBlocked: (userId: string) => {
                 return (this.state.currentUserId?.blockedList || []).includes(userId);
