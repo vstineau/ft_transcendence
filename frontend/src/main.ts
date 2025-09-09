@@ -31,7 +31,10 @@ import { localSnakeGame } from './snake/localSnake';
 import { localpongGame } from './pong/localPong';
 import { initProfilePage } from './utils/avatar';
 import {initSnakeStats } from './graph/init';
+import {initPongStats } from './graph/initPongHistory';
 import { pongTournament } from './pong/tournament';
+import { updateRanking } from './graph/rank';
+import { updateUserProfile } from './graph/profileSnakeFr';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -173,7 +176,6 @@ async function renderPage() {
 			break;
 		case '/snake':
 			await snakeGame();
-		//	await displayChatButton();
 			break;
 		case '/snake/local':
 			localSnakeGame();
@@ -186,6 +188,16 @@ async function renderPage() {
 			setTimeout(() => {
 				console.log('About to call initSnakeStats');
 				initSnakeStats();
+				updateRanking();
+				updateInfos();
+				initProfilePage();
+			}, 100);
+			break;
+		case '/statisticsPong':
+			setTimeout(() => {
+				console.log('About to call initPong');
+				initPongStats();
+				updateRanking();
 				updateInfos();
 				initProfilePage();
 			}, 100);
@@ -198,6 +210,8 @@ async function renderPage() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+	updateUserProfile();
+
 	document.body.addEventListener('click', async e => {
 		const target = e.target as HTMLElement;
 		// if (target instanceof HTMLAnchorElement)

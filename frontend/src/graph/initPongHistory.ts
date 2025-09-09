@@ -1,16 +1,17 @@
-import { StatsSnakeView } from '../views/root.views';
-import { SnakeGameHistory } from '../types/snakeTypes';
-import { updateUserProfile } from './profileSnakeFr';
+
+import { StatsPongView } from '../views/root.views';
+import { PongGameHistory } from '../types/pongTypes';
+import { updateUserProfile } from './profilePongFr';
 import { updateRanking } from './rank';
 import { analyzeGameTimes, analyzeLengthDistribution } from '../graph/gameTime';
 import { currentGames, setCurrentGames, showGameDetails, closeGameDetails } from '../graph/pop';
 
 
-console.log('Snake stats file loaded');
+console.log('Pong stats file loaded');
 declare var Chart: any;
 
-export function initSnakeStats(){
-	console.log('=============> initSnakeStats called');
+export function initPongStats(){
+	console.log('=============> initPongStats called');
 	const tryInit = async() => {
 		console.log('tryInit called');
 		const scoreCanvas = document.getElementById('scoreDistributionChart');
@@ -101,15 +102,15 @@ export function initSnakeStats(){
 }
 
 
-export async function fetchSnakeHistory(): Promise<SnakeGameHistory[]> {
+export async function fetchPongHistory(): Promise<PongGameHistory[]> {
     try {
-        console.log('=== FETCHING SNAKE HISTORY ===');
+        console.log('=== FETCHING PONG HISTORY ===');
         console.log('Current cookies:', document.cookie);
         const host = window.location.hostname;
         const port = window.location.port;
         const protocol = window.location.protocol;
 
-        const response = await fetch(`${protocol}//${host}:${port}/api/user/history?type=snake`);
+        const response = await fetch(`${protocol}//${host}:${port}/api/user/history?type=pong`);
 
         console.log('Response status:', response.status);
         console.log('Response headers:', Object.fromEntries(response.headers.entries()));
@@ -123,7 +124,7 @@ export async function fetchSnakeHistory(): Promise<SnakeGameHistory[]> {
          const data = await response.json();
         return data;
     } catch (error) {
-        console.log('Error fetching snake history', error);
+        console.log('Error fetching pong history', error);
         return [];
     }
 }
@@ -150,7 +151,7 @@ export function formatGameTime(timeInMs: number): string {
 }
 
 
-function generateLastGamesHTML(games: SnakeGameHistory[]): string {
+function generateLastGamesHTML(games: PongGameHistory[]): string {
     if (games.length === 0) {
         return `
             <div class="flex flex-col items-center justify-center py-8 text-center">
@@ -186,7 +187,7 @@ function generateLastGamesHTML(games: SnakeGameHistory[]): string {
                         ${rightPlayer}
                     </p>
                     <p class="text-gray-500 text-xs truncate">
-                        ${formatGameTime(game.gameTime || 0)} • Length: ${game.finalLength}
+                        ${formatGameTime(game.gameTime || 0)} • Length: ${game.finalBallSpeed}
                     </p>
                 </div>
             </div>
@@ -197,7 +198,7 @@ function generateLastGamesHTML(games: SnakeGameHistory[]): string {
 
 export async function updateLastGames(): Promise<void> {
     try {
-        const games = await fetchSnakeHistory();
+        const games = await fetchPongHistory();
         setCurrentGames(games); // ← Stocker les parties globalement
 
         const lastGamesContainer = document.querySelector('#last-games-content');
