@@ -44,6 +44,14 @@ export class UIprofileService {
 			// Délégation: montrer au survol d'un item ayant un data-* ID reconnu
 			container.addEventListener('mouseenter', (e) => {
 				const target = (e.target as HTMLElement) || null;
+				// Ne pas afficher la bulle quand on survole la photo/avatar (wrapper ou image)
+				if (target) {
+					const overAvatarWrapper = target.closest('.shrink-0, .relative.w-8.h-8, .relative.w-7.h-7') as HTMLElement | null;
+					const overAvatarInner = target.closest('img.rounded-full, div.rounded-full') as HTMLElement | null;
+					if (overAvatarWrapper || overAvatarInner) {
+						return;
+					}
+				}
 				const trigger = target?.closest('[data-user-id], [data-online-id], [data-friend-id], [data-search-id]') as HTMLElement | null;
 				if (!trigger) return;
 				const user = this.extractUserFromElement(trigger);

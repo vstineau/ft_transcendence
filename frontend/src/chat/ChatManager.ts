@@ -387,7 +387,7 @@ export class ChatManager extends SocketService {
                 } else {
                     icon = '👤';
                 }
-                bgColor = 'bg-purple-600';
+                bgColor = 'bg-gray-600';
             }
         }
         
@@ -454,7 +454,7 @@ export class ChatManager extends SocketService {
                 } else {
                     iconHtml = '<span class="text-[10px] text-gray-500">👤</span>';
                 }
-                colorClass = 'bg-purple-500';
+                colorClass = 'bg-gray-500';
             }
 
             return `
