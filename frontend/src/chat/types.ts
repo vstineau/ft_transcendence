@@ -29,6 +29,8 @@ export interface User {
     username: string;
     status: 'online' | 'offline' | 'in-game';
     avatar: string;
+    friendList: Friend[];
+    blockedList: string[]; // liste des IDs des utilisateurs bloqués
 }
 
 export interface ChatState {
@@ -36,7 +38,6 @@ export interface ChatState {
     isOpen: boolean;
     activeTab: 'global' | 'pong' | 'snake' | 'private' | '';
     unreadCount: number;
-    friends?: Friend[]; // liste des amis
     onlineUsers?: Friend[]; // utilisateurs actuellement connectés (non filtrés par amitié)
     searchResults?: Friend[]; // résultats de recherche coté UI
     searchTerm?: string; // terme de recherche courant

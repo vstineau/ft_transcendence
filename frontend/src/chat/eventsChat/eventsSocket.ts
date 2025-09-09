@@ -20,6 +20,11 @@ export function eventsSocket(this: ChatManager) {
 		(this as any).state.currentUserId.avatar = data.user.avatar || '';
 		(this as any).messages = data.recentMessages || [];
 		(this as any).state.onlineUsers = data.onlineUsers || [];
+		// Charger la friend list si fournie
+		if (data.friendList) {
+			(this as any).state.currentUserId.friendList = data.friendList;
+			(this as any).renderFriendsList();
+		}
 		(this as any).updateMessagesDisplay();
 		(this as any).renderOnlineUsers();
 	});

@@ -14,6 +14,7 @@ export const CHAT_EVENTS = {
   GAME_INVITATION_RESPONSE: 'gameInvitationResponse',
   STATUS_CHANGE: 'statusChange',
   JOIN_PUBLIC_ROOM: 'joinPublicRoom',
+  ADD_FRIEND: 'addFriend',
   
   // Server -> Client
   USER_CONNECTED: 'userConnected',
@@ -28,6 +29,9 @@ export const CHAT_EVENTS = {
   GAME_INVITATION_RECEIVED: 'gameInvitationReceived',
   GAME_INVITATION_ANSWER: 'gameInvitationAnswer',
   USER_STATUS_CHANGED: 'userStatusChanged',
+  FRIEND_ADDED: 'friendAdded',
+  FRIEND_ERROR: 'friendError',
+  FRIEND_LIST_UPDATED: 'friendListUpdated',
   AUTH_ERROR: 'authError',
   ERROR: 'error'
 } as const;

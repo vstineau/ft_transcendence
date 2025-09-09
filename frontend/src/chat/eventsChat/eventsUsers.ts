@@ -19,10 +19,11 @@ export function eventsUsers(this: ChatManager) {
 			(this as any).state.onlineUsers = (this as any).state.onlineUsers.map((u: any) =>
 				u.id === user.id ? { ...u, username: user.nickName || user.login, avatar: user.avatar, status: 'online' } : u
 			);
-	}
-        (this as any).renderOnlineUsers();
-        (this as any).renderRoomsList();
-        (this as any).updateCurrentRoomIndicator((this as any).state.activeTab);
+		}
+		(this as any).renderOnlineUsers();
+		(this as any).renderRoomsList();
+		(this as any).renderFriendsList();
+		(this as any).updateCurrentRoomIndicator((this as any).state.activeTab);
 	});
 
         this.on('userLeft', (user: any) => {
@@ -34,6 +35,7 @@ export function eventsUsers(this: ChatManager) {
                 );
                 (this as any).renderOnlineUsers();
                 (this as any).renderRoomsList();
+                (this as any).renderFriendsList();
                 (this as any).updateCurrentRoomIndicator((this as any).state.activeTab);
             }
         });
@@ -68,6 +70,7 @@ export function eventsUsers(this: ChatManager) {
             (this as any).state.onlineUsers = updated;
             (this as any).renderOnlineUsers();
             (this as any).renderRoomsList();
+            (this as any).renderFriendsList();
             (this as any).updateCurrentRoomIndicator((this as any).state.activeTab);
         });
 

@@ -1,12 +1,11 @@
 // @ts-ignore
-//import io, { Socket } from 'socket.io-client';
-//import { getCookie } from '../pong/pong';
 import type { ChatState, Message, ChatRoom } from './types';
 import { ChatPanel } from './components/ChatPanel';
-import { SocketService } from './services';
+import { SocketService, UIprofileService } from './services';
 import { formatTime, escapeHtml, createAvatarElement } from './utils';
 import { CHAT_EVENTS } from './config';
-import { eventsSocket, eventsMessages, eventsUsers, eventsRooms } from './eventsChat';
+import { eventsSocket, eventsMessages, eventsUsers, eventsRooms, eventsFriends } from './eventsChat';
+import { navigateTo } from '../main';
 
 export class ChatManager extends SocketService {
     private state: ChatState = {
@@ -15,86 +14,46 @@ export class ChatManager extends SocketService {
         activeTab: 'global',
         unreadCount: 0,
         onlineUsers: [],
-        friends: []
     };
-
-    //private socketService: SocketService;
-    //private messageService: MessageService;
+    private profileUI?: UIprofileService;
+    private profileUIAttached = false;
 
     constructor() {
         super();
-        //this.socketService = new SocketService();
-        //this.messageService = new MessageService();
         eventsSocket.call(this);
         eventsMessages.call(this);
         eventsUsers.call(this);
         eventsRooms.call(this);
-		this.startListening();
+        eventsFriends.call(this);
+        this.profileUI_attached();
     }
 
-    private startListening() {
 
-
-        //// Écouter les messages d'une room spécifique
-        //this.on(CHAT_EVENTS.LOADING_MESSAGES, (data: any) => {
-        //    console.log(`⏳ Chargement des messages pour room ${data.room}:`, data.message);
-        //    this.showLoadingMessage(data.room, data.message);
-        //});
-
-        //this.on(CHAT_EVENTS.MESSAGE_HISTORY, (data: any) => {
-        //    console.log(`📨 Messages reçus pour room ${data.room}:`, data.messages);
-            
-        //    // Cacher le message de chargement
-        //    this.hideLoadingMessage();
-            
-        //    // Remplacer les messages actuels par ceux de la room
-        //    this.messages = data.messages || [];
-
-        //    // Mettre à jour l'affichage
-        //    this.updateMessagesDisplay();
-        //});
-
-        //// Écouter la confirmation de rejoindre une room privée
-        //this.on(CHAT_EVENTS.ROOM_JOINED, (data: any) => {
-        //    console.log(`✅ Room private rejointe: ${data.roomName}`, data.messages);
-            
-        //    // Mettre à jour les messages avec l'historique de la room privée
-        //    this.messages = data.messages || [];
-        //    this.updateMessagesDisplay();
-        //});
-
-        //// Écouter la création automatique d'une room privée par quelqu'un d'autre
-        //this.on(CHAT_EVENTS.PRIVATE_ROOM_CREATED, (data: any) => {
-        //    console.log(`🔔 Room privée créée par ${data.withUser.username}:`, data.roomName);
-            
-        //    // Créer la room dans l'interface si elle n'existe pas
-        //    const existingRoom = this.rooms?.find(r => r.id === data.roomName);
-        //    if (!existingRoom) {
-        //        const newRoom: ChatRoom = {
-        //            id: data.roomName,
-        //            name: data.withUser.username,
-        //            type: 'private',
-        //            participants: [this.state.currentUserId, data.withUser.id],
-        //            unreadCount: 0
-        //        };
-
-        //        if (!this.rooms) this.rooms = [];
-        //        this.rooms.push(newRoom);
-                
-        //        console.log(`✅ Room privée ajoutée automatiquement: ${data.roomName} avec ${data.withUser.username}`);
-                
-        //        // Mettre à jour l'affichage des rooms
-        //        this.renderRoomsSidebar();
-        //    }
-        //});
-
-        //this.on('authError', (error: string) => {
-        //    console.error('❌ Chat auth error:', error);
-        //});
-
-        //this.on('error', (error: any) => {
-        //    console.error('❌ Chat error:', error);
-        //});
+    private profileUI_attached() {
+        // Instanciation du mini UI profil (handlers à adapter selon ton routing/backend)
+        this.profileUI = new UIprofileService({
+            viewProfile: (userId: string) => {
+                //TODO: navigateTo('/profile/' + userId);
+            },
+            privateMessage: (userId: string) => {
+                this.startPrivateChat(userId);
+            },
+            block: (userId: string) => {
+                const set = new Set(this.state.currentUserId?.blockedList || []);
+                set.add(userId);
+                this.state.currentUserId.blockedList = Array.from(set);
+                // Optionnel: rafraîchir UI si tu filtres des listes par bloqués
+            },
+            unblock: (userId: string) => {
+                this.state.currentUserId.blockedList = (this.state.currentUserId?.blockedList || []).filter(id => id !== userId);
+            },
+            isBlocked: (userId: string) => {
+                return (this.state.currentUserId?.blockedList || []).includes(userId);
+            },
+            isSelf: (userId: string) => {
+                return userId === this.state.currentUserId?.id;
+            },
+        });
     }
 
     public toggleChat() {
@@ -126,8 +85,19 @@ export class ChatManager extends SocketService {
         this.setupPanelEventListeners();
         this.updateMessagesDisplay();
         this.updateCurrentRoomIndicator(this.state.activeTab);
-        this.renderOnlineUsers();
+        this.renderOnlineUsers();   
         this.renderSidebar();
+
+        // Brancher le popover sur les conteneurs pertinents (une seule fois)
+        if (this.profileUI && !this.profileUIAttached) {
+            this.profileUI.attachToContainers([
+                //'#messages-container',
+                '#chat-online-users',
+                '#chat-friends-list',
+                '#chat-search-results',
+            ]);
+            this.profileUIAttached = true;
+        }
         
         const messagesContainer = document.getElementById('messages-container');
         if (messagesContainer) {
@@ -250,13 +220,13 @@ export class ChatManager extends SocketService {
                                 <span class="text-xs font-normal text-gray-300 mt-1">Vu</span>
                             </div>
                         </div>
-                        ${avatar}
+                        <div class="shrink-0" data-user-id="${this.state.currentUserId?.id}">${avatar}</div>
                     </div>
                 `;
             } else {
                 return `
                     <div class="flex items-start gap-2.5">
-                        ${avatar}
+                        <div class="shrink-0" data-user-id="${message.userId}">${avatar}</div>
                         <div class="flex flex-col gap-1">
                             <div class="flex flex-col w-full max-w-[280px] leading-1.5 p-3 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl">
                                 <div class="flex items-center space-x-2 mb-1">
@@ -501,16 +471,22 @@ export class ChatManager extends SocketService {
     private renderFriendsList() {
         const list = document.getElementById('chat-friends-list');
         if (!list) return;
-        const friends = this.state.friends || [];
+
+        const friends = this.state.currentUserId?.friendList || [];
         if (!friends.length) {
             list.innerHTML = `<div class="text-[11px] text-gray-500 px-1">Aucun ami</div>`;
             return;
         }
+
+        const online = new Map((this.state.onlineUsers || []).map(u => [u.id, u]));
+
         list.innerHTML = friends.map(f => {
-            const statusColor = f.status === 'online' ? 'bg-green-500' : (f.status === 'in-game' ? 'bg-yellow-500' : 'bg-gray-500');
+            const ou = online.get(f.id);
+            const status = ou?.status || f.status || 'offline';
+            const statusColor = status === 'online' ? 'bg-green-500' : (status === 'in-game' ? 'bg-yellow-500' : 'bg-gray-500');
             const avatar = createAvatarElement(f.username, f.avatar, 'sm');
             return `<div data-friend-id="${f.id}" class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-800 cursor-pointer">
-                <div class="relative w-8 h-8">
+                <div class="relative w-8 h-8" data-user-id="${f.id}">
                     ${avatar}
                     <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-900 ${statusColor}"></span>
                 </div>
@@ -534,7 +510,7 @@ export class ChatManager extends SocketService {
         container.innerHTML = online.map(u => {
             const avatar = createAvatarElement(u.username, u.avatar, 'sm');
             return `<div data-online-id="${u.id}" class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-800 cursor-pointer">
-                <div class="relative w-7 h-7">
+                <div class="relative w-7 h-7" data-user-id="${u.id}">
                     ${avatar}
                     <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-gray-900 bg-green-500"></span>
                 </div>
@@ -557,9 +533,17 @@ export class ChatManager extends SocketService {
         }
         
         container.classList.remove('hidden');
+        const currentId = this.state.currentUserId?.id;
+        const friendIds = new Set((this.state.currentUserId?.friendList || []).map(f => f.id));
+
         container.innerHTML = results.map(u => {
             const statusColor = u.status === 'online' ? 'bg-green-500' : (u.status === 'in-game' ? 'bg-yellow-500' : 'bg-gray-500');
             const avatar = createAvatarElement(u.username, u.avatar, 'sm');
+            const isSelf = u.id === currentId;
+            const isFriend = friendIds.has(u.id);
+            const buttonHtml = (!isSelf && !isFriend)
+                ? `<button data-add-friend-id="${u.id}" class="text-[10px] bg-blue-600 hover:bg-blue-500 text-white rounded px-1 py-0.5">+</button>`
+                : '';
             return `<div data-search-id="${u.id}" class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-800 cursor-pointer">
                 <div class="relative w-7 h-7">
                     ${avatar}
@@ -568,13 +552,29 @@ export class ChatManager extends SocketService {
                 <div class="flex-1 min-w-0">
                     <div class="text-xs text-gray-200 truncate">${escapeHtml(u.username)}</div>
                 </div>
-                <button data-add-friend-id="${u.id}" class="text-[10px] bg-blue-600 hover:bg-blue-500 text-white rounded px-1 py-0.5">+</button>
+                ${buttonHtml}
             </div>`;
         }).join('');
+
+        // Click handler: add friend
+        container.querySelectorAll('[data-add-friend-id]')
+            .forEach(btn => btn.addEventListener('click', (e) => {
+                const id = (e.currentTarget as HTMLElement).getAttribute('data-add-friend-id');
+                if (!id) return;
+                // Sécu: empêcher ajout de soi-même
+                if (id === this.state.currentUserId?.id) return;
+                // Sécu: empêcher ajout si déjà ami
+                if ((this.state.currentUserId?.friendList || []).some(f => f.id === id)) return;
+                this.emit(CHAT_EVENTS.ADD_FRIEND, { targetUserId: id });
+            }));
     }
 
     private performUserSearch(term: string) {
-        const results = this.searchUsers(term, this.state.onlineUsers || [], this.state.friends || []);
+        let results = this.searchUsers(term, this.state.onlineUsers || [], this.state.currentUserId.friendList || []);
+        const currentId = this.state.currentUserId?.id;
+        const friendIds = new Set((this.state.currentUserId?.friendList || []).map(f => f.id));
+        // Filtrer: pas soi-même, pas ceux déjà amis
+        results = results.filter(u => u.id !== currentId && !friendIds.has(u.id));
         this.state.searchResults = results;
         this.renderSearchResults();
     }
