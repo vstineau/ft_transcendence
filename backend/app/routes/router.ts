@@ -15,6 +15,7 @@ import fixpassword from './fixpassword.js';
 import historySnake from '../snake/historySnake.js'
 import ranking from '../snake/ranking.js'
 import profileSnake from '../snake/profileSnake.js'
+import profilePong from '../snake/profilePong.js'
 
 export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
     fastify.route(verifyEnable2fa);
@@ -33,5 +34,6 @@ export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
     fastify.route(historySnake);
     fastify.route(ranking);
     fastify.route(profileSnake);
+    fastify.route(profilePong);
     done()
 }

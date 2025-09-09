@@ -71,7 +71,7 @@ function updateProfileDisplay(profile: ProfilePong): void {
     });
 }
 
-export async function updateUserProfile(): Promise<void> {
+export async function updateUserProfilePong(): Promise<void> {
     try {
         const profile = await fetchUserProfile();
         if (profile) {

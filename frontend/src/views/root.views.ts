@@ -1,4 +1,4 @@
-import { updateUserProfile } from '../graph/profileSnakeFr';
+// import { updateUserProfile } from '../graph/profileSnakeFr';
 
 export async function RootView() {
 	return /* HTML */ `
@@ -338,230 +338,361 @@ export async function GamesView() {
 	`;
 }
 
-export async function StatsPongView() {
-	return /* HTML */ `
-	<!-- Titre FT_TRANSCENDENCE en haut -->
-		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
-				FT<span class="text-blue-600">_</span>TRANSCENDENCE
-			</h1>
-		</div>
+// export async function StatsPongView() {
+// 	return /* HTML */ `
+// 	<!-- Titre FT_TRANSCENDENCE en haut -->
+// 		<div class="bg-gray-100 py-2">
+// 			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+// 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
+// 			</h1>
+// 		</div>
 
-		<div class="content-section min-h-screen bg-gray-100 py-16">
-        <div class="max-w-7xl mx-auto px-8">
-            <!-- Container des blocs en grid complexe -->
-            <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
+// 		<div class="content-section min-h-screen bg-gray-100 py-16">
+//         <div class="max-w-7xl mx-auto px-8">
+//             <!-- Container des blocs en grid complexe -->
+//             <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
 
-			<!-- Bloc My Profile -->
-				<div class="bg-white rounded-xl shadow-lg p-6">
-					<h3 class="font-bold text-lg mb-4">My profil</h3>
-					<div class="flex items-center mb-4">
+// 			<!-- Bloc My Profile -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 					<h3 class="font-bold text-lg mb-4">My profil</h3>
+// 					<div class="flex items-center mb-4">
 
-						<div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden">
-                        	<!-- L'avatar ou le fallback sera injecté ici -->
-						</div>
+// 						<div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden">
+//                         	<!-- L'avatar ou le fallback sera injecté ici -->
+// 						</div>
 
-						<div class="ml-2 mt-12">
-							 <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
+// 						<div class="ml-2 mt-12">
+// 							 <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
 
-							<!-- NOM UTILISATEUR -->
-							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
-						</div>
-					</div>
-					<div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
-						<div class="flex flex-col">
-							<span class="text-gray-600">Classement</span>
-							<span class="font-semibold" data-stat="classement">-</span>
-						</div>
-						<div class="flex flex-col">
-							<span class="text-gray-600">Max speed</span>
-							<span class="font-semibold" data-stat="max-size">-</span>
-						</div>
-						<div class="flex flex-col">
-							<span class="text-gray-600">Average speed</span>
-							<span class="font-semibold" data-stat="average-size">-</span>
-						</div>
-						<div class="flex flex-col">
-							<span class="text-gray-600">Total goals scored</span>
-							<span class="font-semibold" data-stat="eaten-apples">-</span>
-						</div>
-					</div>
-				</div>
+// 							<!-- NOM UTILISATEUR -->
+// 							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
+// 						</div>
+// 					</div>
+// 					<div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Classement</span>
+// 							<span class="font-semibold" data-stat="classement">-</span>
+// 						</div>
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Max speed</span>
+// 							<span class="font-semibold" data-stat="max-size">-</span>
+// 						</div>
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Average speed</span>
+// 							<span class="font-semibold" data-stat="average-size">-</span>
+// 						</div>
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Total goals scored</span>
+// 							<span class="font-semibold" data-stat="eaten-apples">-</span>
+// 						</div>
+// 					</div>
+// 				</div>
 
-				<!-- Bloc Last Games -->
-				<div class="bg-white rounded-xl shadow-lg p-6">
-				<h3 class="font-bold text-lg mb-4">Last games</h3>
-					<div id="last-games-content" class="space-y-3">
-						<!-- Le contenu sera injecté ici par JavaScript -->
-						<div class="flex flex-col items-center justify-center py-8 text-center">
-							<p class="text-gray-500 text-sm">Loading...</p>
-						</div>
-					</div>
-				</div>
+// 				<!-- Bloc Last Games -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 				<h3 class="font-bold text-lg mb-4">Last games</h3>
+// 					<div id="last-games-content" class="space-y-3">
+// 						<!-- Le contenu sera injecté ici par JavaScript -->
+// 						<div class="flex flex-col items-center justify-center py-8 text-center">
+// 							<p class="text-gray-500 text-sm">Loading...</p>
+// 						</div>
+// 					</div>
+// 				</div>
 
-				<!-- Bloc My Stats - Distribution des scores -->
-				<div class="bg-white rounded-xl shadow-lg p-6">
-					<h3 class="font-bold text-lg mb-4">My stats</h3>
-					<p class="text-gray-800 text-sm">Length distribution</p>
-					<p class="text-gray-500 text-sm mb-4">Your most common final sizes</p>
-					<canvas id="scoreDistributionChart" width="250" height="180"></canvas>
-				</div>
+// 				<!-- Bloc My Stats - Distribution des scores -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 					<h3 class="font-bold text-lg mb-4">My stats</h3>
+// 					<p class="text-gray-800 text-sm">Length distribution</p>
+// 					<p class="text-gray-500 text-sm mb-4">Your most common final sizes</p>
+// 					<canvas id="scoreDistributionChart" width="250" height="180"></canvas>
+// 				</div>
 
-				<!-- Bloc Global Ranking -->
-				<div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
-					<h3 class="font-bold text-lg mb-4">Global Ranking</h3>
-					<div class="overflow-x-auto">
-						<table id="ranking-table" class="w-full text-sm">
-							<thead>
-								<tr class="border-b">
-									<th class="text-left py-2">Date</th>
-									<th class="text-left py-2">Player</th>
-									<th class="text-left py-2">Match wins</th>
-									<th class="text-left py-2">Max speed</th>
-									<th class="text-left py-2">Best Time</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td colspan="5" class="py-8 text-center text-gray-500 text-sm">
-										Loading rankings...
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
+// 				<!-- Bloc Global Ranking -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
+// 					<h3 class="font-bold text-lg mb-4">Global Ranking</h3>
+// 					<div class="overflow-x-auto">
+// 						<table id="ranking-table" class="w-full text-sm">
+// 							<thead>
+// 								<tr class="border-b">
+// 									<th class="text-left py-2">Date</th>
+// 									<th class="text-left py-2">Player</th>
+// 									<th class="text-left py-2">Match wins</th>
+// 									<th class="text-left py-2">Max speed</th>
+// 									<th class="text-left py-2">Best Time</th>
+// 								</tr>
+// 							</thead>
+// 							<tbody>
+// 								<tr>
+// 									<td colspan="5" class="py-8 text-center text-gray-500 text-sm">
+// 										Loading rankings...
+// 									</td>
+// 								</tr>
+// 							</tbody>
+// 						</table>
+// 					</div>
+// 				</div>
 
-				<!-- Bloc Time Game - Temps de survie -->
-				<div class="bg-white rounded-xl shadow-lg p-6">
-					<h3 class="font-bold text-lg mb-4">Time game</h3>
-					<p class="text-gray-500 text-sm mb-4">Survival time analysis</p>
-					<canvas id="survivalTimeChart" width="250" height="180"></canvas>
-				</div>
+// 				<!-- Bloc Time Game - Temps de survie -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 					<h3 class="font-bold text-lg mb-4">Time game</h3>
+// 					<p class="text-gray-500 text-sm mb-4">Survival time analysis</p>
+// 					<canvas id="survivalTimeChart" width="250" height="180"></canvas>
+// 				</div>
 
-				<div class="mt-2 flex flex-col">
-					<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
-				</div>
+// 				<div class="mt-2 flex flex-col">
+// 					<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+// 				</div>
 
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	`;
+// 					</div>
+// 				</div>
+// 			</div>
+// 		</div>
+// 	</div>
+// 	`;
+// }
+
+// export async function StatsSnakeView() {
+// 	return /* HTML */ `
+// 	<!-- Titre FT_TRANSCENDENCE en haut -->
+// 		<div class="bg-gray-100 py-2">
+// 			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+// 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
+// 			</h1>
+// 		</div>
+
+// 		<div class="content-section min-h-screen bg-gray-100 py-16">
+//         <div class="max-w-7xl mx-auto px-8">
+//             <!-- Container des blocs en grid complexe -->
+//             <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
+
+// 			<!-- Bloc My Profile -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 					<h3 class="font-bold text-lg mb-4">My profil</h3>
+// 					<div class="flex items-center mb-4">
+
+// 						<div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden">
+//                         	<!-- L'avatar ou le fallback sera injecté ici -->
+// 						</div>
+
+// 						<div class="ml-2 mt-12">
+// 							 <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
+
+// 							<!-- NOM UTILISATEUR -->
+// 							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
+// 						</div>
+// 					</div>
+// 					<div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Classement</span>
+// 							<span class="font-semibold" data-stat="classement">-</span>
+// 						</div>
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Max size</span>
+// 							<span class="font-semibold" data-stat="max-size">-</span>
+// 						</div>
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Average size</span>
+// 							<span class="font-semibold" data-stat="average-size">-</span>
+// 						</div>
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Eaten apples</span>
+// 							<span class="font-semibold" data-stat="eaten-apples">-</span>
+// 						</div>
+// 					</div>
+// 				</div>
+
+// 				<!-- Bloc Last Games -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 				<h3 class="font-bold text-lg mb-4">Last games</h3>
+// 					<div id="last-games-content" class="space-y-3">
+// 						<!-- Le contenu sera injecté ici par JavaScript -->
+// 						<div class="flex flex-col items-center justify-center py-8 text-center">
+// 							<p class="text-gray-500 text-sm">Loading...</p>
+// 						</div>
+// 					</div>
+// 				</div>
+
+// 				<!-- Bloc My Stats - Distribution des scores -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 					<h3 class="font-bold text-lg mb-4">My stats</h3>
+// 					<p class="text-gray-800 text-sm">Length distribution</p>
+// 					<p class="text-gray-500 text-sm mb-4">Your most common final sizes</p>
+// 					<canvas id="scoreDistributionChart" width="250" height="180"></canvas>
+// 				</div>
+
+// 				<!-- Bloc Global Ranking -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
+// 					<h3 class="font-bold text-lg mb-4">Global Ranking</h3>
+// 					<div class="overflow-x-auto">
+// 						<table id="ranking-table" class="w-full text-sm">
+// 							<thead>
+// 								<tr class="border-b">
+// 									<th class="text-left py-2">Date</th>
+// 									<th class="text-left py-2">Player</th>
+// 									<th class="text-left py-2">Match wins</th>
+// 									<th class="text-left py-2">Max size</th>
+// 									<th class="text-left py-2">Best Time</th>
+// 								</tr>
+// 							</thead>
+// 							<tbody>
+// 								<tr>
+// 									<td colspan="5" class="py-8 text-center text-gray-500 text-sm">
+// 										Loading rankings...
+// 									</td>
+// 								</tr>
+// 							</tbody>
+// 						</table>
+// 					</div>
+// 				</div>
+
+// 				<!-- Bloc Time Game - Temps de survie -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 					<h3 class="font-bold text-lg mb-4">Time game</h3>
+// 					<p class="text-gray-500 text-sm mb-4">Survival time analysis</p>
+// 					<canvas id="survivalTimeChart" width="250" height="180"></canvas>
+// 				</div>
+
+// 				<div class="mt-2 flex flex-col">
+// 					<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+// 				</div>
+
+// 					</div>
+// 				</div>
+// 			</div>
+// 		</div>
+// 	</div>
+// 	`;
+// }
+
+function createStatsView(gameType: 'snake' | 'pong') {
+    const config = {
+        snake: {
+            title: 'Snake stats',
+            metrics: [
+                { label: 'Classement', stat: 'classement' },
+                { label: 'Max size', stat: 'max-size' },
+                { label: 'Average size', stat: 'average-size' },
+                { label: 'Eaten apples', stat: 'eaten-apples' }
+            ],
+            chartTitle: 'Length distribution',
+            chartSubtitle: 'Your most common final sizes',
+            timeTitle: 'Time game',
+            timeSubtitle: 'Survival time analysis'
+        },
+        pong: {
+            title: 'Pong stats',
+            metrics: [
+                { label: 'Classement', stat: 'classement' },
+                { label: 'Max speed', stat: 'max-speed' },
+                { label: 'Average speed', stat: 'average-speed' },
+                { label: 'Total goals', stat: 'total-goals' }
+            ],
+            chartTitle: 'Score distribution',
+            chartSubtitle: 'Your most common scores',
+            timeTitle: 'Match duration',
+            timeSubtitle: 'Game duration analysis'
+        }
+    };
+
+    const currentConfig = config[gameType];
+
+    return /* HTML */ `
+        <!-- Titre FT_TRANSCENDENCE en haut -->
+        <div class="bg-gray-100 py-2">
+            <h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+                FT<span class="text-blue-600">_</span>TRANSCENDENCE
+            </h1>
+        </div>
+
+        <div class="content-section min-h-screen bg-gray-100 py-16">
+            <div class="max-w-7xl mx-auto px-8">
+                <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
+
+                    <!-- Bloc My Profile -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="font-bold text-lg mb-4">My profil</h3>
+                        <div class="flex items-center mb-4">
+                            <div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden"></div>
+                            <div class="ml-2 mt-12">
+                                <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
+                                <p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
+                            ${currentConfig.metrics.map(metric => `
+                                <div class="flex flex-col">
+                                    <span class="text-gray-600">${metric.label}</span>
+                                    <span class="font-semibold" data-stat="${metric.stat}">-</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Bloc Last Games -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="font-bold text-lg mb-4">Last games</h3>
+                        <div id="last-games-content" class="space-y-3">
+                            <div class="flex flex-col items-center justify-center py-8 text-center">
+                                <p class="text-gray-500 text-sm">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bloc My Stats -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="font-bold text-lg mb-4">My stats</h3>
+                        <p class="text-gray-800 text-sm">${currentConfig.chartTitle}</p>
+                        <p class="text-gray-500 text-sm mb-4">${currentConfig.chartSubtitle}</p>
+                        <canvas id="scoreDistributionChart" width="250" height="180"></canvas>
+                    </div>
+
+                    <!-- Bloc Global Ranking -->
+                    <div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
+                        <h3 class="font-bold text-lg mb-4">Global Ranking</h3>
+                        <div class="overflow-x-auto">
+                            <table id="ranking-table" class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b">
+                                        <th class="text-left py-2">Date</th>
+                                        <th class="text-left py-2">Player</th>
+                                        <th class="text-left py-2">Match wins</th>
+                                        <th class="text-left py-2">Max size</th>
+                                        <th class="text-left py-2">Best Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="5" class="py-8 text-center text-gray-500 text-sm">
+                                            Loading rankings...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Bloc Time Game -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="font-bold text-lg mb-4">${currentConfig.timeTitle}</h3>
+                        <p class="text-gray-500 text-sm mb-4">${currentConfig.timeSubtitle}</p>
+                        <canvas id="survivalTimeChart" width="250" height="180"></canvas>
+                    </div>
+
+                    <div class="mt-2 flex flex-col">
+                        <a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 export async function StatsSnakeView() {
-	return /* HTML */ `
-	<!-- Titre FT_TRANSCENDENCE en haut -->
-		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
-				FT<span class="text-blue-600">_</span>TRANSCENDENCE
-			</h1>
-		</div>
+    return createStatsView('snake');
+}
 
-		<div class="content-section min-h-screen bg-gray-100 py-16">
-        <div class="max-w-7xl mx-auto px-8">
-            <!-- Container des blocs en grid complexe -->
-            <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
-
-			<!-- Bloc My Profile -->
-				<div class="bg-white rounded-xl shadow-lg p-6">
-					<h3 class="font-bold text-lg mb-4">My profil</h3>
-					<div class="flex items-center mb-4">
-
-						<div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden">
-                        	<!-- L'avatar ou le fallback sera injecté ici -->
-						</div>
-
-						<div class="ml-2 mt-12">
-							 <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
-
-							<!-- NOM UTILISATEUR -->
-							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
-						</div>
-					</div>
-					<div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
-						<div class="flex flex-col">
-							<span class="text-gray-600">Classement</span>
-							<span class="font-semibold" data-stat="classement">-</span>
-						</div>
-						<div class="flex flex-col">
-							<span class="text-gray-600">Max size</span>
-							<span class="font-semibold" data-stat="max-size">-</span>
-						</div>
-						<div class="flex flex-col">
-							<span class="text-gray-600">Average size</span>
-							<span class="font-semibold" data-stat="average-size">-</span>
-						</div>
-						<div class="flex flex-col">
-							<span class="text-gray-600">Eaten apples</span>
-							<span class="font-semibold" data-stat="eaten-apples">-</span>
-						</div>
-					</div>
-				</div>
-
-				<!-- Bloc Last Games -->
-				<div class="bg-white rounded-xl shadow-lg p-6">
-				<h3 class="font-bold text-lg mb-4">Last games</h3>
-					<div id="last-games-content" class="space-y-3">
-						<!-- Le contenu sera injecté ici par JavaScript -->
-						<div class="flex flex-col items-center justify-center py-8 text-center">
-							<p class="text-gray-500 text-sm">Loading...</p>
-						</div>
-					</div>
-				</div>
-
-				<!-- Bloc My Stats - Distribution des scores -->
-				<div class="bg-white rounded-xl shadow-lg p-6">
-					<h3 class="font-bold text-lg mb-4">My stats</h3>
-					<p class="text-gray-800 text-sm">Length distribution</p>
-					<p class="text-gray-500 text-sm mb-4">Your most common final sizes</p>
-					<canvas id="scoreDistributionChart" width="250" height="180"></canvas>
-				</div>
-
-				<!-- Bloc Global Ranking -->
-				<div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
-					<h3 class="font-bold text-lg mb-4">Global Ranking</h3>
-					<div class="overflow-x-auto">
-						<table id="ranking-table" class="w-full text-sm">
-							<thead>
-								<tr class="border-b">
-									<th class="text-left py-2">Date</th>
-									<th class="text-left py-2">Player</th>
-									<th class="text-left py-2">Match wins</th>
-									<th class="text-left py-2">Max size</th>
-									<th class="text-left py-2">Best Time</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td colspan="5" class="py-8 text-center text-gray-500 text-sm">
-										Loading rankings...
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-
-				<!-- Bloc Time Game - Temps de survie -->
-				<div class="bg-white rounded-xl shadow-lg p-6">
-					<h3 class="font-bold text-lg mb-4">Time game</h3>
-					<p class="text-gray-500 text-sm mb-4">Survival time analysis</p>
-					<canvas id="survivalTimeChart" width="250" height="180"></canvas>
-				</div>
-
-				<div class="mt-2 flex flex-col">
-					<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
-				</div>
-
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	`;
+export async function StatsPongView() {
+    return createStatsView('pong');
 }
 
 
