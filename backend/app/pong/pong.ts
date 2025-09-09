@@ -116,6 +116,7 @@ async function initPlayerRoom(socket: Socket, cookie: string) {
 			socket.emit('notLogged');
 			return;
 		}
+		console.log('ICIIIIII');
 		const room = getRoom();
 		if (room && user.id != room.game.p1.uid) {
 			room.game.p2 = initPlayer(socket, user, room);
@@ -238,8 +239,6 @@ function movePlayer(game: Game) {
 
 async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
 
-	if (stored)
-		return;
 	stored = true;
 	const user1 = await User.findOneBy({id: game.p1.uid});
     if (!user1) {
@@ -287,8 +286,9 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
 }
 
 function checkWin(game: Game, app: FastifyInstance) {
-	if (game.p1.score === SCORETOWIN || game.p2.score === SCORETOWIN) {
-		game.p1.score === SCORETOWIN ? saveDataInHistory(game, 'P1') : saveDataInHistory(game, 'P2');
+	if (game.p1.score === SCORETOWIN || game.p2.score === SCORETOWIN ) {
+		if (!stored)
+			game.p1.score === SCORETOWIN ? saveDataInHistory(game, 'P1') : saveDataInHistory(game, 'P2');
 		game.ball.vx = 0;
 		game.ball.vy = 0;
 		game.ball.x = WIN_WIDTH / 2;
