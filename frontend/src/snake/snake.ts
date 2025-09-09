@@ -56,16 +56,18 @@ class SnakeGame {
         return true;
     }
 
-    private drawAlert(winSize: number, alert: string): void {
-        if (!this.ctx) return;
-        this.ctx.clearRect(0, 0, winSize, winSize);
+	private drawAlert(alert: string): void {
+        if (!this.ctx || !this.canvas) return;
+        
+        this.ctx.fillStyle = 'white';
+        this.ctx.fillRect(this.canvas.width * 0.1, this.canvas.height * 0.25, this.canvas.width * 0.8, this.canvas.height * 0.12);
         this.ctx.fillStyle = 'black';
-        this.ctx.fillRect(0, 0, winSize, winSize);
-        this.ctx.font = `40px Arial`;
+        this.ctx.fillRect(this.canvas.width * 0.105, this.canvas.height * 0.26, this.canvas.width * 0.79, this.canvas.height * 0.1);
         this.ctx.fillStyle = 'white';
         this.ctx.textAlign = 'center';
-        this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(alert, winSize / 2, winSize / 2);
+		this.ctx.textBaseline = 'middle';
+        this.ctx.font = `${Math.floor(this.canvas.height * 0.03)}px Arial`;
+        this.ctx.fillText(alert , this.canvas.width * 0.5, this.canvas.height * 0.33);
     }
 
     private drawGame(game: Game): void {
@@ -185,11 +187,11 @@ class SnakeGame {
         });
 
         this.socket.on('waiting_snake', (game: Game) => {
-            this.drawAlert(game.winSize, 'Waiting for player ... (1 / 2)');
+            this.drawAlert('Waiting for player ... (1 / 2)');
         });
 
         this.socket.on('endGame_snake', (data: any) => {
-            this.drawAlert(data.winSize, `Game interrupted : ${data.reason}`);
+            this.drawAlert(`Game interrupted : ${data.reason}`);
         });
 
         this.socket.on('draw', (game: any) => {
@@ -202,7 +204,7 @@ class SnakeGame {
                 if (this.socket && this.socket.connected) {
                     this.socket.disconnect();
                 }
-                this.drawAlert(game.winSize, "DRAW");
+                this.drawAlert("DRAW");
             }
         });
 
