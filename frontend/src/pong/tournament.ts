@@ -9,7 +9,7 @@ import { navigateTo } from '../main';
 import { Game, Tournament } from '../types/pongTypes';
 
 // init game canvas with player button and names
-function initGame(game: Game) {
+export function initGame(game: Game) {
 	form.innerHTML = '';
 	const container = document.createElement('div');
 	container.className = 'flex flex-row items-center justify-center w-full h-full';

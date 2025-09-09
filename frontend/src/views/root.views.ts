@@ -64,7 +64,7 @@ export async function RootView() {
 						</div>
 
 						<p class="font-montserrat font-medium text-gray-700 text-sm leading-5 mb-4">
-							Pong is one of the first computer games that ever created, the goal is to defeat your opponent.<br><br>
+							Pong is one of the first computer games that ever created, the goal is to defeat your opponent.<br /><br />
 							For Snake you must keep the snake from colliding with both other obstacles and itself.
 						</p>
 
@@ -230,7 +230,7 @@ export async function WelcomeView() {
 
 export async function PongChoice() {
 	return /* HTML */ `
-	<!-- Titre FT_TRANSCENDENCE en haut -->
+		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
 			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
@@ -238,39 +238,51 @@ export async function PongChoice() {
 		</div>
 
 		<!-- Section avec les blocs -->
-        <div class="content-section min-h-screen bg-gray-100 py-16">
-            <div class="max-w-4xl mx-auto px-8">
-                <!-- Container des blocs en grid simple -->
-                <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 200px 200px 200px; max-width: 600px;">
-
-					<a href="/pong/matchmaking/localgame" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600">Local</p>
+		<div class="content-section min-h-screen bg-gray-100 py-16">
+			<div class="max-w-4xl mx-auto px-8">
+				<!-- Container des blocs en grid simple -->
+				<div
+					class="grid gap-4 mx-auto mt-36 justify-center"
+					style="grid-template-columns: 200px 200px 200px; max-width: 600px;"
+				>
+					<a
+						href="/pong/matchmaking/localgame"
+						class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors"
+					>
+						<p class="font-montserrat font-medium text-base text-gray-600">Local</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🏠</span>
 						</div>
 					</a>
 
-                    <a href="/pong/matchmaking/game" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600">On Line</p>
+					<a
+						href="/pong/matchmaking/game"
+						class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors"
+					>
+						<p class="font-montserrat font-medium text-base text-gray-600">On Line</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🌏</span>
 						</div>
 					</a>
 
-                    <a href="/pong/tournament" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600">Tournament</p>
+					<a
+						href="/pong/tournament"
+						class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors"
+					>
+						<p class="font-montserrat font-medium text-base text-gray-600">Tournament</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🏆</span>
 						</div>
 					</a>
-            	</div>
+				</div>
 			</div>
+		</div>
 	`;
 }
 
 export async function SnakeChoice() {
 	return /* HTML */ `
-	<!-- Titre FT_TRANSCENDENCE en haut -->
+		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
 			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
@@ -278,32 +290,41 @@ export async function SnakeChoice() {
 		</div>
 
 		<div class="content-section min-h-screen bg-gray-100 py-16">
-            <div class="max-w-4xl mx-auto px-8">
-                <!-- Container des blocs en grid simple -->
-                <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 300px 300px; max-width: 600px;">
-
-					<a href="/snake/local" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600">Local</p>
+			<div class="max-w-4xl mx-auto px-8">
+				<!-- Container des blocs en grid simple -->
+				<div
+					class="grid gap-4 mx-auto mt-36 justify-center"
+					style="grid-template-columns: 300px 300px; max-width: 600px;"
+				>
+					<a
+						href="/snake/local"
+						class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors"
+					>
+						<p class="font-montserrat font-medium text-base text-gray-600">Local</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🏠</span>
 						</div>
 					</a>
 
-                    <!-- Bloc Games - Carré -->
-                    <a href="/snake" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600">On line</p>
+					<!-- Bloc Games - Carré -->
+					<a
+						href="/snake"
+						class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors"
+					>
+						<p class="font-montserrat font-medium text-base text-gray-600">On line</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🌏</span>
 						</div>
 					</a>
-            	</div>
+				</div>
 			</div>
+		</div>
 	`;
 }
 
 export async function GamesView() {
 	return /* HTML */ `
-	<!-- Titre FT_TRANSCENDENCE en haut -->
+		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
 			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
@@ -311,32 +332,41 @@ export async function GamesView() {
 		</div>
 
 		<div class="content-section min-h-screen bg-gray-100 py-16">
-            <div class="max-w-4xl mx-auto px-8">
-                <!-- Container des blocs en grid simple -->
-                <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 300px 300px; max-width: 600px;">
-
-					<a href="/pong-choice" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600">Pong</p>
+			<div class="max-w-4xl mx-auto px-8">
+				<!-- Container des blocs en grid simple -->
+				<div
+					class="grid gap-4 mx-auto mt-36 justify-center"
+					style="grid-template-columns: 300px 300px; max-width: 600px;"
+				>
+					<a
+						href="/pong-choice"
+						class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors"
+					>
+						<p class="font-montserrat font-medium text-base text-gray-600">Pong</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🏓</span>
 						</div>
 					</a>
 
-                    <!-- Bloc Games - Carré -->
-                    <a href="/snake-choice" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600">Snake</p>
+					<!-- Bloc Games - Carré -->
+					<a
+						href="/snake-choice"
+						class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors"
+					>
+						<p class="font-montserrat font-medium text-base text-gray-600">Snake</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🐍</span>
 						</div>
 					</a>
-            	</div>
+				</div>
 			</div>
+		</div>
 	`;
 }
 
 export async function StatsPongView() {
 	return /* HTML */ `
-	<!-- Titre FT_TRANSCENDENCE en haut -->
+		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
 			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
@@ -344,32 +374,41 @@ export async function StatsPongView() {
 		</div>
 
 		<div class="content-section min-h-screen bg-gray-100 py-16">
-            <div class="max-w-4xl mx-auto px-8">
-                <!-- Container des blocs en grid simple -->
-                <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 300px 300px; max-width: 600px;">
-
-					<a href="/pong-choice" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600">Pong</p>
+			<div class="max-w-4xl mx-auto px-8">
+				<!-- Container des blocs en grid simple -->
+				<div
+					class="grid gap-4 mx-auto mt-36 justify-center"
+					style="grid-template-columns: 300px 300px; max-width: 600px;"
+				>
+					<a
+						href="/pong-choice"
+						class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors"
+					>
+						<p class="font-montserrat font-medium text-base text-gray-600">Pong</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🏓</span>
 						</div>
 					</a>
 
-                    <!-- Bloc Games - Carré -->
-                    <a href="/snake-choice" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600">Snake</p>
+					<!-- Bloc Games - Carré -->
+					<a
+						href="/snake-choice"
+						class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors"
+					>
+						<p class="font-montserrat font-medium text-base text-gray-600">Snake</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🐍</span>
 						</div>
 					</a>
-            	</div>
+				</div>
 			</div>
+		</div>
 	`;
 }
 
 export async function StatsSnakeView() {
 	return /* HTML */ `
-	<!-- Titre FT_TRANSCENDENCE en haut -->
+		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
 			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
@@ -377,123 +416,124 @@ export async function StatsSnakeView() {
 		</div>
 
 		<div class="content-section min-h-screen bg-gray-100 py-16">
-        <div class="max-w-7xl mx-auto px-8">
-            <!-- Container des blocs en grid complexe -->
-            <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
-			 <!-- Bloc My Profile -->
-				<div class="bg-white rounded-xl shadow-lg p-6">
-					<h3 class="font-bold text-lg mb-4">My profil</h3>
-					<div class="flex items-center mb-4">
+			<div class="max-w-7xl mx-auto px-8">
+				<!-- Container des blocs en grid complexe -->
+				<div
+					class="grid gap-6 auto-rows-min mx-auto mt-16"
+					style="grid-template-columns: 280px 320px 280px; max-width: 1000px;"
+				>
+					<!-- Bloc My Profile -->
+					<div class="bg-white rounded-xl shadow-lg p-6">
+						<h3 class="font-bold text-lg mb-4">My profil</h3>
+						<div class="flex items-center mb-4">
+							<div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden">
+								<!-- L'avatar ou le fallback sera injecté ici -->
+							</div>
 
-						<div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden">
-                        	<!-- L'avatar ou le fallback sera injecté ici -->
-						</div>
+							<div class="ml-2 mt-12">
+								<h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
 
-						<div class="ml-2 mt-12">
-							 <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
-
-							<!-- NOM UTILISATEUR -->
-							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
+								<!-- NOM UTILISATEUR -->
+								<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
+							</div>
 						</div>
-					</div>
-					<div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
-						<div class="flex flex-col">
-							<span class="text-gray-600">Classement</span>
-							<span class="font-semibold">4</span>
-						</div>
-						<div class="flex flex-col">
-							<span class="text-gray-600">Max size</span>
-							<span class="font-semibold">25</span>
-						</div>
-						<div class="flex flex-col">
-							<span class="text-gray-600">Average size</span>
-							<span class="font-semibold">52</span>
-						</div>
-						<div class="flex flex-col">
-							<span class="text-gray-600">Eaten apples</span>
-							<span class="font-semibold">52</span>
-						</div>
-					</div>
-				</div>
-
-				<!-- Bloc Last Games -->
-				<div class="bg-white rounded-xl shadow-lg p-6">
-				<h3 class="font-bold text-lg mb-4">Last games</h3>
-					<div id="last-games-content" class="space-y-3">
-						<!-- Le contenu sera injecté ici par JavaScript -->
-						<div class="flex flex-col items-center justify-center py-8 text-center">
-							<p class="text-gray-500 text-sm">Loading...</p>
+						<div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
+							<div class="flex flex-col">
+								<span class="text-gray-600">Classement</span>
+								<span class="font-semibold">4</span>
+							</div>
+							<div class="flex flex-col">
+								<span class="text-gray-600">Max size</span>
+								<span class="font-semibold">25</span>
+							</div>
+							<div class="flex flex-col">
+								<span class="text-gray-600">Average size</span>
+								<span class="font-semibold">52</span>
+							</div>
+							<div class="flex flex-col">
+								<span class="text-gray-600">Eaten apples</span>
+								<span class="font-semibold">52</span>
+							</div>
 						</div>
 					</div>
-				</div>
 
-				<!-- Bloc My Stats - Distribution des scores -->
-				<div class="bg-white rounded-xl shadow-lg p-6">
-					<h3 class="font-bold text-lg mb-4">My stats</h3>
-					<p class="text-gray-500 text-sm mb-4">Score distribution</p>
-					<canvas id="scoreDistributionChart" width="250" height="180"></canvas>
-				</div>
-
-				<!-- Bloc Global Ranking -->
-				<div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
-					<h3 class="font-bold text-lg mb-4">Global Ranking</h3>
-					<div class="overflow-x-auto">
-						<table class="w-full text-sm">
-							<thead>
-								<tr class="border-b">
-									<th class="text-left py-2">Rank</th>
-									<th class="text-left py-2">Player</th>
-									<th class="text-left py-2">Max Score</th>
-									<th class="text-left py-2">Max Length</th>
-									<th class="text-left py-2">Best Time</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr class="border-b">
-									<td class="py-2">01-09</td>
-									<td class="py-2 font-semibold">Theo le terreur</td>
-									<td class="py-2">50</td>
-									<td class="py-2">50</td>
-									<td class="py-2">1:05</td>
-								</tr>
-								<tr class="border-b">
-									<td class="py-2">01-09</td>
-									<td class="py-2 font-semibold">Arthur</td>
-									<td class="py-2">35</td>
-									<td class="py-2">50</td>
-									<td class="py-2">0:50</td>
-								</tr>
-								<tr class="border-b">
-									<td class="py-2">01-09</td>
-									<td class="py-2 font-semibold">OSETO</td>
-									<td class="py-2">28</td>
-									<td class="py-2">50</td>
-									<td class="py-2">0:20</td>
-								</tr>
-								<tr class="border-b">
-									<td class="py-2">01-09</td>
-									<td class="py-2 font-semibold">Theo</td>
-									<td class="py-2">27</td>
-									<td class="py-2">50</td>
-									<td class="py-2">0:15</td>
-								</tr>
-							</tbody>
-						</table>
+					<!-- Bloc Last Games -->
+					<div class="bg-white rounded-xl shadow-lg p-6">
+						<h3 class="font-bold text-lg mb-4">Last games</h3>
+						<div id="last-games-content" class="space-y-3">
+							<!-- Le contenu sera injecté ici par JavaScript -->
+							<div class="flex flex-col items-center justify-center py-8 text-center">
+								<p class="text-gray-500 text-sm">Loading...</p>
+							</div>
+						</div>
 					</div>
-				</div>
 
-				<!-- Bloc Time Game - Temps de survie -->
-				<div class="bg-white rounded-xl shadow-lg p-6">
-					<h3 class="font-bold text-lg mb-4">Time game</h3>
-					<p class="text-gray-500 text-sm mb-4">Survival time analysis</p>
-					<canvas id="survivalTimeChart" width="250" height="180"></canvas>
+					<!-- Bloc My Stats - Distribution des scores -->
+					<div class="bg-white rounded-xl shadow-lg p-6">
+						<h3 class="font-bold text-lg mb-4">My stats</h3>
+						<p class="text-gray-500 text-sm mb-4">Score distribution</p>
+						<canvas id="scoreDistributionChart" width="250" height="180"></canvas>
+					</div>
+
+					<!-- Bloc Global Ranking -->
+					<div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
+						<h3 class="font-bold text-lg mb-4">Global Ranking</h3>
+						<div class="overflow-x-auto">
+							<table class="w-full text-sm">
+								<thead>
+									<tr class="border-b">
+										<th class="text-left py-2">Rank</th>
+										<th class="text-left py-2">Player</th>
+										<th class="text-left py-2">Max Score</th>
+										<th class="text-left py-2">Max Length</th>
+										<th class="text-left py-2">Best Time</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="border-b">
+										<td class="py-2">01-09</td>
+										<td class="py-2 font-semibold">Theo le terreur</td>
+										<td class="py-2">50</td>
+										<td class="py-2">50</td>
+										<td class="py-2">1:05</td>
+									</tr>
+									<tr class="border-b">
+										<td class="py-2">01-09</td>
+										<td class="py-2 font-semibold">Arthur</td>
+										<td class="py-2">35</td>
+										<td class="py-2">50</td>
+										<td class="py-2">0:50</td>
+									</tr>
+									<tr class="border-b">
+										<td class="py-2">01-09</td>
+										<td class="py-2 font-semibold">OSETO</td>
+										<td class="py-2">28</td>
+										<td class="py-2">50</td>
+										<td class="py-2">0:20</td>
+									</tr>
+									<tr class="border-b">
+										<td class="py-2">01-09</td>
+										<td class="py-2 font-semibold">Theo</td>
+										<td class="py-2">27</td>
+										<td class="py-2">50</td>
+										<td class="py-2">0:15</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<!-- Bloc Time Game - Temps de survie -->
+					<div class="bg-white rounded-xl shadow-lg p-6">
+						<h3 class="font-bold text-lg mb-4">Time game</h3>
+						<p class="text-gray-500 text-sm mb-4">Survival time analysis</p>
+						<canvas id="survivalTimeChart" width="250" height="180"></canvas>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 	`;
 }
-
 
 // <img src="https://i.gifer.com/QgxJ.gif" alt="pong" />
 export async function PongView() {
@@ -880,65 +920,117 @@ export async function UpdateInfosview() {
 	`;
 }
 
-export async function PongCanvas(){ // gameCanvas
+// <div class="flex items-center justify-center w-screen h-screen bg-gray-900">
+// 	<canvas id="gameCanvas" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"></canvas>
+// </div>
+export async function PongCanvas() {
+	// gameCanvas
 	return /* HTML */ `
 		<div class="flex items-center justify-center w-screen h-screen bg-gray-900">
+			<!-- Colonne gauche : Joueur 1 -->
+			<div id="playerOne" class="flex flex-col items-end mr-8">
+				<div id="p1Name" class="font-bold text-xl text-white mb-4"></div>
+				<div class="flex flex-col items-end gap-2">
+					<div id="p1keyup" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">W / ↑</div>
+					<div id="p1keydown" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">S / ↓</div>
+				</div>
+			</div>
+
+			<!-- Canvas central -->
 			<canvas id="gameCanvas" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"></canvas>
+
+			<!-- Colonne droite : Joueur 2 -->
+			<div id="playerTwo" class="flex flex-col items-start ml-8">
+				<div id="p2Name" class="font-bold text-xl text-white mb-4"></div>
+				<div class="flex flex-col items-start gap-2">
+					<div id="p2keyup" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">W / ↑</div>
+					<div id="p2keydown" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">S / ↓</div>
+				</div>
+			</div>
 		</div>
 	`;
 }
 
 export async function SnakeCanvas() {
-  return /* HTML */ `
-    <div class="flex flex-col items-center justify-center w-screen h-screen bg-gray-900">
-      <!-- Zone de texte (20%) -->
-      <div class="flex items-center justify-center w-full h-[20vh] px-8">
-        <div class="text-center text-white text-4xl font-bold">SNAKE GAME ONLINE</div>
-      </div>
-
-      <!-- Zone centrale avec blocs latéraux et canvas (80%) -->
-      <div class="flex flex-row items-center justify-center w-full h-[80vh]">
-
-        <!-- Bloc gauche : Photo carrée + nom joueur -->
-		<div class="flex flex-col items-center justify-center h-[80vh] w-[20vh] mr-28">
-		  <img id="avatarJoueur1"
-		    src=""
-		    alt="Avatar joueur 1"
-		    class="w-40 h-40 object-cover border-4 border-gray-600 shadow-lg mb-8 rounded-xl" />
-		  <input id="nomJoueur1" type="text" value="Joueur 1" class="bg-gray-700 text-white rounded px-4 py-2 text-2xl font-extrabold text-center w-full mb-2" />
-		</div>
-
-        <!-- Canvas central -->
-        <div class="flex items-center justify-center h-[80vh] w-[80vh]">
-          <canvas
-            id="SnakeGameCanvas"
-            class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"
-            width="640"
-            height="640"
-            style="width:80vh; height:80vh;"
-          ></canvas>
-        </div>
-
-        <!-- Bloc droit : Photo carrée + nom joueur -->
-		<div class="flex flex-col items-center justify-center h-[80vh] w-[20vh] ml-28">
-		  <img id="avatarJoueur2"
-		    src=""
-		    alt="Avatar joueur 2"
-		    class="w-40 h-40 object-cover border-4 border-gray-600 shadow-lg mb-8 rounded-xl" />
-		  <input id="nomJoueur2" type="text" value="Joueur 2" class="bg-gray-700 text-white rounded px-4 py-2 text-2xl font-extrabold text-center w-full mb-2" />
-		</div>
-
-	<!-- Boutons fin de partie -->
-			<div id="snakeGameEndButtons"
-			     class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50"
-			     style="display:none; pointer-events:auto;">
-			  <div class="flex flex-row items-center justify-center gap-4 bg-gray-900 bg-opacity-30 p-8 rounded-xl shadow-2xl"
-			       style="position:relative; top:200px;">
-			    <button id="replayBtn" class="bg-green-500 :bg-green-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition">click or Press 'Enter' for replay</button>
-			    <button id="quitBtn" class="bg-red-500 hover:bg-red-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition">click or press 'Escape' for quit</button>
-			  </div>
+	return /* HTML */ `
+		<div class="flex flex-col items-center justify-center w-screen h-screen bg-gray-900">
+			<!-- Zone de texte (20%) -->
+			<div class="flex items-center justify-center w-full h-[20vh] px-8">
+				<div class="text-center text-white text-4xl font-bold">SNAKE GAME ONLINE</div>
 			</div>
-  `;
+
+			<!-- Zone centrale avec blocs latéraux et canvas (80%) -->
+			<div class="flex flex-row items-center justify-center w-full h-[80vh]">
+				<!-- Bloc gauche : Photo carrée + nom joueur -->
+				<div class="flex flex-col items-center justify-center h-[80vh] w-[20vh] mr-28">
+					<img
+						id="avatarJoueur1"
+						src=""
+						alt="Avatar joueur 1"
+						class="w-40 h-40 object-cover border-4 border-gray-600 shadow-lg mb-8 rounded-xl"
+					/>
+					<input
+						id="nomJoueur1"
+						type="text"
+						value="Joueur 1"
+						class="bg-gray-700 text-white rounded px-4 py-2 text-2xl font-extrabold text-center w-full mb-2"
+					/>
+				</div>
+
+				<!-- Canvas central -->
+				<div class="flex items-center justify-center h-[80vh] w-[80vh]">
+					<canvas
+						id="SnakeGameCanvas"
+						class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"
+						width="640"
+						height="640"
+						style="width:80vh; height:80vh;"
+					></canvas>
+				</div>
+
+				<!-- Bloc droit : Photo carrée + nom joueur -->
+				<div class="flex flex-col items-center justify-center h-[80vh] w-[20vh] ml-28">
+					<img
+						id="avatarJoueur2"
+						src=""
+						alt="Avatar joueur 2"
+						class="w-40 h-40 object-cover border-4 border-gray-600 shadow-lg mb-8 rounded-xl"
+					/>
+					<input
+						id="nomJoueur2"
+						type="text"
+						value="Joueur 2"
+						class="bg-gray-700 text-white rounded px-4 py-2 text-2xl font-extrabold text-center w-full mb-2"
+					/>
+				</div>
+
+				<!-- Boutons fin de partie -->
+				<div
+					id="snakeGameEndButtons"
+					class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50"
+					style="display:none; pointer-events:auto;"
+				>
+					<div
+						class="flex flex-row items-center justify-center gap-4 bg-gray-900 bg-opacity-30 p-8 rounded-xl shadow-2xl"
+						style="position:relative; top:200px;"
+					>
+						<button
+							id="replayBtn"
+							class="bg-green-500 :bg-green-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition"
+						>
+							click or Press 'Enter' for replay
+						</button>
+						<button
+							id="quitBtn"
+							class="bg-red-500 hover:bg-red-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition"
+						>
+							click or press 'Escape' for quit
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	`;
 }
 
 export async function localPongCanvas() {
@@ -950,64 +1042,93 @@ export async function localPongCanvas() {
 }
 
 export async function localSnakeCanvas() {
-  return /* HTML */ `
-    <div class="flex flex-col items-center justify-center w-screen h-screen bg-gray-900">
-      <!-- Zone de texte (20%) -->
-      <div class="flex items-center justify-center w-full h-[20vh] px-8">
-        <div class="text-center text-white text-4xl font-bold">LOCAL SNAKE GAME</div>
-      </div>
+	return /* HTML */ `
+		<div class="flex flex-col items-center justify-center w-screen h-screen bg-gray-900">
+			<!-- Zone de texte (20%) -->
+			<div class="flex items-center justify-center w-full h-[20vh] px-8">
+				<div class="text-center text-white text-4xl font-bold">LOCAL SNAKE GAME</div>
+			</div>
 
-      <!-- Zone centrale avec blocs latéraux et canvas (80%) -->
-		<div class="flex flex-row items-center justify-center w-full h-[80vh]">
+			<!-- Zone centrale avec blocs latéraux et canvas (80%) -->
+			<div class="flex flex-row items-center justify-center w-full h-[80vh]">
+				<!-- Bloc gauche pour WASD -->
+				<div class="flex flex-col items-center justify-center h-[80vh] w-[10vh] mr-28">
+					<div class="grid grid-cols-3 grid-rows-2 gap-2">
+						<div></div>
+						<div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">
+							W
+						</div>
+						<div></div>
+						<div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">
+							A
+						</div>
+						<div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">
+							S
+						</div>
+						<div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">
+							D
+						</div>
+					</div>
+				</div>
 
-		  <!-- Bloc gauche pour WASD -->
-		  <div class="flex flex-col items-center justify-center h-[80vh] w-[10vh] mr-28">
-		    <div class="grid grid-cols-3 grid-rows-2 gap-2">
-		      <div></div>
-		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">W</div>
-		      <div></div>
-		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">A</div>
-		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">S</div>
-		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">D</div>
-		    </div>
-		  </div>
+				<!-- Canvas central -->
+				<div class="flex items-center justify-center h-[80vh] w-[80vh]">
+					<canvas
+						id="localSnakeGameCanvas"
+						class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"
+						width="640"
+						height="640"
+						style="width:80vh; height:80vh;"
+					></canvas>
+				</div>
 
-		  <!-- Canvas central -->
-		  <div class="flex items-center justify-center h-[80vh] w-[80vh]">
-		    <canvas
-		      id="localSnakeGameCanvas"
-		      class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"
-		      width="640"
-		      height="640"
-		      style="width:80vh; height:80vh;"
-		    ></canvas>
-		  </div>
-
-		  <!-- Bloc droit pour flèches directionnelles -->
-		  <div class="flex flex-col items-center justify-center h-[80vh] w-[10vh] ml-28">
-		    <div class="grid grid-cols-3 grid-rows-2 gap-2">
-		      <div></div>
-		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">&#8593;</div>
-		      <div></div>
-		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">&#8592;</div>
-		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">&#8595;</div>
-		      <div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">&#8594;</div>
-		    </div>
-		  </div>
+				<!-- Bloc droit pour flèches directionnelles -->
+				<div class="flex flex-col items-center justify-center h-[80vh] w-[10vh] ml-28">
+					<div class="grid grid-cols-3 grid-rows-2 gap-2">
+						<div></div>
+						<div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">
+							&#8593;
+						</div>
+						<div></div>
+						<div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">
+							&#8592;
+						</div>
+						<div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">
+							&#8595;
+						</div>
+						<div class="bg-gray-700 text-white rounded flex items-center justify-center w-12 h-12 text-xl font-bold">
+							&#8594;
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-      </div>
 
 		<!-- Boutons fin de partie -->
-		<div id="snakeGameEndButtons"
-		     class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50"
-		     style="display:none; pointer-events:auto;">
-		  <div class="flex flex-row items-center justify-center gap-4 bg-gray-900 bg-opacity-30 p-8 rounded-xl shadow-2xl"
-		       style="position:relative; top:200px;">
-		    <button id="replayBtn" class="bg-green-500 :bg-green-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition">click or Press 'Enter' for replay</button>
-		    <button id="quitBtn" class="bg-red-500 hover:bg-red-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition">click or press 'Escape' for quit</button>
-		  </div>
+		<div
+			id="snakeGameEndButtons"
+			class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50"
+			style="display:none; pointer-events:auto;"
+		>
+			<div
+				class="flex flex-row items-center justify-center gap-4 bg-gray-900 bg-opacity-30 p-8 rounded-xl shadow-2xl"
+				style="position:relative; top:200px;"
+			>
+				<button
+					id="replayBtn"
+					class="bg-green-500 :bg-green-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition"
+				>
+					click or Press 'Enter' for replay
+				</button>
+				<button
+					id="quitBtn"
+					class="bg-red-500 hover:bg-red-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition"
+				>
+					click or press 'Escape' for quit
+				</button>
+			</div>
 		</div>
-  `;
+	`;
 }
 
 export async function pongTournamentView() {

@@ -1,6 +1,7 @@
 import io, { Socket } from 'socket.io-client';
 import { Game, Player } from '../types/pongTypes';
 import { navigateTo } from '../main';
+// import { Socket } from 'socket.io';
 
 export function getCookie(name: string) {
 	const value = `; ${document.cookie}`;
@@ -170,18 +171,62 @@ function drawWinner(winner: Player, game: Game) {
 
 let winner: Player | null = null;
 let lastGame: Game | null = null;
+
+export function keyHandler(socket: Socket) {
+	let keyUpP1 = document.getElementById('p1keyup');
+	let keyDownP1 = document.getElementById('p1keydown');
+	let keyUpP2 = document.getElementById('p2keyup');
+	let keyDownP2 = document.getElementById('p2keydown');
+	// P1 UP
+	socket.on('p1UpKeyDown', () => {
+		if (keyUpP1)
+			keyUpP1.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	});
+	socket.on('p1UpKeyUp', () => {
+		if (keyUpP1) keyUpP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	});
+	// P1 DOWN
+	socket.on('p1DownKeyDown', () => {
+		if (keyDownP1)
+			keyDownP1.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	});
+	socket.on('p1DownKeyUp', () => {
+		if (keyDownP1) keyDownP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	});
+	// P2 UP
+	socket.on('p2UpKeyDown', () => {
+		if (keyUpP2)
+			keyUpP2.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	});
+	socket.on('p2UpKeyUp', () => {
+		if (keyUpP2) keyUpP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	});
+	// P2 DOWN
+	socket.on('p2DownKeyDown', () => {
+		if (keyDownP2)
+			keyDownP2.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	});
+	socket.on('p2DownKeyUp', () => {
+		if (keyDownP2) keyDownP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	});
+}
+
+
 export async function pongGame() {
 	const socket = createPongSocket();
 	listenUserInputs(socket);
-	socket.onAny((eventName, ...args) => {
-	})
+	// socket.onAny((eventName, ...args) => {});
 	socket.on('notLogged', () => {
 		navigateTo('/login?/pong/matchmaking/game');
 	});
 	socket.on('waiting', (room: any) => {
 		drawWaitingScreen(room);
 	});
-	socket.on('playerWin', (player :Player, game) => {
+	socket.on('playerWin', (player: Player, game) => {
 		if (!gameOver) {
 			lastGame = game;
 			winner = player;
@@ -195,4 +240,17 @@ export async function pongGame() {
 	socket.on('gameState', (game: Game) => {
 		drawGame(game);
 	});
+	socket.on('p1Name', (name: string) => {
+		const p1name = document.getElementById('p1Name');
+		if (p1name) {
+			p1name.textContent = name;
+		}
+	});
+	socket.on('p2Name', (name: string) => {
+		const p2name = document.getElementById('p2Name');
+		if (p2name) {
+			p2name.textContent = name;
+		}
+	});
+	keyHandler(socket)
 }
