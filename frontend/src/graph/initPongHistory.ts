@@ -1,7 +1,7 @@
 
 import { StatsPongView } from '../views/root.views';
 import { PongGameHistory } from '../types/pongTypes';
-import { updateUserProfile } from './profilePongFr';
+import { updateUserProfilePong } from './profilePongFr';
 import { updateRanking } from './rank';
 import { analyzeGameTimes, analyzeLengthDistribution } from '../graph/gameTime';
 import { currentGames, setCurrentGames, showGameDetails, closeGameDetails } from '../graph/pop';
@@ -82,7 +82,7 @@ export function initPongStats(){
             console.log('Calling updateLastGames...');
             updateLastGames();
             updateRanking();
-            updateUserProfile();
+            updateUserProfilePong();
         } else {
             console.error('Element #last-games-content not found!');
             // Reessayer apres un delai comme pour les canvas

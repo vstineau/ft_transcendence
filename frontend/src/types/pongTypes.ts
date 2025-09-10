@@ -165,7 +165,7 @@ export interface PongGameHistory{
     } | null;
 }
 
-export interface PlayerRanking{
+export interface PongPlayerRanking{
 	login: string;
     nickName: string;
     totalWins: number;
@@ -190,5 +190,3 @@ export interface ProfilePong{
         totalWins: number;
     };
 }
-
-

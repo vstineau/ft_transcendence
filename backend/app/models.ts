@@ -140,7 +140,10 @@ export class History extends BaseEntity { //extends : mot-cle d'héritage - Hist
     @Column()
     finalLength?: number;
 
-    @Column()
+    // @Column()
+    // finalBallSpeed?: number;
+
+	@Column({ nullable: true })
     finalBallSpeed?: number;
 
     @Column()

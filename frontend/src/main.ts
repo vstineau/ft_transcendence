@@ -30,11 +30,13 @@ import { snakeGame } from './snake/snake';
 import { localSnakeGame } from './snake/localSnake';
 import { localpongGame } from './pong/localPong';
 import { initProfilePage } from './utils/avatar';
-import {initSnakeStats } from './graph/init';
-import {initPongStats } from './graph/initPongHistory';
+import { initSnakeStats } from './graph/init';
+import { initPongStats } from './graph/initPong';
 import { pongTournament } from './pong/tournament';
 import { updateRanking } from './graph/rank';
+import { updateRankingPong } from './graph/rankPong';
 import { updateUserProfile } from './graph/profileSnakeFr';
+import { updateUserProfilePong } from './graph/profilePongFr';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -195,9 +197,9 @@ async function renderPage() {
 			break;
 		case '/statisticsPong':
 			setTimeout(() => {
-				console.log('About to call initPong');
+				console.log('About to call initPongStats');
 				initPongStats();
-				updateRanking();
+				updateRankingPong();
 				updateInfos();
 				initProfilePage();
 			}, 100);
@@ -211,6 +213,7 @@ async function renderPage() {
 
 document.addEventListener('DOMContentLoaded', async () => {
 	updateUserProfile();
+	updateUserProfilePong();
 
 	document.body.addEventListener('click', async e => {
 		const target = e.target as HTMLElement;
