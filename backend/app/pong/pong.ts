@@ -295,7 +295,7 @@ function movePlayer(game: Game) {
 }
 
 function checkWin(game: Game, app: FastifyInstance) {
-	if (game.p1.score === -1 || game.p2.score === -1) {
+	if (game.p1.score === 3 || game.p2.score === 3) {
 		game.ball.vx = 0;
 		game.ball.vy = 0;
 		game.ball.x = WIN_WIDTH / 2;

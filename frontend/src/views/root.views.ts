@@ -951,7 +951,7 @@ export async function PongCanvas() {
 
 			<!-- Colonne droite : Joueur 2 -->
 			<div id="playerTwo" class="flex flex-col items-start ml-8">
-				<div id="p2Name" class="font-bold text-xl text-white mb-2"></div>
+				<div id="p2Name" class="font-bold text-xl text-white mb-2">...</div>
 				<img
 					id="p2Avatar"
 					class="w-40 h-40 rounded-xl mb-2 border-4 border-gray-700 object-cover"
