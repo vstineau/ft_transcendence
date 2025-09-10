@@ -261,17 +261,17 @@ export async function pongGame() {
 	socket.on('gameState', (game: Game) => {
 		drawGame(game);
 	});
-	socket.on('p1Name', (name: string) => {
+	socket.on('p1Name', (player: Player) => {
 		const p1name = document.getElementById('p1Name');
-		if (p1name) {
-			p1name.textContent = name;
-		}
+		const p1PP = document.getElementById('p1Avatar') as HTMLImageElement;
+		if (p1name) p1name.textContent = player.nickName;
+		if (p1PP) p1PP.src = player.avatar!;
 	});
-	socket.on('p2Name', (name: string) => {
+	socket.on('p2Name', (player: Player) => {
 		const p2name = document.getElementById('p2Name');
-		if (p2name) {
-			p2name.textContent = name;
-		}
+		const p2PP = document.getElementById('p2Avatar') as HTMLImageElement;
+		if (p2name) p2name.textContent = player.nickName;
+		if (p2PP) p2PP.src = player.avatar!;
 	});
 	keyHandler(socket);
 }

@@ -119,23 +119,14 @@ async function initPlayerRoom(socket: Socket, cookie: string) {
 			socket.join(room.name);
 			room.locked = true;
 			getInputs(socket, room);
-			// handleDisconnect(app, socket);
-			// app.io.of('/pong').to(room.name).emit('p2Name', user.nickName);
-			// app.io.of('/pong').to(room.name).emit('p1Name', room.game.p1.nickName);
-			// socket.emit('p2Name', user.nickName);
-			// socket.emit('p1Name', room.game.p1.nickName);
 		} else {
 			const newRoom = createRoom();
 
 			newRoom.game.p1 = initPlayer(socket, user, newRoom);
 			socket.join(newRoom.name);
 			getInputs(socket, newRoom); // ← Configurer les inputs après assignment
-			// handleDisconnect(app, socket);
-			// console.log(`✅ Socket ${socket.id} joint la room ${newRoom.name}`);
-			app.io.of('/pong').to(newRoom.name).emit('p1Name', user.nickName);
-			app.io.of('/pong').to(newRoom.name).emit('p2Name', '...');
-			// socket.emit('p1Name', user.nickName);
-			// socket.emit('p2Name', '...');
+			app.io.of('/pong').to(newRoom.name).emit('p1Name', newRoom.game.p1);
+			// app.io.of('/pong').to(newRoom.name).emit('p2Name', '...');
 		}
 	} else {
 		socket.emit('notLogged');
@@ -163,14 +154,12 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 			if (socket) {
 				socket.leave(room.name);
 			}
-			// rooms = rooms.filter(r => r !== room);
+			if(room.playersNb === 0)
+				rooms = rooms.filter(r => r !== room);
 			if (gameInterval) {
 				console.log('aaaaaaaaaa');
 				clearInterval(gameInterval);
 			}
-			// if (gamecountdown) {
-			// 	clearTimeout(gamecountdown);
-			// }
 		}
 		if (socket) {
 			socket.off;
@@ -206,8 +195,8 @@ export function launchGame(rooms: Room[]) {
 						app.io.of('/pong').to(room.name).emit('gameState', room.game);
 					}
 					if (!room.nameSet) {
-						app.io.of('/pong').to(room.name).emit('p1Name', room.game.p1.nickName);
-						app.io.of('/pong').to(room.name).emit('p2Name', room.game.p2.nickName);
+						app.io.of('/pong').to(room.name).emit('p1Name', room.game.p1);
+						app.io.of('/pong').to(room.name).emit('p2Name', room.game.p2);
 						room.nameSet = true;
 					}
 				} else if (!room.locked && room.playersNb === 1) {

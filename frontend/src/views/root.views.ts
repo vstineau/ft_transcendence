@@ -929,10 +929,20 @@ export async function PongCanvas() {
 		<div id="pongGame" class="flex items-center justify-center w-screen h-screen bg-gray-900">
 			<!-- Colonne gauche : Joueur 1 -->
 			<div id="playerOne" class="flex flex-col items-end mr-8">
-				<div id="p1Name" class="font-bold text-xl text-white mb-4"></div>
+				<div id="p1Name" class="font-bold text-xl text-white mb-2"></div>
+				<img
+					id="p1Avatar"
+					class="w-40 h-40 rounded-xl mb-2 border-4 border-gray-700 object-cover"
+					src=""
+					alt=""
+				/>
 				<div class="flex flex-col items-end gap-2">
-					<div id="p1keyup" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">W / ↑</div>
-					<div id="p1keydown" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">S / ↓</div>
+					<div id="p1keyup" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">
+						W / ↑
+					</div>
+					<div id="p1keydown" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">
+						S / ↓
+					</div>
 				</div>
 			</div>
 
@@ -941,10 +951,20 @@ export async function PongCanvas() {
 
 			<!-- Colonne droite : Joueur 2 -->
 			<div id="playerTwo" class="flex flex-col items-start ml-8">
-				<div id="p2Name" class="font-bold text-xl text-white mb-4"></div>
+				<div id="p2Name" class="font-bold text-xl text-white mb-2"></div>
+				<img
+					id="p2Avatar"
+					class="w-40 h-40 rounded-xl mb-2 border-4 border-gray-700 object-cover"
+					src=""
+					alt=""
+				/>
 				<div class="flex flex-col items-start gap-2">
-					<div id="p2keyup" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">W / ↑</div>
-					<div id="p2keydown" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">S / ↓</div>
+					<div id="p2keyup" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">
+						W / ↑
+					</div>
+					<div id="p2keydown" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">
+						S / ↓
+					</div>
 				</div>
 			</div>
 		</div>
