@@ -49,11 +49,11 @@ export async function startChat(app: FastifyInstance) {
     });
 
     // ===== FRIENDS =====
-    socket.on(CHAT_EVENTS.ADD_FRIEND, (data: { targetUserId: string }) => 
+    socket.on(CHAT_EVENTS.ADD_FRIEND, (data: { targetUserId: string, currentUserId: string }) => 
       handleAddFriend(socket, data, app)
     );
 
-    socket.on(CHAT_EVENTS.DELETE_FRIEND, (data: { targetUserId: string }) => 
+    socket.on(CHAT_EVENTS.DELETE_FRIEND, (data: { targetUserId: string, currentUserId: string }) => 
       handleDeleteFriend(socket, data, app)
     );
 

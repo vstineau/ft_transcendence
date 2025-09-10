@@ -3,6 +3,8 @@ import { CHAT_EVENTS } from '../config/chatConfig';
 
 export function eventsUsers(this: ChatManager) {
 
+    // ==== CONNECTION USERS - DISCONNECT USER =====
+
 	this.on('userJoined', (user: any) => {
 		console.log('👋 User joined chat:', user);
 		// N'ajoute que s'il n'existe pas déjà
@@ -39,6 +41,8 @@ export function eventsUsers(this: ChatManager) {
             (this as any).updateCurrentRoomIndicator((this as any).state.activeTab);
         }
     });
+
+    // ==== SYNC ONLINE USERS =====
 
     this.on('onlineUsersUpdated', (onlineUsers: any[]) => {
         console.log('🔄 Online users list updated:', onlineUsers);
@@ -83,9 +87,9 @@ export function eventsUsers(this: ChatManager) {
         if (currentUser && !currentUser.blockedList.includes(data.targetUserId)) {
             currentUser.blockedList.push(data.targetUserId);
             (this as any).state.currentUserId.friendList = (this as any).state.currentUserId.friendList.filter((f: any) => f.id !== data.targetUserId);
-            (this as any).emit(CHAT_EVENTS.DELETE_FRIEND, (this as any).state.currentUserId.friendList);
-            (this as any).renderRoomsList();
-            (this as any).renderMessages();
+            (this as any).emit(CHAT_EVENTS.DELETE_FRIEND, { targetUserId: data.targetUserId, currentUserId: currentUser.id });
+            //(this as any).renderRoomsList();
+            //(this as any).renderMessages();
         }
     });
 
@@ -94,9 +98,8 @@ export function eventsUsers(this: ChatManager) {
         const currentUser = (this as any).state.currentUserId;
         if (currentUser && currentUser.blockedList.includes(data.targetUserId)) {
             currentUser.blockedList = currentUser.blockedList.filter((id: string) => id !== data.targetUserId);
-            // Optionnel: rafraîchir UI si tu filtres des listes par bloqués
-            (this as any).renderRoomsList();
-            (this as any).renderMessages();
+            //(this as any).renderRoomsList();
+            //(this as any).renderMessages();
         }
     });
 }
