@@ -613,9 +613,11 @@ export class ChatManager extends SocketService {
         if (messagesContainer) {
             // Filtrer les messages pour afficher seulement ceux de la room active
             const currentRoom = this.state.activeTab; // 'global', 'pong' ou 'snake'
+            console.log('INITIALISATION des messages pour la room:', currentRoom);
             const roomMessages = this.currentRoom?.messages.filter(msg => msg.roomId === currentRoom);
             if (roomMessages) {
-                messagesContainer.innerHTML = this.renderMessages(this.currentRoom?.messages);
+                console.log('Messages trouvés pour la room:', roomMessages);
+                messagesContainer.innerHTML = this.renderMessages(roomMessages);
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }
         }

@@ -18,7 +18,7 @@ export function eventsSocket(this: ChatManager) {
 		console.log('✅ Chat user connected:', data);
 		(this as any).state.currentUserId.id = data.user.id;
 		(this as any).state.currentUserId.avatar = data.user.avatar || '';
-		(this as any).messages = data.recentMessages || [];
+		(this as any).currentRoom.messages = data.recentMessages || [];
 		(this as any).state.onlineUsers = data.onlineUsers || [];
 		// Charger la friend list si fournie
 		if (data.friendList) {
@@ -29,6 +29,7 @@ export function eventsSocket(this: ChatManager) {
 			(this as any).state.currentUserId.blockedList = data.blockedList;
 		}
 		console.log('blockedList:', (this as any).state.currentUserId.blockedList);
+		console.log('currentRoom = :', (this as any).currentRoom.id);
 		(this as any).updateMessagesDisplay();
 		(this as any).renderOnlineUsers();
 	});
