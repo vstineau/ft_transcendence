@@ -209,56 +209,73 @@ export class ChatManager extends SocketService {
     private renderMessages(messages?: Message[]): string {
         const messagesToRender = messages || this.currentRoom?.messages;
         if (!messagesToRender) return '';
-        return messagesToRender.map(message => {
-            const isOwn = message.userId === this.state.currentUserId?.id;
-            const time = formatTime(message.timestamp);
-            
-            let avatar;
-            console.log('isOwn ? : ', isOwn);
-            if (isOwn && this.state.currentUserId?.avatar) {
-                avatar = `<img src="${this.state.currentUserId.avatar}" alt="avatar" class="w-8 h-8 rounded-full object-cover shrink-0" />`;
-            } else {
-                avatar = createAvatarElement(message.username, message.avatarPath, 'md');
-            }
+        return messagesToRender.map(m => this.renderMessage(m)).join('');
+    }
 
-            if (isOwn) {
-                return `
-                    <div class="flex items-start justify-end gap-2.5">
-                        <div class="flex flex-col gap-1">
-                            <div class="flex flex-col w-full max-w-[280px] leading-1.5 p-3 border border-gray-200 bg-black text-white rounded-s-xl rounded-ee-xl">
-                                <div class="flex items-center justify-between space-x-2 mb-1">
-                                    <span class="text-sm font-semibold">Moi</span>
-                                    <span class="text-xs font-normal text-gray-300">${time}</span>
-                                </div>
-                                <p class="text-sm font-normal break-words">
-                                    ${escapeHtml(message.content)}
-                                </p>
-                                <span class="text-xs font-normal text-gray-300 mt-1">Vu</span>
+    // Rend un seul message (HTML string) – réutilisé pour l'append incrémental
+    private renderMessage(message: Message): string {
+        const isOwn = message.userId === this.state.currentUserId?.id;
+        const time = formatTime(message.timestamp);
+
+        let avatar;
+        console.log('isOwn ? : ', isOwn);
+        if (isOwn && this.state.currentUserId?.avatar) {
+            avatar = `<img src="${this.state.currentUserId.avatar}" alt="avatar" class="w-8 h-8 rounded-full object-cover shrink-0" />`;
+        } else {
+            avatar = createAvatarElement(message.username, message.avatarPath, 'md');
+        }
+
+        if (isOwn) {
+            return `
+                <div class="flex items-start justify-end gap-2.5">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex flex-col w-full max-w-[280px] leading-1.5 p-3 border border-gray-200 bg-black text-white rounded-s-xl rounded-ee-xl">
+                            <div class="flex items-center justify-between space-x-2 mb-1">
+                                <span class="text-sm font-semibold">Moi</span>
+                                <span class="text-xs font-normal text-gray-300">${time}</span>
                             </div>
-                        </div>
-                        <div class="shrink-0" data-user-id="${this.state.currentUserId?.id}">${avatar}</div>
-                    </div>
-                `;
-            } else {
-                return `
-                    <div class="flex items-start gap-2.5">
-                        <div class="shrink-0" data-user-id="${message.userId}">${avatar}</div>
-                        <div class="flex flex-col gap-1">
-                            <div class="flex flex-col w-full max-w-[280px] leading-1.5 p-3 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl">
-                                <div class="flex items-center space-x-2 mb-1">
-                                    <span class="text-sm font-semibold text-gray-900">${escapeHtml(message.username)}</span>
-                                    <span class="text-xs font-normal text-gray-500">${time}</span>
-                                </div>
-                                <p class="text-sm font-normal text-gray-900 break-words">
-                                    ${escapeHtml(message.content)}
-                                </p>
-                                <span class="text-xs font-normal text-gray-500 mt-1">Delivered</span>
-                            </div>
+                            <p class="text-sm font-normal break-words">
+                                ${escapeHtml(message.content)}
+                            </p>
+                            <span class="text-xs font-normal text-gray-300 mt-1">Vu</span>
                         </div>
                     </div>
-                `;
-            }
-        }).join('');
+                    <div class="shrink-0" data-user-id="${this.state.currentUserId?.id}">${avatar}</div>
+                </div>
+            `;
+        } else {
+            return `
+                <div class="flex items-start gap-2.5">
+                    <div class="shrink-0" data-user-id="${message.userId}">${avatar}</div>
+                    <div class="flex flex-col gap-1">
+                        <div class="flex flex-col w-full max-w-[280px] leading-1.5 p-3 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="text-sm font-semibold text-gray-900">${escapeHtml(message.username)}</span>
+                                <span class="text-xs font-normal text-gray-500">${time}</span>
+                            </div>
+                            <p class="text-sm font-normal text-gray-900 break-words">
+                                ${escapeHtml(message.content)}
+                            </p>
+                            <span class="text-xs font-normal text-gray-500 mt-1">Delivered</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    // Append uniquement le nouveau message dans la room active (évite full re-render)
+    private appendMessageToDom(message: Message) {
+        // N'ajouter que si la room du message correspond à la room active
+        const currentRoom = this.currentRoom?.id || this.state.activeTab;
+        if (message.roomId !== currentRoom) return;
+
+        const messagesContainer = document.getElementById('messages-container');
+        if (!messagesContainer) return;
+
+        const html = this.renderMessage(message);
+        messagesContainer.insertAdjacentHTML('beforeend', html);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
     private async switchRoom(roomId: string) {
@@ -594,7 +611,7 @@ export class ChatManager extends SocketService {
             const currentRoom = this.state.activeTab; // 'global', 'pong' ou 'snake'
             const roomMessages = this.currentRoom?.messages.filter(msg => msg.roomId === currentRoom);
             if (roomMessages) {
-                messagesContainer.innerHTML = this.renderMessages(roomMessages);
+                messagesContainer.innerHTML = this.renderMessages(this.currentRoom?.messages);
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }
         }
@@ -721,7 +738,7 @@ export class ChatManager extends SocketService {
             console.log(`✅ Room privée ajoutée: ${roomId} avec ${sender.username}`);
             
             // Mettre à jour l'affichage des rooms
-            this.renderSidebar();
+            this.renderRoomsList();
         }
 
     }
@@ -742,9 +759,7 @@ export class ChatManager extends SocketService {
         // Déclencher startPrivateChat pour s'assurer que la room existe côté serveur
         // Cela permettra au destinataire d'avoir la room même après un refresh
         console.log(`🔄 Initialisation côté serveur de la room privée avec l'utilisateur ${otherUserId}`);
-        this.emit(CHAT_EVENTS.JOIN_PRIVATE_ROOM, { 
-            targetUserId: otherUserId
-        });
+        this.emit(CHAT_EVENTS.JOIN_PRIVATE_ROOM, { targetUserId: otherUserId });
     }
 
 }

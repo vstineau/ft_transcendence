@@ -35,7 +35,8 @@ export function eventsMessages(this: ChatManager) {
 			this.addMessage(message);
 			const currentRoom = (this as any).currentRoom?.id || (this as any).state?.activeTab;
 			if (message.roomId === currentRoom) {
-				(this as any).updateMessagesDisplay();
+				// Append incrémental au lieu d'un full re-render
+				(this as any).appendMessageToDom(message);
 			}
 
 			// Incrémenter les non-lus si le chat est fermé OU si pas dans la bonne room
