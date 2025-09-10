@@ -185,7 +185,7 @@ export interface ProfilePong{
         ranking: number;
         maxSpeed: number;
         averageSpeed: number;
-        totalGoalScored: number;
+        totalGoals: number;
         totalGames: number;
         totalWins: number;
     };

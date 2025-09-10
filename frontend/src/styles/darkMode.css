@@ -26,8 +26,8 @@
     background-color: var(--bg-primary) !important;
 }
 
-.dark .bg-gray-100 {
-    background-color: var(--bg-secondary) !important;
+.dark .content-section {
+    background-color: #111827 !important;
 }
 
 .dark .bg-gray-200 {
@@ -126,33 +126,33 @@
 
 /* Boutons NOIRS deviennent BLANCS */
 .dark .bg-black {
-    background-color: #ffffff !important; /* Blanc */
-    color: #000000 !important; /* Texte noir */
+    background-color: #ffffff !important;
+    color: #000000 !important;
 }
 
 .dark .bg-black:hover,
 .dark .hover\:bg-gray-800:hover {
-    background-color: #e5e7eb !important; /* Gris clair au hover */
+    background-color: #e5e7eb !important;
     color: #000000 !important;
 }
 
 /* Boutons BLANCS deviennent NOIRS */
 .dark button:not(.bg-black):not([class*="bg-"]) {
-    background-color: #000000 !important; /* Noir */
-    color: #ffffff !important; /* Texte blanc */
+    background-color: #000000 !important;
+    color: #ffffff !important;
 }
 
 /* Boutons avec bg-gray-100 (blancs/gris clairs) deviennent noirs */
 .dark .bg-gray-100 {
-    background-color: #000000 !important; /* Noir */
-    color: #ffffff !important; /* Texte blanc */
-}
-
-.dark .bg-gray-100:hover,
-.dark .hover\:bg-gray-200:hover {
-    background-color: #1f2937 !important; /* Gris foncé au hover */
+    background-color: #000000 !important;
     color: #ffffff !important;
 }
+/*
+.dark .bg-gray-100:hover,
+.dark .hover\:bg-gray-200:hover {
+    background-color: #1f2937 !important;
+    color: #ffffff !important;
+} */
 
 /* Boutons View/Edit dans le profil */
 .dark button {
@@ -271,3 +271,13 @@ dark .bg-black .text-white,
         inset -3px -3px 6px var(--neu-shadow-light);
     transform: translateY(0);
 }
+
+.dark #darkmode-fab {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+.dark #darkmode-fab:hover {
+    background-color: #e5e7eb !important;
+}
+

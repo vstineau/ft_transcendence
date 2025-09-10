@@ -4,7 +4,7 @@ export async function RootView() {
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
 			</h1>
 		</div>
@@ -18,12 +18,12 @@ export async function RootView() {
 
 			<!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes changer la taille de base du bloc de profil -->
 				<div class="row-span-2 bg-white rounded-xl shadow-lg p-4">
-					<div class="flex items-start mb-6 ml-3 mt-10">
+					<div class="flex items-start mb-14 ml-3 mt-2">
 						<div id="profile-avatar-container" class="w-32 h-32 bg-gray-200 rounded-xl overflow-hidden">
                         	<!-- L'avatar ou le fallback sera injecté ici -->
 						</div>
 
-							<div class="ml-5">
+							<div class="ml-6">
 								<h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
 
 								<!-- NOM UTILISATEUR -->
@@ -34,7 +34,7 @@ export async function RootView() {
 							</div>
 						</div>
 
-						<div class="flex space-x-6 ml-3 mt-6">
+						<div class="flex space-x-6 ml-3 mt-auto"">
 								<a href="/statisticsSnake" class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition">View</a>
 								<a href="/updateInfos" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition">Edit</a>
 						</div>
@@ -72,10 +72,9 @@ export async function RootView() {
 					<!-- Bloc Success rate - 1 colonne, 1 ligne -->
 					<div class="row-span-1 bg-white rounded-xl shadow-lg p-4">
 						<a href="/statisticsPong" class="text-left">
-							<p class="font-montserrat text-black text-base mb-2">Pong stats</p>
-							<p class="text-4xl font-bold text-black">
-								86<span class="text-4xl font-normal text-gray-300">%</span>
-							</p>
+							<p class="font-montserrat text-black text-base">Pong stats</p>
+							<p class="font-montserrat text-gray-400 text-sm mb-2">Your max speed</p>
+							<span class="text-4xl font-bold text-black" data-stat="max-speed"></span>
 						</a>
 					</div>
 
@@ -83,31 +82,12 @@ export async function RootView() {
 					<div class="bg-white rounded-xl shadow-lg p-8" style="grid-column: 1 / 3; grid-row: 3">
 						<div class="h-full flex flex-col justify-between">
 							<h3 class="font-montserrat font-bold text-6xl mb-6">Let's talk</h3>
-
-							<div class="flex items-start space-x-6">
+							<div id="recent-contacts-container" class="flex items-start space-x-6">
+								<!-- Le contenu sera injecte dynamiquement -->
 								<div class="text-center">
-									<div
-										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
-									>
-										L
+									<div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl">
+										Loading...
 									</div>
-									<span class="text-xs text-gray-600">@LeoApple</span>
-								</div>
-								<div class="text-center">
-									<div
-										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
-									>
-										M
-									</div>
-									<span class="text-xs text-gray-600">@MaxDragon</span>
-								</div>
-								<div class="text-center">
-									<div
-										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
-									>
-										F
-									</div>
-									<span class="text-xs text-gray-600">@FatimaPing</span>
 								</div>
 							</div>
 						</div>
@@ -164,7 +144,7 @@ export async function RootView() {
 export async function WelcomeView() {
 	return /* HTML */ `
         <!-- Titre isolé - position absolue dès le départ -->
-        <h1 id="main-title" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl font-bold text-black z-50">
+        <h1 id="main-title" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl font-bold text-black z-50 mb-24">
             FT<span class="text-blue-600">_</span>TRANSCENDENCE
         </h1>
 
@@ -224,7 +204,7 @@ export async function PongChoice() {
 	return /* HTML */ `
 	<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
 			</h1>
 		</div>
@@ -243,7 +223,7 @@ export async function PongChoice() {
 					</a>
 
                     <a href="/pong/matchmaking/game" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600">On Line</p>
+					<p class="font-montserrat font-medium text-base text-gray-600">Online</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🌏</span>
 						</div>
@@ -268,7 +248,7 @@ export async function SnakeChoice() {
 	return /* HTML */ `
 	<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
 			</h1>
 		</div>
@@ -287,7 +267,7 @@ export async function SnakeChoice() {
 
                     <!-- Bloc Games - Carré -->
                     <a href="/snake" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600">On line</p>
+					<p class="font-montserrat font-medium text-base text-gray-600">Online</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🌏</span>
 						</div>
@@ -305,7 +285,7 @@ export async function GamesView() {
 	return /* HTML */ `
 	<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
 			</h1>
 		</div>
@@ -599,7 +579,7 @@ function createStatsView(gameType: 'snake' | 'pong') {
     return /* HTML */ `
         <!-- Titre FT_TRANSCENDENCE en haut -->
         <div class="bg-gray-100 py-2">
-            <h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+            <h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
                 FT<span class="text-blue-600">_</span>TRANSCENDENCE
             </h1>
         </div>
@@ -679,7 +659,7 @@ function createStatsView(gameType: 'snake' | 'pong') {
                     </div>
 
                     <div class="mt-2 flex flex-col">
-                        <a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+                        <a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
                     </div>
                 </div>
             </div>
@@ -715,7 +695,7 @@ export async function LoginView() {
 	return /*HTML*/ `
 		 <!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 class="text-center text-4xl font-bold text-black">
+			<h1 class="text-center text-4xl font-bold text-black mb-24">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
 			</h1>
 		</div>
@@ -773,7 +753,7 @@ export async function RegisterView() {
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 class="text-center text-4xl font-bold text-black">FT<span class="text-blue-600">_</span>TRANSCENDENCE</h1>
+			<h1 class="text-center text-4xl font-bold text-black mb-8">FT<span class="text-blue-600">_</span>TRANSCENDENCE</h1>
 		</div>
 		<!-- Arrière-plan -->
 		<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4">
@@ -909,7 +889,7 @@ export async function UpdateInfosview() {
 
 <!-- Titre FT_TRANSCENDENCE en haut -->
 	<div class="bg-gray-100 py-2">
-		<h1 class="text-center text-4xl font-bold text-black">
+		<h1 class="text-center text-4xl font-bold text-black mb-24">
 			FT<span class="text-blue-600">_</span>TRANSCENDENCE
 		</h1>
 	</div>
@@ -1005,7 +985,7 @@ export async function UpdateInfosview() {
 
 						<!-- Bouton retour -->
 						<div class="mt-8 text-center">
-							<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+							<a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
 						</div>
 					</div>
 				</div>

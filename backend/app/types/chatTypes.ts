@@ -3,7 +3,7 @@ export interface ChatUser {
   socketId: string;
   login: string;
   nickName: string;
-  avatar: string;
+  avatar?: string;
   status: 'online' | 'offline' | 'in-game';
 }
 
