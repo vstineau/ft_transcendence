@@ -5,7 +5,7 @@ export function eventsMessages(this: ChatManager) {
 
 	this.on('newMessage', (message: any) => {
 	    console.log('📩 New message received:', message);
-		const isBlocked = (this as any).state.currentUserId.blockedList.includes(message.userId) || (this as any).state.currentUserId.id === message.userId && (this as any).state.currentUserId.blockedList.includes(message.userId);
+		const isBlocked = (this as any).state.currentUserId.blockedList.includes(message.userId) || message.blockedList.includes((this as any).state.currentUserId.id);
 		console.log('isBlocked:', isBlocked);
 		console.log('Current user ID:', (this as any).state.currentUserId.id);
 		console.log('Blocked list:', (this as any).state.currentUserId.blockedList);

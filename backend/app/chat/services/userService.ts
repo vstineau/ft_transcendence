@@ -96,7 +96,8 @@ class UserService {
       login: user.login,
       nickName: user.nickName,
       avatar: user.avatar || '',
-      status: 'online'
+      status: 'online',
+      blocklist: user.blocklist || []
     };
   }
 }

@@ -54,7 +54,8 @@ class MessageService {
         content: content,
         timestamp: savedMessage.timestamp,
         type: type,
-        roomId: room
+        roomId: room,
+        blockedList: dbUser.blocklist || []
       };
     } catch (error) {
       console.error('Error saving message:', error);
@@ -71,7 +72,8 @@ class MessageService {
       content: msg.content,
       timestamp: msg.timestamp,
       type: msg.type as 'text' | 'system' | 'game-invitation',
-      roomId: msg.room  // Changé de 'room' à 'roomId'
+      roomId: msg.room,
+      blockedList: msg.user.blocklist || []
     };
   }
 
@@ -84,7 +86,8 @@ class MessageService {
       content: content,
       timestamp: new Date(),
       type: 'text',
-      roomId: room  // Changé de 'room' à 'roomId'
+      roomId: room,
+      blockedList: user.blocklist || []
     };
   }
 

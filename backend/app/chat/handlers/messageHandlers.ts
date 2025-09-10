@@ -21,7 +21,7 @@ export async function handleSendMessage(
   }
 
   const room = data.room || CHAT_CONFIG.ROOMS.GLOBAL;
-  
+
   // Vérifier l'accès à la room
   if (!roomService.validateRoomAccess(user.id, room)) {
     socket.emit(CHAT_EVENTS.ERROR, 'Access denied to this room');

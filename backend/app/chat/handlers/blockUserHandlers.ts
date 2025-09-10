@@ -17,14 +17,14 @@ export async function handleBlockUser(socket: Socket, data: { targetUserId: stri
 				// l'utilisateur est déjà bloqué donc on le debloque
 				user.blocklist = user.blocklist.filter(id => id !== blocked);
 				await User.save(user);
-				socket.emit(CHAT_EVENTS.USER_DEBLOCKED, { userId: blocked });
+				socket.emit(CHAT_EVENTS.USER_DEBLOCKED, { targetUserId: blocked });
 				return;
 			}
 			else {
 				// Ajouter l'utilisateur à la blocklist
 				user.blocklist = user.blocklist ? [...user.blocklist, blocked] : [blocked];
 				await User.save(user);
-				socket.emit(CHAT_EVENTS.USER_BLOCKED, { userId: blocked });
+				socket.emit(CHAT_EVENTS.USER_BLOCKED, { targetUserId: blocked });
 				return;
 			}
 		}

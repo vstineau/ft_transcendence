@@ -40,6 +40,7 @@ export class ChatManager extends SocketService {
             },
             block: (userId: string) => {
                 const set = new Set(this.state.currentUserId?.blockedList || []);
+                console.log('i blocked', userId);
                 set.add(userId);
                 this.emit(CHAT_EVENTS.BLOCK_USER, { targetUserId: userId, currentUserId: this.state.currentUserId?.id });
                 // Optionnel: rafraîchir UI si tu filtres des listes par bloqués
