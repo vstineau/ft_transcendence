@@ -18,6 +18,7 @@ export class ChatManager extends SocketService {
     private profileUI?: UIprofileService;
     private profileUIAttached = false;
 
+
     constructor() {
         super();
         eventsSocket.call(this);
@@ -217,8 +218,7 @@ export class ChatManager extends SocketService {
         const isOwn = message.userId === this.state.currentUserId?.id;
         const time = formatTime(message.timestamp);
 
-        let avatar;
-        console.log('isOwn ? : ', isOwn);
+    let avatar;
         if (isOwn && this.state.currentUserId?.avatar) {
             avatar = `<img src="${this.state.currentUserId.avatar}" alt="avatar" class="w-8 h-8 rounded-full object-cover shrink-0" />`;
         } else {
@@ -315,7 +315,11 @@ export class ChatManager extends SocketService {
                     const parts = roomId.replace('private_', '').split('_');
                     const otherUserId = parts.find(id => id !== this.state.currentUserId?.id);
                     if (otherUserId) {
-                        this.emit(CHAT_EVENTS.JOIN_PRIVATE_ROOM, { targetUserId: otherUserId });
+                        // Éviter d'émettre plusieurs fois pour la même room
+                        if (!this.initializedPrivateRooms.has(roomId)) {
+                            this.emit(CHAT_EVENTS.JOIN_PRIVATE_ROOM, { targetUserId: otherUserId });
+                            this.initializedPrivateRooms.add(roomId);
+                        }
                     }
                 } else {
                     this.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: roomId });
@@ -740,7 +744,8 @@ export class ChatManager extends SocketService {
             // Mettre à jour l'affichage des rooms
             this.renderRoomsList();
         }
-
+        // Marquer la room comme initialisée pour éviter des JOIN répétés
+        if (roomId) this.initializedPrivateRooms.add(roomId);
     }
 
     private handleOutgoingPrivateMessage(message: Message) {
@@ -756,10 +761,12 @@ export class ChatManager extends SocketService {
 
         if (!otherUserId) return;
         
-        // Déclencher startPrivateChat pour s'assurer que la room existe côté serveur
-        // Cela permettra au destinataire d'avoir la room même après un refresh
-        console.log(`🔄 Initialisation côté serveur de la room privée avec l'utilisateur ${otherUserId}`);
-        this.emit(CHAT_EVENTS.JOIN_PRIVATE_ROOM, { targetUserId: otherUserId });
+        // N'envoyer JOIN_PRIVATE_ROOM qu'une seule fois pour cette room
+        if (!this.initializedPrivateRooms.has(roomId)) {
+            console.log(`🔄 Initialisation côté serveur de la room privée avec l'utilisateur ${otherUserId}`);
+            this.emit(CHAT_EVENTS.JOIN_PRIVATE_ROOM, { targetUserId: otherUserId });
+            this.initializedPrivateRooms.add(roomId);
+        }
     }
 
 }
