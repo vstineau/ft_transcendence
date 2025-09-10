@@ -98,12 +98,11 @@ export function getRoom() {
 export function createRoom(): Room {
 	let newRoom: Room = {
 		name: `room_${roomcount++}`,
-		playersNb: 0, // ← Sera incrémenté dans initPlayer
+		playersNb: 0,
 		game: initGame(),
 		locked: false,
 		winner: null,
 	};
-	// Ne pas assigner p1.id ici, ce sera fait dans initPlayerRoom
 	rooms.push(newRoom);
 	return newRoom;
 }
@@ -129,7 +128,7 @@ async function initPlayerRoom(socket: Socket, cookie: string) {
 
 			newRoom.game.p1 = initPlayer(socket, user, newRoom);
 			socket.join(newRoom.name);
-			getInputs(socket, newRoom.game); // ← Configurer les inputs après assignment
+			getInputs(socket, newRoom.game);
 			console.log(`✅ Socket ${socket.id} joint la room ${newRoom.name}`);
 		}
 	} else {
@@ -141,7 +140,6 @@ async function initPlayerRoom(socket: Socket, cookie: string) {
 function handleDisconnect(app: FastifyInstance, socket: Socket) {
 	void app;
 	socket.on('disconnect', () => {
-		// Trouver la room du joueur
 		const room = rooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
 		if (room) {
 			room.playersNb--;

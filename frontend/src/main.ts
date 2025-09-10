@@ -39,6 +39,8 @@ import { updateUserProfile } from './graph/profileSnakeFr';
 import { updateUserProfilePong } from './graph/profilePongFr';
 import { updateRecentContacts } from './chat/recentContents';
 import { displayDarkModeButton } from './theme/lightButton'
+import { initLanguageSelector, initializeLanguage } from './lang/languageManager';
+
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -74,6 +76,7 @@ export async function navigateTo(url: string) {
 	await renderPage();
 }
 
+
 export async function authenticatedFetch(url: string, options: RequestInit = {}): Promise<Response> {
 	const response = await fetch(url, {
 		...options,
@@ -101,12 +104,10 @@ function showAuthMessage() {
 	setTimeout(() => message.remove(), 3000);
 }
 
-async function renderPage() {
+export async function renderPage() {
 	const path = window.location.pathname;
 	console.log('Current path:', path);
 
-	//veriff pour si le tokens jws ne fonctionne plus,
-	// il y aura une redirection vers login pour se co a nouveau
 	const publicPaths = [
 		'/',
 		'/login',
@@ -123,7 +124,6 @@ async function renderPage() {
 		try {
 			await authenticatedFetch('/api/updateInfos');
 		} catch {
-			// alert('Your session has expired. Please log in to access this page.');
 			showAuthMessage();
 			localStorage.clear();
 			navigateTo('/');
@@ -131,13 +131,14 @@ async function renderPage() {
 		}
 	}
 
+
+
 	cleanupScrollAnimations();
 	cleanupThemeToggle();
 
 	const view = routes[path] ? await routes[path]() : '<h1>404 Not Found</h1>';
 	const rootElement: HTMLElement | null = document.getElementById('root');
 
-	// document.getElementById('root')!.innerHTML = view;
 
 	if (rootElement) {
 		rootElement.innerHTML = view;
@@ -150,6 +151,7 @@ async function renderPage() {
 			setTimeout(() => {
 				initScrollAnimations();
 				initThemeToggle();
+				initLanguageSelector();
 			}, 100);
 			break;
 		case '/dashboard':
@@ -159,22 +161,26 @@ async function renderPage() {
 				initThemeToggle();
 				initProfilePage();
 				updateRecentContacts();
+				initLanguageSelector();
 			}, 100);
 			break;
 		case '/updateInfos':
 			initThemeToggle();
 			displayDarkModeButton();
+			initLanguageSelector();
 			updateInfos();
 			displayChatButton();
 			break;
 		case '/register':
 			initThemeToggle();
 			displayDarkModeButton();
+			initLanguageSelector();
 			registerUser();
 			break;
 		case '/login':
 			initThemeToggle();
 			displayDarkModeButton();
+			initLanguageSelector();
 			logUser();
 			break;
 		case '/pong/matchmaking/game':
@@ -226,6 +232,7 @@ async function renderPage() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+	await initializeLanguage();
 	updateUserProfile();
 	updateUserProfilePong();
 
@@ -245,5 +252,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	// 6. Rendu initial
 	await renderPage();
-	// pongGame();
 });

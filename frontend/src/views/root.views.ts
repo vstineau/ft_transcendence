@@ -1,10 +1,9 @@
-// import { updateUserProfile } from '../graph/profileSnakeFr';
 
 export async function RootView() {
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
 			</h1>
 		</div>
@@ -18,12 +17,12 @@ export async function RootView() {
 
 			<!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes changer la taille de base du bloc de profil -->
 				<div class="row-span-2 bg-white rounded-xl shadow-lg p-4">
-					<div class="flex items-start mb-14 ml-3 mt-2">
+					<div class="flex items-start mb-6 ml-3 mt-10">
 						<div id="profile-avatar-container" class="w-32 h-32 bg-gray-200 rounded-xl overflow-hidden">
                         	<!-- L'avatar ou le fallback sera injecté ici -->
 						</div>
 
-							<div class="ml-6">
+							<div class="ml-5">
 								<h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
 
 								<!-- NOM UTILISATEUR -->
@@ -34,17 +33,17 @@ export async function RootView() {
 							</div>
 						</div>
 
-						<div class="flex space-x-6 ml-3 mt-auto"">
-								<a href="/statisticsSnake" class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition">View</a>
-								<a href="/updateInfos" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition">Edit</a>
+						<div class="flex space-x-6 ml-3 mt-6">
+								<a href="/statisticsSnake" class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition" data-translate="dashboard.view">View</a>
+								<a href="/updateInfos" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition" data-translate="dashboard.edit">Edit</a>
 						</div>
 					</div>
 
 					<!-- Bloc Games played - 1 colonne, 1 ligne -->
 					<div class="row-span-1 bg-white rounded-xl shadow-lg p-4">
 						<a href="/statisticsSnake" class="text-left">
-							<p class="font-montserrat text-black text-base">Snake stats</p>
-							<p class="font-montserrat text-gray-400 text-sm mb-2">Your max size</p>
+							<p class="font-montserrat text-black text-base" data-translate="dashboard.snakeStats">Snake stats</p>
+							<p class="font-montserrat text-gray-400 text-sm mb-2" data-translate="dashboard.yourMaxSize">Your max size</p>
 							<span class="text-4xl font-bold text-black" data-stat="max-size"></span>
 						</a>
 					</div>
@@ -52,18 +51,19 @@ export async function RootView() {
 					<!-- Bloc Pong Game - 3 colonnes, 2 lignes -->
 					<div class="row-span-2 bg-white rounded-xl shadow-lg p-4" style="grid-column: 3 / 5">
 						<div class="flex items-center justify-items-center mb-4">
-							<h3 class="font-montserrat font-bold text-6xl">Games</h3>
+							<h3 class="font-montserrat font-bold text-6xl" data-translate="dashboard.games">Games</h3>
 						</div>
 
 						<p class="font-montserrat font-medium text-gray-700 text-sm leading-5 mb-4">
-							Pong is one of the first computer games that ever created, the goal is to defeat your opponent.<br><br>
-							For Snake you must keep the snake from colliding with both other obstacles and itself.
+							<span data-translate="games.pong.description">Pong is one of the first computer games that ever created, the goal is to defeat your opponent.</span><br><br>
+							<span data-translate="games.snake.description">For Snake you must keep the snake from colliding with both other obstacles and itself.</span>
 						</p>
 
 						<div class="flex mt-4">
 							<a
 								href="/games"
 								class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition"
+								data-translate="dashboard.play"
 								>Play</a
 							>
 						</div>
@@ -72,22 +72,42 @@ export async function RootView() {
 					<!-- Bloc Success rate - 1 colonne, 1 ligne -->
 					<div class="row-span-1 bg-white rounded-xl shadow-lg p-4">
 						<a href="/statisticsPong" class="text-left">
-							<p class="font-montserrat text-black text-base">Pong stats</p>
-							<p class="font-montserrat text-gray-400 text-sm mb-2">Your max speed</p>
-							<span class="text-4xl font-bold text-black" data-stat="max-speed"></span>
+							<p class="font-montserrat text-black text-base mb-2" data-translate="dashboard.pongStats">Pong stats</p>
+							<p class="text-4xl font-bold text-black">
+								86<span class="text-4xl font-normal text-gray-300">%</span>
+							</p>
 						</a>
 					</div>
 
 					<!-- Bloc Let's talk - 4 colonnes, 1 ligne -->
 					<div class="bg-white rounded-xl shadow-lg p-8" style="grid-column: 1 / 3; grid-row: 3">
 						<div class="h-full flex flex-col justify-between">
-							<h3 class="font-montserrat font-bold text-6xl mb-6">Let's talk</h3>
-							<div id="recent-contacts-container" class="flex items-start space-x-6">
-								<!-- Le contenu sera injecte dynamiquement -->
+							<h3 class="font-montserrat font-bold text-6xl mb-6" data-translate="dashboard.letsTalk">Let's talk</h3>
+
+							<div class="flex items-start space-x-6">
 								<div class="text-center">
-									<div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl">
-										Loading...
+									<div
+										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
+									>
+										L
 									</div>
+									<span class="text-xs text-gray-600">@LeoApple</span>
+								</div>
+								<div class="text-center">
+									<div
+										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
+									>
+										M
+									</div>
+									<span class="text-xs text-gray-600">@MaxDragon</span>
+								</div>
+								<div class="text-center">
+									<div
+										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
+									>
+										F
+									</div>
+									<span class="text-xs text-gray-600">@FatimaPing</span>
 								</div>
 							</div>
 						</div>
@@ -99,17 +119,27 @@ export async function RootView() {
 							<!-- Welcome Back - moitié haute -->
 							<div class="flex-1 bg-white rounded-xl shadow-lg p-4">
 								<h3 class="font-montserrat font-bold text-6xl">
-									Welcome<br /><span class="text-gray-400">Back</span>
+									<span data-translate="dashboard.welcome">Welcome</span><br /><span class="text-gray-400" data-translate="dashboard.back">Back</span>
 								</h3>
 							</div>
 
 							<div class="flex-1 flex gap-3">
+								<!-- Language Selector -->
+								<div class="flex-1 bg-white rounded-xl shadow-lg p-3 flex flex-col">
+									<p class="font-montserrat text-base mb-2">Language</p>
+									<select id="language-selector" class="flex-1 bg-transparent border-none outline-none cursor-pointer text-sm">
+										<option value="en">ENGLISH</option>
+										<option value="fr">FRANCAIS</option>
+										<option value="es">ESPANOL</option>
+									</select>
+								</div>
+
 								<!-- Light mode avec soleil centre -->
 								<div
 									id="dash-theme-toggle"
 									class="flex-1 bg-white rounded-xl shadow-lg p-3 flex flex-col cursor-pointer hover:bg-gray-50 transition-colors"
 								>
-									<p class="font-montserrat text-base mb-2" id="dash-theme-text">Light mode</p>
+									<p class="font-montserrat text-base mb-2" id="dash-theme-text" data-translate="dashboard.lightMode">Light mode</p>
 									<div class="flex-1 flex items-center justify-center">
 										<span class="text-6xl transition-transform hover:scale-110" id="dash-theme-icon">☼</span>
 									</div>
@@ -120,7 +150,7 @@ export async function RootView() {
 									href="/updateInfos"
 									class="flex-1 bg-black hover:bg-gray-800 text-white rounded-xl shadow-lg p-3 flex flex-col"
 								>
-									<p class="font-montserrat text-white text-base mb-2">Settings</p>
+									<p class="font-montserrat text-white text-base mb-2" data-translate="dashboard.settings">Settings</p>
 								</a>
 							</div>
 						</div>
@@ -135,6 +165,7 @@ export async function RootView() {
 			id="logout"
 			class="font-montserrat fixed top-4 right-4 z-50 bg-black hover:bg-gray-600 text-white text-sm py-2 px-4 rounded-lg"
 			style="display: none;"
+			data-translate="nav.logout"
 		>
 			Logout
 		</button>
@@ -151,12 +182,12 @@ export async function WelcomeView() {
         <!-- Section Hero - écran complet SANS le titre -->
         <div class="hero-section h-screen flex flex-col justify-center items-center bg-gray-100 relative">
             <div class="hero-content text-center pt-20">
-                <p class="text-gray-600 text-lg mb-8 mt-8">Choose your adventure.</p>
+                <p class="text-gray-600 text-lg mb-8 mt-8" data-translate="welcome.subtitle">Choose your adventure.</p>
             </div>
 
             <!-- Indicateur de scroll en bas -->
             <div class="scroll-indicator absolute bottom-12 left-1/2 transform -translate-x-1/2">
-                <span class="text-gray-500 text-sm block mb-2">scroll</span>
+                <span class="text-gray-500 text-sm block mb-2" data-translate="welcome.scroll">scroll</span>
                 <div class="w-px h-8 bg-gray-200 mx-auto animate-pulse"></div>
             </div>
         </div>
@@ -164,36 +195,48 @@ export async function WelcomeView() {
         <!-- Section avec les blocs -->
         <div class="content-section min-h-screen bg-gray-100 py-16">
             <div class="max-w-4xl mx-auto px-8">
+                <!-- Language Selector - en haut à droite -->
+                <div class="flex justify-end mb-8">
+                    <div class="bg-white rounded-lg shadow-sm p-2">
+                        <select id="language-selector-welcome" class="bg-transparent border-none outline-none cursor-pointer text-sm">
+                            <option value="en">🇺🇸 EN</option>
+                            <option value="fr">🇫🇷 FR</option>
+                            <option value="es">🇪🇸 ES</option>
+                        </select>
+                    </div>
+                </div>
+
                 <!-- Container des blocs en grid simple -->
                 <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 200px 200px 200px; max-width: 600px;">
 
                     <!-- Bloc Sign up - Plus large -->
                     <a href="/login" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors ">
-                        <p class="font-montserrat font-medium text-white text-base mb-2">Sign in</p>
+                        <p class="font-montserrat font-medium text-white text-base mb-2" data-translate="auth.signIn">Sign in</p>
                     </a>
 
                     <!-- Bloc Light mode - Carré -->
                     <div id="theme-toggle" class="bg-white rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col cursor-pointer hover:bg-gray-50 transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600" id="theme-text">Light mode</p>
-					<div class="flex-1 flex items-center justify-center">
-						<span class="text-3xl" id="theme-icon">☼</span>
-					</div>
-				</div>
+                        <p class="font-montserrat font-medium text-base text-gray-600" id="theme-text" data-translate="dashboard.lightMode">Light mode</p>
+                        <div class="flex-1 flex items-center justify-center">
+                            <span class="text-3xl" id="theme-icon">☼</span>
+                        </div>
+                    </div>
 
                     <!-- Bloc Games - Carré -->
                     <a href="/games" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
-					<p class="font-montserrat font-medium text-base text-gray-600">Games</p>
-					<div class="flex-1 flex items-center justify-center">
-						<span class="text-2xl">▶</span>
-					</div>
-					</a>
-            	</div>
-			</div>
-			<!-- Bouton Create an account - Large en dessous -->
-			<div class="mt-4" style="max-width: 616px; margin-left: auto; margin-right: auto;">
-                    <a href="/register" class="font-montserrat block bg-black hover:bg-gray-800 text-white py-4 rounded-xl font-medium text-lg transition-colors text-center" >
+                        <p class="font-montserrat font-medium text-base text-gray-600" data-translate="nav.games">Games</p>
+                        <div class="flex-1 flex items-center justify-center">
+                            <span class="text-2xl">▶</span>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Bouton Create an account - Large en dessous -->
+                <div class="mt-4" style="max-width: 616px; margin-left: auto; margin-right: auto;">
+                    <a href="/register" class="font-montserrat block bg-black hover:bg-gray-800 text-white py-4 rounded-xl font-medium text-lg transition-colors text-center" data-translate="auth.createAccount">
                         Create an account
                     </a>
+                </div>
             </div>
         </div>
     </div>
@@ -317,232 +360,6 @@ export async function GamesView() {
 			</div>
 	`;
 }
-
-// export async function StatsPongView() {
-// 	return /* HTML */ `
-// 	<!-- Titre FT_TRANSCENDENCE en haut -->
-// 		<div class="bg-gray-100 py-2">
-// 			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
-// 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
-// 			</h1>
-// 		</div>
-
-// 		<div class="content-section min-h-screen bg-gray-100 py-16">
-//         <div class="max-w-7xl mx-auto px-8">
-//             <!-- Container des blocs en grid complexe -->
-//             <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
-
-// 			<!-- Bloc My Profile -->
-// 				<div class="bg-white rounded-xl shadow-lg p-6">
-// 					<h3 class="font-bold text-lg mb-4">My profil</h3>
-// 					<div class="flex items-center mb-4">
-
-// 						<div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden">
-//                         	<!-- L'avatar ou le fallback sera injecté ici -->
-// 						</div>
-
-// 						<div class="ml-2 mt-12">
-// 							 <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
-
-// 							<!-- NOM UTILISATEUR -->
-// 							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
-// 						</div>
-// 					</div>
-// 					<div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
-// 						<div class="flex flex-col">
-// 							<span class="text-gray-600">Classement</span>
-// 							<span class="font-semibold" data-stat="classement">-</span>
-// 						</div>
-// 						<div class="flex flex-col">
-// 							<span class="text-gray-600">Max speed</span>
-// 							<span class="font-semibold" data-stat="max-size">-</span>
-// 						</div>
-// 						<div class="flex flex-col">
-// 							<span class="text-gray-600">Average speed</span>
-// 							<span class="font-semibold" data-stat="average-size">-</span>
-// 						</div>
-// 						<div class="flex flex-col">
-// 							<span class="text-gray-600">Total goals scored</span>
-// 							<span class="font-semibold" data-stat="eaten-apples">-</span>
-// 						</div>
-// 					</div>
-// 				</div>
-
-// 				<!-- Bloc Last Games -->
-// 				<div class="bg-white rounded-xl shadow-lg p-6">
-// 				<h3 class="font-bold text-lg mb-4">Last games</h3>
-// 					<div id="last-games-content" class="space-y-3">
-// 						<!-- Le contenu sera injecté ici par JavaScript -->
-// 						<div class="flex flex-col items-center justify-center py-8 text-center">
-// 							<p class="text-gray-500 text-sm">Loading...</p>
-// 						</div>
-// 					</div>
-// 				</div>
-
-// 				<!-- Bloc My Stats - Distribution des scores -->
-// 				<div class="bg-white rounded-xl shadow-lg p-6">
-// 					<h3 class="font-bold text-lg mb-4">My stats</h3>
-// 					<p class="text-gray-800 text-sm">Length distribution</p>
-// 					<p class="text-gray-500 text-sm mb-4">Your most common final sizes</p>
-// 					<canvas id="scoreDistributionChart" width="250" height="180"></canvas>
-// 				</div>
-
-// 				<!-- Bloc Global Ranking -->
-// 				<div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
-// 					<h3 class="font-bold text-lg mb-4">Global Ranking</h3>
-// 					<div class="overflow-x-auto">
-// 						<table id="ranking-table" class="w-full text-sm">
-// 							<thead>
-// 								<tr class="border-b">
-// 									<th class="text-left py-2">Date</th>
-// 									<th class="text-left py-2">Player</th>
-// 									<th class="text-left py-2">Match wins</th>
-// 									<th class="text-left py-2">Max speed</th>
-// 									<th class="text-left py-2">Best Time</th>
-// 								</tr>
-// 							</thead>
-// 							<tbody>
-// 								<tr>
-// 									<td colspan="5" class="py-8 text-center text-gray-500 text-sm">
-// 										Loading rankings...
-// 									</td>
-// 								</tr>
-// 							</tbody>
-// 						</table>
-// 					</div>
-// 				</div>
-
-// 				<!-- Bloc Time Game - Temps de survie -->
-// 				<div class="bg-white rounded-xl shadow-lg p-6">
-// 					<h3 class="font-bold text-lg mb-4">Time game</h3>
-// 					<p class="text-gray-500 text-sm mb-4">Survival time analysis</p>
-// 					<canvas id="survivalTimeChart" width="250" height="180"></canvas>
-// 				</div>
-
-// 				<div class="mt-2 flex flex-col">
-// 					<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
-// 				</div>
-
-// 					</div>
-// 				</div>
-// 			</div>
-// 		</div>
-// 	</div>
-// 	`;
-// }
-
-// export async function StatsSnakeView() {
-// 	return /* HTML */ `
-// 	<!-- Titre FT_TRANSCENDENCE en haut -->
-// 		<div class="bg-gray-100 py-2">
-// 			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
-// 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
-// 			</h1>
-// 		</div>
-
-// 		<div class="content-section min-h-screen bg-gray-100 py-16">
-//         <div class="max-w-7xl mx-auto px-8">
-//             <!-- Container des blocs en grid complexe -->
-//             <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
-
-// 			<!-- Bloc My Profile -->
-// 				<div class="bg-white rounded-xl shadow-lg p-6">
-// 					<h3 class="font-bold text-lg mb-4">My profil</h3>
-// 					<div class="flex items-center mb-4">
-
-// 						<div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden">
-//                         	<!-- L'avatar ou le fallback sera injecté ici -->
-// 						</div>
-
-// 						<div class="ml-2 mt-12">
-// 							 <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
-
-// 							<!-- NOM UTILISATEUR -->
-// 							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
-// 						</div>
-// 					</div>
-// 					<div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
-// 						<div class="flex flex-col">
-// 							<span class="text-gray-600">Classement</span>
-// 							<span class="font-semibold" data-stat="classement">-</span>
-// 						</div>
-// 						<div class="flex flex-col">
-// 							<span class="text-gray-600">Max size</span>
-// 							<span class="font-semibold" data-stat="max-size">-</span>
-// 						</div>
-// 						<div class="flex flex-col">
-// 							<span class="text-gray-600">Average size</span>
-// 							<span class="font-semibold" data-stat="average-size">-</span>
-// 						</div>
-// 						<div class="flex flex-col">
-// 							<span class="text-gray-600">Eaten apples</span>
-// 							<span class="font-semibold" data-stat="eaten-apples">-</span>
-// 						</div>
-// 					</div>
-// 				</div>
-
-// 				<!-- Bloc Last Games -->
-// 				<div class="bg-white rounded-xl shadow-lg p-6">
-// 				<h3 class="font-bold text-lg mb-4">Last games</h3>
-// 					<div id="last-games-content" class="space-y-3">
-// 						<!-- Le contenu sera injecté ici par JavaScript -->
-// 						<div class="flex flex-col items-center justify-center py-8 text-center">
-// 							<p class="text-gray-500 text-sm">Loading...</p>
-// 						</div>
-// 					</div>
-// 				</div>
-
-// 				<!-- Bloc My Stats - Distribution des scores -->
-// 				<div class="bg-white rounded-xl shadow-lg p-6">
-// 					<h3 class="font-bold text-lg mb-4">My stats</h3>
-// 					<p class="text-gray-800 text-sm">Length distribution</p>
-// 					<p class="text-gray-500 text-sm mb-4">Your most common final sizes</p>
-// 					<canvas id="scoreDistributionChart" width="250" height="180"></canvas>
-// 				</div>
-
-// 				<!-- Bloc Global Ranking -->
-// 				<div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
-// 					<h3 class="font-bold text-lg mb-4">Global Ranking</h3>
-// 					<div class="overflow-x-auto">
-// 						<table id="ranking-table" class="w-full text-sm">
-// 							<thead>
-// 								<tr class="border-b">
-// 									<th class="text-left py-2">Date</th>
-// 									<th class="text-left py-2">Player</th>
-// 									<th class="text-left py-2">Match wins</th>
-// 									<th class="text-left py-2">Max size</th>
-// 									<th class="text-left py-2">Best Time</th>
-// 								</tr>
-// 							</thead>
-// 							<tbody>
-// 								<tr>
-// 									<td colspan="5" class="py-8 text-center text-gray-500 text-sm">
-// 										Loading rankings...
-// 									</td>
-// 								</tr>
-// 							</tbody>
-// 						</table>
-// 					</div>
-// 				</div>
-
-// 				<!-- Bloc Time Game - Temps de survie -->
-// 				<div class="bg-white rounded-xl shadow-lg p-6">
-// 					<h3 class="font-bold text-lg mb-4">Time game</h3>
-// 					<p class="text-gray-500 text-sm mb-4">Survival time analysis</p>
-// 					<canvas id="survivalTimeChart" width="250" height="180"></canvas>
-// 				</div>
-
-// 				<div class="mt-2 flex flex-col">
-// 					<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
-// 				</div>
-
-// 					</div>
-// 				</div>
-// 			</div>
-// 		</div>
-// 	</div>
-// 	`;
-// }
 
 function createStatsView(gameType: 'snake' | 'pong') {
     const config = {
@@ -704,48 +521,60 @@ export async function LoginView() {
 			<!--conteneur principal-->
 			<div class="max-w-md w-full bg-white rounded-2xl shadow-sm p-8">
 
-			<!-- Titre -->
-			<h2 class="text-2xl font-semibold text-center text-black mb-8">Welcome back !</h2>
-			<form id="login-form" class="space-y-4">
+                <!-- Language Selector en haut à droite du formulaire -->
+                <div class="flex justify-end mb-4">
+                    <select id="language-selector-login" class="bg-gray-100 border-none outline-none cursor-pointer text-sm p-2 rounded">
+                        <option value="en">🇺🇸 EN</option>
+                        <option value="fr">🇫🇷 FR</option>
+                        <option value="es">🇪🇸 ES</option>
+                    </select>
+                </div>
 
-				<!--login-->
-				<input
-					autocomplete="off"
-					type="login"
-					name="login"
-					id="login"
-					placeholder="login"
-					class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
-					required
-                />
+                <!-- Titre -->
+                <h2 class="text-2xl font-semibold text-center text-black mb-8" data-translate="auth.welcomeBack">Welcome back !</h2>
+                <form id="login-form" class="space-y-4">
 
-				<!-- Mot de passe -->
-				<input
-					type="password"
-					name="password"
-					id="password"
-					placeholder="Password"
-					class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
-					required
-				/>
+                    <!--login-->
+                    <input
+                        autocomplete="off"
+                        type="login"
+                        name="login"
+                        id="login"
+                        placeholder="login"
+                        data-translate-placeholder="auth.login"
+                        class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+                        required
+                    />
 
-				<!-- Bouton S'inscrire -->
-					<div class="flex justify-center pt-4">
-						<button
-							type="submit"
-							class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors">Sign in</button>
-					</div>
+                    <!-- Mot de passe -->
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="Password"
+                        data-translate-placeholder="auth.password"
+                        class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
+                        required
+                    />
+
+                    <!-- Bouton S'inscrire -->
+                    <div class="flex justify-center pt-4">
+                        <button
+                            type="submit"
+                            class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                            data-translate="auth.signIn">Sign in</button>
+                    </div>
                 </form>
 
-				 <!-- Lien vers connexion -->
-				<div class="mt-4 text-center">
-					<p class="text-sm text-gray-600">
-						Don't have an account ?
-						<a href="/register?/login" class="text-black hover:underline font-medium">Sign up</a>
-					</p>
-				</div>
+                <!-- Lien vers connexion -->
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-gray-600">
+                        <span data-translate="auth.noAccount">Don't have an account ?</span>
+                        <a href="/register?/login" class="text-black hover:underline font-medium" data-translate="auth.signUp">Sign up</a>
+                    </p>
+                </div>
 
-		</div>
+            </div>
 	`;
 }
 
@@ -759,8 +588,18 @@ export async function RegisterView() {
 		<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4">
 			<!-- Container principal blanc centré -->
 			<div class="max-w-md w-full bg-white rounded-2xl shadow-sm p-8">
+                
+                <!-- Language Selector -->
+                <div class="flex justify-end mb-4">
+                    <select id="language-selector-register" class="bg-gray-100 border-none outline-none cursor-pointer text-sm p-2 rounded">
+                        <option value="en">🇺🇸 EN</option>
+                        <option value="fr">🇫🇷 FR</option>
+                        <option value="es">🇪🇸 ES</option>
+                    </select>
+                </div>
+
 				<!-- Titre -->
-				<h2 class="text-2xl font-semibold text-center text-black mb-8">Create an account</h2>
+				<h2 class="text-2xl font-semibold text-center text-black mb-8" data-translate="auth.createAccount">Create an account</h2>
 
 				<!-- Formulaire -->
 				<form id="register-form" class="space-y-6">
@@ -772,6 +611,7 @@ export async function RegisterView() {
 							name="login"
 							id="login"
 							placeholder="Login"
+							data-translate-placeholder="auth.login"
 							class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
 							required
 						/>
@@ -781,6 +621,7 @@ export async function RegisterView() {
 							name="nickname"
 							id="nickname"
 							placeholder="Nickname"
+							data-translate-placeholder="auth.nickname"
 							class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
 							required
 						/>
@@ -793,6 +634,7 @@ export async function RegisterView() {
 						name="email"
 						id="mail"
 						placeholder="Email"
+						data-translate-placeholder="auth.email"
 						class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
 						required
 					/>
@@ -803,13 +645,14 @@ export async function RegisterView() {
 						name="password"
 						id="password"
 						placeholder="Mot de passe"
+						data-translate-placeholder="auth.password"
 						class="w-full px-0 py-3 border-0 border-b border-black focus:outline-none focus:border-black transition-colors bg-transparent"
 						required
 					/>
 
 					<!-- Upload de fichier -->
 					<div class="space-y-2">
-						<label class="block text-sm text-gray-600">Photo de profil (optionnel)</label>
+						<label class="block text-sm text-gray-600" data-translate="auth.profilePicture">Photo de profil (optionnel)</label>
 						<input
 							type="file"
 							name="avatar"
@@ -829,7 +672,7 @@ export async function RegisterView() {
 								value="1"
 								class="w-4 h-4 accent-black focus:outline-none"
 							/>
-							<label for="enable2fa" class="text-sm text-gray-700"> Enable dual authentication </label>
+							<label for="enable2fa" class="text-sm text-gray-700" data-translate="auth.enable2fa"> Enable dual authentication </label>
 						</div>
 					</div>
 
@@ -838,6 +681,7 @@ export async function RegisterView() {
 						<button
 							type="submit"
 							class="w-1/2 bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+							data-translate="auth.signUp"
 						>
 							Sign up
 						</button>
@@ -847,18 +691,18 @@ export async function RegisterView() {
 				<!-- infos private privacy -->
 				<div class="mt-6 text-center">
 					<p class="text-sm text-gray-600">
-						Signing up for a Ft_transcendence means you agree to the .
-						<a href="/privacy" class="text-black hover:underline font-medium">Privacy Policy</a>
-						and
-						<a href="/terms" class="text-black hover:underline font-medium">Terms of Service</a>.
+						<span data-translate="auth.agreeTerms">Signing up for a Ft_transcendence means you agree to the .</span>
+						<a href="/privacy" class="text-black hover:underline font-medium" data-translate="auth.privacyPolicy">Privacy Policy</a>
+						<span data-translate="auth.and"> and </span>
+						<a href="/terms" class="text-black hover:underline font-medium" data-translate="auth.termsOfService">Terms of Service</a>.
 					</p>
 				</div>
 
 				<!-- Lien vers connexion -->
 				<div class="mt-6 text-center">
 					<p class="text-sm text-gray-600">
-						Have an account ?
-						<a href="/login" class="text-black hover:underline font-medium">Sign in</a>
+						<span data-translate="auth.haveAccount">Have an account ?</span>
+						<a href="/login" class="text-black hover:underline font-medium" data-translate="auth.signIn">Sign in</a>
 					</p>
 				</div>
 
@@ -898,14 +742,25 @@ export async function UpdateInfosview() {
 	<div class="min-h-screen bg-gray-100 py-8 px-4">
 		<div class="max-w-4xl mx-auto">
 
+			<!-- Language Selector en haut à droite -->
+			<div class="flex justify-end mb-8">
+				<div class="bg-white rounded-lg shadow-sm p-2">
+					<select id="language-selector-settings" class="bg-transparent border-none outline-none cursor-pointer text-sm">
+						<option value="en">🇺🇸 EN</option>
+						<option value="fr">🇫🇷 FR</option>
+						<option value="es">🇪🇸 ES</option>
+					</select>
+				</div>
+			</div>
+
 			<!-- creer les onglets-->
 			<div class="flex border-b border-gray-300 mb-8">
-				<button class="tab-button active px-6 px-3 front-medium font-montserrat text-sm focus:outline-none border-b-2 transition-colors" data-tab="profil">
+				<button class="tab-button active px-6 px-3 front-medium font-montserrat text-sm focus:outline-none border-b-2 transition-colors" data-tab="profil" data-translate="settings.profile">
 					Profil
 				</button>
 
 				<button
-					class="font-montserrat tab-button px-6 py-3 font-medium text-sm focus:outline-none border-b-2 transition-colors" data-tab="general">
+					class="font-montserrat tab-button px-6 py-3 font-medium text-sm focus:outline-none border-b-2 transition-colors" data-tab="general" data-translate="settings.general">
 					General
 				</button>
 			</div>
@@ -932,7 +787,7 @@ export async function UpdateInfosview() {
 									✍︎
 									</button>
 								</div>
-								<p class="font-montserrat text-sm text-gray-500">Profil settings</p>
+								<p class="font-montserrat text-sm text-gray-500" data-translate="settings.profileSettings">Profil settings</p>
 							</div>
 						</div>
                     </div>
@@ -942,15 +797,15 @@ export async function UpdateInfosview() {
                             <div class="space-y-2">
                                 <button class="font-montserrat menu-item active w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="change-password">
                                     <span class="w-5 h-5 mr-3 text-lg">ꗃ</span>
-                                    Change password
+                                    <span data-translate="settings.changePassword">Change password</span>
                                 </button>
                                 <button class="font-montserrat menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center"  data-content="dual-authentication">
                                     <span class="w-5 h-5 mr-3 text-lg">✓</span>
-                                    Dual authentication
+                                    <span data-translate="settings.dualAuth">Dual authentication</span>
                                 </button>
                                 <button class="font-montserrat menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center"  data-content="profile-picture">
                                     <span class="w-5 h-5 mr-3">👤</span>
-                                    Profile picture
+                                    <span data-translate="settings.profilePicture">Profile picture</span>
                                 </button>
                             </div>
                         </div>
@@ -958,18 +813,13 @@ export async function UpdateInfosview() {
                         <!-- Menu latéral pour onglet General (caché par défaut) -->
                         <div id="general-menu" class="tab-menu hidden">
                             <div class="space-y-2">
-                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="language">
-                                    <span class="w-5 h-5 mr-3">🗣</span>
-                                    Langage
-                                </button>
                                 <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="privacy-policy">
                                     <span class="w-5 h-5 mr-3 text-lg">⚖︎</span>
-                                    General privacy police<br>
-									& terms of service
+                                    <span data-translate="settings.privacyTerms">General privacy police<br>& terms of service</span>
                                 </button>
                                 <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="delete">
                                     <span class="w-5 h-5 mr-3">🗑</span>
-                                    Delete your account
+                                    <span data-translate="settings.deleteAccount">Delete your account</span>
                                 </button>
                             </div>
                         </div>
@@ -985,7 +835,9 @@ export async function UpdateInfosview() {
 
 						<!-- Bouton retour -->
 						<div class="mt-8 text-center">
-							<a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+							<a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">
+								<span data-translate="settings.backToDashboard">← Retour au Dashboard</span>
+							</a>
 						</div>
 					</div>
 				</div>
