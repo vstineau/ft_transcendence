@@ -1,6 +1,5 @@
 import { PongGameHistory } from '../types/pongTypes';
 import { formatGameTime, formatDate } from '../graph/init';
-// import { history } from '../../../backend/app/snake/historySnake';
 
 export let currentGames: PongGameHistory[] = [];
 

@@ -1,4 +1,4 @@
-// import { updateUserProfile } from '../graph/profileSnakeFr';
+import { showProfileDetails } from '../user/popProfile'
 
 export async function RootView() {
 	return /* HTML */ `
@@ -34,9 +34,9 @@ export async function RootView() {
 							</div>
 						</div>
 
-						<div class="flex space-x-6 ml-3 mt-auto"">
-								<a href="/statisticsSnake" class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition">View</a>
-								<a href="/updateInfos" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition">Edit</a>
+						<div class="flex space-x-6 ml-3 mt-auto">
+							<div class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition cursor-pointer" onclick="showProfileDetails()">View</div>
+							<a href="/updateInfos" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition">Edit</a>
 						</div>
 					</div>
 
