@@ -288,12 +288,13 @@ function checkSubmited(container: HTMLDivElement) {
 }
 
 // shows count down before game starts
-export function showCountdown() {
+export function showCountdown(element: HTMLElement) {
 	const container = document.createElement('div');
 	container.className = `
 		fixed top-0 left-0 w-screen h-screen flex flex-col justify-center items-center
 		z-50
 	`;
+	container.id = 'countDown'
 	const label = document.createElement('div');
 	label.textContent = 'Game start in';
 	label.className = `
@@ -311,7 +312,7 @@ export function showCountdown() {
 	`;
 	container.appendChild(label);
 	container.appendChild(number);
-	form.appendChild(container);
+	element.appendChild(container);
 	const values = ['3', '2', '1'];
 	let idx = 0;
 	const fadeIn = () => {
@@ -595,7 +596,7 @@ function showNextMatch() {
 	roundButton.addEventListener('click', () => {
 		form.innerHTML = '';
 		initGame(tournament.rounds.games[currentRound][currentMatch]);
-		showCountdown();
+		showCountdown(form);
 		setTimeout(() => {
 			gameStart = true;
 			startMainLoop(tournament.rounds.games[currentRound][currentMatch]);

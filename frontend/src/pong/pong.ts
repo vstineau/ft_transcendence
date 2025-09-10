@@ -1,6 +1,7 @@
 import io, { Socket } from 'socket.io-client';
 import { Game, Player } from '../types/pongTypes';
 import { navigateTo } from '../main';
+import { showCountdown } from './tournament';
 // import { Socket } from 'socket.io';
 
 export function getCookie(name: string) {
@@ -17,6 +18,9 @@ export function createPongSocket(): Socket {
 
 	let socket = io(`${protocol}//${host}:${port}/pong`);
 	socket.on('connect', () => {
+		console.log(`gameOver ${gameOver}`);
+		console.log(`lastGame ${lastGame}`);
+		console.log(`winner ${winner}`);
 		console.log('socket pong create');
 		let cookie = getCookie('token');
 		socket.emit('initGame', cookie);
@@ -31,7 +35,6 @@ let ctx: CanvasRenderingContext2D | null = null;
 let win_width = window.innerWidth;
 let win_height = window.innerHeight;
 let gameOver = false;
-let started = false;
 
 function initCanvas(socket: Socket) {
 	canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
@@ -97,22 +100,14 @@ function listenUserInputs(socket: Socket) {
 		}
 		if (gameOver && e.key === 'Escape') {
 			gameOver = false;
-			started = false;
 			winner = null;
 			lastGame = null;
+			// canvas = null;
+			ctx = null;
 			if (socket && socket.connected) {
 				socket.disconnect();
 			}
 			navigateTo('/dashboard');
-		} else if (gameOver && e.key === 'Enter') {
-			gameOver = false;
-			started = false;
-			winner = null;
-			lastGame = null;
-			if (socket && socket.connected) {
-				socket.disconnect();
-			}
-			navigateTo('/pong/matchmaking/game');
 		}
 	});
 
@@ -129,16 +124,16 @@ function listenUserInputs(socket: Socket) {
 		if (gameOver && winner && lastGame) drawWinner(winner, lastGame);
 		// socket.emit('resize');
 	});
+	window.addEventListener('beforeunload', () => {
+		if (socket && socket.connected) {
+			socket.disconnect();
+			socket.off();
+			gameOver = false;
+			winner = null;
+			lastGame = null;
+		}
+	});
 }
-
-// Variables pour gérer le bouton
-let gameOverButton = {
-	x: 0,
-	y: 0,
-	width: 0,
-	height: 0,
-	visible: false,
-};
 
 // Gestion du clic sur le canvas
 
@@ -180,12 +175,7 @@ function drawWinner(winner: Player, game: Game) {
 	ctx.fillStyle = 'white';
 	ctx.textAlign = 'center';
 	ctx.font = `${40 * (scale_y < scale_x ? scale_y : scale_y)}px Arial`;
-	ctx.fillText(
-		winner.nickName + ' wins press `Enter` to play again',
-		canvas.width * 0.5,
-		canvas.height * 0.33,
-		canvas.width * 0.4
-	);
+	ctx.fillText(winner.nickName + ' wins', canvas.width * 0.5, canvas.height * 0.33, canvas.width * 0.4);
 	ctx.fillText('Press `Escape` to return to dashboard', canvas.width * 0.5, canvas.height * 0.73, canvas.width * 0.4);
 	return;
 }
@@ -237,8 +227,17 @@ export function keyHandler(socket: Socket) {
 }
 
 export async function pongGame() {
+	let countdown = false;
 	const socket = createPongSocket();
 	listenUserInputs(socket);
+	socket.on('countdown', () => {
+		if (!countdown) {
+			ctx!.clearRect(0, 0, canvas.width, canvas.height); // clear full screen
+			countdown = true;
+			const element = document.getElementById('pongGame') as HTMLElement;
+			if (element) showCountdown(element);
+		}
+	});
 	// socket.onAny((eventName, ...args) => {});
 	socket.on('notLogged', () => {
 		navigateTo('/login?/pong/matchmaking/game');
@@ -253,14 +252,13 @@ export async function pongGame() {
 		}
 		gameOver = true;
 		if (gameOver && winner && lastGame) {
+			const container = document.getElementById('countDown');
+			container?.remove();
 			drawWinner(winner, lastGame);
 		}
 	});
 	// Main game loop (frame update)
 	socket.on('gameState', (game: Game) => {
-		if (!started) {
-			started = true;
-		}
 		drawGame(game);
 	});
 	socket.on('p1Name', (name: string) => {

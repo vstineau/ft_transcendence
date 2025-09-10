@@ -4,6 +4,7 @@ export interface Game {
     ball: Ball;
     win: Window;
     over: boolean;
+    started: boolean;
 }
 
 export interface Player {

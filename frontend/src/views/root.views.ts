@@ -926,7 +926,7 @@ export async function UpdateInfosview() {
 export async function PongCanvas() {
 	// gameCanvas
 	return /* HTML */ `
-		<div class="flex items-center justify-center w-screen h-screen bg-gray-900">
+		<div id="pongGame" class="flex items-center justify-center w-screen h-screen bg-gray-900">
 			<!-- Colonne gauche : Joueur 1 -->
 			<div id="playerOne" class="flex flex-col items-end mr-8">
 				<div id="p1Name" class="font-bold text-xl text-white mb-4"></div>
