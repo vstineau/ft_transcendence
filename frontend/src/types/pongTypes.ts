@@ -1,5 +1,5 @@
 // import { initPlayer } from '../pong/tournament';
-// import { initGame } from '../../../backend/app/snake/snake';
+// import { initGame } from '../../../backend/app/pong/pong';
 // import { playerEntrance } from '../../../backend/app/pong/tournament';
 
 export interface Game {
@@ -145,4 +145,48 @@ export interface Ball {
 export interface Window {
 	width: number;
 	height: number;
+}
+
+export interface PongGameHistory{
+	gamecount?: number;
+	type?: string;
+	date?: string;
+	opponent?: string;
+	score?: string;
+	win?: string;
+	finalBallSpeed?: number;
+	gameTime?: number;
+    opponentLogin?: string;
+
+    opponentStats?: {
+        finalBallSpeed?: number;
+        gameTime?: number;
+
+    } | null;
+}
+
+export interface PongPlayerRanking{
+	login: string;
+    nickName: string;
+    totalWins: number;
+    totalGames: number;
+    maxSpeed: number;
+    bestTime: number;
+    lastGameDate: string;
+}
+
+export interface ProfilePong{
+	 user: {
+        login: string;
+        nickName: string;
+        avatar?: string;
+    };
+    stats: {
+        ranking: number;
+        maxSpeed: number;
+        averageSpeed: number;
+        totalGoals: number;
+        totalGames: number;
+        totalWins: number;
+    };
 }

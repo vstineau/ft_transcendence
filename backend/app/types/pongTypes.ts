@@ -4,6 +4,7 @@ export interface Game {
     ball: Ball;
     win: Window;
     over: boolean;
+	gameStart?: number;
     started: boolean;
 }
 
@@ -19,7 +20,7 @@ export interface Player {
     key_up: boolean;
     key_down: boolean;
     avatar: string | undefined;
-    login: string;
+    uid: string;
 }
 
 export interface Ball {

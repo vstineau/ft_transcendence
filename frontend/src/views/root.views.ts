@@ -1,30 +1,29 @@
-// import { promises } from 'readline';
+// import { updateUserProfile } from '../graph/profileSnakeFr';
 
 export async function RootView() {
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
 			</h1>
 		</div>
 
-		<!-- Section avec les blocs -->
-		<div class="content-section min-h-screen bg-gray-100 py-16">
-			<div class="max-w-7xl mx-auto px-8 ">
-				<!-- Container des blocs en grid complexe -->
-				<div
-					class="grid gap-3 auto-rows-min mx-auto mt-36 justify-center"
-					style="grid-template-columns: 320px 150px 280px 150px; max-width: 1000px;"
-				>
-					<!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes changer la taille de base du bloc de profil -->
-					<div class="row-span-2 bg-white rounded-xl shadow-lg p-4">
-						<div class="flex items-start mb-6 ml-3">
-							<div id="profile-avatar-container" class="w-32 h-32 bg-gray-200 rounded-xl overflow-hidden">
-								<!-- L'avatar ou le fallback sera injecté ici -->
-							</div>
+<!-- Section avec les blocs -->
+<div class="content-section min-h-screen bg-gray-100 py-16">
+    <div class="max-w-7xl mx-auto px-8 ">
 
-							<div class="ml-5">
+        <!-- Container des blocs en grid complexe -->
+        	<div class="grid gap-3 auto-rows-min mx-auto mt-36 justify-center" style="grid-template-columns: 320px 150px 280px 150px; max-width: 1000px;">
+
+			<!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes changer la taille de base du bloc de profil -->
+				<div class="row-span-2 bg-white rounded-xl shadow-lg p-4">
+					<div class="flex items-start mb-14 ml-3 mt-2">
+						<div id="profile-avatar-container" class="w-32 h-32 bg-gray-200 rounded-xl overflow-hidden">
+                        	<!-- L'avatar ou le fallback sera injecté ici -->
+						</div>
+
+							<div class="ml-6">
 								<h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
 
 								<!-- NOM UTILISATEUR -->
@@ -35,25 +34,18 @@ export async function RootView() {
 							</div>
 						</div>
 
-						<div class="flex space-x-6 ml-3">
-							<button
-								class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition"
-							>
-								View
-							</button>
-							<a
-								href="/updateInfos"
-								class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition"
-								>Edit</a
-							>
+						<div class="flex space-x-6 ml-3 mt-auto"">
+								<a href="/statisticsSnake" class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition">View</a>
+								<a href="/updateInfos" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition">Edit</a>
 						</div>
 					</div>
 
 					<!-- Bloc Games played - 1 colonne, 1 ligne -->
 					<div class="row-span-1 bg-white rounded-xl shadow-lg p-4">
 						<a href="/statisticsSnake" class="text-left">
-							<p class="font-montserrat text-black text-base mb-2">Snake stats</p>
-							<p class="text-4xl font-bold text-black">20</p>
+							<p class="font-montserrat text-black text-base">Snake stats</p>
+							<p class="font-montserrat text-gray-400 text-sm mb-2">Your max size</p>
+							<span class="text-4xl font-bold text-black" data-stat="max-size"></span>
 						</a>
 					</div>
 
@@ -80,10 +72,9 @@ export async function RootView() {
 					<!-- Bloc Success rate - 1 colonne, 1 ligne -->
 					<div class="row-span-1 bg-white rounded-xl shadow-lg p-4">
 						<a href="/statisticsPong" class="text-left">
-							<p class="font-montserrat text-black text-base mb-2">Pong stats</p>
-							<p class="text-4xl font-bold text-black">
-								86<span class="text-4xl font-normal text-gray-300">%</span>
-							</p>
+							<p class="font-montserrat text-black text-base">Pong stats</p>
+							<p class="font-montserrat text-gray-400 text-sm mb-2">Your max speed</p>
+							<span class="text-4xl font-bold text-black" data-stat="max-speed"></span>
 						</a>
 					</div>
 
@@ -91,31 +82,12 @@ export async function RootView() {
 					<div class="bg-white rounded-xl shadow-lg p-8" style="grid-column: 1 / 3; grid-row: 3">
 						<div class="h-full flex flex-col justify-between">
 							<h3 class="font-montserrat font-bold text-6xl mb-6">Let's talk</h3>
-
-							<div class="flex items-start space-x-6">
+							<div id="recent-contacts-container" class="flex items-start space-x-6">
+								<!-- Le contenu sera injecte dynamiquement -->
 								<div class="text-center">
-									<div
-										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
-									>
-										L
+									<div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl">
+										Loading...
 									</div>
-									<span class="text-xs text-gray-600">@LeoApple</span>
-								</div>
-								<div class="text-center">
-									<div
-										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
-									>
-										M
-									</div>
-									<span class="text-xs text-gray-600">@MaxDragon</span>
-								</div>
-								<div class="text-center">
-									<div
-										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
-									>
-										F
-									</div>
-									<span class="text-xs text-gray-600">@FatimaPing</span>
 								</div>
 							</div>
 						</div>
@@ -172,7 +144,7 @@ export async function RootView() {
 export async function WelcomeView() {
 	return /* HTML */ `
         <!-- Titre isolé - position absolue dès le départ -->
-        <h1 id="main-title" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl font-bold text-black z-50">
+        <h1 id="main-title" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl font-bold text-black z-50 mb-24">
             FT<span class="text-blue-600">_</span>TRANSCENDENCE
         </h1>
 
@@ -232,7 +204,7 @@ export async function PongChoice() {
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
 			</h1>
 		</div>
@@ -259,7 +231,7 @@ export async function PongChoice() {
 						href="/pong/matchmaking/game"
 						class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors"
 					>
-						<p class="font-montserrat font-medium text-base text-gray-600">On Line</p>
+						<p class="font-montserrat font-medium text-base text-gray-600">Online</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🌏</span>
 						</div>
@@ -274,6 +246,10 @@ export async function PongChoice() {
 							<span class="text-2xl">🏆</span>
 						</div>
 					</a>
+
+					<div class="mt-2 flex flex-col">
+						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -284,7 +260,7 @@ export async function SnakeChoice() {
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
 			</h1>
 		</div>
@@ -311,11 +287,15 @@ export async function SnakeChoice() {
 						href="/snake"
 						class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors"
 					>
-						<p class="font-montserrat font-medium text-base text-gray-600">On line</p>
+						<p class="font-montserrat font-medium text-base text-gray-600">Online</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🌏</span>
 						</div>
 					</a>
+
+					<div class="mt-2 flex flex-col">
+						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -326,7 +306,7 @@ export async function GamesView() {
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
 			</h1>
 		</div>
@@ -358,181 +338,371 @@ export async function GamesView() {
 							<span class="text-2xl">🐍</span>
 						</div>
 					</a>
+
+					<div class="mt-2 flex flex-col">
+						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+					</div>
 				</div>
 			</div>
 		</div>
 	`;
 }
 
-export async function StatsPongView() {
-	return /* HTML */ `
-		<!-- Titre FT_TRANSCENDENCE en haut -->
-		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
-				FT<span class="text-blue-600">_</span>TRANSCENDENCE
-			</h1>
-		</div>
+// export async function StatsPongView() {
+// 	return /* HTML */ `
+// 		<!-- Titre FT_TRANSCENDENCE en haut -->
+// 		<div class="bg-gray-100 py-2">
+// 			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+// 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
+// 			</h1>
+// 		</div>
 
-		<div class="content-section min-h-screen bg-gray-100 py-16">
-			<div class="max-w-4xl mx-auto px-8">
-				<!-- Container des blocs en grid simple -->
-				<div
-					class="grid gap-4 mx-auto mt-36 justify-center"
-					style="grid-template-columns: 300px 300px; max-width: 600px;"
-				>
-					<a
-						href="/pong-choice"
-						class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors"
-					>
-						<p class="font-montserrat font-medium text-base text-gray-600">Pong</p>
-						<div class="flex-1 flex items-center justify-center">
-							<span class="text-2xl">🏓</span>
-						</div>
-					</a>
+// 		<div class="content-section min-h-screen bg-gray-100 py-16">
+//         <div class="max-w-7xl mx-auto px-8">
+//             <!-- Container des blocs en grid complexe -->
+//             <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
 
-					<!-- Bloc Games - Carré -->
-					<a
-						href="/snake-choice"
-						class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors"
-					>
-						<p class="font-montserrat font-medium text-base text-gray-600">Snake</p>
-						<div class="flex-1 flex items-center justify-center">
-							<span class="text-2xl">🐍</span>
-						</div>
-					</a>
-				</div>
-			</div>
-		</div>
-	`;
+// 			<!-- Bloc My Profile -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 					<h3 class="font-bold text-lg mb-4">My profil</h3>
+// 					<div class="flex items-center mb-4">
+
+// 						<div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden">
+//                         	<!-- L'avatar ou le fallback sera injecté ici -->
+// 						</div>
+
+// 						<div class="ml-2 mt-12">
+// 							 <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
+
+// 							<!-- NOM UTILISATEUR -->
+// 							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
+// 						</div>
+// 					</div>
+// 					<div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Classement</span>
+// 							<span class="font-semibold" data-stat="classement">-</span>
+// 						</div>
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Max speed</span>
+// 							<span class="font-semibold" data-stat="max-size">-</span>
+// 						</div>
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Average speed</span>
+// 							<span class="font-semibold" data-stat="average-size">-</span>
+// 						</div>
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Total goals scored</span>
+// 							<span class="font-semibold" data-stat="eaten-apples">-</span>
+// 						</div>
+// 					</div>
+// 				</div>
+
+// 				<!-- Bloc Last Games -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 				<h3 class="font-bold text-lg mb-4">Last games</h3>
+// 					<div id="last-games-content" class="space-y-3">
+// 						<!-- Le contenu sera injecté ici par JavaScript -->
+// 						<div class="flex flex-col items-center justify-center py-8 text-center">
+// 							<p class="text-gray-500 text-sm">Loading...</p>
+// 						</div>
+// 					</div>
+// 				</div>
+
+// 				<!-- Bloc My Stats - Distribution des scores -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 					<h3 class="font-bold text-lg mb-4">My stats</h3>
+// 					<p class="text-gray-800 text-sm">Length distribution</p>
+// 					<p class="text-gray-500 text-sm mb-4">Your most common final sizes</p>
+// 					<canvas id="scoreDistributionChart" width="250" height="180"></canvas>
+// 				</div>
+
+// 				<!-- Bloc Global Ranking -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
+// 					<h3 class="font-bold text-lg mb-4">Global Ranking</h3>
+// 					<div class="overflow-x-auto">
+// 						<table id="ranking-table" class="w-full text-sm">
+// 							<thead>
+// 								<tr class="border-b">
+// 									<th class="text-left py-2">Date</th>
+// 									<th class="text-left py-2">Player</th>
+// 									<th class="text-left py-2">Match wins</th>
+// 									<th class="text-left py-2">Max speed</th>
+// 									<th class="text-left py-2">Best Time</th>
+// 								</tr>
+// 							</thead>
+// 							<tbody>
+// 								<tr>
+// 									<td colspan="5" class="py-8 text-center text-gray-500 text-sm">
+// 										Loading rankings...
+// 									</td>
+// 								</tr>
+// 							</tbody>
+// 						</table>
+// 					</div>
+// 				</div>
+
+// 				<!-- Bloc Time Game - Temps de survie -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 					<h3 class="font-bold text-lg mb-4">Time game</h3>
+// 					<p class="text-gray-500 text-sm mb-4">Survival time analysis</p>
+// 					<canvas id="survivalTimeChart" width="250" height="180"></canvas>
+// 				</div>
+
+// 				<div class="mt-2 flex flex-col">
+// 					<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+// 				</div>
+
+// 					</div>
+// 				</div>
+// 			</div>
+// 		</div>
+// 	</div>
+// 	`;
+// }
+
+// export async function StatsSnakeView() {
+// 	return /* HTML */ `
+// 	<!-- Titre FT_TRANSCENDENCE en haut -->
+// 		<div class="bg-gray-100 py-2">
+// 			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+// 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
+// 			</h1>
+// 		</div>
+
+// 		<div class="content-section min-h-screen bg-gray-100 py-16">
+//         <div class="max-w-7xl mx-auto px-8">
+//             <!-- Container des blocs en grid complexe -->
+//             <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
+
+// 			<!-- Bloc My Profile -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 					<h3 class="font-bold text-lg mb-4">My profil</h3>
+// 					<div class="flex items-center mb-4">
+
+// 						<div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden">
+//                         	<!-- L'avatar ou le fallback sera injecté ici -->
+// 						</div>
+
+// 						<div class="ml-2 mt-12">
+// 							 <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
+
+// 							<!-- NOM UTILISATEUR -->
+// 							<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
+// 						</div>
+// 					</div>
+// 					<div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Classement</span>
+// 							<span class="font-semibold" data-stat="classement">-</span>
+// 						</div>
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Max size</span>
+// 							<span class="font-semibold" data-stat="max-size">-</span>
+// 						</div>
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Average size</span>
+// 							<span class="font-semibold" data-stat="average-size">-</span>
+// 						</div>
+// 						<div class="flex flex-col">
+// 							<span class="text-gray-600">Eaten apples</span>
+// 							<span class="font-semibold" data-stat="eaten-apples">-</span>
+// 						</div>
+// 					</div>
+// 				</div>
+
+// 				<!-- Bloc Last Games -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 				<h3 class="font-bold text-lg mb-4">Last games</h3>
+// 					<div id="last-games-content" class="space-y-3">
+// 						<!-- Le contenu sera injecté ici par JavaScript -->
+// 						<div class="flex flex-col items-center justify-center py-8 text-center">
+// 							<p class="text-gray-500 text-sm">Loading...</p>
+// 						</div>
+// 					</div>
+// 				</div>
+
+// 				<!-- Bloc My Stats - Distribution des scores -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 					<h3 class="font-bold text-lg mb-4">My stats</h3>
+// 					<p class="text-gray-800 text-sm">Length distribution</p>
+// 					<p class="text-gray-500 text-sm mb-4">Your most common final sizes</p>
+// 					<canvas id="scoreDistributionChart" width="250" height="180"></canvas>
+// 				</div>
+
+// 				<!-- Bloc Global Ranking -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
+// 					<h3 class="font-bold text-lg mb-4">Global Ranking</h3>
+// 					<div class="overflow-x-auto">
+// 						<table id="ranking-table" class="w-full text-sm">
+// 							<thead>
+// 								<tr class="border-b">
+// 									<th class="text-left py-2">Date</th>
+// 									<th class="text-left py-2">Player</th>
+// 									<th class="text-left py-2">Match wins</th>
+// 									<th class="text-left py-2">Max size</th>
+// 									<th class="text-left py-2">Best Time</th>
+// 								</tr>
+// 							</thead>
+// 							<tbody>
+// 								<tr>
+// 									<td colspan="5" class="py-8 text-center text-gray-500 text-sm">
+// 										Loading rankings...
+// 									</td>
+// 								</tr>
+// 							</tbody>
+// 						</table>
+// 					</div>
+// 				</div>
+
+// 				<!-- Bloc Time Game - Temps de survie -->
+// 				<div class="bg-white rounded-xl shadow-lg p-6">
+// 					<h3 class="font-bold text-lg mb-4">Time game</h3>
+// 					<p class="text-gray-500 text-sm mb-4">Survival time analysis</p>
+// 					<canvas id="survivalTimeChart" width="250" height="180"></canvas>
+// 				</div>
+
+// 				<div class="mt-2 flex flex-col">
+// 					<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+// 				</div>
+
+// 					</div>
+// 				</div>
+// 			</div>
+// 		</div>
+// 	</div>
+// 	`;
+// }
+
+function createStatsView(gameType: 'snake' | 'pong') {
+    const config = {
+        snake: {
+            title: 'Snake stats',
+            metrics: [
+                { label: 'Classement', stat: 'classement' },
+                { label: 'Max size', stat: 'max-size' },
+                { label: 'Average size', stat: 'average-size' },
+                { label: 'Eaten apples', stat: 'eaten-apples' }
+            ],
+            chartTitle: 'Length distribution',
+            chartSubtitle: 'Your most common final sizes',
+            timeTitle: 'Time game',
+            timeSubtitle: 'Survival time analysis'
+        },
+        pong: {
+            title: 'Pong stats',
+            metrics: [
+                { label: 'Classement', stat: 'classement' },
+                { label: 'Max speed', stat: 'max-speed' },
+                { label: 'Average speed', stat: 'average-speed' },
+                { label: 'Total goals', stat: 'total-goals' }
+            ],
+            chartTitle: 'Score distribution',
+            chartSubtitle: 'Your most common scores',
+            timeTitle: 'Match duration',
+            timeSubtitle: 'Game duration analysis'
+        }
+    };
+
+    const currentConfig = config[gameType];
+
+    return /* HTML */ `
+        <!-- Titre FT_TRANSCENDENCE en haut -->
+        <div class="bg-gray-100 py-2">
+            <h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
+                FT<span class="text-blue-600">_</span>TRANSCENDENCE
+            </h1>
+        </div>
+
+        <div class="content-section min-h-screen bg-gray-100 py-16">
+            <div class="max-w-7xl mx-auto px-8">
+                <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
+
+                    <!-- Bloc My Profile -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="font-bold text-lg mb-4">My profil</h3>
+                        <div class="flex items-center mb-4">
+                            <div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden"></div>
+                            <div class="ml-2 mt-12">
+                                <h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
+                                <p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
+                            ${currentConfig.metrics.map(metric => `
+                                <div class="flex flex-col">
+                                    <span class="text-gray-600">${metric.label}</span>
+                                    <span class="font-semibold" data-stat="${metric.stat}">-</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+	                    <!-- Bloc Last Games -->
+	                    <div class="bg-white rounded-xl shadow-lg p-6">
+		                        <h3 class="font-bold text-lg mb-4">Last games</h3>
+	                        <div id="last-games-content" class="space-y-3">
+		                            <div class="flex flex-col items-center justify-center py-8 text-center">
+	                                <p class="text-gray-500 text-sm">Loading...</p>
+	                            </div>
+	                        </div>
+	                    </div>
+
+	                    <!-- Bloc My Stats -->
+	                    <div class="bg-white rounded-xl shadow-lg p-6">
+	                        <h3 class="font-bold text-lg mb-4">My stats</h3>
+	                        <p class="text-gray-800 text-sm">${currentConfig.chartTitle}</p>
+                        <p class="text-gray-500 text-sm mb-4">${currentConfig.chartSubtitle}</p>
+	                        <canvas id="scoreDistributionChart" width="250" height="180"></canvas>
+	                    </div>
+
+                    <!-- Bloc Global Ranking -->
+                    <div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
+                        <h3 class="font-bold text-lg mb-4">Global Ranking</h3>
+                        <div class="overflow-x-auto">
+                            <table id="ranking-table" class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b">
+                                        <th class="text-left py-2">Date</th>
+                                        <th class="text-left py-2">Player</th>
+                                        <th class="text-left py-2">Match wins</th>
+                                        <th class="text-left py-2">Max size</th>
+                                        <th class="text-left py-2">Best Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="5" class="py-8 text-center text-gray-500 text-sm">
+                                            Loading rankings...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+	                    <!-- Bloc Time Game -->
+	                    <div class="bg-white rounded-xl shadow-lg p-6">
+	                        <h3 class="font-bold text-lg mb-4">${currentConfig.timeTitle}</h3>
+	                        <p class="text-gray-500 text-sm mb-4">${currentConfig.timeSubtitle}</p>
+	                        <canvas id="survivalTimeChart" width="250" height="180"></canvas>
+	                    </div>
+
+                    <div class="mt-2 flex flex-col">
+                        <a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+                    </div>
+	                </div>
+	            </div>
+	        </div>
+    `;
 }
 
 export async function StatsSnakeView() {
-	return /* HTML */ `
-		<!-- Titre FT_TRANSCENDENCE en haut -->
-		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
-				FT<span class="text-blue-600">_</span>TRANSCENDENCE
-			</h1>
-		</div>
+    return createStatsView('snake');
+}
 
-		<div class="content-section min-h-screen bg-gray-100 py-16">
-			<div class="max-w-7xl mx-auto px-8">
-				<!-- Container des blocs en grid complexe -->
-				<div
-					class="grid gap-6 auto-rows-min mx-auto mt-16"
-					style="grid-template-columns: 280px 320px 280px; max-width: 1000px;"
-				>
-					<!-- Bloc My Profile -->
-					<div class="bg-white rounded-xl shadow-lg p-6">
-						<h3 class="font-bold text-lg mb-4">My profil</h3>
-						<div class="flex items-center mb-4">
-							<div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden">
-								<!-- L'avatar ou le fallback sera injecté ici -->
-							</div>
-
-							<div class="ml-2 mt-12">
-								<h3 id="profile-display-name" class="font-montserrat font-bold text-lg">Loading...</h3>
-
-								<!-- NOM UTILISATEUR -->
-								<p id="profile-username" class="text-gray-600 text-sm mb-1">@loading...</p>
-							</div>
-						</div>
-						<div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
-							<div class="flex flex-col">
-								<span class="text-gray-600">Classement</span>
-								<span class="font-semibold">4</span>
-							</div>
-							<div class="flex flex-col">
-								<span class="text-gray-600">Max size</span>
-								<span class="font-semibold">25</span>
-							</div>
-							<div class="flex flex-col">
-								<span class="text-gray-600">Average size</span>
-								<span class="font-semibold">52</span>
-							</div>
-							<div class="flex flex-col">
-								<span class="text-gray-600">Eaten apples</span>
-								<span class="font-semibold">52</span>
-							</div>
-						</div>
-					</div>
-
-					<!-- Bloc Last Games -->
-					<div class="bg-white rounded-xl shadow-lg p-6">
-						<h3 class="font-bold text-lg mb-4">Last games</h3>
-						<div id="last-games-content" class="space-y-3">
-							<!-- Le contenu sera injecté ici par JavaScript -->
-							<div class="flex flex-col items-center justify-center py-8 text-center">
-								<p class="text-gray-500 text-sm">Loading...</p>
-							</div>
-						</div>
-					</div>
-
-					<!-- Bloc My Stats - Distribution des scores -->
-					<div class="bg-white rounded-xl shadow-lg p-6">
-						<h3 class="font-bold text-lg mb-4">My stats</h3>
-						<p class="text-gray-500 text-sm mb-4">Score distribution</p>
-						<canvas id="scoreDistributionChart" width="250" height="180"></canvas>
-					</div>
-
-					<!-- Bloc Global Ranking -->
-					<div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
-						<h3 class="font-bold text-lg mb-4">Global Ranking</h3>
-						<div class="overflow-x-auto">
-							<table class="w-full text-sm">
-								<thead>
-									<tr class="border-b">
-										<th class="text-left py-2">Rank</th>
-										<th class="text-left py-2">Player</th>
-										<th class="text-left py-2">Max Score</th>
-										<th class="text-left py-2">Max Length</th>
-										<th class="text-left py-2">Best Time</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr class="border-b">
-										<td class="py-2">01-09</td>
-										<td class="py-2 font-semibold">Theo le terreur</td>
-										<td class="py-2">50</td>
-										<td class="py-2">50</td>
-										<td class="py-2">1:05</td>
-									</tr>
-									<tr class="border-b">
-										<td class="py-2">01-09</td>
-										<td class="py-2 font-semibold">Arthur</td>
-										<td class="py-2">35</td>
-										<td class="py-2">50</td>
-										<td class="py-2">0:50</td>
-									</tr>
-									<tr class="border-b">
-										<td class="py-2">01-09</td>
-										<td class="py-2 font-semibold">OSETO</td>
-										<td class="py-2">28</td>
-										<td class="py-2">50</td>
-										<td class="py-2">0:20</td>
-									</tr>
-									<tr class="border-b">
-										<td class="py-2">01-09</td>
-										<td class="py-2 font-semibold">Theo</td>
-										<td class="py-2">27</td>
-										<td class="py-2">50</td>
-										<td class="py-2">0:15</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
-
-					<!-- Bloc Time Game - Temps de survie -->
-					<div class="bg-white rounded-xl shadow-lg p-6">
-						<h3 class="font-bold text-lg mb-4">Time game</h3>
-						<p class="text-gray-500 text-sm mb-4">Survival time analysis</p>
-						<canvas id="survivalTimeChart" width="250" height="180"></canvas>
-					</div>
-				</div>
-			</div>
-		</div>
-	`;
+export async function StatsPongView() {
+    return createStatsView('pong');
 }
 
 // <img src="https://i.gifer.com/QgxJ.gif" alt="pong" />
@@ -554,7 +724,7 @@ export async function LoginView() {
 	return /*HTML*/ `
 		 <!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 class="text-center text-4xl font-bold text-black">
+			<h1 class="text-center text-4xl font-bold text-black mb-24">
 				FT<span class="text-blue-600">_</span>TRANSCENDENCE
 			</h1>
 		</div>
@@ -612,7 +782,7 @@ export async function RegisterView() {
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 class="text-center text-4xl font-bold text-black">FT<span class="text-blue-600">_</span>TRANSCENDENCE</h1>
+			<h1 class="text-center text-4xl font-bold text-black mb-8">FT<span class="text-blue-600">_</span>TRANSCENDENCE</h1>
 		</div>
 		<!-- Arrière-plan -->
 		<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4">
@@ -748,7 +918,7 @@ export async function UpdateInfosview() {
 
 <!-- Titre FT_TRANSCENDENCE en haut -->
 	<div class="bg-gray-100 py-2">
-		<h1 class="text-center text-4xl font-bold text-black">
+		<h1 class="text-center text-4xl font-bold text-black mb-24">
 			FT<span class="text-blue-600">_</span>TRANSCENDENCE
 		</h1>
 	</div>
@@ -844,7 +1014,7 @@ export async function UpdateInfosview() {
 
 						<!-- Bouton retour -->
 						<div class="mt-8 text-center">
-							<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+							<a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
 						</div>
 					</div>
 				</div>

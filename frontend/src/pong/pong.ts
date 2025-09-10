@@ -24,7 +24,7 @@ export function createPongSocket(): Socket {
 		console.log('socket pong create');
 		let cookie = getCookie('token');
 		socket.emit('initGame', cookie);
-		initCanvas(socket);
+		initCanvas();
 	});
 	return socket;
 }
@@ -36,7 +36,7 @@ let win_width = window.innerWidth;
 let win_height = window.innerHeight;
 let gameOver = false;
 
-function initCanvas(socket: Socket) {
+function initCanvas() {
 	canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
 	if (!canvas) {
 		console.error("❌ Canvas 'gameCanvas' not found");

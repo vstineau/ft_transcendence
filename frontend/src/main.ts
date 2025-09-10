@@ -1,7 +1,6 @@
 // import { register } from 'ts-node';
 import { registerUser } from './user/register';
 import { logUser, initTwoFALogin, TwoFAVerifyView } from './user/login';
-//import { loginGithub } from './user/loginGithub';
 import { rootUser } from './user/root';
 import { updateInfos } from './user/updateInfos';
 import { displayChatButton } from './utils/chat_tools';
@@ -31,8 +30,15 @@ import { snakeGame } from './snake/snake';
 import { localSnakeGame } from './snake/localSnake';
 import { localpongGame } from './pong/localPong';
 import { initProfilePage } from './utils/avatar';
-import {initSnakeStats } from './graph/init';
+import { initSnakeStats } from './graph/init';
+import { initPongStats } from './graph/initPong';
 import { pongTournament } from './pong/tournament';
+import { updateRanking } from './graph/rank';
+import { updateRankingPong } from './graph/rankPong';
+import { updateUserProfile } from './graph/profileSnakeFr';
+import { updateUserProfilePong } from './graph/profilePongFr';
+import { updateRecentContacts } from './chat/recentContents';
+import { displayDarkModeButton } from './theme/lightButton'
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -150,18 +156,25 @@ async function renderPage() {
 			rootUser();
 			displayChatButton();
 			setTimeout(() => {
-				initThemeToggle(); // ← Initialiser le thème après les animations
+				initThemeToggle();
 				initProfilePage();
+				updateRecentContacts();
 			}, 100);
 			break;
 		case '/updateInfos':
+			initThemeToggle();
+			displayDarkModeButton();
 			updateInfos();
 			displayChatButton();
 			break;
 		case '/register':
+			initThemeToggle();
+			displayDarkModeButton();
 			registerUser();
 			break;
 		case '/login':
+			initThemeToggle();
+			displayDarkModeButton();
 			logUser();
 			break;
 		case '/pong/matchmaking/game':
@@ -174,9 +187,9 @@ async function renderPage() {
 			break;
 		case '/snake':
 			await snakeGame();
-			await displayChatButton();
 			break;
 		case '/snake/local':
+			displayDarkModeButton();
 			localSnakeGame();
 			displayChatButton();
 			break;
@@ -186,7 +199,21 @@ async function renderPage() {
 		case '/statisticsSnake':
 			setTimeout(() => {
 				console.log('About to call initSnakeStats');
+				initThemeToggle();
+				displayDarkModeButton();
 				initSnakeStats();
+				updateRanking();
+				updateInfos();
+				initProfilePage();
+			}, 100);
+			break;
+		case '/statisticsPong':
+			setTimeout(() => {
+				console.log('About to call initPongStats');
+				initThemeToggle();
+				displayDarkModeButton();
+				initPongStats();
+				updateRankingPong();
 				updateInfos();
 				initProfilePage();
 			}, 100);
@@ -199,6 +226,9 @@ async function renderPage() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+	updateUserProfile();
+	updateUserProfilePong();
+
 	document.body.addEventListener('click', async e => {
 		const target = e.target as HTMLElement;
 		// if (target instanceof HTMLAnchorElement)

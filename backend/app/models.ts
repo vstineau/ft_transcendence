@@ -140,6 +140,9 @@ export class History extends BaseEntity { //extends : mot-cle d'héritage - Hist
     @Column()
     finalLength?: number;
 
+	@Column()
+    finalBallSpeed?: number;
+
     @Column()
     gameTime?: number;
 
@@ -158,13 +161,14 @@ export class History extends BaseEntity { //extends : mot-cle d'héritage - Hist
             this.score = data.score;
             this.win = data.win;
             this.finalLength = data.finalLength;
+            this.finalBallSpeed = data.finalBallSpeed;
             this.gameTime = data.gameTime;
         }
     }
 }
 
 @Entity()
-export class ChatMessage {
+export class ChatMessage extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id!: number;
 
@@ -185,6 +189,7 @@ export class ChatMessage {
 	user!: User;
 
 	constructor(user?: User, content?: string, room?: string, type: string = 'text') {
+		super();
 		if (user && content && room) {
 			this.user = user;
 			this.content = content;
