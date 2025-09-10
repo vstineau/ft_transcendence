@@ -659,7 +659,7 @@ function createStatsView(gameType: 'snake' | 'pong') {
                     </div>
 
                     <div class="mt-2 flex flex-col">
-                        <a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+                        <a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
                     </div>
                 </div>
             </div>
@@ -753,7 +753,7 @@ export async function RegisterView() {
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 class="text-center text-4xl font-bold text-black mb-24">FT<span class="text-blue-600">_</span>TRANSCENDENCE</h1>
+			<h1 class="text-center text-4xl font-bold text-black mb-8">FT<span class="text-blue-600">_</span>TRANSCENDENCE</h1>
 		</div>
 		<!-- Arrière-plan -->
 		<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4">
@@ -985,7 +985,7 @@ export async function UpdateInfosview() {
 
 						<!-- Bouton retour -->
 						<div class="mt-8 text-center">
-							<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+							<a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
 						</div>
 					</div>
 				</div>
