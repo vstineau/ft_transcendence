@@ -14,11 +14,17 @@ export function eventsRooms(this: ChatManager) {
         this.on(CHAT_EVENTS.MESSAGE_HISTORY, (data: any) => {
             console.log(`📨 Messages reçus pour room ${data.room}:`, data.messages);
             
+            const room = data.room;
+            const messages = data.messages || [];
+
+            if (room === (this as any).currentRoom?.id) {
+                (this as any).currentRoom.messages = messages;
+            }
             // Cacher le message de chargement
             (this as any).hideLoadingMessage();
             
             // Remplacer les messages actuels par ceux de la room
-            this.messages = data.messages || [];
+            //(this as any).currentRoom?.messages = data.messages || [];
 
             // Mettre à jour l'affichage
             (this as any).updateMessagesDisplay();
@@ -28,8 +34,8 @@ export function eventsRooms(this: ChatManager) {
         this.on(CHAT_EVENTS.ROOM_JOINED, (data: any) => {
             console.log(`✅ Room private rejointe: ${data.roomName}`, data.messages);
             
-            // Mettre à jour les messages avec l'historique de la room privée
-            this.messages = data.messages || [];
+            //// Mettre à jour les messages avec l'historique de la room privée
+            //this.messages = data.messages || [];
             (this as any).updateMessagesDisplay();
         });
 
@@ -44,6 +50,7 @@ export function eventsRooms(this: ChatManager) {
                     id: data.roomName,
                     name: data.withUser.username,
                     type: 'private',
+                    messages: data.messages || [],
                     participants: [(this as any).state.currentUserId?.id, data.withUser.id],
                     unreadCount: 0
                 };

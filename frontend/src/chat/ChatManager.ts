@@ -207,7 +207,8 @@ export class ChatManager extends SocketService {
     }
 
     private renderMessages(messages?: Message[]): string {
-        const messagesToRender = messages || this.messages;
+        const messagesToRender = messages || this.currentRoom?.messages;
+        if (!messagesToRender) return '';
         return messagesToRender.map(message => {
             const isOwn = message.userId === this.state.currentUserId?.id;
             const time = formatTime(message.timestamp);
@@ -268,8 +269,11 @@ export class ChatManager extends SocketService {
         this.currentRoom = this.rooms?.find(r => r.id === roomId) || null;
 
         // Demander les messages de cette room au backend
-        await this.loadRoomMessages(roomId);
-        
+        console.log(`📥 Chargement des messages pour room: ${roomId} + 'valeur de room.message[], ${this.currentRoom?.messages}'`);
+        if (this.currentRoom?.messages.length === 0) {
+            await this.loadRoomMessages(roomId);
+        }
+
         // Actions spécifiques selon la room
         switch (roomId) {
             case 'global':
@@ -312,17 +316,6 @@ export class ChatManager extends SocketService {
         this.updateMessagesDisplay();
     }
     
-    private async loadRoomMessages(roomId: string) {
-        try {
-            console.log(`📥 Chargement des messages pour room: ${roomId}`);
-            
-            // Émettre une demande de messages au backend
-            this.emit(CHAT_EVENTS.GET_MESSAGE_HISTORY, { room: roomId });
-
-        } catch (error) {
-            console.error('❌ Erreur lors du chargement des messages:', error);
-        }
-    }
     
     private updateRoomSelection(activeRoomId: string) {
         // La sélection est maintenant gérée directement dans renderRoomsList()
@@ -585,7 +578,7 @@ export class ChatManager extends SocketService {
     }
 
     private performUserSearch(term: string) {
-        let results = this.searchUsers(term, this.state.onlineUsers || [], this.state.currentUserId.friendList || []);
+        let results = this.state.onlineUsers || [];
         const currentId = this.state.currentUserId?.id;
         const friendIds = new Set((this.state.currentUserId?.friendList || []).map(f => f.id));
         // Filtrer: pas soi-même, pas ceux déjà amis
@@ -599,10 +592,11 @@ export class ChatManager extends SocketService {
         if (messagesContainer) {
             // Filtrer les messages pour afficher seulement ceux de la room active
             const currentRoom = this.state.activeTab; // 'global', 'pong' ou 'snake'
-            const roomMessages = this.messages.filter(msg => msg.roomId === currentRoom);
-            
-            messagesContainer.innerHTML = this.renderMessages(roomMessages);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            const roomMessages = this.currentRoom?.messages.filter(msg => msg.roomId === currentRoom);
+            if (roomMessages) {
+                messagesContainer.innerHTML = this.renderMessages(roomMessages);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
         }
     }
 
@@ -671,6 +665,7 @@ export class ChatManager extends SocketService {
                 id: roomId,
                 name: targetUser.username,
                 type: 'private',
+                messages: [],
                 participants: [this.state.currentUserId?.id, userId],
                 unreadCount: 0
             };
@@ -716,6 +711,7 @@ export class ChatManager extends SocketService {
                 name: sender.username,
                 type: 'private',
                 participants: [this.state.currentUserId?.id, message.userId],
+                messages: [message],
                 unreadCount: 0
             };
 

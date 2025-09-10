@@ -13,6 +13,7 @@ export interface ChatRoom {
     id: string;
     name: string;
     type: 'global' | 'private';
+    messages: Message[];
     participants?: string[];
     unreadCount: number;
 }

@@ -32,9 +32,9 @@ export function eventsMessages(this: ChatManager) {
 		// Si l'utilisateur n'est pas bloqué, afficher le message dans les salons publics
 		if (!isBlocked) {
 			// Vérifier si le message appartient à la room active
+			this.addMessage(message);
 			const currentRoom = (this as any).currentRoom?.id || (this as any).state?.activeTab;
 			if (message.roomId === currentRoom) {
-				this.addMessage(message);
 				(this as any).updateMessagesDisplay();
 			}
 
