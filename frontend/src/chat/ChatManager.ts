@@ -39,7 +39,7 @@ export class ChatManager {
         const socket = this.socketService.createConnection();
 
         this.socketService.on('connect', () => {
-            console.log('💬 Chat socket connected');
+            // console.log('💬 Chat socket connected');
             let cookie = getCookie('token');
             if (cookie) {
                 this.socketService.emit('initUser', cookie);
@@ -48,7 +48,7 @@ export class ChatManager {
 
         // Écouter les événements du serveur
         this.socketService.on('userConnected', (data: any) => {
-            console.log('✅ Chat user connected:', data);
+            // console.log('✅ Chat user connected:', data);
             this.state.currentUserId = data.user.id;
             this.state.avatar = data.user.avatar || '';
             this.state.messages = data.recentMessages || [];
@@ -57,7 +57,7 @@ export class ChatManager {
         });
 
         this.socketService.on('newMessage', (message: Message) => {
-            console.log('📩 New message received:', message);
+            // console.log('📩 New message received:', message);
             this.messageService.addMessage(message);
             this.state.messages.push(message);
             this.updateMessagesDisplay();
@@ -70,7 +70,7 @@ export class ChatManager {
         });
 
         this.socketService.on('userJoined', (user: any) => {
-            console.log('👋 User joined chat:', user);
+            // console.log('👋 User joined chat:', user);
             if (!this.state.onlineUsers) this.state.onlineUsers = [];
             if (!this.state.onlineUsers.find(u => u.id === user.id)) {
                 this.state.onlineUsers.push({
@@ -84,7 +84,7 @@ export class ChatManager {
         });
 
         this.socketService.on('userLeft', (user: any) => {
-            console.log('👋 User left chat:', user);
+            // console.log('👋 User left chat:', user);
             if (this.state.onlineUsers) {
                 this.state.onlineUsers = this.state.onlineUsers.filter(u => u.id !== user.id);
                 this.renderOnlineUsers();
@@ -92,7 +92,7 @@ export class ChatManager {
         });
 
         this.socketService.on('onlineUsersUpdated', (onlineUsers: any[]) => {
-            console.log('🔄 Online users list updated:', onlineUsers);
+            // console.log('🔄 Online users list updated:', onlineUsers);
             this.state.onlineUsers = onlineUsers.map(u => ({
                 id: u.id,
                 username: u.nickName || u.login,
@@ -103,7 +103,7 @@ export class ChatManager {
 
         // Écouter les messages d'une room spécifique
         this.socketService.on(CHAT_EVENTS.MESSAGE_HISTORY, (data: any) => {
-            console.log(`📨 Messages reçus pour room ${data.room}:`, data.messages);
+            // console.log(`📨 Messages reçus pour room ${data.room}:`, data.messages);
             
             // Remplacer les messages actuels par ceux de la room
             this.state.messages = data.messages || [];
@@ -113,11 +113,11 @@ export class ChatManager {
         });
 
         this.socketService.on('authError', (error: string) => {
-            console.error('❌ Chat auth error:', error);
+            // console.error('❌ Chat auth error:', error);
         });
 
         this.socketService.on('error', (error: any) => {
-            console.error('❌ Chat error:', error);
+            // console.error('❌ Chat error:', error);
         });
     }
 
@@ -231,7 +231,7 @@ export class ChatManager {
                 
                 if (roomElement) {
                     const roomId = roomElement.dataset.roomId;
-                    console.log(`🎯 Clic sur room: ${roomId}`);
+                    // console.log(`🎯 Clic sur room: ${roomId}`);
                     this.switchRoom(roomId!);
                 }
             });
@@ -247,7 +247,7 @@ export class ChatManager {
                 room: this.state.activeTab === 'global' ? 'global' : this.state.currentRoom?.id
             });
         } else {
-            console.error('❌ Socket not connected');
+            // console.error('❌ Socket not connected');
         }
     }
 
@@ -304,7 +304,7 @@ export class ChatManager {
     }
 
     private async switchRoom(roomId: string) {
-        console.log(`🔄 Changement vers room: ${roomId}`);
+        // console.log(`🔄 Changement vers room: ${roomId}`);
         
         // Mettre à jour l'état local
         this.state.activeTab = roomId as any;
@@ -316,22 +316,22 @@ export class ChatManager {
         // Actions spécifiques selon la room
         switch (roomId) {
             case 'global':
-                console.log('💬 Chat global activé');
+                // console.log('💬 Chat global activé');
                 break;
                 
             case 'pong':
-                console.log('🏓 Room Pong activée');
+                // console.log('🏓 Room Pong activée');
                 // Rejoindre la room pong côté serveur
                 this.socketService.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: 'pong' });
                 break;
                 
             case 'snake':
-                console.log('🐍 Room Snake activée');
+                // console.log('🐍 Room Snake activée');
                 this.socketService.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: 'snake' });
                 break;
                 
             default:
-                console.log(`📁 Room personnalisée: ${roomId}`);
+                // console.log(`📁 Room personnalisée: ${roomId}`);
                 this.socketService.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: roomId });
                 break;
         }
@@ -345,13 +345,13 @@ export class ChatManager {
     
     private async loadRoomMessages(roomId: string) {
         try {
-            console.log(`📥 Chargement des messages pour room: ${roomId}`);
+            // console.log(`📥 Chargement des messages pour room: ${roomId}`);
             
             // Émettre une demande de messages au backend
             this.socketService.emit(CHAT_EVENTS.GET_MESSAGE_HISTORY, { room: roomId });
 
         } catch (error) {
-            console.error('❌ Erreur lors du chargement des messages:', error);
+            // console.error('❌ Erreur lors du chargement des messages:', error);
         }
     }
     
