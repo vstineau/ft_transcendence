@@ -81,11 +81,9 @@ export function eventsUsers(this: ChatManager) {
         console.log('🔒 User blocked:', data.targetUserId);
         const currentUser = (this as any).state.currentUserId;
         if (currentUser && !currentUser.blockedList.includes(data.targetUserId)) {
-            console.log('Before block, blockedList:', currentUser.blockedList);
             currentUser.blockedList.push(data.targetUserId);
-            // Optionnel: rafraîchir UI si tu filtres des listes par bloqués
-            (this as any).renderOnlineUsers();
-            (this as any).renderFriendsList();
+            (this as any).state.currentUserId.friendList = (this as any).state.currentUserId.friendList.filter((f: any) => f.id !== data.targetUserId);
+            (this as any).emit(CHAT_EVENTS.DELETE_FRIEND, (this as any).state.currentUserId.friendList);
             (this as any).renderRoomsList();
             (this as any).renderMessages();
         }
@@ -97,8 +95,6 @@ export function eventsUsers(this: ChatManager) {
         if (currentUser && currentUser.blockedList.includes(data.targetUserId)) {
             currentUser.blockedList = currentUser.blockedList.filter((id: string) => id !== data.targetUserId);
             // Optionnel: rafraîchir UI si tu filtres des listes par bloqués
-            (this as any).renderOnlineUsers();
-            (this as any).renderFriendsList();
             (this as any).renderRoomsList();
             (this as any).renderMessages();
         }

@@ -12,7 +12,7 @@ import { handleSendMessage, handleGetMessageHistory } from './handlers/messageHa
 import { handleJoinPrivateRoom } from './handlers/roomHandlers.js';
 import { handleGameInvitation, handleGameInvitationResponse, handleStatusChange } from './handlers/gameHandlers.js';
 import { handleDisconnect, handleSocketError } from './handlers/connectionHandlers.js';
-import { handleAddFriend } from './handlers/friendHandlers.js';
+import { handleAddFriend, handleDeleteFriend } from './handlers/friendHandlers.js';
 import { handleBlockUser } from './handlers/blockUserHandlers.js';
 
 // Configuration
@@ -51,6 +51,10 @@ export async function startChat(app: FastifyInstance) {
     // ===== FRIENDS =====
     socket.on(CHAT_EVENTS.ADD_FRIEND, (data: { targetUserId: string }) => 
       handleAddFriend(socket, data, app)
+    );
+
+    socket.on(CHAT_EVENTS.DELETE_FRIEND, (data: { targetUserId: string }) => 
+      handleDeleteFriend(socket, data, app)
     );
 
     // ==== BLOCK / UNBLOCK =====

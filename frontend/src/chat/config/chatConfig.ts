@@ -15,6 +15,7 @@ export const CHAT_EVENTS = {
   STATUS_CHANGE: 'statusChange',
   JOIN_PUBLIC_ROOM: 'joinPublicRoom',
   ADD_FRIEND: 'addFriend',
+  DELETE_FRIEND: 'deleteFriend',
   BLOCK_USER: 'blockUser',
   UNBLOCK_USER: 'unblockUser',
 

@@ -79,3 +79,44 @@ export async function buildFriendList(userId: string) {
     status: u.isOnline ? 'online' : 'offline'
   }));
 }
+
+export async function handleDeleteFriend(
+  socket: Socket,
+  data: { targetUserId: string },
+  app: any
+): Promise<void> {
+  try {
+    const requester = userService.getUser(socket.id);
+    if (!requester) {
+      socket.emit(CHAT_EVENTS.FRIEND_ERROR, 'Not authenticated');
+      return;
+    }
+
+    const repo = SqliteDataSource.getRepository(User);
+    const me = await repo.findOne({ where: { id: requester.id } });
+    const target = await repo.findOne({ where: { id: data.targetUserId } });
+
+    if (!me || !target) {
+      socket.emit(CHAT_EVENTS.FRIEND_ERROR, 'User not found');
+      return;
+    }
+
+    // Vérifier s'il est déjà ami
+    const myFriends = me.friends || [];
+    if (!myFriends.includes(target.id)) {
+      return;
+    }
+
+    // Retirer de ma liste d'amis
+    me.friends = myFriends.filter(id => id !== target.id);
+    await repo.save(me);
+
+
+    const friends = await buildFriendList(me.id);
+    socket.emit(CHAT_EVENTS.FRIEND_LIST_UPDATED, friends);
+  } catch (err) {
+    app.log.error('handleDeleteFriend error', err);
+    socket.emit(CHAT_EVENTS.FRIEND_ERROR, 'Failed to delete friend');
+  }
+}
+

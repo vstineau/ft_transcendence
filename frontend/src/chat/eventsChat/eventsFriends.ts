@@ -26,9 +26,15 @@ export function eventsFriends(this: ChatManager) {
 		(this as any).renderFriendsList();
 	});
 
+	this.on(CHAT_EVENTS.DELETE_FRIEND, (friendId: string) => {
+		console.log('🗑️ Friend deleted:', friendId);
+		const list = (this as any).state.currentUserId.friendList || [];
+		(this as any).state.currentUserId.friendList = list.filter((f: any) => f.id !== friendId);
+		(this as any).renderFriendsList();
+	});
+
 	// Erreur d'ajout
 	this.on(CHAT_EVENTS.FRIEND_ERROR, (message: string) => {
 		console.warn('❌ Friend error:', message);
-		// Optionnel: afficher une alerte UI
 	});
 }
