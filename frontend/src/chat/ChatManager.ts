@@ -63,8 +63,11 @@ export class ChatManager extends SocketService {
         this.state.isOpen = !this.state.isOpen;
         if (this.state.isOpen) {
             this.openChat();
-            this.state.unreadCount = 0;
+            // Ne plus vider les notifications à l'ouverture du chat
+            // Mettre à jour le badge global avec la somme des rooms
+            this.state.unreadCount = this.getTotalUnread();
             this.updateNotificationBadge();
+            this.renderRoomsList();
         } else {
             this.closeChat();
         }
@@ -333,7 +336,13 @@ export class ChatManager extends SocketService {
         // Mettre à jour l'indicateur de room courante
         this.updateCurrentRoomIndicator(roomId);
         
-        // Mettre à jour l'affichage des messages avec ceux de la nouvelle room
+    // Reset unread counter for the room we just switched to
+    this.resetUnread(roomId);
+    // Re-sync global badge with total unread across rooms
+    this.state.unreadCount = this.getTotalUnread();
+    this.updateNotificationBadge();
+    this.renderRoomsList();
+    // Mettre à jour l'affichage des messages avec ceux de la nouvelle room
         this.updateMessagesDisplay();
     }
     

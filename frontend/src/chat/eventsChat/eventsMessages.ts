@@ -14,6 +14,7 @@ export function eventsMessages(this: ChatManager) {
 	    // Si c'est un message privé, gérer côté client
 		if (message.roomId?.startsWith('private_')) {
 				if (isBlocked) {
+					
 					return;
 				}
 
@@ -35,8 +36,14 @@ export function eventsMessages(this: ChatManager) {
 				} else {
 					// Incrémenter les non-lus si le chat est fermé OU si pas dans la bonne room
 					if (!(this as any).state.isOpen || message.roomId !== currentRoom) {
-						(this as any).state.unreadCount++;
-						(this as any).updateNotificationBadge();
+						// compteur par room
+						if (message.roomId) {
+							(this as any).incrementUnread(message.roomId);
+							// recalcul du global à partir de la somme des rooms
+							(this as any).state.unreadCount = (this as any).getTotalUnread();
+							(this as any).updateNotificationBadge();
+							(this as any).renderRoomsList();
+						}
 					}
 				}
 				return;
@@ -54,8 +61,12 @@ export function eventsMessages(this: ChatManager) {
 
 			// Incrémenter les non-lus si le chat est fermé OU si pas dans la bonne room
 			if (!(this as any).state.isOpen || message.roomId !== currentRoom) {
-				(this as any).state.unreadCount++;
-				(this as any).updateNotificationBadge();
+				if (message.roomId) {
+					(this as any).incrementUnread(message.roomId);
+					(this as any).state.unreadCount = (this as any).getTotalUnread();
+					(this as any).updateNotificationBadge();
+					(this as any).renderRoomsList();
+				}
 			}
 		}
 	});
