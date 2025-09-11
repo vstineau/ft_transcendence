@@ -43,4 +43,5 @@ export interface Room {
 	locked: boolean;
     winner: Player | null;
     nameSet: boolean;
+    private: string[] | null;
 };

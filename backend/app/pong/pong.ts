@@ -87,13 +87,28 @@ function initGame(): Game {
 }
 
 let rooms: Room[] = [];
+// let privateRooms: Room[] = [];
 let roomcount = 0;
 
-export function getRoom() {
-	return rooms.find(room => room.playersNb < 2 && !room.locked);
+export function getRoom(userId: string, arr?: string[]) {
+	if (arr && arr.length === 2) {
+		// On cherche la room privée qui matche exactement ce duo
+		const privateRoom = rooms.find(
+			room =>
+				room.playersNb < 2 &&
+				!room.locked &&
+				room.private &&
+				room.private.length === 2 &&
+				arr.every((id, i) => room.private![i] === id) &&
+				room.private.includes(userId)
+		);
+		if (privateRoom) return privateRoom;
+	}
+	// Sinon, on ne propose qu'une room publique
+	return rooms.find(room => room.playersNb < 2 && !room.locked && !room.private);
 }
 
-export function createRoom(): Room {
+export function createRoom(arr: string[], userId: string): Room {
 	let newRoom: Room = {
 		name: `room_${roomcount++}`,
 		playersNb: 0,
@@ -101,12 +116,13 @@ export function createRoom(): Room {
 		locked: false,
 		winner: null,
 		nameSet: false,
+		private: arr && arr.length === 2 && arr.includes(userId) ? arr : null,
 	};
 	rooms.push(newRoom);
 	return newRoom;
 }
 
-async function initPlayerRoom(socket: Socket, cookie: string) {
+async function initPlayerRoom(socket: Socket, cookie: string, arr: string[]) {
 	if (cookie) {
 		const payload = app.jwt.verify<JwtPayload>(cookie);
 		const user = await User.findOneBy({ id: payload.id });
@@ -114,7 +130,8 @@ async function initPlayerRoom(socket: Socket, cookie: string) {
 			socket.emit('notLogged');
 			return;
 		}
-		const room = getRoom();
+		// const queryString = !window.location.search ? '/dashboard' : window.location.search.substring(1);
+		const room = getRoom(user.login, arr.length === 2 ? arr : undefined); //modifier par userID
 		if (room && user.id != room.game.p1.uid) {
 			room.game.p2 = initPlayer(socket, user, room);
 			room.game.p2.x = WIN_WIDTH * 0.98;
@@ -122,11 +139,11 @@ async function initPlayerRoom(socket: Socket, cookie: string) {
 			room.locked = true;
 			getInputs(socket, room);
 		} else {
-			const newRoom = createRoom();
-
+			const newRoom = createRoom(arr, user.login); // modifier par userID
 			newRoom.game.p1 = initPlayer(socket, user, newRoom);
 			socket.join(newRoom.name);
-			getInputs(socket, newRoom); 
+			getInputs(socket, newRoom);
+			console.log(newRoom);
 			app.io.of('/pong').to(newRoom.name).emit('p1Name', newRoom.game.p1);
 		}
 	} else {
@@ -213,8 +230,8 @@ export async function startPongGame(app: FastifyInstance) {
 	app.ready().then(() => {
 		app.io.of('/pong').on('connection', (socket: Socket) => {
 			handleDisconnect(app, socket);
-			socket.on('initGame', (cookie: string) => {
-				initPlayerRoom(socket, cookie);
+			socket.on('initGame', (cookie: string, arr: string[]) => {
+				initPlayerRoom(socket, cookie, arr);
 				launchGame(rooms);
 			});
 		});
