@@ -51,7 +51,7 @@ export async function handleInitUser(
     // Confirmer la connexion
     socket.emit(CHAT_EVENTS.USER_CONNECTED, { 
       user: chatUser,
-      onlineUsers: userService.getAllUsers(),
+      onlineUsers: await userService.getAllUsers(),
       recentMessages,
       friendList,
       blockedList
@@ -65,7 +65,7 @@ export async function handleInitUser(
     // Envoyer la liste complète mise à jour à tous
     chatNamespace.to(CHAT_CONFIG.ROOMS.GLOBAL).emit(
       CHAT_EVENTS.ONLINE_USERS_UPDATED, 
-      userService.getAllUsers()
+      await userService.getAllUsers()
     );
     
     app.log.info(`Chat user connected: ${user.login}`);

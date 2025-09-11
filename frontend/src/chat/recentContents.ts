@@ -1,4 +1,6 @@
 import { User } from '../chat/types';
+import { chatManager } from '../chat';
+
 
 async function fetchRecentContacts(): Promise<User[]> {
     try {
@@ -11,21 +13,23 @@ async function fetchRecentContacts(): Promise<User[]> {
         if (!response.ok) {
             throw new Error('Failed to fetch recent contacts');
         }
-		const data = await response.json();
-		console.log('Raw API response:', data);
+        const data = await response.json();
+        console.log('Raw API response:', data);
 
-		 return data.map((contact: any) => ({
+        return data.map((contact: any) => ({
             id: contact.id,
             username: contact.login, // ou contact.nickName selon vos préférences
             avatar: contact.avatar,
             status: contact.status
-        } as User), console.log('Mapped contacts:', data));
+        } as User));
         // return await response.json();
     } catch (error) {
         console.error('Error fetching recent contacts:', error);
         return [];
     }
 }
+
+// On ne crée pas un second socket; on utilise l'instance unique de chatManager
 
 function generateContactHTML(contacts: User[]): string {
     console.log('Number of contacts:', contacts.length);
@@ -85,11 +89,9 @@ function generateContactHTML(contacts: User[]): string {
 export async function updateRecentContacts(): Promise<void> {
     try {
         const contacts = await fetchRecentContacts();
-        console.log('Fetched contacts:', contacts);
         const contactsContainer = document.getElementById('recent-contacts-container');
 
         if (contactsContainer) {
-            console.warn('Updating recent contacts container');
             contactsContainer.innerHTML = generateContactHTML(contacts);
         }
     } catch (error) {
@@ -97,25 +99,18 @@ export async function updateRecentContacts(): Promise<void> {
     }
 }
 
+// Petits helpers accessibles depuis le dashboard (onclick)
 function openChat(userId: string): void {
-    // Rediriger vers le chat ou ouvrir une modal
-    console.log('Opening chat with user:', userId);
-    //--------------------- >ici pour gerer les events <-----------------
-	// regarde en bas la fonction lie avec
+    chatManager.openPrivateChat(userId);
 }
 
 function openGlobalChat(): void {
-    console.log('Opening global chat');
-    // Rediriger vers le chat global ou ouvrir une modal comme tu veux 
-    // window.location.href = '/chat';
+    chatManager.openChat();
+    chatManager.openGlobalChat();
 }
 
-declare global {
-    interface Window {
-        openChat: (userId: string) => void;
-		openGlobalChat: () => void;
-    }
-}
-
-window.openChat = openChat; //c'est lie a ca
-window.openGlobalChat = openGlobalChat;
+// Exposer explicitement pour l’HTML inline
+// @ts-ignore
+window.openChat = openChat as any;
+// @ts-ignore
+window.openGlobalChat = openGlobalChat as any;

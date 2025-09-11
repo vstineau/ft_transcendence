@@ -7,6 +7,13 @@ import { CHAT_EVENTS } from './config';
 import { eventsSocket, eventsMessages, eventsUsers, eventsRooms, eventsFriends } from './eventsChat';
 import { navigateTo } from '../main';
 
+declare global {
+    interface Window {
+        openChat: (userId: string) => void;
+        startPrivateChat: (userId: string) => void;
+    }
+}
+
 export class ChatManager extends SocketService {
     private state: ChatState = {
         currentUserId: {} as any,
@@ -29,12 +36,11 @@ export class ChatManager extends SocketService {
         this.profileUI_attached();
     }
 
-
     private profileUI_attached() {
         // Instanciation du mini UI profil (handlers à adapter selon ton routing/backend)
         this.profileUI = new UIprofileService({
             viewProfile: (userId: string) => {
-                TODO: navigateTo('/pong/matchmaking/localgame');
+                TODO: navigateTo('/statisticsSnake');
             },
             privateMessage: (userId: string) => {
                 this.startPrivateChat(userId);
@@ -113,6 +119,16 @@ export class ChatManager extends SocketService {
         if (messagesContainer) {
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
+    }
+
+    public openPrivateChat(userId: string) {
+        if (!this.state.isOpen) this.openChat();
+        this.startPrivateChat(userId);
+    }
+
+    public openGlobalChat() {
+        if (!this.state.isOpen) this.openChat();
+        this.switchRoom('global');
     }
 
     private setupPanelEventListeners() {
@@ -351,7 +367,7 @@ export class ChatManager extends SocketService {
                         }
                     }
                 } else {
-                    this.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: roomId });
+                    this.emit(CHAT_EVENTS.JOIN_PRIVATE_ROOM, { room: roomId });
                 }
                 break;
         }
@@ -695,11 +711,12 @@ export class ChatManager extends SocketService {
         this.updateNotificationBadge();
     }
 
-    private startPrivateChat(userId: string) {
-        // Trouver l'utilisateur dans la liste des utilisateurs en ligne
+    public startPrivateChat(userId: string) {
+        //// Trouver l'utilisateur dans la liste des utilisateurs en ligne
         const targetUser = this.state.onlineUsers?.find(u => u.id === userId);
         if (!targetUser) {
             console.error('❌ Utilisateur non trouvé:', userId);
+            console.warn('⚠️ User in onlineUser: ', this.state.onlineUsers);
             return;
         }
 

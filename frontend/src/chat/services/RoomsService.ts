@@ -5,7 +5,6 @@ import { ChatRoom, Message } from '../types';
 export class RoomsService {
 	protected rooms: ChatRoom[] = [];
 	protected currentRoom: ChatRoom | null = null;
-	// Evite les JOIN_PRIVATE_ROOM répétés pour une même room
 	protected initializedPrivateRooms: Set<string> = new Set();
 
 

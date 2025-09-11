@@ -17,22 +17,8 @@ export async function handleJoinPrivateRoom(
   const roomName = roomService.generatePrivateRoomName(user.id, data.targetUserId);
   socket.join(roomName);
   
-  // Faire aussi joindre l'autre utilisateur à cette room privée
-  const targetUser = userService.findUserById(data.targetUserId);
-  if (targetUser && targetUser.socketId) {
-    const targetSocket = socket.to(targetUser.socketId);
-    targetSocket.socketsJoin(roomName);
-    
-    // Informer l'autre utilisateur qu'une room privée a été créée
-    targetSocket.emit(CHAT_EVENTS.PRIVATE_ROOM_CREATED, { 
-      roomName, 
-      withUser: {
-        id: user.id,
-        username: user.nickName || user.login,
-        avatar: user.avatar
-      }
-    });
-  }
+  // Ne plus notifier/ouvrir la room chez le destinataire tant qu'aucun message n'est envoyé.
+  // L'ajout du destinataire à la room et la notification se feront lors du premier message.
   
   // Récupérer l'historique des messages de cette room privée
   try {

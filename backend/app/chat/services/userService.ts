@@ -24,15 +24,57 @@ class UserService {
     return this.connectedUsers.get(socketId);
   }
 
-  // Récupérer tous les utilisateurs
-  getAllUsers(): ChatUser[] {
+  // Récupérer tous les utilisateurs de la DB et fusionner avec l'état connecté
+  async getAllUsers(): Promise<ChatUser[]> {
+    try {
+      const users = await User.find();
+      // Indexer les connectés par userId
+      const connectedById = new Map<string, ChatUser>();
+      for (const cu of this.connectedUsers.values()) {
+        connectedById.set(cu.id, cu);
+      }
+
+      return users.map(u => {
+        const connected = connectedById.get(u.id);
+        if (connected) {
+          // Conserver le status en temps réel (online / in-game) et le socketId
+          return {
+            id: u.id,
+            socketId: connected.socketId,
+            login: u.login,
+            nickName: u.nickName,
+            avatar: u.avatar || connected.avatar || '',
+            status: connected.status, // priorise l'état actuel du socket
+            blocklist: u.blocklist || []
+          } as ChatUser;
+        }
+        // Utilisateur non connecté au chat
+        return {
+          id: u.id,
+          socketId: '',
+          login: u.login,
+          nickName: u.nickName,
+          avatar: u.avatar || '',
+          status: u.isOnline ? 'online' : 'offline', // fallback DB flag
+          blocklist: u.blocklist || []
+        } as ChatUser;
+      });
+    } catch (err) {
+      console.error('Error fetching all users for chat:', err);
+      return Array.from(this.connectedUsers.values());
+    }
+  }
+
+  getAllConnectedUsers(): ChatUser[] {
     return Array.from(this.connectedUsers.values());
   }
 
-  // Trouver un utilisateur par son ID (et non par socketId).
+  // Trouver un utilisateur connecté par son ID (accès socketId)
   findUserById(userId: string): ChatUser | undefined {
-    return Array.from(this.connectedUsers.values())
-      .find(u => u.id === userId);
+    for (const u of this.connectedUsers.values()) {
+      if (u.id === userId) return u;
+    }
+    return undefined;
   }
 
   // status: 'online' | 'in-game'
