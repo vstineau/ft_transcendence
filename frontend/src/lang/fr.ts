@@ -18,7 +18,7 @@ export default {
         "yourMaxSize": "Votre taille max",
         "play": "Jouer",
         "view": "Voir",
-        "edit": "Modifier"
+        "edit": "Editer"
     },
     "games": {
         "pong": {
