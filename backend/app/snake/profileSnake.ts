@@ -55,7 +55,7 @@ export default {
             const averageSize = totalGames > 0 ?
                 Math.round(userSnakeGames.reduce((sum, g) => sum + (g.finalLength || 0), 0) / totalGames) : 0;
 
-            // Calculer des pommes mangees (finalLength - 1 parce que le serpent commence avec 1 segment)
+            // Calculer des pommes mangees (finalLe ngth - 1 parce que le serpent commence avec 1 segment)
             const totalApples = userSnakeGames.reduce((sum, g) => sum + Math.max((g.finalLength || 1) - 1, 0), 0);
 
             // Calculer le classement (nombre de joueurs avec moins de victoires + 1)

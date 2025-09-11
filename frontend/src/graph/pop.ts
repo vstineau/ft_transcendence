@@ -46,7 +46,7 @@ export function showGameDetails(gameIndex: number): void {
     // Texte du résultat
     const resultText = isDraw ? 'DRAW' : (isWin ? 'WIN' : 'LOSS');
 
-    const popupHTML = `
+    const popupHTML = /* HTML */ `
         <div id="game-popup" class="fixed inset-0 bg-white/10 backdrop-blur flex items-center justify-center z-50" onclick="closeGameDetails(event)">
             <div class="${bgColor} rounded-xl p-4 max-w-xl h-[350px] w-full mx-4 transform transition-all duration-300 scale-95 relative flex flex-col flex flex-col justify-start ${textColor} ${shadowColor}" onclick="event.stopPropagation()">
 
@@ -58,11 +58,10 @@ export function showGameDetails(gameIndex: number): void {
 				</button>
 
 			<!-- Header avec date et heure -->
-                <div class="rounded-lg pt-2 px-4 pb-4 text-center">
+            <div class="rounded-lg pt-2 px-4 pb-4 text-center">
                 <div class="text-sm ${accentColor}">${formatDate(game.date || '')}</div>
                 <div class="text-xs ${textColor}">Game time</div>
                 <div class="text-lg ${accentColor}">${formatGameTime(game.gameTime || 0)}</div>
-
             </div>
 
                 <!-- Section VS avec couronne -->

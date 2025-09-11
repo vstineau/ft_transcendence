@@ -1,3 +1,4 @@
+import { showProfileDetails } from '../user/popProfile'
 
 export async function RootView() {
 	return /* HTML */ `
@@ -55,13 +56,8 @@ export async function RootView() {
 						</div>
 
 						<p class="font-montserrat font-medium text-gray-700 text-sm leading-5 mb-4">
-<<<<<<< HEAD
 							<span data-translate="games.pong.description">Pong is one of the first computer games that ever created, the goal is to defeat your opponent.</span><br><br>
 							<span data-translate="games.snake.description">For Snake you must keep the snake from colliding with both other obstacles and itself.</span>
-=======
-							Pong is one of the first computer games that ever created, the goal is to defeat your opponent.<br /><br />
-							For Snake you must keep the snake from colliding with both other obstacles and itself.
->>>>>>> origin
 						</p>
 
 						<div class="flex mt-4">

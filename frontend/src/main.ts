@@ -40,7 +40,7 @@ import { updateUserProfilePong } from './graph/profilePongFr';
 import { updateRecentContacts } from './chat/recentContents';
 import { displayDarkModeButton } from './theme/lightButton'
 import { initLanguageSelector, initializeLanguage } from './lang/languageManager';
-
+import { showProfileDetails } from './user/popProfile'
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
@@ -162,6 +162,10 @@ export async function renderPage() {
 				initProfilePage();
 				updateRecentContacts();
 				initLanguageSelector();
+				const viewBtn = document.getElementById('view-profile-btn');
+				if (viewBtn) {
+					viewBtn.addEventListener('click', showProfileDetails);
+				}
 			}, 100);
 			break;
 		case '/updateInfos':
@@ -224,6 +228,12 @@ export async function renderPage() {
 				initProfilePage();
 			}, 100);
 			break;
+		// case '/profile/':
+		// 	if(path.startsWith('/profile/')){
+		// 		const username = path.split('/')[2];
+		// 		await showUserProfile(username);
+		// 	}
+		// 	break;
 		case '/pong/tournament':
 			pongTournament();
 			displayChatButton();
