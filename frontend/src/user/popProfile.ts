@@ -119,15 +119,40 @@ async function loadProfileData(): Promise<void> {
             // Données Pong (à adapter plus tard)
             const pongStats = profileData.pongStats;
             if (pongStats) {
-                // Pour l'instant, valeurs par défaut
-                document.getElementById('pong-last-game')!.textContent = '-';
-                document.getElementById('pong-ranking')!.textContent = '-';
-                document.getElementById('pong-max-speed')!.textContent = '-';
+                // Last game Pong
+                const pongHistory = await fetchPongLastGame();
+                const pongLastGameResult = pongHistory?.win || 'N/A';
+                document.getElementById('pong-last-game')!.textContent = pongLastGameResult;
+
+                // Classement Pong
+                document.getElementById('pong-ranking')!.textContent = pongStats.stats.ranking.toString();
+
+                // Max speed Pong
+                document.getElementById('pong-max-speed')!.textContent = pongStats.stats.maxSpeed.toString();
             }
         }
 
     } catch (error) {
         console.error('Error loading profile data:', error);
+    }
+}
+
+
+async function fetchPongLastGame(): Promise<{win: string} | null> {
+    try {
+        const host = window.location.hostname;
+        const port = window.location.port;
+        const protocol = window.location.protocol;
+
+        const response = await fetch(`${protocol}//${host}:${port}/api/user/history?type=pong`);
+        if (response.ok) {
+            const history = await response.json();
+            return history.length > 0 ? history[0] : null; // Premier élément = plus récent
+        }
+        return null;
+    } catch (error) {
+        console.error('Error fetching last Pong game:', error);
+        return null;
     }
 }
 

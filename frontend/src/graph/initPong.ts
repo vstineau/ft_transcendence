@@ -1,8 +1,9 @@
 import { SnakeGameHistory } from '../types/snakeTypes';
 import { updateUserProfilePong } from './profilePongFr';
 import { updateRankingPong } from './rankPong';
+import { PongGameHistory } from '../types/pongTypes';
 import { formatDate, formatGameTime } from './init';
-import { analyzeGameTimes, analyzeLengthDistribution } from '../graph/gameTime';
+import { analyzeGameTimes, analyzeLengthDistribution, analyzeBallSpeedDistribution, analyzePongGameTimes } from '../graph/gameTime';
 import { setCurrentGamesPong, showGameDetailsPong, closeGameDetailsPong } from '../graph/popPong';
 
 
@@ -28,104 +29,83 @@ export function initPongStats(){
 
 		console.log('Creating charts...');
 		const scoreCtx = (scoreCanvas as HTMLCanvasElement).getContext('2d');
-		if(scoreCtx) {
-				const lengthData = await analyzeLengthDistribution();
+        if(scoreCtx) {
+            const speedData = await analyzeBallSpeedDistribution(); // Fonction Pong
 
-				new Chart(scoreCtx, {
-					type: 'bar',
-					data: {
-						labels: lengthData.labels,
-						datasets: [{
-							label: 'Number of games',
-							data: lengthData.data,
-							backgroundColor: ['#0F4E77', '#72524A', '#89A377', '#b7dbf1'],
-							borderWidth: 1
-						}]
-					},
-					options: {
-						responsive: true,
-						maintainAspectRatio: true,
-						aspectRatio: 1.5,
-						plugins: { legend: { display: false } },
-						scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-					}
-				});
-		}
+            new Chart(scoreCtx, {
+                type: 'bar',
+                data: {
+                    labels: speedData.labels,
+                    datasets: [{
+                        label: 'Number of games',
+                        data: speedData.data,
+                        backgroundColor: ['#0F4E77', '#72524A', '#89A377', '#b7dbf1'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 1.5,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+        }
 
-		const timeCtx = (timeCanvas as HTMLCanvasElement).getContext('2d');
-		if(timeCtx){
-			const timeData = await analyzeGameTimes();
+        const timeCtx = (timeCanvas as HTMLCanvasElement).getContext('2d');
+        if(timeCtx){
+            const timeData = await analyzePongGameTimes(); // Fonction Pong
 
-			new Chart(timeCtx, {
-				type: 'doughnut',
-				data: {
-					labels: timeData.labels,
-					datasets: [{
-						data: timeData.data,
-						backgroundColor: ['#FBD271', '#89A377', '#0F4E77', '#72524A'],
-						borderWidth: 2,
-						borderColor: '#ffffff'
-					}]
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: true,
-					aspectRatio: 1.5,
-					plugins: { legend: { position: 'bottom' } },
-					cutout: '60%'
-				}
-			});
-		}
+            new Chart(timeCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: timeData.labels,
+                    datasets: [{
+                        data: timeData.data,
+                        backgroundColor: ['#FBD271', '#89A377', '#0F4E77', '#72524A'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 1.5,
+                    plugins: { legend: { position: 'bottom' } },
+                    cutout: '60%'
+                }
+            });
+        }
 
-		if (lastGamesContainer) {
-			console.log('Calling updateLastGames...');
-			updateLastGamesPong();
-			updateRankingPong();
-			updateUserProfilePong();
-		} else {
-			console.error('Element #last-games-content not found!');
-			// Reessayer apres un delai comme pour les canvas
-			setTimeout(() => {
-				const container = document.querySelector('#last-games-content');
-				if (container) {
-					console.log('Found container on retry, calling updateLastGames...');
-					updateLastGamesPong();
-				} else {
-					console.error('Still no #last-games-content found after retry');
-				}
-			}, 100);
-		}
-	};
-
-	tryInit();
+        // Vos fonctions Pong existantes
+        if (lastGamesContainer) {
+            updateLastGamesPong();
+            updateRankingPong();
+            updateUserProfilePong();
+        }
+    };
+    tryInit();
 }
 
 
-export async function fetchPongHistory(): Promise<SnakeGameHistory[]> {
-	try {
-		console.log('=== FETCHING SNAKE HISTORY ===');
-		console.log('Current cookies:', document.cookie);
-		const host = window.location.hostname;
-		const port = window.location.port;
-		const protocol = window.location.protocol;
+// Votre fonction devrait ressembler à ça :
+export async function fetchPongHistory(): Promise<PongGameHistory[]> {
+    try {
+        const host = window.location.hostname;
+        const port = window.location.port;
+        const protocol = window.location.protocol;
 
-		const response = await fetch(`${protocol}//${host}:${port}/api/user/history?type=pong`);
-
-		console.log('Response status:', response.status);
-		console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-
-		if (!response.ok) {
-			const errorText = await response.text();
-			console.log('Error response text:', errorText);
-			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-		}
-
-		 const data = await response.json();
-		return data;
-	} catch (error) {
-		console.log('Error fetching snake history', error);
-		return [];
-	}
+        const response = await fetch(`${protocol}//${host}:${port}/api/user/history?type=pong`);
+        if (response.ok) {
+            const history: PongGameHistory[] = await response.json(); // Type correct ici
+            return history;
+        }
+        return [];
+    } catch (error) {
+        console.error('Error fetching pong history:', error);
+        return [];
+    }
 }
 
 function generateLastGamesHTML(games: SnakeGameHistory[]): string {

@@ -8,8 +8,8 @@ import { messageService } from '../services/messageService.js';
 import { CHAT_CONFIG, CHAT_EVENTS } from '../config/chatConfig.js';
 
 export async function handleInitUser(
-  socket: Socket, 
-  token: string, 
+  socket: Socket,
+  token: string,
   app: FastifyInstance,
   chatNamespace: any
 ): Promise<void> {
@@ -36,33 +36,33 @@ export async function handleInitUser(
     // Créer l'objet utilisateur de chat
     const chatUser = userService.createChatUser(user, socket.id);
     userService.addUser(socket.id, chatUser);
-    
+
     // Rejoindre la room globale, Pong et snake
     socket.join(CHAT_CONFIG.ROOMS.GLOBAL);
     socket.join(CHAT_CONFIG.ROOMS.PONG);
     socket.join(CHAT_CONFIG.ROOMS.SNAKE);
-    
+
     // Récupérer les messages récents
     const recentMessages = await messageService.getRecentMessages(CHAT_CONFIG.ROOMS.GLOBAL);
-    
+
     // Confirmer la connexion
-    socket.emit(CHAT_EVENTS.USER_CONNECTED, { 
+    socket.emit(CHAT_EVENTS.USER_CONNECTED, {
       user: chatUser,
       onlineUsers: userService.getAllUsers(),
       recentMessages: recentMessages
     });
-    
-    console.log('User connected to chat:', user.login);
+
+    // console.log('User connected to chat:', user.login);
 
     // Notifier les autres utilisateurs
     socket.to(CHAT_CONFIG.ROOMS.GLOBAL).emit(CHAT_EVENTS.USER_JOINED, chatUser);
-    
+
     // Envoyer la liste complète mise à jour à tous
     chatNamespace.to(CHAT_CONFIG.ROOMS.GLOBAL).emit(
-      CHAT_EVENTS.ONLINE_USERS_UPDATED, 
+      CHAT_EVENTS.ONLINE_USERS_UPDATED,
       userService.getAllUsers()
     );
-    
+
     app.log.info(`Chat user connected: ${user.login}`);
 
   } catch (error) {

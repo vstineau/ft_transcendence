@@ -10,7 +10,7 @@ export async function handleDisconnect(
   chatNamespace: any
 ): Promise<void> {
   const user = userService.removeUser(socket.id);
-  
+
   if (user) {
     try {
       // Mettre à jour le statut hors ligne dans la base de données
@@ -18,17 +18,17 @@ export async function handleDisconnect(
     } catch (error) {
       app.log.error('Error updating user offline status:', error);
     }
-    
+
     // Notifier les autres utilisateurs
     socket.to(CHAT_CONFIG.ROOMS.GLOBAL).emit(CHAT_EVENTS.USER_LEFT, user);
-    
+
     // Envoyer la liste complète mise à jour
     chatNamespace.to(CHAT_CONFIG.ROOMS.GLOBAL).emit(
-      CHAT_EVENTS.ONLINE_USERS_UPDATED, 
+      CHAT_EVENTS.ONLINE_USERS_UPDATED,
       userService.getAllUsers()
     );
-    
-    app.log.info(`Chat user disconnected: ${user.login}`);
+
+    // app.log.info(`Chat user disconnected: ${user.login}`);
   }
 }
 

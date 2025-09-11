@@ -18,7 +18,7 @@ export async function RootView() {
 
 			<!-- Bloc Profil Utilisateur - prend 2 colonnes et 2 lignes changer la taille de base du bloc de profil -->
 				<div class="row-span-2 bg-white rounded-xl shadow-lg p-4">
-					<div class="flex items-start mb-6 ml-3 mt-10">
+					<div class="flex items-start mb-14 ml-3 mt-2">
 						<div id="profile-avatar-container" class="w-32 h-32 bg-gray-200 rounded-xl overflow-hidden">
                         	<!-- L'avatar ou le fallback sera injecté ici -->
 						</div>
@@ -73,10 +73,9 @@ export async function RootView() {
 					<!-- Bloc Success rate - 1 colonne, 1 ligne -->
 					<div class="row-span-1 bg-white rounded-xl shadow-lg p-4">
 						<a href="/statisticsPong" class="text-left">
-							<p class="font-montserrat text-black text-base mb-2" data-translate="dashboard.pongStats">Pong stats</p>
-							<p class="text-4xl font-bold text-black">
-								86<span class="text-4xl font-normal text-gray-300">%</span>
-							</p>
+							<p class="font-montserrat text-black text-base">Pong stats</p>
+							<p class="font-montserrat text-gray-400 text-sm mb-2">Your max speed</p>
+							<span class="text-4xl font-bold text-black" data-stat="max-speed"></span>
 						</a>
 					</div>
 
@@ -396,10 +395,10 @@ function createStatsView(gameType: 'snake' | 'pong') {
                 { label: 'Average speed', stat: 'average-speed' },
                 { label: 'Total goals', stat: 'total-goals' }
             ],
-            chartTitle: 'Score distribution',
-            chartSubtitle: 'Your most common scores',
-            timeTitle: 'Match duration',
-            timeSubtitle: 'Game duration analysis'
+            chartTitle: 'Ball speed distribution',
+			chartSubtitle: 'Your most common final speeds',
+			timeTitle: 'Match duration',
+			timeSubtitle: 'Game duration analysis'
         }
     };
 

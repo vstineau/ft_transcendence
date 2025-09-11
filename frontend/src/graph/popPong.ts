@@ -78,7 +78,7 @@ export function showGameDetailsPong(gameIndex: number): void {
 							<span class="${textColor}">Final ball speed : </span><span class="${accentColor}">${game.finalBallSpeed || 0}</span>
 						</div>
 						<div class="text-sm">
-							<span class="${textColor}">Average speed : </span><span class="${accentColor}">${Math.max((game.finalBallSpeed || 1) - 1, 0)}</span>
+							<span class="${textColor}">Average speed : </span><span class="${accentColor}">${game.opponentStats?.finalBallSpeed || '-'}</span>
 						</div>
 					</div>
 

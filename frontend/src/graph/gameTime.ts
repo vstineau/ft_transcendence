@@ -1,4 +1,6 @@
 import { fetchSnakeHistory } from '../graph/init';
+import { fetchPongHistory } from '../graph/initPong';
+import { PongGameHistory } from '../types/pongTypes';
 
 
 export async function analyzeGameTimes(): Promise<{labels: string[], data: number[]}> {
@@ -93,6 +95,98 @@ export async function analyzeLengthDistribution(): Promise<{labels: string[], da
         console.error('Error analyzing length distribution:', error);
         return {
             labels: ['0-10', '11-20', '21-30', '31-40'],
+            data: [0, 0, 0, 0]
+        };
+    }
+}
+
+// Pour analyser les vitesses de balle (équivalent des tailles de serpent)
+export async function analyzeBallSpeedDistribution(): Promise<{labels: string[], data: number[]}> {
+    try {
+        const games = await fetchPongHistory();
+        if (games.length === 0) {
+            return {
+                labels: ['0-5', '6-10', '11-15', '16+'],
+                data: [0, 0, 0, 0]
+            };
+        }
+
+        const speedCategories = {
+            '0-5': 0,
+            '6-10': 0,
+            '11-15': 0,
+            '16+': 0
+        };
+
+        games.forEach(game => {
+            if (game.finalBallSpeed) {
+                const speed = game.finalBallSpeed;
+                if (speed <= 5) {
+                    speedCategories['0-5']++;
+                } else if (speed <= 10) {
+                    speedCategories['6-10']++;
+                } else if (speed <= 15) {
+                    speedCategories['11-15']++;
+                } else {
+                    speedCategories['16+']++;
+                }
+            }
+        });
+
+        return {
+            labels: Object.keys(speedCategories),
+            data: Object.values(speedCategories)
+        };
+    } catch (error) {
+        console.error('Error analyzing ball speeds:', error);
+        return {
+            labels: ['0-5', '6-10', '11-15', '16+'],
+            data: [0, 0, 0, 0]
+        };
+    }
+}
+
+// Pour analyser les temps de jeu Pong
+export async function analyzePongGameTimes(): Promise<{labels: string[], data: number[]}> {
+    try {
+        const games = await fetchPongHistory();
+        if (games.length === 0) {
+            return {
+                labels: ['0-1min', '1-3min', '3-5min', '5min+'],
+                data: [0, 0, 0, 0]
+            };
+        }
+
+        const timeCategories = {
+            '0-1min': 0,
+            '1-3min': 0,
+            '3-5min': 0,
+            '5min+': 0
+        };
+
+        games.forEach(game => {
+            if (game.gameTime) {
+                const minutes = Math.floor(game.gameTime / 60000); // Convertir en minutes
+                if (minutes <= 1) {
+                    timeCategories['0-1min']++;
+                } else if (minutes <= 3) {
+                    timeCategories['1-3min']++;
+                } else if (minutes <= 5) {
+                    timeCategories['3-5min']++;
+                } else {
+                    timeCategories['5min+']++;
+                }
+            }
+        });
+
+        return {
+            labels: Object.keys(timeCategories),
+            data: Object.values(timeCategories)
+        };
+    } catch (error) {
+        console.error('Error analyzing pong game times:', error);
+        return {
+            labels: ['0-1min', '1-3min', '3-5min', '5min+'],
             data: [0, 0, 0, 0]
         };
     }
