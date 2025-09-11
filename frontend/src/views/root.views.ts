@@ -35,8 +35,8 @@ export async function RootView() {
 						</div>
 
 						<div class="flex space-x-6 ml-3 mt-6">
-								<a href="/statisticsSnake" class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition" data-translate="dashboard.view">View</a>
-								<a href="/updateInfos" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition" data-translate="dashboard.edit">Edit</a>
+								<div class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition cursor-pointer" onclick="showProfileDetails()">View</div>
+							<a href="/updateInfos" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition">Edit</a>
 						</div>
 					</div>
 
@@ -83,32 +83,13 @@ export async function RootView() {
 					<!-- Bloc Let's talk - 4 colonnes, 1 ligne -->
 					<div class="bg-white rounded-xl shadow-lg p-8" style="grid-column: 1 / 3; grid-row: 3">
 						<div class="h-full flex flex-col justify-between">
-							<h3 class="font-montserrat font-bold text-6xl mb-6" data-translate="dashboard.letsTalk">Let's talk</h3>
-
-							<div class="flex items-start space-x-6">
+							<h3 class="font-montserrat font-bold text-6xl mb-6">Let's talk</h3>
+							<div id="recent-contacts-container" class="flex items-start space-x-6">
+								<!-- Le contenu sera injecte dynamiquement -->
 								<div class="text-center">
-									<div
-										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
-									>
-										L
+									<div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl">
+										Loading...
 									</div>
-									<span class="text-xs text-gray-600">@LeoApple</span>
-								</div>
-								<div class="text-center">
-									<div
-										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
-									>
-										M
-									</div>
-									<span class="text-xs text-gray-600">@MaxDragon</span>
-								</div>
-								<div class="text-center">
-									<div
-										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
-									>
-										F
-									</div>
-									<span class="text-xs text-gray-600">@FatimaPing</span>
 								</div>
 							</div>
 						</div>
@@ -231,7 +212,7 @@ export async function WelcomeView() {
                         </div>
                     </a>
                 </div>
-                
+
                 <!-- Bouton Create an account - Large en dessous -->
                 <div class="mt-4" style="max-width: 616px; margin-left: auto; margin-right: auto;">
                     <a href="/register" class="font-montserrat block bg-black hover:bg-gray-800 text-white py-4 rounded-xl font-medium text-lg transition-colors text-center" data-translate="auth.createAccount">
@@ -618,7 +599,7 @@ export async function RegisterView() {
 		<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4">
 			<!-- Container principal blanc centré -->
 			<div class="max-w-md w-full bg-white rounded-2xl shadow-sm p-8">
-                
+
                 <!-- Language Selector -->
                 <div class="flex justify-end mb-4">
                     <select id="language-selector-register" class="bg-gray-100 border-none outline-none cursor-pointer text-sm p-2 rounded">
