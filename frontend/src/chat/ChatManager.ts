@@ -63,8 +63,12 @@ export class ChatManager extends SocketService {
         this.state.isOpen = !this.state.isOpen;
         if (this.state.isOpen) {
             this.openChat();
-            // Ne plus vider les notifications à l'ouverture du chat
-            // Mettre à jour le badge global avec la somme des rooms
+            // À l'ouverture: si la room courante a des notifs, les considérer comme lues
+            const currentRoomId = this.currentRoom?.id || this.state.activeTab;
+            if (currentRoomId && this.getUnread(currentRoomId) > 0) {
+                this.resetUnread(currentRoomId);
+            }
+            // Mettre à jour le badge global avec la somme des rooms restantes
             this.state.unreadCount = this.getTotalUnread();
             this.updateNotificationBadge();
             this.renderRoomsList();
