@@ -152,7 +152,7 @@ function drawWaitingScreen(room: any) {
 	ctx.fillStyle = 'white';
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
-	ctx.fillText('Waiting for player ... (1 / 2)', (room.game.win.width * scale_x) / 2, (room.game.win.height * scale_y) / 2);
+	ctx.fillText('Waiting for player ... (1 / 2)', (room.game.win.width * scale_x) / 2, (room.game.win.height * scale_y) / 2, (room.game.win.width * scale_x) * 0.80);
 }
 
 function drawWinner(winner: Player, game: Game) {

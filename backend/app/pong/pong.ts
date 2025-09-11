@@ -2,11 +2,11 @@ import { Server, Socket } from 'socket.io';
 import { Game, Player, Room } from '../types/pongTypes.js';
 import { FastifyInstance } from 'fastify';
 import { app } from '../app.js';
-import { JwtPayload, UserHistory } from '../types/userTypes.js'
-import { User, History} from '../models.js'
+import { JwtPayload, UserHistory } from '../types/userTypes.js';
+import { User, History } from '../models.js';
 
 const SCORETOWIN = 3;
-let stored:boolean = false;
+let stored: boolean = false;
 
 declare module 'fastify' {
 	interface FastifyInstance {
@@ -158,11 +158,11 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 			if (socket) {
 				socket.leave(room.name);
 			}
-			if(room.playersNb === 0)
-				rooms = rooms.filter(r => r !== room);
+			if (room.playersNb === 0) rooms = rooms.filter(r => r !== room);
 			if (gameInterval) {
 				console.log('aaaaaaaaaa');
 				clearInterval(gameInterval);
+				stored = false;
 			}
 		}
 		if (socket) {
@@ -183,7 +183,7 @@ export function launchGame(rooms: Room[]) {
 			// Pour chaque room prête, broadcast son état de jeu à tous ses joueurs
 			for (const room of rooms) {
 				if (room.playersNb === 2 && room.locked && !room.game!.over) {
-					!room.game.gameStart? room.game.gameStart = Date.now(): 0;
+					!room.game.gameStart ? (room.game.gameStart = Date.now()) : 0;
 					// console.log('ball speed');
 					// console.log(room.game.ball.vx);
 					// console.log(room.game.ball.vy);
@@ -300,57 +300,54 @@ function movePlayer(game: Game) {
 }
 
 async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
-
 	stored = true;
-	const user1 = await User.findOneBy({id: game.p1.uid});
-    if (!user1) {
-        console.log('cant get user1');
-        return;
-    }
-    const user2 = await User.findOneBy({id: game.p2.uid});
-    if (!user2) {
-        console.log('cant get user2');
-        return;
-    }
+	const user1 = await User.findOneBy({ id: game.p1.uid });
+	if (!user1) {
+		console.log('cant get user1');
+		return;
+	}
+	const user2 = await User.findOneBy({ id: game.p2.uid });
+	if (!user2) {
+		console.log('cant get user2');
+		return;
+	}
 
-    const gametime = game.gameStart ? Date.now() - game.gameStart : 0;
+	const gametime = game.gameStart ? Date.now() - game.gameStart : 0;
 
-    const historyp1: UserHistory = {
-        type: 'pong',
-        date: new Date().toISOString(),
-        win: winner === 'P1' ? 'WIN' : 'LOOSE',
-        opponent: user2.id,
-        score: `${game.p1.score}:${game.p2.score}`,
-        finalLength: 0,
-        finalBallSpeed: game.ball.vx + game.ball.vy / 2,
-        gameTime: gametime,
-    }
+	const historyp1: UserHistory = {
+		type: 'pong',
+		date: new Date().toISOString(),
+		win: winner === 'P1' ? 'WIN' : 'LOOSE',
+		opponent: user2.id,
+		score: `${game.p1.score}:${game.p2.score}`,
+		finalLength: 0,
+		finalBallSpeed: game.ball.vx + game.ball.vy / 2,
+		gameTime: gametime,
+	};
 
-    const historyp2: UserHistory = {
-        type: 'pong',
-        date: new Date().toISOString(),
-        win: winner === 'P2' ? 'WIN' : 'LOOSE',
-        opponent: user1.id,
-        score: `${game.p2.score}:${game.p1.score}`,
-        finalLength: 0,
-        finalBallSpeed: game.ball.vx + game.ball.vy / 2,
-        gameTime: gametime,
-    }
+	const historyp2: UserHistory = {
+		type: 'pong',
+		date: new Date().toISOString(),
+		win: winner === 'P2' ? 'WIN' : 'LOOSE',
+		opponent: user1.id,
+		score: `${game.p2.score}:${game.p1.score}`,
+		finalLength: 0,
+		finalBallSpeed: game.ball.vx + game.ball.vy / 2,
+		gameTime: gametime,
+	};
 
-    const historyEntry1 = new History(user1, historyp1);
-    const historyEntry2 = new History(user2, historyp2);
+	const historyEntry1 = new History(user1, historyp1);
+	const historyEntry2 = new History(user2, historyp2);
 
-    await historyEntry1.save(); 
-    await historyEntry2.save();
+	await historyEntry1.save();
+	await historyEntry2.save();
 
-
-    console.log('History saved for both players');
+	console.log('History saved for both players');
 }
 
 function checkWin(game: Game, app: FastifyInstance) {
-	if (game.p1.score === SCORETOWIN || game.p2.score === SCORETOWIN ) {
-		if (!stored)
-			game.p1.score === SCORETOWIN ? saveDataInHistory(game, 'P1') : saveDataInHistory(game, 'P2');
+	if (game.p1.score === SCORETOWIN || game.p2.score === SCORETOWIN) {
+		if (!stored) game.p1.score === SCORETOWIN ? saveDataInHistory(game, 'P1') : saveDataInHistory(game, 'P2');
 		game.ball.vx = 0;
 		game.ball.vy = 0;
 		game.ball.x = WIN_WIDTH / 2;
