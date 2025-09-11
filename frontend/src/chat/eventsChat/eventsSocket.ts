@@ -27,16 +27,16 @@ export function eventsSocket(this: ChatManager) {
 		}
 		if (data.blockedList) {
 			(this as any).state.currentUserId.blockedList = data.blockedList;
-		}
+		};
 		(this as any).updateMessagesDisplay();
 		(this as any).renderOnlineUsers();
 	});
 
-	this.on('authError', (error: string) => {
+	this.on(CHAT_EVENTS.AUTH_ERROR, (error: string) => {
 		console.error('❌ Chat auth error:', error);
 	});
 
-	this.on('error', (error: any) => {
+	this.on(CHAT_EVENTS.ERROR, (error: any) => {
 		console.error('❌ Chat error:', error);
 	});
 
