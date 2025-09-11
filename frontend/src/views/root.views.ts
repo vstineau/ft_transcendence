@@ -83,32 +83,13 @@ export async function RootView() {
 					<!-- Bloc Let's talk - 4 colonnes, 1 ligne -->
 					<div class="bg-white rounded-xl shadow-lg p-8" style="grid-column: 1 / 3; grid-row: 3">
 						<div class="h-full flex flex-col justify-between">
-							<h3 class="font-montserrat font-bold text-6xl mb-6" data-translate="dashboard.letsTalk">Let's talk</h3>
-
-							<div class="flex items-start space-x-6">
+							<h3 class="font-montserrat font-bold text-6xl mb-6">Let's talk</h3>
+							<div id="recent-contacts-container" class="flex items-start space-x-6">
+								<!-- Le contenu sera injecte dynamiquement -->
 								<div class="text-center">
-									<div
-										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
-									>
-										L
+									<div class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl">
+										Loading...
 									</div>
-									<span class="text-xs text-gray-600">@LeoApple</span>
-								</div>
-								<div class="text-center">
-									<div
-										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
-									>
-										M
-									</div>
-									<span class="text-xs text-gray-600">@MaxDragon</span>
-								</div>
-								<div class="text-center">
-									<div
-										class="w-32 h-32 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-xl font-bold"
-									>
-										F
-									</div>
-									<span class="text-xs text-gray-600">@FatimaPing</span>
 								</div>
 							</div>
 						</div>
