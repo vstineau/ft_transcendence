@@ -3,7 +3,8 @@ export default {
         "dashboard": "Tableau de bord",
         "games": "Jeux",
         "settings": "Paramètres",
-        "logout": "Déconnexion"
+        "logout": "Déconnexion",
+		"backToDashboard": "← Retour au tableau de bord",
     },
     "dashboard": {
         "title": "FT_TRANSCENDENCE",
@@ -27,6 +28,11 @@ export default {
         "snake": {
             "description": "Pour Snake, vous devez empêcher le serpent de rentrer en collision avec les obstacles et lui-même."
         }
+    },
+    "pong": {
+        "local": "Local",
+        "online": "En ligne",
+        "tournament": "Tournoi"
     },
     "welcome": {
         "subtitle": "Choisissez votre aventure.",

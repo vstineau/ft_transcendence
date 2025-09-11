@@ -246,7 +246,7 @@ export async function PongChoice() {
 						href="/pong/matchmaking/localgame"
 						class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors"
 					>
-						<p class="font-montserrat font-medium text-base text-gray-600">Local</p>
+						<p class="font-montserrat font-medium text-base text-white" data-translate="pong.local">Local</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🏠</span>
 						</div>
@@ -256,7 +256,7 @@ export async function PongChoice() {
 						href="/pong/matchmaking/game"
 						class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors"
 					>
-						<p class="font-montserrat font-medium text-base text-gray-600">Online</p>
+						<p class="font-montserrat font-medium text-base text-gray-600" data-translate="pong.online">Online</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🌏</span>
 						</div>
@@ -266,14 +266,14 @@ export async function PongChoice() {
 						href="/pong/tournament"
 						class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors"
 					>
-						<p class="font-montserrat font-medium text-base text-gray-600">Tournament</p>
+						<p class="font-montserrat font-medium text-base text-gray-600" data-translate="pong.tournament">Tournament</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🏆</span>
 						</div>
 					</a>
 
 					<div class="mt-2 flex flex-col">
-						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors" data-translate="nav.backToDashboard">← Retour au Dashboard</a>
 					</div>
 				</div>
 			</div>

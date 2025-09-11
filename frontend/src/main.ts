@@ -39,7 +39,7 @@ import { updateUserProfile } from './graph/profileSnakeFr';
 import { updateUserProfilePong } from './graph/profilePongFr';
 import { updateRecentContacts } from './chat/recentContents';
 import { displayDarkModeButton } from './theme/lightButton'
-import { initLanguageSelector, initializeLanguage } from './lang/languageManager';
+import { initLanguageSelector, initializeLanguage, languageManager } from './lang/languageManager';
 import { showProfileDetails } from './user/popProfile'
 
 // 1. Déclaration des routes
@@ -237,6 +237,9 @@ export async function renderPage() {
 		case '/pong/tournament':
 			pongTournament();
 			displayChatButton();
+			break;
+		case '/pong-choice':
+			languageManager.updatePageTranslations();
 			break;
 	}
 }

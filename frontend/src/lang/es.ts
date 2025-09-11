@@ -3,7 +3,8 @@ export default {
         "dashboard": "Panel de control",
         "games": "Juegos",
         "settings": "Configuración",
-        "logout": "Cerrar sesión"
+        "logout": "Cerrar sesión",
+		"backToDashboard": "← Volver al panel",
     },
     "dashboard": {
         "title": "FT_TRANSCENDENCE",
@@ -31,6 +32,11 @@ export default {
     },
     "errors": {
         "notFound": "404 No encontrado"
+    },
+    "pong": {
+        "local": "Local",
+        "online": "En línea",
+        "tournament": "Torneo"
     },
     "welcome": {
         "subtitle": "Elige tu aventura.",
