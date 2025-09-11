@@ -29,6 +29,10 @@ export default {
             "description": "For Snake you must keep the snake from colliding with both other obstacles and itself."
         }
     },
+    "snake": {
+        "local": "Local",
+        "online": "Online"
+    },
 	"pong": {
         "local": "Local",
         "online": "Online", 

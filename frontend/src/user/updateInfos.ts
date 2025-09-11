@@ -1,7 +1,7 @@
-import { navigateTo, authenticatedFetch} from '../main';
+import { navigateTo, authenticatedFetch } from '../main';
 import { displayError } from '../utils/error';
 import { readFileAsBase64 } from '../utils/userInfo';
-import { fetchAndSaveUserInfo, initUserAvatar, getCurrentUser, updateProfileAvatar} from '../utils/avatar';
+import { fetchAndSaveUserInfo, initUserAvatar, getCurrentUser, updateProfileAvatar } from '../utils/avatar';
 import { init2FASetup } from '../user/2fasetup';
 
 export async function updateInfos() {
@@ -45,7 +45,7 @@ export async function updateInfos() {
 		loginInput ? (loginInput.placeholder = reply.user.login) : '';
 		nicknameInput ? (nicknameInput.placeholder = reply.user.nickName) : '';
 		mailInput ? (mailInput.placeholder = reply.user.email) : '';
-	} catch (err) {}
+	} catch (err) { }
 	form?.addEventListener('submit', async e => {
 		e.preventDefault();
 		displayError('');
@@ -109,11 +109,11 @@ export async function updateInfos() {
 }
 
 function imageExtension(base64: string): string {
-  if (base64.startsWith('iVBOR')) return 'png';
-  if (base64.startsWith('/9j/')) return 'jpeg';
-  if (base64.startsWith('R0lGOD')) return 'gif';
-  if (base64.startsWith('UklGR')) return 'webp';
-  return 'png'; // défaut
+	if (base64.startsWith('iVBOR')) return 'png';
+	if (base64.startsWith('/9j/')) return 'jpeg';
+	if (base64.startsWith('R0lGOD')) return 'gif';
+	if (base64.startsWith('UklGR')) return 'webp';
+	return 'png'; // défaut
 }
 
 function initUpdateInfosPage(): void {
@@ -123,8 +123,8 @@ function initUpdateInfosPage(): void {
 	initTabs();
 	// Initialiser les menus
 	initMenuItems();
-    // Afficher le contenu par défaut
-    showContent('change-password');
+	// Afficher le contenu par défaut
+	showContent('change-password');
 	initMenuItems();
 	// Afficher le contenu par défaut
 	showContent('change-password');
@@ -419,7 +419,7 @@ function getContentHTML(contentKey: string): string {
 		</div>
 	`,
 
-	'edit-profile': `
+		'edit-profile': `
 		<div class="space-y-6">
 			<h2 class="font-montserrat font-medium text-black mb-4">Edit profile</h2>
 				<form id="edit-profile-form" class="space-y-4">
@@ -456,121 +456,122 @@ function getContentHTML(contentKey: string): string {
 				</form>
 		</div>
 	`
-};
+	};
 
 	return contents[contentKey] || '<p>Content not found</p>';
 }
 
 function initEditProfileForm(): void {
-    console.log("=== DEBUGGING initEditProfileForm ===");
+	console.log("=== DEBUGGING initEditProfileForm ===");
 
-    // 1. Vérifier les cookies
-    console.log("Document cookies:", document.cookie);
+	// 1. Vérifier les cookies
+	console.log("Document cookies:", document.cookie);
 
-    // 2. Vérifier les données utilisateur
-    const userData = getCurrentUser();
-    console.log("Current user data:", userData);
+	// 2. Vérifier les données utilisateur
+	const userData = getCurrentUser();
+	console.log("Current user data:", userData);
 
-    const form = document.getElementById('edit-profile-form') as HTMLFormElement;
-    if (!form) {
-        console.log("❌ Form not found");
-        return;
-    }
+	const form = document.getElementById('edit-profile-form') as HTMLFormElement;
+	if (!form) {
+		console.log("❌ Form not found");
+		return;
+	}
 
-    if (userData) {
-        // const firstNameInput = document.getElementById('edit-firstName') as HTMLInputElement;
-        // const lastNameInput = document.getElementById('edit-lastName') as HTMLInputElement;
-        const nickNameInput = document.getElementById('edit-nickName') as HTMLInputElement;
+	if (userData) {
+		// const firstNameInput = document.getElementById('edit-firstName') as HTMLInputElement;
+		// const lastNameInput = document.getElementById('edit-lastName') as HTMLInputElement;
+		const nickNameInput = document.getElementById('edit-nickName') as HTMLInputElement;
 		const usernameInput = document.getElementById('edit-username') as HTMLInputElement;
-        const emailInput = document.getElementById('edit-email') as HTMLInputElement;
+		const emailInput = document.getElementById('edit-email') as HTMLInputElement;
 
-        // if (firstNameInput) firstNameInput.value = userData.firstName || '';
-        // if (lastNameInput) lastNameInput.value = userData.lastName || '';
-        if (nickNameInput) nickNameInput.value = userData.nickName || '';
-        if (emailInput) emailInput.value = userData.email || '';
+		// if (firstNameInput) firstNameInput.value = userData.firstName || '';
+		// if (lastNameInput) lastNameInput.value = userData.lastName || '';
+		if (nickNameInput) nickNameInput.value = userData.nickName || '';
+		if (emailInput) emailInput.value = userData.email || '';
 		if (usernameInput && userData.login) {
 			usernameInput.value = userData.login;
 		}
-    }
+	}
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        console.log("=== FORM SUBMIT DEBUG ===");
+	form.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		console.log("=== FORM SUBMIT DEBUG ===");
 
-        const formData = new FormData(form);
-        const body = {
-            login: formData.get('username')?.toString().trim(),
-            nickName: formData.get('nickName')?.toString().trim(),
-            password: '',
-            newPassword: '',
-            email: formData.get('email')?.toString().trim(),
-            avatar: '',
-            noAvatar: false,
-            ext: '',
-        };
+		const formData = new FormData(form);
+		const body = {
+			login: formData.get('username')?.toString().trim(),
+			nickName: formData.get('nickName')?.toString().trim(),
+			password: '',
+			newPassword: '',
+			email: formData.get('email')?.toString().trim(),
+			avatar: '',
+			noAvatar: false,
+			ext: '',
+		};
 
-        console.log("Body being sent:", body);
-        console.log("Cookies before request:", document.cookie);
+		console.log("Body being sent:", body);
+		console.log("Cookies before request:", document.cookie);
 
-        try {
-            const host = window.location.hostname;
-            const port = window.location.port;
-            const protocol = window.location.protocol;
-            const url = `${protocol}//${host}:${port}/api/updateInfos`;
+		try {
+			const host = window.location.hostname;
+			const port = window.location.port;
+			const protocol = window.location.protocol;
+			const url = `${protocol}//${host}:${port}/api/updateInfos`;
 
-            console.log("Request URL:", url);
-            console.log("Request headers will include credentials");
+			console.log("Request URL:", url);
+			console.log("Request headers will include credentials");
 
-	const response = await authenticatedFetch(`${protocol}//${host}:${port}/api/updateInfos`, {                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify(body),
-            });
+			const response = await authenticatedFetch(`${protocol}//${host}:${port}/api/updateInfos`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				credentials: 'include',
+				body: JSON.stringify(body),
+			});
 
-            console.log("Response status:", response.status);
-            console.log("Response headers:", [...response.headers.entries()]);
+			console.log("Response status:", response.status);
+			console.log("Response headers:", [...response.headers.entries()]);
 
-            const result = await response.json();
-            console.log("Full response:", result);
+			const result = await response.json();
+			console.log("Full response:", result);
 
-            if (result.success) {
-                console.log("✅ Success!");
-                alert('Profile updated successfully!');
-            } else {
-                console.log("❌ Backend error:", result.error);
-                displayError(result.error || 'Failed to update profile');
-            }
-        } catch (error) {
-            console.log("❌ Network error:", error);
-            displayError('Network error occurred');
-        }
-    });
+			if (result.success) {
+				console.log("✅ Success!");
+				alert('Profile updated successfully!');
+			} else {
+				console.log("❌ Backend error:", result.error);
+				displayError(result.error || 'Failed to update profile');
+			}
+		} catch (error) {
+			console.log("❌ Network error:", error);
+			displayError('Network error occurred');
+		}
+	});
 }
 
 // Ajoutez cette fonction pour tester l'authentification
 async function testAuth(): Promise<void> {
-    // console.log("=== TESTING AUTHENTICATION ===");
-    // console.log("Cookies:", document.cookie);
+	// console.log("=== TESTING AUTHENTICATION ===");
+	// console.log("Cookies:", document.cookie);
 
-    try {
-        const host = window.location.hostname;
-        const port = window.location.port;
-        const protocol = window.location.protocol;
+	try {
+		const host = window.location.hostname;
+		const port = window.location.port;
+		const protocol = window.location.protocol;
 
-        const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
-            method: 'GET',
-            credentials: 'include',
-        });
+		const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
+			method: 'GET',
+			credentials: 'include',
+		});
 
-        console.log("Auth test response status:", response.status);
-        const result = await response.json();
-        console.log("Auth test result:", result);
+		console.log("Auth test response status:", response.status);
+		const result = await response.json();
+		console.log("Auth test result:", result);
 
-    } catch (error) {
-        console.log("Auth test error:", error);
-    }
+	} catch (error) {
+		console.log("Auth test error:", error);
+	}
 }
 
 
@@ -580,71 +581,71 @@ function initContentFeatures(contentKey: string): void {
 			initChangePasswordForm();
 			break;
 		case 'dual-authentication':
-            init2FASetup();
-            break;
-        case 'profile-picture':
-            initProfilePictureUpload();
-            break;
+			init2FASetup();
+			break;
+		case 'profile-picture':
+			initProfilePictureUpload();
+			break;
 		case 'delete':
-            initDeleteAccountForm();
-            break;
+			initDeleteAccountForm();
+			break;
 		case 'edit-profile':
-            initEditProfileForm();
-            break;
-    }
+			initEditProfileForm();
+			break;
+	}
 }
 
 function initChangePasswordForm(): void {
-    const form = document.getElementById('change-password-form') as HTMLFormElement;
-    if (form) {
-        form.addEventListener('submit', async e => {
-            e.preventDefault();
-            const formData = new FormData(form);
-            const email = formData.get('email')?.toString().trim();
-            const currentPassword = formData.get('current-password')?.toString().trim();
-            const newPassword = formData.get('new-password')?.toString().trim();
+	const form = document.getElementById('change-password-form') as HTMLFormElement;
+	if (form) {
+		form.addEventListener('submit', async e => {
+			e.preventDefault();
+			const formData = new FormData(form);
+			const email = formData.get('email')?.toString().trim();
+			const currentPassword = formData.get('current-password')?.toString().trim();
+			const newPassword = formData.get('new-password')?.toString().trim();
 
-            if (!email || !currentPassword || !newPassword) {
-                displayError('All fields are required');
-                return;
-            }
+			if (!email || !currentPassword || !newPassword) {
+				displayError('All fields are required');
+				return;
+			}
 
-            const body = {
-                login: '',
-                nickName: '',
-                password: currentPassword,
-                newPassword: newPassword,
-                email: email,
-                avatar: '',
-                noAvatar: false,
-                ext: '',
-            };
+			const body = {
+				login: '',
+				nickName: '',
+				password: currentPassword,
+				newPassword: newPassword,
+				email: email,
+				avatar: '',
+				noAvatar: false,
+				ext: '',
+			};
 
-            try {
-                const host = window.location.hostname;
-                const port = window.location.port;
-                const protocol = window.location.protocol;
-                const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify(body),
-                });
-                const reply = await response.json();
-                if (reply.success) {
-                    alert('Password changed successfully!');
-                    form.reset();
-                } else {
-                    displayError(reply.error || 'Password change failed');
-                }
-            } catch (err) {
-                console.error(err);
-                displayError('Network error occurred');
-            }
-        });
-    }
+			try {
+				const host = window.location.hostname;
+				const port = window.location.port;
+				const protocol = window.location.protocol;
+				const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					credentials: 'include',
+					body: JSON.stringify(body),
+				});
+				const reply = await response.json();
+				if (reply.success) {
+					alert('Password changed successfully!');
+					form.reset();
+				} else {
+					displayError(reply.error || 'Password change failed');
+				}
+			} catch (err) {
+				console.error(err);
+				displayError('Network error occurred');
+			}
+		});
+	}
 }
 
 function initProfilePictureUpload(): void {
@@ -659,15 +660,15 @@ function initProfilePictureUpload(): void {
 	fileInput.addEventListener('change', e => {
 		const file = (e.target as HTMLInputElement).files?.[0];
 		if (file) {
-		if (fileInfo) fileInfo.textContent = file.name;
+			if (fileInfo) fileInfo.textContent = file.name;
 
-		const reader = new FileReader();
-		reader.onload = ev => {
-			if (preview && ev.target?.result) {
-			preview.innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-cover rounded-lg">`;
-			}
-		};
-		reader.readAsDataURL(file);
+			const reader = new FileReader();
+			reader.onload = ev => {
+				if (preview && ev.target?.result) {
+					preview.innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-cover rounded-lg">`;
+				}
+			};
+			reader.readAsDataURL(file);
 		}
 	});
 
@@ -679,185 +680,185 @@ function initProfilePictureUpload(): void {
 		const noPicture = (document.getElementById('no-picture') as HTMLInputElement)?.checked;
 
 		const body: any = {
-		login: '',
-		nickName: '',
-		password: '',
-		newPassword: '',
-		email: '',
-		avatar: '',
-		noAvatar: noPicture,
-		ext: '',
+			login: '',
+			nickName: '',
+			password: '',
+			newPassword: '',
+			email: '',
+			avatar: '',
+			noAvatar: noPicture,
+			ext: '',
 		};
 
 		if (file && !noPicture) {
-		try {
-			const base64 = await readFileAsBase64(file);
-			body.avatar = base64;
+			try {
+				const base64 = await readFileAsBase64(file);
+				body.avatar = base64;
 
-			const fileName = file.name;
-			const lastDot = fileName.lastIndexOf('.');
-			if (lastDot !== -1) {
-			body.ext = fileName.slice(lastDot + 1).toLowerCase();
+				const fileName = file.name;
+				const lastDot = fileName.lastIndexOf('.');
+				if (lastDot !== -1) {
+					body.ext = fileName.slice(lastDot + 1).toLowerCase();
+				}
+			} catch (err) {
+				displayError('Error with avatar upload');
+				return;
 			}
-		} catch (err) {
-			displayError('Error with avatar upload');
-			return;
-		}
 		}
 
 		try {
-		const host = window.location.hostname;
-		const port = window.location.port;
-		const protocol = window.location.protocol;
+			const host = window.location.hostname;
+			const port = window.location.port;
+			const protocol = window.location.protocol;
 
-		const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
-			method: 'POST',
-			headers: {
-			'Content-Type': 'application/json',
-			},
-			credentials: 'include',
-			body: JSON.stringify(body),
-		});
+			const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				credentials: 'include',
+				body: JSON.stringify(body),
+			});
 
-		const reply = await response.json();
-		console.log("Upload response:", reply);
+			const reply = await response.json();
+			console.log("Upload response:", reply);
 
-		if (reply.success) {
-			console.log("=== AVATAR UPDATE DEBUG ===");
-			console.log("Full reply:", reply);
-			console.log("reply.user exists:", !!reply.user);
-			console.log("reply.user.avatar exists:", !!reply.user?.avatar);
-			console.log("Avatar data length:", reply.user?.avatar?.length);
+			if (reply.success) {
+				console.log("=== AVATAR UPDATE DEBUG ===");
+				console.log("Full reply:", reply);
+				console.log("reply.user exists:", !!reply.user);
+				console.log("reply.user.avatar exists:", !!reply.user?.avatar);
+				console.log("Avatar data length:", reply.user?.avatar?.length);
 
-			const currentUser = getCurrentUser();
-			console.log("Current user before update:", currentUser);
+				const currentUser = getCurrentUser();
+				console.log("Current user before update:", currentUser);
 
-			if (currentUser && reply.user && reply.user.avatar) {
-				currentUser.avatar = reply.user.avatar;
-				localStorage.setItem('currentUser', JSON.stringify(currentUser));
-				console.log("Updated localStorage with new avatar");
+				if (currentUser && reply.user && reply.user.avatar) {
+					currentUser.avatar = reply.user.avatar;
+					localStorage.setItem('currentUser', JSON.stringify(currentUser));
+					console.log("Updated localStorage with new avatar");
 
-				// Vérifier que la sauvegarde a fonctionné
-				const savedUser = getCurrentUser();
-				console.log("Saved user after update:", savedUser);
-				console.log("Saved avatar length:", savedUser?.avatar?.length);
+					// Vérifier que la sauvegarde a fonctionné
+					const savedUser = getCurrentUser();
+					console.log("Saved user after update:", savedUser);
+					console.log("Saved avatar length:", savedUser?.avatar?.length);
+				} else {
+					console.log("Missing data - reply.user:", !!reply.user, "avatar:", !!reply.user?.avatar);
+				}
+
+				setTimeout(() => {
+					console.log("Calling initUserAvatar...");
+					initUserAvatar();
+				}, 100);
+
+				alert("Profile picture updated!");
 			} else {
-				console.log("Missing data - reply.user:", !!reply.user, "avatar:", !!reply.user?.avatar);
+				displayError(reply.error || "Upload failed");
 			}
-
-			setTimeout(() => {
-				console.log("Calling initUserAvatar...");
-				initUserAvatar();
-			}, 100);
-
-			alert("Profile picture updated!");
-		} else {
-			displayError(reply.error || "Upload failed");
-		}
 		} catch (err) {
-		console.error(err);
-		displayError("Network error during upload");
+			console.error(err);
+			displayError("Network error during upload");
 		}
 	});
 }
 
 
 function initDeleteAccountForm(): void {
-    const form = document.getElementById('delete-account-form') as HTMLFormElement;
-    if (!form) return;
+	const form = document.getElementById('delete-account-form') as HTMLFormElement;
+	if (!form) return;
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+	form.addEventListener('submit', async (e) => {
+		e.preventDefault();
 
-        // Double confirmation avant suppression
-        const confirmed = confirm(
-            "Are you absolutely sure you want to delete your account? This action cannot be undone."
-        );
+		// Double confirmation avant suppression
+		const confirmed = confirm(
+			"Are you absolutely sure you want to delete your account? This action cannot be undone."
+		);
 
-        if (!confirmed) return;
+		if (!confirmed) return;
 
-        const formData = new FormData(form);
-        const email = formData.get('email')?.toString().trim();
-        const password = formData.get('password')?.toString().trim();
+		const formData = new FormData(form);
+		const email = formData.get('email')?.toString().trim();
+		const password = formData.get('password')?.toString().trim();
 
-        if (!email || !password) {
-            displayError('Please enter both email and password');
-            return;
-        }
+		if (!email || !password) {
+			displayError('Please enter both email and password');
+			return;
+		}
 
-        try {
-            // Désactiver le bouton pendant la requête
-            const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
-            if (submitButton) {
-                submitButton.disabled = true;
-                submitButton.textContent = 'Deleting...';
-                submitButton.style.backgroundColor = '#9CA3AF';
-            }
+		try {
+			// Désactiver le bouton pendant la requête
+			const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+			if (submitButton) {
+				submitButton.disabled = true;
+				submitButton.textContent = 'Deleting...';
+				submitButton.style.backgroundColor = '#9CA3AF';
+			}
 
-            // Appel à votre API de suppression
-            const host = window.location.hostname;
-            const port = window.location.port;
-            const protocol = window.location.protocol;
+			// Appel à votre API de suppression
+			const host = window.location.hostname;
+			const port = window.location.port;
+			const protocol = window.location.protocol;
 
-            const response = await fetch(`${protocol}//${host}:${port}/api/deleteAccount`, {
-                method: 'POST', // Changé en POST pour envoyer les données
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include', // Pour les cookies
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                }),
-            });
+			const response = await fetch(`${protocol}//${host}:${port}/api/deleteAccount`, {
+				method: 'POST', // Changé en POST pour envoyer les données
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				credentials: 'include', // Pour les cookies
+				body: JSON.stringify({
+					email: email,
+					password: password
+				}),
+			});
 
-            const result = await response.json();
+			const result = await response.json();
 
-            if (result.success) {
-                alert('Your account has been successfully deleted.');
-                // Rediriger vers la page d'accueil
-                window.location.href = '/';
-            } else {
-                displayError(result.error || 'Failed to delete account. Please check your credentials.');
+			if (result.success) {
+				alert('Your account has been successfully deleted.');
+				// Rediriger vers la page d'accueil
+				window.location.href = '/';
+			} else {
+				displayError(result.error || 'Failed to delete account. Please check your credentials.');
 
-                // Réactiver le bouton
-                if (submitButton) {
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Delete Account Forever';
-                    submitButton.style.backgroundColor = '#DC2626';
-                }
-            }
+				// Réactiver le bouton
+				if (submitButton) {
+					submitButton.disabled = false;
+					submitButton.textContent = 'Delete Account Forever';
+					submitButton.style.backgroundColor = '#DC2626';
+				}
+			}
 
-        } catch (error) {
-            console.error('Delete account error:', error);
-            displayError('Network error occurred. Please try again.');
+		} catch (error) {
+			console.error('Delete account error:', error);
+			displayError('Network error occurred. Please try again.');
 
-            // Réactiver le bouton
-            const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
-            if (submitButton) {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Delete Account Forever';
-                submitButton.style.backgroundColor = '#DC2626';
-            }
-        }
-    });
+			// Réactiver le bouton
+			const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+			if (submitButton) {
+				submitButton.disabled = false;
+				submitButton.textContent = 'Delete Account Forever';
+				submitButton.style.backgroundColor = '#DC2626';
+			}
+		}
+	});
 }
 
 
 function initEditProfileButton(): void {
-    const editBtn = document.getElementById('edit-profile-btn');
-    if (editBtn) {
-        editBtn.addEventListener('click', () => {
-            console.log('Edit profile clicked');
+	const editBtn = document.getElementById('edit-profile-btn');
+	if (editBtn) {
+		editBtn.addEventListener('click', () => {
+			console.log('Edit profile clicked');
 
-            // Désactiver tous les menu items actifs
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('active');
-            });
+			// Désactiver tous les menu items actifs
+			document.querySelectorAll('.menu-item').forEach(item => {
+				item.classList.remove('active');
+			});
 
-            // Afficher le contenu d'édition de profil
-            showContent('edit-profile');
-        });
-    }
+			// Afficher le contenu d'édition de profil
+			showContent('edit-profile');
+		});
+	}
 }
 

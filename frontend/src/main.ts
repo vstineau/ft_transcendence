@@ -241,6 +241,9 @@ export async function renderPage() {
 		case '/pong-choice':
 			languageManager.updatePageTranslations();
 			break;
+		case '/snake-choice':
+			languageManager.updatePageTranslations();
+			break;
 	}
 }
 

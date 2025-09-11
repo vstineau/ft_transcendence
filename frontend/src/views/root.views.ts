@@ -83,7 +83,7 @@ export async function RootView() {
 					<!-- Bloc Let's talk - 4 colonnes, 1 ligne -->
 					<div class="bg-white rounded-xl shadow-lg p-8" style="grid-column: 1 / 3; grid-row: 3">
 						<div class="h-full flex flex-col justify-between">
-							<h3 class="font-montserrat font-bold text-6xl mb-6">Let's talk</h3>
+							<h3 class="font-montserrat font-bold text-6xl mb-6" data-translate="dashboard.letsTalk">Let's talk</h3>
 							<div id="recent-contacts-container" class="flex items-start space-x-6">
 								<!-- Le contenu sera injecte dynamiquement -->
 								<div class="text-center">
@@ -301,7 +301,7 @@ export async function SnakeChoice() {
 						href="/snake/local"
 						class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors"
 					>
-						<p class="font-montserrat font-medium text-base text-gray-600">Local</p>
+						<p class="font-montserrat font-medium text-base text-white" data-translate="snake.local">Local</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🏠</span>
 						</div>
@@ -312,14 +312,14 @@ export async function SnakeChoice() {
 						href="/snake"
 						class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors"
 					>
-						<p class="font-montserrat font-medium text-base text-gray-600">Online</p>
+						<p class="font-montserrat font-medium text-base text-gray-600" data-translate="snake.online">Online</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🌏</span>
 						</div>
 					</a>
 
 					<div class="mt-2 flex flex-col">
-						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors" data-translate="nav.backToDashboard">← Retour au Dashboard</a>
 					</div>
 				</div>
 			</div>

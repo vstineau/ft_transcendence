@@ -33,6 +33,10 @@ export default {
     "errors": {
         "notFound": "404 No encontrado"
     },
+    "snake": {
+        "local": "Local",
+        "online": "En línea"
+    },
     "pong": {
         "local": "Local",
         "online": "En línea",

@@ -29,6 +29,10 @@ export default {
             "description": "Pour Snake, vous devez empêcher le serpent de rentrer en collision avec les obstacles et lui-même."
         }
     },
+    "snake": {
+        "local": "Local",
+        "online": "En ligne"
+    },
     "pong": {
         "local": "Local",
         "online": "En ligne",
