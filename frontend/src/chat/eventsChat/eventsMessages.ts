@@ -1,20 +1,16 @@
 import { ChatManager } from '../ChatManager';
-//import { Message } from '../types';
+import { CHAT_EVENTS } from '../config';
 
 export function eventsMessages(this: ChatManager) {
 
-	this.on('newMessage', (message: any) => {
-	    console.log('📩 New message received:', message);
+	this.on(CHAT_EVENTS.NEW_MESSAGE, (message: any) => {
+	    //console.log('📩 New message received:', message);
 		const isBlocked = (this as any).state.currentUserId.blockedList.includes(message.userId) || message.blockedList.includes((this as any).state.currentUserId.id);
-		console.log('isBlocked:', isBlocked);
-		console.log('Current user ID:', (this as any).state.currentUserId.id);
-		console.log('Blocked list:', (this as any).state.currentUserId.blockedList);
-		console.log('Message user ID:', message.userId);
 
 	    // Si c'est un message privé, gérer côté client
 		if (message.roomId?.startsWith('private_')) {
 				if (isBlocked) {
-					
+					(this as any).emit(CHAT_EVENTS.DELETE_MESSAGE, { messageId: message.id });
 					return;
 				}
 

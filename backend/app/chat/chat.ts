@@ -38,6 +38,10 @@ export async function startChat(app: FastifyInstance) {
       handleGetMessageHistory(socket, data, app)
     );
 
+    socket.on(CHAT_EVENTS.DELETE_MESSAGE, (data: { messageId: string }) => {
+      messageService.deleteMessage(data.messageId);
+    });
+
     // ===== ROOMS =====
     socket.on(CHAT_EVENTS.JOIN_PRIVATE_ROOM, (data: { targetUserId: string }) => 
       handleJoinPrivateRoom(socket, data, app)

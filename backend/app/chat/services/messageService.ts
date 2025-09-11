@@ -107,6 +107,20 @@ class MessageService {
       console.error('Error cleaning old messages:', error);
     }
   }
+
+  async deleteMessage(messageId: string): Promise<void> {
+    try {
+      await SqliteDataSource.getRepository(ChatMessageEntity)
+        .createQueryBuilder()
+        .delete()
+        .where('id = :messageId', { messageId })
+        .execute();
+        
+      console.log(`Message ${messageId} deleted`);
+    } catch (error) {
+      console.error(`Error deleting message ${messageId}:`, error);
+    }
+  }
 }
 
 export const messageService = new MessageService();

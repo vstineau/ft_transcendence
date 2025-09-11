@@ -18,6 +18,7 @@ export const CHAT_EVENTS = {
   DELETE_FRIEND: 'deleteFriend',
   BLOCK_USER: 'blockUser',
   UNBLOCK_USER: 'unblockUser',
+  DELETE_MESSAGE: 'deleteMessage',
 
   // Server -> Client
   USER_CONNECTED: 'userConnected',

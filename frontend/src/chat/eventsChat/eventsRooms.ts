@@ -13,7 +13,6 @@ export function eventsRooms(this: ChatManager) {
 		// Réception de l'historique des messages pour une room spécifique
         this.on(CHAT_EVENTS.MESSAGE_HISTORY, (data: any) => {
             console.log(`📨 Messages reçus pour room ${data.room}:`, data.messages);
-            
             const room = data.room;
             const messages = data.messages || [];
 

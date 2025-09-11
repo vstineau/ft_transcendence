@@ -205,7 +205,7 @@ export class ChatManager extends SocketService {
         if (!content.trim()) return;
 
         if (this.isConnected()) {
-            this.emit('sendMessage', {
+            this.emit(CHAT_EVENTS.SEND_MESSAGE, {
                 content: content.trim(),
                 room: this.state.activeTab
             });

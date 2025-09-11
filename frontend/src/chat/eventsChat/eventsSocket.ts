@@ -1,6 +1,6 @@
 import { ChatManager } from '../ChatManager';
 import { getCookie } from '../../pong/pong';
-import { ChatState } from '../types';
+import { CHAT_EVENTS } from '../config';
 
 export function eventsSocket(this: ChatManager) {
 
@@ -9,12 +9,12 @@ export function eventsSocket(this: ChatManager) {
 		console.log('💬 Chat socket connected');
 		let cookie = getCookie('token');
 		if (cookie) {
-			this.emit('initUser', cookie);
+			this.emit(CHAT_EVENTS.INIT_USER, cookie);
 		}
 	});
 
 	// Écouter les événements du serveur
-	this.on('userConnected', (data: any) => {
+	this.on(CHAT_EVENTS.USER_CONNECTED, (data: any) => {
 		console.log('✅ Chat user connected:', data);
 		(this as any).state.currentUserId.id = data.user.id;
 		(this as any).state.currentUserId.avatar = data.user.avatar || '';
@@ -28,8 +28,6 @@ export function eventsSocket(this: ChatManager) {
 		if (data.blockedList) {
 			(this as any).state.currentUserId.blockedList = data.blockedList;
 		}
-		console.log('blockedList:', (this as any).state.currentUserId.blockedList);
-		console.log('currentRoom = :', (this as any).currentRoom.id);
 		(this as any).updateMessagesDisplay();
 		(this as any).renderOnlineUsers();
 	});
