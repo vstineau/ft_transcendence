@@ -4,6 +4,8 @@ export interface Game {
     ball: Ball;
     win: Window;
     over: boolean;
+	gameStart?: number;
+    started: boolean;
 }
 
 export interface Player {
@@ -17,8 +19,8 @@ export interface Player {
     score: number;
     key_up: boolean;
     key_down: boolean;
-    avatar: string;
-    login: string;
+    avatar: string | undefined;
+    uid: string;
 }
 
 export interface Ball {
@@ -33,3 +35,12 @@ export interface Window {
     width: number;
     height: number;
 }
+
+export interface Room {
+	name: string;
+	playersNb: number;
+	game: Game;
+	locked: boolean;
+    winner: Player | null;
+    nameSet: boolean;
+};

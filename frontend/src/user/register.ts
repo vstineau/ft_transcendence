@@ -119,4 +119,3 @@ export async function registerUser() {
 		}
 	});
 }
-// ah ouais mon vscode c'est une areme met nous sur le .env stp

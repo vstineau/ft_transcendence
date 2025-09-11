@@ -4,7 +4,6 @@ import { JwtPayload, UserHistory } from '../types/userTypes.js'
 import { Socket } from 'socket.io';
 import { FastifyInstance } from 'fastify';
 import { User, History} from '../models.js'
-//import { v4 as uuidv4 } from "uuid";
 
 const WIN = 600;
 const SEG_SIZE = 10;
@@ -12,26 +11,59 @@ const FPS = 30;
 let snakeRooms: Room[] = [];
 let roomcount = 0;
 
-function getRoom() {
-    return snakeRooms.find(room => room.playersNb === 1);
+function getRoom(friend?: string []) {
+	if (friend) {
+		return snakeRooms.find(room => room.playersNb === 1 && (room.game.p1.uid === friend[0] || room.game.p1.uid === friend[1]));
+	}
+    return snakeRooms.find(room => room.playersNb === 1 && room.custom === false);
 }
 
-function initRoom(socket: Socket, user: User) {
-    const room = getRoom();
-    if (room && user.login != room.game.p1.login) {
-        socket.join(room.name);
-        room.playersNb = 2;
-        room.game.p2.id = socket.id;
-		room.game.p2.name = user.nickName;
-		room.game.p2.login = user.login;
-		room.game.p2.avatar = user.avatar;
-		return room;
+function isInvited(uidP1: string, uidP2: string, friend: string[]): boolean {
+	if (uidP1 !== friend[0] && uidP1 !== friend[1])	
+		return false;
+	if (uidP2 !== friend[0] && uidP2 !== friend[1])	
+		return false;
+	return true;
+}
+
+function initRoom(socket: Socket, user: User, friend?: string[]) {
+    const room = getRoom(friend);
+    if (room && user.id != room.game.p1.uid) {
+		if (!friend) {
+			console.log('NORMAL GAME');
+			socket.join(room.name);
+        	room.playersNb = 2;
+        	room.game.p2.id = socket.id;
+			room.game.p2.name = user.nickName;
+			room.game.p2.uid = user.id;
+			room.game.p2.avatar = user.avatar;
+			return room;
+		}
+		else if (room && friend && user.id != room.game.p1.uid && isInvited(room.game.p1.uid, user.id, friend)) {
+			console.log('CUSTOM GAME');
+			socket.join(room.name);
+        	room.playersNb = 2;
+        	room.game.p2.id = socket.id;
+			room.game.p2.name = user.nickName;
+			room.game.p2.uid = user.id;
+			room.game.p2.avatar = user.avatar;
+			return room;
+		}
+		else {
+			const newRoom = createRoom(socket, user);
+			friend? newRoom.custom = true: newRoom.custom=false;
+        	socket.join(newRoom.name);
+			newRoom.playersNb = 1;
+			return newRoom;
+		}
     } else {
+		console.log("0 ROOM ON EN CREE UNE")
         const newRoom = createRoom(socket, user);
+		friend? newRoom.custom = true: newRoom.custom=false;
         socket.join(newRoom.name);
 		newRoom.playersNb = 1;
 		return newRoom;
-    }
+	}
 }
 
 function createRoom(socket: Socket, user: User): Room {
@@ -47,16 +79,27 @@ function createRoom(socket: Socket, user: User): Room {
 
 function handleDisconnect(app: FastifyInstance, socket: Socket) {
     socket.on('disconnect', () => {
+		console.log('SOCKET DISCONNECTED');
         const room = snakeRooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
         if (room) {
             if (room.interval) {
                 clearInterval(room.interval);
                 room.interval = undefined;
             }
-            app.io.of('/snake').to(room.name).emit('endGame_snake', { reason: 'A player disconnected.', winSize: WIN });
-
-            // Remove room from list
+			room.playersNb--;
+			const sock = app.io.of('snake').sockets.get(room.game.p1.id === socket.id ? room.game.p2.id : room.game.p1.id) as Socket;
+			if (sock) {
+				sock.emit('playerWin_snake', room.game.p1.id === socket.id ? room.game.p2 : room.game.p1, room.game);
+				sock.leave(room.name);
+			}
+			if (socket) {
+				socket.leave(room.name);
+			}
             snakeRooms = snakeRooms.filter(r => r !== room);
+			if (socket) {
+				socket.off;
+				socket.disconnect;
+			}
         }
     });
 }
@@ -91,7 +134,7 @@ export function spawnFoods(g: Game) {
 
 export function eatFood(snake: Snake, g: Game): boolean {
   const head = snake.segments[0];
-  const tolerance = 20; 
+  const tolerance = 20;
   const idx = g.foods.findIndex(f =>
     Math.abs(f.pos.x - head.x) <= tolerance &&
     Math.abs(f.pos.y - head.y) <= tolerance
@@ -148,7 +191,7 @@ function initGame(user: User): Game {
             pendingDir: { x: 0, y: -1 },
             color: "blue",
             id: 'p1',
-			login: user.login,
+			uid: user.id,
 			avatar: user.avatar,
         },
         p2: {
@@ -158,7 +201,7 @@ function initGame(user: User): Game {
             pendingDir: { x: 0, y: 1 },
             color: "red",
             id: 'p2',
-			login: '',
+			uid: '',
 			avatar: '',
         },
         foods: [],
@@ -210,45 +253,48 @@ export function getInputs(sock: Socket, game: Game) {
 
 async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
 
-	const user1 = await User.findOneBy({login: game.p1.login});
-	if (!user1 ) {
-		console.log('cant get user1');
-		return ;
-	}
-	const user2 = await User.findOneBy({login: game.p2.login});
-	if (!user2 ) {
-		console.log('cant get user2');
-		return ;
-	}
-	const gametime = game.gameStart? Date.now() - game.gameStart: 0;
-	const historyp1: UserHistory = {
-		type: 'snake',
-		date: Date(),
-		win: winner === 'P1' ? 'WIN' : 'LOOSE',
-		opponent: user2.login,
-		score: '',
-		finalLength: game.p1.segments.length,
-		gameTime: gametime,
-	}
-	const historyp2: UserHistory = {
-		type: 'snake',
-		date: Date(),
-		win: winner === 'P2' ? 'WIN' : 'LOOSE',
-		opponent: user1.login,
-		score: '',
-		finalLength: game.p2.segments.length,
-		gameTime: gametime,
-	}
-	if (winner === 'DRAW') {
-		historyp1.win = 'DRAW';
-		historyp2.win = 'DRAW';
-	}
-	if (!user1.history) user1.history = [];
-	user1.history.push(new History(user1, historyp1));
-	if (!user2.history) user2.history = [];
-	user2.history.push(new History(user2, historyp2));
-	user1.save();
-	user2.save();
+	const user1 = await User.findOneBy({id: game.p1.uid});
+    if (!user1) {
+        console.log('cant get user1');
+        return;
+    }
+    const user2 = await User.findOneBy({id: game.p2.uid});
+    if (!user2) {
+        console.log('cant get user2');
+        return;
+    }
+
+    const gametime = game.gameStart ? Date.now() - game.gameStart : 0;
+
+    const historyp1: UserHistory = {
+        type: 'snake',
+        date: new Date().toISOString(),
+        win: winner === 'P1' ? 'WIN' : winner === 'P2' ? 'LOOSE' : 'DRAW',
+        opponent: user2.id,
+        score: '',
+        finalLength: game.p1.segments.length,
+        finalBallSpeed: 0,
+        gameTime: gametime,
+    }
+
+    const historyp2: UserHistory = {
+        type: 'snake',
+        date: new Date().toISOString(),
+        win: winner === 'P2' ? 'WIN' : winner === 'P1' ? 'LOOSE' : 'DRAW',
+        opponent: user1.id,
+        score: '',
+        finalLength: game.p2.segments.length,
+        finalBallSpeed: 0,
+        gameTime: gametime,
+    }
+
+    const historyEntry1 = new History(user1, historyp1);
+    const historyEntry2 = new History(user2, historyp2);
+
+    await historyEntry1.save(); 
+    await historyEntry2.save();
+
+    console.log('History saved for both players');
 }
 
 
@@ -285,12 +331,10 @@ export function update(game: Game, app: FastifyInstance, roomId: string) {
 
 
 async function getUser(socket: Socket, cookie: string): Promise<User | undefined> {
-				
+
 	let user;
-	console.log(cookie);
 	if (cookie) {
 		const payload = app.jwt.verify<JwtPayload>(cookie);
-		console.log(payload);
 		user = await User.findOneBy({ id: payload.id });
 		if (!user) {
 			socket.emit('notLogged');
@@ -304,12 +348,15 @@ async function getUser(socket: Socket, cookie: string): Promise<User | undefined
 
 export async function startSnakeGame(app: FastifyInstance) {
     app.io.of('/snake').on('connection', (socket: Socket) => {
-        socket.on('isConnected', async (cookie: string) => {
+        socket.on('isConnected', async (cookie: string, friend?: string[]) => {
+				console.log("FRIEND = ", friend);
             const user = await getUser(socket, cookie);
             if (!user) return; // non connecté
-            const room = initRoom(socket, user);
+            const room = initRoom(socket, user, friend);
             handleDisconnect(app, socket);
+				//console.log('HANDLEDISCONNECT');
             getInputs(socket, room.game);
+				//console.log('GETINPUT');
             socket.emit('roomJoined_snake', room.name); // eviter la course !
             socket.on('initGame_snake', () => {
                 const room = snakeRooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
@@ -317,7 +364,7 @@ export async function startSnakeGame(app: FastifyInstance) {
                 if (room.interval) return;
                 room.interval = setInterval(() => {
                     for (const room of snakeRooms) {
-                        if (room.playersNb === 2) { 
+                        if (room.playersNb === 2) {
                             !room.game.gameStart? room.game.gameStart = Date.now(): 0;
                             update(room.game, app, room.name);
                             app.io.of('/snake').to(room.name).emit('gameState_snake', room.game);

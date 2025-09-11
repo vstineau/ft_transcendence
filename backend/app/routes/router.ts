@@ -12,6 +12,12 @@ import login2fa from './login2fa.js';
 import enable2fa from './enable2fa.js';
 import verifyEnable2fa from './verifyenable2fa.js';
 import fixpassword from './fixpassword.js';
+import historySnake from './historySnake.js'
+import ranking from '../snake/ranking.js'
+import profileSnake from '../snake/profileSnake.js'
+import profilePong from '../pong/profilePong.js'
+import rankingPong from '../pong/rankingPong.js'
+import recentContacts from './recentContacts.js'
 
 export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
     fastify.route(verifyEnable2fa);
@@ -27,6 +33,11 @@ export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
     fastify.route(login2fa);
     fastify.route(enable2fa);
     fastify.route(fixpassword);
+    fastify.route(historySnake);
+    fastify.route(ranking);
+    fastify.route(rankingPong);
+    fastify.route(profileSnake);
+    fastify.route(profilePong);
+    fastify.route(recentContacts);
     done()
 }
-

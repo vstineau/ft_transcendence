@@ -1,6 +1,8 @@
 import io, { Socket } from 'socket.io-client';
 import { Game, Player } from '../types/pongTypes';
 import { navigateTo } from '../main';
+import { showCountdown } from './tournament';
+// import { Socket } from 'socket.io';
 
 export function getCookie(name: string) {
 	const value = `; ${document.cookie}`;
@@ -16,9 +18,13 @@ export function createPongSocket(): Socket {
 
 	let socket = io(`${protocol}//${host}:${port}/pong`);
 	socket.on('connect', () => {
+		console.log(`gameOver ${gameOver}`);
+		console.log(`lastGame ${lastGame}`);
+		console.log(`winner ${winner}`);
+		console.log('socket pong create');
 		let cookie = getCookie('token');
 		socket.emit('initGame', cookie);
-		initCanvas(socket);
+		initCanvas();
 	});
 	return socket;
 }
@@ -30,7 +36,7 @@ let win_width = window.innerWidth;
 let win_height = window.innerHeight;
 let gameOver = false;
 
-function initCanvas(socket: Socket) {
+function initCanvas() {
 	canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
 	if (!canvas) {
 		console.error("❌ Canvas 'gameCanvas' not found");
@@ -44,7 +50,7 @@ function initCanvas(socket: Socket) {
 	}
 }
 
-function drawGame(game: Game) {
+export function drawGame(game: Game) {
 	if (!ctx || gameOver) return;
 	const scale_x = canvas.width / game.win.width;
 	const scale_y = canvas.height / game.win.height;
@@ -86,15 +92,22 @@ function drawGame(game: Game) {
 function listenUserInputs(socket: Socket) {
 	window.addEventListener('keypress', e => {
 		socket.emit('keypress', { key: e.key });
-		if (e.key === ' ') {
-			e.preventDefault();
-			gameOver = false;
-		}
 	});
 	window.addEventListener('keydown', e => {
 		socket.emit('keydown', { key: e.key }, socket.id);
 		if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
 			e.preventDefault();
+		}
+		if (gameOver && e.key === 'Escape') {
+			gameOver = false;
+			winner = null;
+			lastGame = null;
+			// canvas = null;
+			ctx = null;
+			if (socket && socket.connected) {
+				socket.disconnect();
+			}
+			navigateTo('/dashboard');
 		}
 	});
 
@@ -111,16 +124,16 @@ function listenUserInputs(socket: Socket) {
 		if (gameOver && winner && lastGame) drawWinner(winner, lastGame);
 		// socket.emit('resize');
 	});
+	window.addEventListener('beforeunload', () => {
+		if (socket && socket.connected) {
+			socket.disconnect();
+			socket.off();
+			gameOver = false;
+			winner = null;
+			lastGame = null;
+		}
+	});
 }
-
-// Variables pour gérer le bouton
-let gameOverButton = {
-	x: 0,
-	y: 0,
-	width: 0,
-	height: 0,
-	visible: false,
-};
 
 // Gestion du clic sur le canvas
 
@@ -139,10 +152,10 @@ function drawWaitingScreen(room: any) {
 	ctx.fillStyle = 'white';
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
-	ctx.fillText('Waiting for player ... (1 / 2)', (room.game.win.width * scale_x) / 2, (room.game.win.height * scale_y) / 2);
+	ctx.fillText('Waiting for player ... (1 / 2)', (room.game.win.width * scale_x) / 2, (room.game.win.height * scale_y) / 2, (room.game.win.width * scale_x) * 0.80);
 }
 
-function drawWinner(winner: string, game: Game) {
+function drawWinner(winner: Player, game: Game) {
 	if (!ctx) return;
 	// game.over = true;
 	// gameOver = true;
@@ -156,35 +169,91 @@ function drawWinner(winner: string, game: Game) {
 	ctx.lineWidth = 4; // épaisseur de la bordure
 	ctx.fillRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
 	ctx.strokeRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
-	// ctx.fillRect(canvas.width * 0.1, canvas.height * 0.25, canvas.width * 0.6, canvas.height * 0.12);
-	// ctx.fillStyle = 'black';
-	// ctx.fillRect(canvas.width * 0.105, canvas.height * 0.26, canvas.width * 0.69, canvas.height * 0.1);
+	ctx.fillStyle = 'red';
+	ctx.fillRect(canvas.width * 0.25, canvas.height * 0.66, canvas.width * 0.5, canvas.height * 0.12);
+	ctx.strokeRect(canvas.width * 0.25, canvas.height * 0.66, canvas.width * 0.5, canvas.height * 0.12);
 	ctx.fillStyle = 'white';
 	ctx.textAlign = 'center';
-	// const px = canvas.width * canvas.height / 30000;
 	ctx.font = `${40 * (scale_y < scale_x ? scale_y : scale_y)}px Arial`;
-	ctx.fillText(winner + ' wins', canvas.width * 0.5, canvas.height * 0.33, canvas.width * 0.4);
+	ctx.fillText(winner.nickName + ' wins', canvas.width * 0.5, canvas.height * 0.33, canvas.width * 0.4);
+	ctx.fillText('Press `Escape` to return to dashboard', canvas.width * 0.5, canvas.height * 0.73, canvas.width * 0.4);
 	return;
 }
 
-let winner: string | null = null;
+let winner: Player | null = null;
 let lastGame: Game | null = null;
+
+export function keyHandler(socket: Socket) {
+	let keyUpP1 = document.getElementById('p1keyup');
+	let keyDownP1 = document.getElementById('p1keydown');
+	let keyUpP2 = document.getElementById('p2keyup');
+	let keyDownP2 = document.getElementById('p2keydown');
+	// P1 UP
+	socket.on('p1UpKeyDown', () => {
+		if (keyUpP1)
+			keyUpP1.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	});
+	socket.on('p1UpKeyUp', () => {
+		if (keyUpP1) keyUpP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	});
+	// P1 DOWN
+	socket.on('p1DownKeyDown', () => {
+		if (keyDownP1)
+			keyDownP1.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	});
+	socket.on('p1DownKeyUp', () => {
+		if (keyDownP1) keyDownP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	});
+	// P2 UP
+	socket.on('p2UpKeyDown', () => {
+		if (keyUpP2)
+			keyUpP2.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	});
+	socket.on('p2UpKeyUp', () => {
+		if (keyUpP2) keyUpP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	});
+	// P2 DOWN
+	socket.on('p2DownKeyDown', () => {
+		if (keyDownP2)
+			keyDownP2.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	});
+	socket.on('p2DownKeyUp', () => {
+		if (keyDownP2) keyDownP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	});
+}
+
 export async function pongGame() {
+	let countdown = false;
 	const socket = createPongSocket();
 	listenUserInputs(socket);
+	socket.on('countdown', () => {
+		if (!countdown) {
+			ctx!.clearRect(0, 0, canvas.width, canvas.height); // clear full screen
+			countdown = true;
+			const element = document.getElementById('pongGame') as HTMLElement;
+			if (element) showCountdown(element);
+		}
+	});
+	// socket.onAny((eventName, ...args) => {});
 	socket.on('notLogged', () => {
 		navigateTo('/login?/pong/matchmaking/game');
 	});
 	socket.on('waiting', (room: any) => {
 		drawWaitingScreen(room);
 	});
-	socket.on('playerWin', (player, game) => {
+	socket.on('playerWin', (player: Player, game) => {
 		if (!gameOver) {
 			lastGame = game;
 			winner = player;
 		}
 		gameOver = true;
 		if (gameOver && winner && lastGame) {
+			const container = document.getElementById('countDown');
+			container?.remove();
 			drawWinner(winner, lastGame);
 		}
 	});
@@ -192,4 +261,17 @@ export async function pongGame() {
 	socket.on('gameState', (game: Game) => {
 		drawGame(game);
 	});
+	socket.on('p1Name', (player: Player) => {
+		const p1name = document.getElementById('p1Name');
+		const p1PP = document.getElementById('p1Avatar') as HTMLImageElement;
+		if (p1name) p1name.textContent = player.nickName;
+		if (p1PP) p1PP.src = player.avatar!;
+	});
+	socket.on('p2Name', (player: Player) => {
+		const p2name = document.getElementById('p2Name');
+		const p2PP = document.getElementById('p2Avatar') as HTMLImageElement;
+		if (p2name) p2name.textContent = player.nickName;
+		if (p2PP) p2PP.src = player.avatar!;
+	});
+	keyHandler(socket);
 }

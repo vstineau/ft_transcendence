@@ -331,32 +331,6 @@ function getContentHTML(contentKey: string): string {
 		</div>
         `,
 
-		'language': `
-			<div class="space-y-6" style="width: 100%;">
-				<h2 class="font-montserrat font-medium text-black mb-4">Select language</h2>
-
-				<div class="flex items-start">
-					<input type="radio" name="language" id="langage_fr" value="fr" class="square-radio mr-4">
-					<label for="langage_fr" class="font-medium text-black">French</label>
-				</div>
-				<div class="flex items-start">
-					<input type="radio" name="language" id="langage_en" value="en" class="square-radio mr-4" checked>
-					<label for="langage_en" class="font-medium text-black">English</label>
-				</div>
-				<div class="flex items-start">
-					<input type="radio" name="language" id="langage_sp" value="es" class="square-radio mr-4">
-					<label for="langage_sp" class="font-medium text-black">Spanish</label>
-				</div>
-
-				<div style="width: 100%; display: flex; justify-content: center; padding-top: 16px;">
-					<button
-						type="submit"
-						style="background-color: black; color: white; padding: 12px 32px; border-radius: 8px; border: none; cursor: pointer;">
-						Submit
-					</button>
-				</div>
-		`,
-
 		'privacy-policy': `
 			<div class="space-y-6">
 				<h2 class="font-montserrat font-medium text-black mb-4">General Privacy Policy & Terms of Service</h2>

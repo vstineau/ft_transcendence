@@ -43,3 +43,8 @@ export interface ChatState {
     searchResults?: Friend[]; // résultats de recherche coté UI
     searchTerm?: string; // terme de recherche courant
 }
+
+// export interface RecentContacts {
+
+
+// }

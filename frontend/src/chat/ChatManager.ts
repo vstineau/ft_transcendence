@@ -134,6 +134,28 @@ export class ChatManager extends SocketService {
                 messageInput.value = '';
             });
 
+		//boutons pour inviter dans une partie de snake ou pong 
+        const host = window.location.hostname;
+        const port = window.location.port;
+        const protocol = window.location.protocol;
+        const snakeBtn = document.getElementById('snake-button');
+		if (snakeBtn) {
+
+		const currentRoomId = this.currentRoom?.id;
+		const existingRoom = currentRoomId
+		  ? this.rooms?.find(r => r.id === currentRoomId)
+		  : null;
+			if (existingRoom) {
+				snakeBtn.addEventListener('click', () => {
+				if(!existingRoom.participants || !existingRoom.participants[0] || !existingRoom.participants[1]) { return ;}
+						this.sendMessage(`${protocol}://${host}:${port}/snake?player1=${existingRoom.participants[0]}&player2=${existingRoom.participants[1]}`);
+				});
+			}
+
+		}
+		//bouton pour le pong
+        //const pongBtn = document.getElementById('send-message');
+
             messageInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     this.sendMessage(messageInput.value);
@@ -166,7 +188,7 @@ export class ChatManager extends SocketService {
                 
                 if (roomElement) {
                     const roomId = roomElement.dataset.roomId;
-                    console.log(`🎯 Clic sur room: ${roomId}`);
+                    // console.log(`🎯 Clic sur room: ${roomId}`);
                     this.switchRoom(roomId!);
                 }
             });
@@ -210,7 +232,7 @@ export class ChatManager extends SocketService {
                 room: this.state.activeTab
             });
         } else {
-            console.error('❌ Socket not connected');
+            // console.error('❌ Socket not connected');
         }
     }
 
@@ -286,7 +308,7 @@ export class ChatManager extends SocketService {
     }
 
     private async switchRoom(roomId: string) {
-        console.log(`🔄 Changement vers room: ${roomId}`);
+        // console.log(`🔄 Changement vers room: ${roomId}`);
         
         // Mettre à jour l'état local
         this.state.activeTab = roomId as any;
@@ -301,11 +323,11 @@ export class ChatManager extends SocketService {
         // Actions spécifiques selon la room
         switch (roomId) {
             case 'global':
-                console.log('💬 Chat global activé');
+                // console.log('💬 Chat global activé');
                 break;
                 
             case 'pong':
-                console.log('🏓 Room Pong activée');
+                // console.log('🏓 Room Pong activée');
                 // Rejoindre la room pong côté serveur
                 this.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: 'pong' });
                 break;

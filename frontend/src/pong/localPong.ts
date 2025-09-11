@@ -1,10 +1,12 @@
+import { navigateTo } from '../main';
+
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D | null;
 
 let win_width = window.innerWidth;
 let win_height = window.innerHeight;
-let gameWidth = win_width * 0.8;
-let gameHeight = win_height * 0.8;
+let gameWidth = win_width * 0.6;
+let gameHeight = win_height * 0.6;
 
 let p1 = {
 	name: 'player 1',
@@ -70,11 +72,9 @@ function updateInfos() {
 function drawGame() {
 	if (!ctx) return;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	// Dessine le fond du jeu (zone centrale)
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	ctx.save();
-	// Dessine la balle (en ajoutant le décalage)
 	ctx.beginPath();
 	ctx.fillStyle = 'white';
 	ctx.lineWidth = 5;
@@ -139,6 +139,9 @@ function checkWin() {
 		// Dessine le rectangle plein
 		ctx.fillRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
 		ctx.strokeRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
+		ctx.fillStyle = 'red';
+		ctx.fillRect(canvas.width * 0.25, canvas.height * 0.66, canvas.width * 0.5, canvas.height * 0.12);
+		ctx.strokeRect(canvas.width * 0.25, canvas.height * 0.66, canvas.width * 0.5, canvas.height * 0.12);
 
 		ctx.fillStyle = 'white';
 		ctx.textAlign = 'center';
@@ -146,8 +149,10 @@ function checkWin() {
 		ctx.fillText(
 			(p1.score > p2.score ? p1.name : p2.name) + ' wins, press `Enter` to restart game',
 			canvas.width * 0.5,
-			canvas.height * 0.32
+			canvas.height * 0.32,
+			canvas.width * 0.4
 		);
+		ctx.fillText('Press `Escape` to return to dashboard', canvas.width * 0.5, canvas.height * 0.73, canvas.width * 0.4);
 
 		return;
 	}
@@ -186,7 +191,7 @@ function handlePaddleCollisionP2() {
 	}
 }
 
-export function gameLoop(_socket: any) {
+function gameLoop(canvas: HTMLCanvasElement) {
 	// requestAnimationFrame(gameLoop);
 	// win_width = canvas.width;
 	// win_height = canvas.height;
@@ -220,6 +225,59 @@ export function gameLoop(_socket: any) {
 	}
 }
 
+function handleKeyDown(e: KeyboardEvent) {
+	let keyUpP1 = document.getElementById('p1keyup');
+	let keyDownP1 = document.getElementById('p1keydown');
+	let keyUpP2 = document.getElementById('p2keyup');
+	let keyDownP2 = document.getElementById('p2keydown');
+
+	if (e.key === 'w' || e.key === 'W') {
+		if (keyUpP1)
+			keyUpP1.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	}
+	if (e.key === 's' || e.key === 'S') {
+		if (keyDownP1)
+			keyDownP1.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	}
+	if (e.key === 'ArrowUp') {
+		e.preventDefault();
+		if (keyUpP2)
+			keyUpP2.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	}
+	if (e.key === 'ArrowDown') {
+		e.preventDefault();
+		if (keyDownP2)
+			keyDownP2.className =
+				'bg-gray-500 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono outline outline-yellow-500';
+	}
+}
+
+// key handler for key up
+function handleKeyUp(e: KeyboardEvent) {
+	let keyUpP1 = document.getElementById('p1keyup');
+	let keyDownP1 = document.getElementById('p1keydown');
+	let keyUpP2 = document.getElementById('p2keyup');
+	let keyDownP2 = document.getElementById('p2keydown');
+
+	if (e.key === 'w' || e.key === 'W') {
+		if (keyUpP1) keyUpP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	}
+	if (e.key === 's' || e.key === 'S') {
+		if (keyDownP1) keyDownP1.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	}
+	if (e.key === 'ArrowUp') {
+		e.preventDefault();
+		if (keyUpP2) keyUpP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	}
+	if (e.key === 'ArrowDown') {
+		e.preventDefault();
+		if (keyDownP2) keyDownP2.className = 'bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	}
+}
+
 function listenInputs() {
 	window.addEventListener('keydown', e => {
 		if (e.key === 'w' || e.key === 'W') key_w = true;
@@ -238,6 +296,9 @@ function listenInputs() {
 			p1.score = 0;
 			p2.score = 0;
 		}
+		if (e.key === 'Escape' && gameOver) {
+			navigateTo('/dashboard');
+		}
 	});
 
 	window.addEventListener('keyup', e => {
@@ -254,8 +315,8 @@ function listenInputs() {
 	});
 
 	window.addEventListener('resize', () => {
-		canvas.width = window.innerWidth * 0.8;
-		canvas.height = window.innerHeight * 0.8;
+		canvas.width = window.innerWidth * 0.6;
+		canvas.height = window.innerHeight * 0.6;
 		win_width = canvas.width;
 		win_height = canvas.height;
 		// gameWidth = canvas.width;
@@ -263,12 +324,14 @@ function listenInputs() {
 
 		updateInfos();
 	});
+	window.addEventListener('keydown', handleKeyDown);
+	window.addEventListener('keyup', handleKeyUp);
 }
 
 function initGame() {
 	canvas = document.getElementById('localgameCanvas') as HTMLCanvasElement;
-	canvas.width = window.innerWidth * 0.8;
-	canvas.height = window.innerHeight * 0.8;
+	canvas.width = window.innerWidth * 0.6;
+	canvas.height = window.innerHeight * 0.6;
 	if (!canvas) {
 		console.error("Canvas 'game' not found");
 		return;

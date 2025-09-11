@@ -16,7 +16,7 @@ export interface Snake {
 	pendingDir: pos;
 	color: string;
 	id: string;
-	login: string;
+	uid: string;
 	avatar?: string;
 }
 
@@ -30,4 +30,5 @@ export type Room = {
     playersNb: number;
     game: Game;
 	interval?: NodeJS.Timeout;
+	custom?: boolean;
 };

@@ -55,14 +55,23 @@ export function ChatPanel(): string {
                         <!-- Messages dynamiques -->
                     </div>
                     <div class="p-3 bg-white border-t border-gray-200">
-                        <div class="flex items-center space-x-2">
-                            <input id="message-input" type="text" placeholder="Tapez votre message..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gray-500 focus:border-gray-500" />
-                            <button id="send-message" class="bg-black hover:bg-gray-800 text-white px-3 py-2 rounded-lg transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                                </svg>
-                            </button>
-                        </div>
+						<div class="flex items-center gap-2">
+						    <input id="message-input" type="text" placeholder="Tapez votre message..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gray-500 focus:border-gray-500" />
+						    <!-- Bouton Envoyer -->
+						    <button id="send-message" class="bg-black hover:bg-gray-800 text-white rounded-lg transition-colors flex items-center justify-center w-10 h-10">
+						        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+						        </svg>
+						    </button>
+						    <!-- Bouton Ping Pong -->
+						    <button id="pong-button" class="bg-black hover:bg-gray-800 text-white rounded-lg transition-colors flex items-center justify-center w-10 h-10">
+						        <span class="text-xl">🏓</span>
+						    </button>
+						    <!-- Bouton Snake -->
+						    <button id="snake-button" class="bg-black hover:bg-gray-800 text-white rounded-lg transition-colors flex items-center justify-center w-10 h-10">
+						        <span class="text-xl">🐍</span>
+						    </button>
+						</div>
                     </div>
                 </div>
             </div>
