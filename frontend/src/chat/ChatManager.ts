@@ -458,19 +458,15 @@ export class ChatManager extends SocketService {
             const isActive = room.id === this.state.activeTab;
             const activeClass = isActive ? 'bg-gray-700' : '';
             
-            // Déterminer l'icône et la couleur selon le type de room
+            // Déterminer l'icône selon le type de room
             let iconHtml = '';
-            let colorClass = 'bg-gray-500';
             
             if (room.id === 'global') {
                 iconHtml = '<span class="text-[10px] text-gray-500">🌐</span>';
-                colorClass = 'bg-blue-500';
             } else if (room.id === 'pong') {
                 iconHtml = '<span class="text-[10px] text-gray-500">🏓</span>';
-                colorClass = 'bg-red-500';
             } else if (room.id === 'snake') {
                 iconHtml = '<span class="text-[10px] text-gray-500">🐍</span>';
-                colorClass = 'bg-green-500';
             } else if (room.type === 'private') {
                 // Pour les rooms privées, afficher l'avatar avec le statut
                 const otherUserId = room.participants?.find(id => id !== this.state.currentUserId?.id);
@@ -492,15 +488,17 @@ export class ChatManager extends SocketService {
                 } else {
                     iconHtml = '<span class="text-[10px] text-gray-500">👤</span>';
                 }
-                colorClass = 'bg-gray-500';
             }
 
             return `
                 <div data-room-id="${room.id}" class="flex items-center px-2 py-1.5 rounded hover:bg-gray-800 cursor-pointer group ${activeClass}">
-                    <div class="w-2 h-2 ${colorClass} rounded-full mr-2"></div>
+                    <div class="mr-2 w-5 flex items-center justify-center">
+                        ${room.unreadCount > 0 
+                            ? `<span class=\"bg-red-500 text-white text-[9px] font-semibold rounded-full w-4 h-4 flex items-center justify-center\">${room.unreadCount > 9 ? '9+' : room.unreadCount}</span>`
+                            : `<span class=\"w-2 h-2 bg-gray-500 rounded-full\"></span>`}
+                    </div>
                     <span class="text-xs font-medium flex-1 truncate">${escapeHtml(room.name)}</span>
                     <div class="ml-auto">${iconHtml}</div>
-                    ${room.unreadCount > 0 ? `<span class="ml-1 bg-red-500 text-white text-[10px] px-1 rounded-full">${room.unreadCount}</span>` : ''}
                 </div>
             `;
         }).join('');
