@@ -90,7 +90,7 @@ export async function startChat(app: FastifyInstance) {
       handleDisconnect(socket, app, chatNamespace)
     );
 
-    socket.on('error', (error: any) => 
+    socket.on(CHAT_EVENTS.ERROR, (error: any) => 
       handleSocketError(error, app)
     );
   });
