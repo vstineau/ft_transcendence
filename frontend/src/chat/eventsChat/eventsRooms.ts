@@ -35,7 +35,9 @@ export function eventsRooms(this: ChatManager) {
             
             //// Mettre à jour les messages avec l'historique de la room privée
             //this.messages = data.messages || [];
-            (this as any).updateMessagesDisplay();
+            if ((this as any).currentRoom?.messages.length === 0) {
+                (this as any).updateMessagesDisplay();
+            }
         });
 
         // Écouter la création automatique d'une room privée par quelqu'un d'autre
