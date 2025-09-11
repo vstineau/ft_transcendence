@@ -115,10 +115,14 @@ function drawBrackets(matchIdx: number, roundnb: number): HTMLDivElement {
 		for (let j = 0; j < tournament.rounds.games[i].length; j++) {
 			const match = document.createElement('div');
 			match.className = 'flex flex-col border hover:bg-gray-500 items-center bg-gray-600 p-2 rounded shadow-sm mx-4';
-			if (j === matchIdx && i === roundnb) match.className += ' animate-bounce outline outline-yellow-500';
+			if (j === matchIdx && i === roundnb){
+				match.className += ' animate-bounce outline outline-yellow-500';
+				// envoyer la notif sur le chat tournament
+			}
 
 			const player1 = document.createElement('div');
-			player1.className = 'w-40 font-bold text-white text-center bg-gray-400 rounded shadow-inner mb-1 px-2 py-1';
+			player1.className =
+				'w-40 font-bold text-white text-center break-words bg-gray-400 rounded shadow-inner mb-1 px-2 py-1';
 			player1.textContent = `${tournament.rounds.games[i][j].p1.nickName}`;
 
 			const vs = document.createElement('div');
@@ -126,7 +130,7 @@ function drawBrackets(matchIdx: number, roundnb: number): HTMLDivElement {
 			vs.textContent = `VS`;
 
 			const player2 = document.createElement('div');
-			player2.className = 'w-40 font-bold text-white text-center bg-gray-400 rounded shadow-inner px-2 py-1';
+			player2.className = 'w-40 font-bold text-white text-center break-words bg-gray-400 rounded shadow-inner px-2 py-1';
 			player2.textContent = `${tournament.rounds.games[i][j].p2.nickName}`;
 			if (tournament.rounds.games[i][j].over) {
 				match.className += ' brightness-50';
@@ -261,6 +265,10 @@ function listenInputs(game: Game) {
 	});
 }
 
+function areAllAlphanumeric(arr: string[]) {
+	return arr.every(str => /^[a-zA-Z0-9]+$/.test(str));
+}
+
 // check if player names fill policy
 function checkSubmited(container: HTMLDivElement) {
 	const inputs = Array.from(container.querySelectorAll('input[type="text"]')) as HTMLInputElement[];
@@ -279,6 +287,10 @@ function checkSubmited(container: HTMLDivElement) {
 		firstEmpty.focus();
 		return true;
 	}
+	if (!areAllAlphanumeric(names)) {
+		alert(`alpha-num names are required`);
+		return true;
+	}
 	//comment to make tests
 	if (duplicate) {
 		alert(`You need ${inputs.length} differents players.`);
@@ -294,7 +306,7 @@ export function showCountdown(element: HTMLElement) {
 		fixed top-0 left-0 w-screen h-screen flex flex-col justify-center items-center
 		z-50
 	`;
-	container.id = 'countDown'
+	container.id = 'countDown';
 	const label = document.createElement('div');
 	label.textContent = 'Game start in';
 	label.className = `
@@ -428,7 +440,8 @@ function checkWin(game: Game) {
 		ctx.fillText(
 			(game.p1.score > game.p2.score ? game.p1.nickName : game.p2.nickName) + ' wins, press `Enter` to continue',
 			canvas.width * 0.5,
-			canvas.height * 0.32
+			canvas.height * 0.32,
+			canvas.width * 0.45
 		);
 		game.p1.score > game.p2.score ? (game.p2.eliminated = true) : (game.p1.eliminated = true);
 		if (!game.over) {
