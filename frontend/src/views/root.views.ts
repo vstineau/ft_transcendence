@@ -35,8 +35,8 @@ export async function RootView() {
 						</div>
 
 						<div class="flex space-x-6 ml-3 mt-6">
-								<a href="/statisticsSnake" class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition" data-translate="dashboard.view">View</a>
-								<a href="/updateInfos" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition" data-translate="dashboard.edit">Edit</a>
+								<div class="bg-black hover:bg-gray-800 text-white px-12 py-2 rounded-lg text-sm font-medium transition cursor-pointer" onclick="showProfileDetails()">View</div>
+							<a href="/updateInfos" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-12 py-2 rounded-lg text-sm font-medium transition">Edit</a>
 						</div>
 					</div>
 
@@ -231,7 +231,7 @@ export async function WelcomeView() {
                         </div>
                     </a>
                 </div>
-                
+
                 <!-- Bouton Create an account - Large en dessous -->
                 <div class="mt-4" style="max-width: 616px; margin-left: auto; margin-right: auto;">
                     <a href="/register" class="font-montserrat block bg-black hover:bg-gray-800 text-white py-4 rounded-xl font-medium text-lg transition-colors text-center" data-translate="auth.createAccount">
@@ -618,7 +618,7 @@ export async function RegisterView() {
 		<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4">
 			<!-- Container principal blanc centré -->
 			<div class="max-w-md w-full bg-white rounded-2xl shadow-sm p-8">
-                
+
                 <!-- Language Selector -->
                 <div class="flex justify-end mb-4">
                     <select id="language-selector-register" class="bg-gray-100 border-none outline-none cursor-pointer text-sm p-2 rounded">
