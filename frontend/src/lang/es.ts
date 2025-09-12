@@ -72,7 +72,7 @@ export default {
         "dualAuth": "Autenticación dual",
         "profilePicture": "Foto de perfil",
         "language": "Idioma",
-        "privacyTerms": "Política de privacidad general<br>y términos de servicio",
+        "privacyTerms": "Política de privacidad general y términos de servicio",
         "deleteAccount": "Eliminar tu cuenta",
         "backToDashboard": "← Volver al panel"
     },

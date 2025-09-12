@@ -11,6 +11,7 @@ export type JwtPayload = {
 	id: string,
 	login: string,
 	password: string,
+	favLang: string,
 	iat: string,
 	exp: string,
 };
@@ -29,6 +30,7 @@ export type UserJson = {
 	twoFaSecret?: string;
 	twoFaCode?: string;
 	provider?: string;
+	favLang?: string;
 	isOnline?: boolean;
 	friends?: string[];
 	blocklist?: string[];

@@ -68,7 +68,7 @@ export default {
         "dualAuth": "Authentification à deux facteurs",
         "profilePicture": "Photo de profil",
         "language": "Langue",
-        "privacyTerms": "Politique de confidentialité générale<br>et conditions d'utilisation",
+        "privacyTerms": "Politique de confidentialité générale et conditions d'utilisation",
         "deleteAccount": "Supprimer votre compte",
         "backToDashboard": "← Retour au tableau de bord"
     },

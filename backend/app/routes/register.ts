@@ -28,6 +28,7 @@ export default {
 		 request.body.password = await hashPassword(request.body.password);
       }
       const user = await User.createUser(request.body)
+	  user.favLang = 'en';
 	  let qrCodeDataURL: string = '';
 	  if (user.twoFaAuth) {
 			const secret = speakeasy.generateSecret({name: `transcendence ${user.login}`});

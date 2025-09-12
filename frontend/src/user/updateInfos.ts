@@ -4,6 +4,8 @@ import { readFileAsBase64 } from '../utils/userInfo';
 import { fetchAndSaveUserInfo, initUserAvatar, getCurrentUser, updateProfileAvatar } from '../utils/avatar';
 import { init2FASetup } from '../user/2fasetup';
 
+
+
 export async function updateInfos() {
 	await fetchAndSaveUserInfo();
 
@@ -331,6 +333,34 @@ function getContentHTML(contentKey: string): string {
 		</div>
         `,
 
+		'language': `
+			<div class="space-y-6" style="width: 100%;">
+				<h2 class="font-montserrat font-medium text-black mb-4">Select language</h2>
+
+				<form id="default-language-form" class="space-y-4">
+				<div class="flex items-start">
+					<input type="radio" name="language" id="langage_fr" value="fr" class="square-radio mr-4">
+					<label for="langage_fr" class="font-medium text-black">French</label>
+				</div>
+				<div class="flex items-start">
+					<input type="radio" name="language" id="langage_en" value="en" class="square-radio mr-4" checked>
+					<label for="langage_en" class="font-medium text-black">English</label>
+				</div>
+				<div class="flex items-start">
+					<input type="radio" name="language" id="langage_sp" value="es" class="square-radio mr-4">
+					<label for="langage_sp" class="font-medium text-black">Spanish</label>
+				</div>
+
+				<div style="width: 100%; display: flex; justify-content: center; padding-top: 16px;">
+					<button
+						type="submit"
+						style="background-color: black; color: white; padding: 12px 32px; border-radius: 8px; border: none; cursor: pointer;">
+						Submit
+					</button>
+					</form>
+				</div>
+		`,
+
 		'privacy-policy': `
 			<div class="space-y-6">
 				<h2 class="font-montserrat font-medium text-black mb-4">General Privacy Policy & Terms of Service</h2>
@@ -574,6 +604,48 @@ async function testAuth(): Promise<void> {
 	}
 }
 
+export function initLangageForm(): void {
+	console.log('switch case marcheeeeeeeeeeee');	
+    const form = document.querySelector('#default-language-form') as HTMLFormElement;
+    if (!form) return;
+
+	console.log('ya un formmmmm');	
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        try {
+            const host = window.location.hostname;
+            const port = window.location.port;
+            const protocol = window.location.protocol;
+
+	        // Récupère la langue sélectionnée
+	        const selectedLang = form.querySelector('input[name="language"]:checked') as HTMLInputElement;
+	        if (!selectedLang) {
+	            displayError('Please select a language.');
+	            return;
+	        }
+			console.log('value', selectedLang.value);	
+
+            const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				credentials: 'include',
+				body: JSON.stringify({favLang: selectedLang.value})
+			});
+            const result = await response.json();
+
+            if (result.success) {
+            } else {
+                displayError(result.error || 'Failed to change default language');
+            }
+        } catch (error) {
+            console.error('default language update error: ', error);
+            displayError('Connection error. Please try again.');
+        }
+	});
+}
+
+
 
 function initContentFeatures(contentKey: string): void {
 	switch (contentKey) {
@@ -591,6 +663,9 @@ function initContentFeatures(contentKey: string): void {
 			break;
 		case 'edit-profile':
 			initEditProfileForm();
+			break;
+		case 'language':
+			initLangageForm();
 			break;
 	}
 }
