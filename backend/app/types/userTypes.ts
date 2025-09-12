@@ -1,6 +1,6 @@
 
 export interface IUserReply {
-	200: { success: boolean, user?: UserJson, qrCode?: string, twoFaAuth?: boolean, tmpToken?: string };
+	200: { success: boolean, user?: UserJson, qrCode?: string, twoFaAuth?: boolean, tmpToken?: string, favLang?: string };
 	302: { success: boolean, message?: string ,user?: UserJson };
 	401: { success: boolean, error: string };
 	400: { success: boolean, error: string };
@@ -11,6 +11,7 @@ export type JwtPayload = {
 	id: string,
 	login: string,
 	password: string,
+	favLang: string,
 	iat: string,
 	exp: string,
 };
@@ -29,6 +30,7 @@ export type UserJson = {
 	twoFaSecret?: string;
 	twoFaCode?: string;
 	provider?: string;
+	favLang?: string;
 	isOnline?: boolean;
 	friends?: string[];
 	blocklist?: string[];

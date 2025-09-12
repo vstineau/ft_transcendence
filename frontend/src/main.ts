@@ -39,7 +39,7 @@ import { updateUserProfile } from './graph/profileSnakeFr';
 import { updateUserProfilePong } from './graph/profilePongFr';
 import { updateRecentContacts } from './chat/recentContents';
 import { displayDarkModeButton } from './theme/lightButton'
-import { initLanguageSelector, initializeLanguage } from './lang/languageManager';
+import { initLanguageSelector, initializeLanguage, languageManager } from './lang/languageManager';
 import { showProfileDetails } from './user/popProfile'
 
 // 1. Déclaration des routes
@@ -82,6 +82,7 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
 		...options,
 		credentials: 'include',
 	});
+
 	if (response.status == 401) {
 		console.log('Token expired, redirecting to login');
 		localStorage.clear();
@@ -120,9 +121,30 @@ export async function renderPage() {
 		'/snake',
 		'/snake/local',
 	];
+
+	let favLangChecked = false;
+
+	// Pour les paths non publics, vérifie la langue préférée de l'utilisateur
 	if (!publicPaths.includes(path)) {
 		try {
 			await authenticatedFetch('/api/updateInfos');
+			// Récupération du favlang
+			if (!favLangChecked) {
+				const host = window.location.hostname;
+        		const port = window.location.port;
+        		const protocol = window.location.protocol;
+
+        		const response = await fetch(`${protocol}//${host}:${port}/api/`);
+				if (response.status === 200) {
+					const repBody = await response.json();
+					const favLang = repBody.favLang;
+					if (favLang && ['en', 'fr', 'es'].includes(favLang) && favLang !== languageManager.getCurrentLanguage()) {
+						languageManager.setLanguage(favLang);
+						languageManager.updatePageTranslations();
+					}
+				}
+				favLangChecked = true;
+			}
 		} catch {
 			showAuthMessage();
 			localStorage.clear();
@@ -207,18 +229,23 @@ export async function renderPage() {
 			initTwoFALogin();
 			break;
 		case '/statisticsSnake':
-			setTimeout(() => {
-				console.log('About to call initSnakeStats');
+			setTimeout(async() => {
 				initThemeToggle();
 				displayDarkModeButton();
 				initSnakeStats();
 				updateRanking();
 				updateInfos();
 				initProfilePage();
+				try {
+					await authenticatedFetch('/api/updateInfos');
+					updateUserProfile(); // Seulement si authentifié
+				} catch {
+					console.log('Not authenticated, skipping profile update');
+				}
 			}, 100);
 			break;
 		case '/statisticsPong':
-			setTimeout(() => {
+			setTimeout(async () => {
 				console.log('About to call initPongStats');
 				initThemeToggle();
 				displayDarkModeButton();
@@ -226,6 +253,12 @@ export async function renderPage() {
 				updateRankingPong();
 				updateInfos();
 				initProfilePage();
+				try {
+					await authenticatedFetch('/api/updateInfos');
+					updateUserProfilePong(); // Seulement si authentifié
+				} catch {
+					console.log('Not authenticated, skipping profile update');
+				}
 			}, 100);
 			break;
 		// case '/profile/':
@@ -238,13 +271,19 @@ export async function renderPage() {
 			pongTournament();
 			displayChatButton();
 			break;
+		case '/pong-choice':
+			languageManager.updatePageTranslations();
+			break;
+		case '/snake-choice':
+			languageManager.updatePageTranslations();
+			break;
 	}
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
 	await initializeLanguage();
-	updateUserProfile();
-	updateUserProfilePong();
+	// updateUserProfile();
+	// updateUserProfilePong();
 
 	document.body.addEventListener('click', async e => {
 		const target = e.target as HTMLElement;

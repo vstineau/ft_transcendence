@@ -60,6 +60,9 @@ export class User extends BaseEntity {
 	@Column({ nullable: true })
 	provider?: string;
 
+	@Column({ nullable: true })
+	favLang?: string;
+
 	@Column({type: 'boolean', default: false})
 	isOnline!: boolean;
 
@@ -85,6 +88,7 @@ export class User extends BaseEntity {
 			twoFaAuth: this.twoFaAuth,
 			twoFaSecret: twoFaSecret,
 			provider: this.provider,
+			favLang: this.favLang,
 			isOnline: this.isOnline,
 		};
 	}

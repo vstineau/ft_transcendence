@@ -3,12 +3,13 @@ export default {
         "dashboard": "Tableau de bord",
         "games": "Jeux",
         "settings": "Paramètres",
-        "logout": "Déconnexion"
+        "logout": "Déconnexion",
+		"backToDashboard": "← Retour au tableau de bord",
     },
     "dashboard": {
         "title": "FT_TRANSCENDENCE",
-        "welcome": "Bienvenue",
-        "back": "de retour",
+        "welcome": "Bon retour",
+        "back": "parmi nous",
         "games": "Jeux",
         "letsTalk": "Discutons",
         "lightMode": "Mode clair",
@@ -27,6 +28,15 @@ export default {
         "snake": {
             "description": "Pour Snake, vous devez empêcher le serpent de rentrer en collision avec les obstacles et lui-même."
         }
+    },
+    "snake": {
+        "local": "Local",
+        "online": "En ligne"
+    },
+    "pong": {
+        "local": "Local",
+        "online": "En ligne",
+        "tournament": "Tournoi"
     },
     "welcome": {
         "subtitle": "Choisissez votre aventure.",
@@ -58,7 +68,7 @@ export default {
         "dualAuth": "Authentification à deux facteurs",
         "profilePicture": "Photo de profil",
         "language": "Langue",
-        "privacyTerms": "Politique de confidentialité générale<br>et conditions d'utilisation",
+        "privacyTerms": "Politique de confidentialité générale et conditions d'utilisation",
         "deleteAccount": "Supprimer votre compte",
         "backToDashboard": "← Retour au tableau de bord"
     },

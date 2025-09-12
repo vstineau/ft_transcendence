@@ -3,7 +3,8 @@ export default {
         "dashboard": "Panel de control",
         "games": "Juegos",
         "settings": "Configuración",
-        "logout": "Cerrar sesión"
+        "logout": "Cerrar sesión",
+		"backToDashboard": "← Volver al panel",
     },
     "dashboard": {
         "title": "FT_TRANSCENDENCE",
@@ -31,6 +32,15 @@ export default {
     },
     "errors": {
         "notFound": "404 No encontrado"
+    },
+    "snake": {
+        "local": "Local",
+        "online": "En línea"
+    },
+    "pong": {
+        "local": "Local",
+        "online": "En línea",
+        "tournament": "Torneo"
     },
     "welcome": {
         "subtitle": "Elige tu aventura.",
@@ -62,7 +72,7 @@ export default {
         "dualAuth": "Autenticación dual",
         "profilePicture": "Foto de perfil",
         "language": "Idioma",
-        "privacyTerms": "Política de privacidad general<br>y términos de servicio",
+        "privacyTerms": "Política de privacidad general y términos de servicio",
         "deleteAccount": "Eliminar tu cuenta",
         "backToDashboard": "← Volver al panel"
     },

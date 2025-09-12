@@ -3,7 +3,8 @@ export default {
         "dashboard": "Dashboard",
         "games": "Games",
         "settings": "Settings",
-        "logout": "Logout"
+        "logout": "Logout",
+		"backToDashboard": "← Back to Dashboard",
     },
     "dashboard": {
         "title": "FT_TRANSCENDENCE",
@@ -27,6 +28,15 @@ export default {
         "snake": {
             "description": "For Snake you must keep the snake from colliding with both other obstacles and itself."
         }
+    },
+    "snake": {
+        "local": "Local",
+        "online": "Online"
+    },
+	"pong": {
+        "local": "Local",
+        "online": "Online", 
+        "tournament": "Tournament"
     },
 	"welcome": {
         "subtitle": "Choose your adventure.",
@@ -58,7 +68,7 @@ export default {
         "dualAuth": "Dual authentication",
         "profilePicture": "Profile picture",
         "language": "Language",
-        "privacyTerms": "General privacy policy<br>& terms of service",
+        "privacyTerms": "General privacy policy & terms of service",
         "deleteAccount": "Delete your account",
         "backToDashboard": "← Back to Dashboard"
     },

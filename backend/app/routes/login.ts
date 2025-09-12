@@ -30,16 +30,17 @@ export default {
       const response: IUserReply[200] = {
           success: true,
           twoFaAuth: true,
-          tmpToken: tmpToken  // ← Ce champ manque !
+          tmpToken: tmpToken  
       };
       reply.code(200).send(response);
-      return; // ← Et ce return aussi !
+      return; 
   }
       const token = reply.server.jwt.sign(
         {
 		  login: user.login,
 		  email: user.email,
 		  id: user.id,
+		  favLang: user.favLang,
 		  twoFaAuth: user.twoFaAuth
 		},
         { expiresIn: '4h' }
