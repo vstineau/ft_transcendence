@@ -10,6 +10,8 @@ export function eventsSocket(this: ChatManager) {
 		let cookie = getCookie('token');
 		if (cookie) {
 			this.emit(CHAT_EVENTS.INIT_USER, cookie);
+		} else {
+			console.error('❌ No auth token found in cookies');
 		}
 	});
 

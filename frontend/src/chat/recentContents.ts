@@ -1,5 +1,5 @@
 import { User } from '../chat/types';
-import { chatManager } from '../chat';
+import { ChatSingleton } from '../chat';
 
 
 async function fetchRecentContacts(): Promise<User[]> {
@@ -101,12 +101,12 @@ export async function updateRecentContacts(): Promise<void> {
 
 // Petits helpers accessibles depuis le dashboard (onclick)
 function openChat(userId: string): void {
-    chatManager.openPrivateChat(userId);
+    ChatSingleton.getInstance().Manager.openPrivateChat(userId);
 }
 
 function openGlobalChat(): void {
-    chatManager.openChat();
-    chatManager.openGlobalChat();
+    ChatSingleton.getInstance().Manager.openChat();
+    ChatSingleton.getInstance().Manager.openGlobalChat();
 }
 
 // Exposer explicitement pour l’HTML inline

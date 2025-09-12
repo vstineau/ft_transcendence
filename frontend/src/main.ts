@@ -155,12 +155,12 @@ export async function renderPage() {
 			}, 100);
 			break;
 		case '/dashboard':
-			rootUser();
-			displayChatButton();
-			setTimeout(() => {
+			await rootUser();
+			setTimeout(async () => {
 				initThemeToggle();
-				initProfilePage();
-				updateRecentContacts();
+				await initProfilePage();
+				await updateRecentContacts();
+				await displayChatButton();
 				initLanguageSelector();
 				const viewBtn = document.getElementById('view-profile-btn');
 				if (viewBtn) {
@@ -170,22 +170,22 @@ export async function renderPage() {
 			break;
 		case '/updateInfos':
 			initThemeToggle();
-			displayDarkModeButton();
+			await displayDarkModeButton();
 			initLanguageSelector();
-			updateInfos();
-			displayChatButton();
+			await updateInfos();
+			await displayChatButton();
 			break;
 		case '/register':
+			await displayDarkModeButton();
+			await registerUser();
 			initThemeToggle();
-			displayDarkModeButton();
 			initLanguageSelector();
-			registerUser();
 			break;
 		case '/login':
+			await logUser();
 			initThemeToggle();
-			displayDarkModeButton();
+			await displayDarkModeButton();
 			initLanguageSelector();
-			logUser();
 			break;
 		case '/pong/matchmaking/game':
 			await pongGame();
@@ -193,39 +193,39 @@ export async function renderPage() {
 			break;
 		case '/pong/matchmaking/localgame':
 			localpongGame();
-			displayChatButton();
+			await displayChatButton();
 			break;
 		case '/snake':
 			await snakeGame();
 			break;
 		case '/snake/local':
-			displayDarkModeButton();
+			await displayDarkModeButton();
 			localSnakeGame();
-			displayChatButton();
+			await displayChatButton();
 			break;
 		case '/2fa-verification':
 			initTwoFALogin();
 			break;
 		case '/statisticsSnake':
-			setTimeout(() => {
+			setTimeout(async () => {
 				console.log('About to call initSnakeStats');
 				initThemeToggle();
-				displayDarkModeButton();
+				await displayDarkModeButton();
 				initSnakeStats();
-				updateRanking();
-				updateInfos();
-				initProfilePage();
+				await updateRanking();
+				await updateInfos();
+				await initProfilePage();
 			}, 100);
 			break;
 		case '/statisticsPong':
-			setTimeout(() => {
+			setTimeout(async () => {
 				console.log('About to call initPongStats');
 				initThemeToggle();
-				displayDarkModeButton();
+				await displayDarkModeButton();
 				initPongStats();
-				updateRankingPong();
-				updateInfos();
-				initProfilePage();
+				await updateRankingPong();
+				await updateInfos();
+				await initProfilePage();
 			}, 100);
 			break;
 		// case '/profile/':
@@ -236,13 +236,13 @@ export async function renderPage() {
 		// 	break;
 		case '/pong/tournament':
 			pongTournament();
-			displayChatButton();
+			await displayChatButton();
 			break;
 	}
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-	await initializeLanguage();
+	initializeLanguage();
 	updateUserProfile();
 	updateUserProfilePong();
 

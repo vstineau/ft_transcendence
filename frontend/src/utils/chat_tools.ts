@@ -11,19 +11,15 @@ export async function displayChatButton() {
     document.body.insertAdjacentHTML('beforeend', ChatFloatingButton());
     
     // Initialiser le chat immédiatement (connexion Socket.IO, état initial)
-    const { chatManager } = await import('../chat');
+    const { ChatSingleton } = await import('../chat');
     
     // Le bouton ne fait que toggle l'interface (ouvrir/fermer le panel)
     const chatFab = document.getElementById('chat-fab');
     if (chatFab) {
         chatFab.addEventListener('click', () => {
-            chatManager.toggleChat();
+        ChatSingleton.getInstance().Manager.toggleChat();
         });
     }
-    
-    // Petit délai pour s'assurer que la connexion Socket.IO s'établit
-    // avant l'initialisation d'autres composants (snake, pong)
-    await new Promise(resolve => setTimeout(resolve, 100));
 }
 
 // Masquer le bouton de chat après déconnexion

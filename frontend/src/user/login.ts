@@ -32,6 +32,7 @@ export async function logUser() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify({ login, password }),
             });
 

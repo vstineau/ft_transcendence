@@ -5,10 +5,10 @@ import { ChatRoom } from '../types';
 export function eventsRooms(this: ChatManager) {
 
 		// [ANIMATION] Chargement des messages pour une room spécifique
-        this.on(CHAT_EVENTS.LOADING_MESSAGES, (data: any) => {
-            console.log(`⏳ Chargement des messages pour room ${data.room}:`, data.message);
-            (this as any).showLoadingMessage(data.room, data.message);
-        });
+        //this.on(CHAT_EVENTS.LOADING_MESSAGES, (data: any) => {
+        //    console.log(`⏳ Chargement des messages pour room ${data.room}:`, data.message);
+        //    (this as any).showLoadingMessage(data.room, data.message);
+        //});
 
 		// Réception de l'historique des messages pour une room spécifique
         this.on(CHAT_EVENTS.MESSAGE_HISTORY, (data: any) => {

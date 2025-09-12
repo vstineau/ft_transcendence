@@ -28,7 +28,7 @@ export class ChatManager extends SocketService {
 
     constructor() {
         super();
-        this.showLoadingMessage('global', 'initializing chat...');
+
         eventsSocket.call(this);
         eventsMessages.call(this);
         eventsUsers.call(this);
@@ -36,6 +36,8 @@ export class ChatManager extends SocketService {
         eventsFriends.call(this);
         this.profileUI_attached();
     }
+
+
 
     private profileUI_attached() {
         // Instanciation du mini UI profil (handlers à adapter selon ton routing/backend)
