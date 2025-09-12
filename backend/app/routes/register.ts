@@ -19,7 +19,7 @@ export default {
     request: FastifyRequest<{ Body: UserJson }>,
     reply: FastifyReply
   ): Promise<void> => {
-     try {
+      try {
             // Validation du mot de passe
             if (request.body.password) {
                 const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -77,7 +77,7 @@ export default {
 
 	  const response : IUserReply[200] = {success: true, qrCode: qrCodeDataURL};
       reply.code(200).send(response);
-    } catch (error) {
+    }  catch (error) {
             console.log(error);
             let errorMessage = 'Unknown error occurred';
 

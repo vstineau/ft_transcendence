@@ -1,4 +1,5 @@
 import { SnakeGameHistory, ProfileSnake } from '../types/snakeTypes';
+import { navigateTo, authenticatedFetch} from '../main';
 import { formatGameTime, formatDate } from '../graph/init';
 
 async function fetchUserProfile(): Promise<ProfileSnake | null> {
@@ -72,6 +73,7 @@ function updateProfileDisplay(profile: ProfileSnake): void {
 
 export async function updateUserProfile(): Promise<void> {
     try {
+
         const profile = await fetchUserProfile();
         if (profile) {
             updateProfileDisplay(profile);

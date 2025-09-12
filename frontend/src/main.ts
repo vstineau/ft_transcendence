@@ -207,18 +207,23 @@ export async function renderPage() {
 			initTwoFALogin();
 			break;
 		case '/statisticsSnake':
-			setTimeout(() => {
-				console.log('About to call initSnakeStats');
+			setTimeout(async() => {
 				initThemeToggle();
 				displayDarkModeButton();
 				initSnakeStats();
 				updateRanking();
 				updateInfos();
 				initProfilePage();
+				try {
+					await authenticatedFetch('/api/updateInfos');
+					updateUserProfile(); // Seulement si authentifié
+				} catch {
+					console.log('Not authenticated, skipping profile update');
+				}
 			}, 100);
 			break;
 		case '/statisticsPong':
-			setTimeout(() => {
+			setTimeout(async () => {
 				console.log('About to call initPongStats');
 				initThemeToggle();
 				displayDarkModeButton();
@@ -226,6 +231,12 @@ export async function renderPage() {
 				updateRankingPong();
 				updateInfos();
 				initProfilePage();
+				try {
+					await authenticatedFetch('/api/updateInfos');
+					updateUserProfilePong(); // Seulement si authentifié
+				} catch {
+					console.log('Not authenticated, skipping profile update');
+				}
 			}, 100);
 			break;
 		// case '/profile/':
@@ -243,8 +254,8 @@ export async function renderPage() {
 
 document.addEventListener('DOMContentLoaded', async () => {
 	await initializeLanguage();
-	updateUserProfile();
-	updateUserProfilePong();
+	// updateUserProfile();
+	// updateUserProfilePong();
 
 	document.body.addEventListener('click', async e => {
 		const target = e.target as HTMLElement;
