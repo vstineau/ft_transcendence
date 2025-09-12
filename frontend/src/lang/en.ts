@@ -58,7 +58,7 @@ export default {
         "dualAuth": "Dual authentication",
         "profilePicture": "Profile picture",
         "language": "Language",
-        "privacyTerms": "General privacy policy<br>& terms of service",
+        "privacyTerms": "General privacy policy & terms of service",
         "deleteAccount": "Delete your account",
         "backToDashboard": "← Back to Dashboard"
     },

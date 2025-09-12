@@ -825,7 +825,7 @@ export async function UpdateInfosview() {
                             <div class="space-y-2">
                                 <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="privacy-policy">
                                     <span class="w-5 h-5 mr-3 text-lg">⚖︎</span>
-                                    <span data-translate="settings.privacyTerms">General privacy police<br>& terms of service</span>
+                                    <span data-translate="settings.privacyTerms">General privacy police & terms of service</span>
                                 </button>
                                 <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="delete">
                                     <span class="w-5 h-5 mr-3">🗑</span>
