@@ -24,6 +24,7 @@ export default {
               email: user.email,
               avatar: user.avatar,
               twoFaAuth: user.twoFaAuth,
+              favLang: user.favLang,
             }
           };
           reply.code(200).send(response);

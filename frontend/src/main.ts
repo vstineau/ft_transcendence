@@ -39,7 +39,7 @@ import { updateUserProfile } from './graph/profileSnakeFr';
 import { updateUserProfilePong } from './graph/profilePongFr';
 import { updateRecentContacts } from './chat/recentContents';
 import { displayDarkModeButton } from './theme/lightButton'
-import { initLanguageSelector, initializeLanguage } from './lang/languageManager';
+import { initLanguageSelector, initializeLanguage, languageManager } from './lang/languageManager';
 import { showProfileDetails } from './user/popProfile'
 
 // 1. Déclaration des routes
@@ -82,6 +82,7 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
 		...options,
 		credentials: 'include',
 	});
+
 	if (response.status == 401) {
 		console.log('Token expired, redirecting to login');
 		localStorage.clear();
@@ -120,9 +121,30 @@ export async function renderPage() {
 		'/snake',
 		'/snake/local',
 	];
+
+	let favLangChecked = false;
+
+	// Pour les paths non publics, vérifie la langue préférée de l'utilisateur
 	if (!publicPaths.includes(path)) {
 		try {
 			await authenticatedFetch('/api/updateInfos');
+			// Récupération du favlang
+			if (!favLangChecked) {
+				const host = window.location.hostname;
+        		const port = window.location.port;
+        		const protocol = window.location.protocol;
+
+        		const response = await fetch(`${protocol}//${host}:${port}/api/`);
+				if (response.status === 200) {
+					const repBody = await response.json();
+					const favLang = repBody.favLang;
+					if (favLang && ['en', 'fr', 'es'].includes(favLang) && favLang !== languageManager.getCurrentLanguage()) {
+						languageManager.setLanguage(favLang);
+						languageManager.updatePageTranslations();
+					}
+				}
+				favLangChecked = true;
+			}
 		} catch {
 			showAuthMessage();
 			localStorage.clear();
@@ -237,6 +259,12 @@ export async function renderPage() {
 		case '/pong/tournament':
 			pongTournament();
 			displayChatButton();
+			break;
+		case '/pong-choice':
+			languageManager.updatePageTranslations();
+			break;
+		case '/snake-choice':
+			languageManager.updatePageTranslations();
 			break;
 	}
 }

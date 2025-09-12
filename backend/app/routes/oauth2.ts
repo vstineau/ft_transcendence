@@ -50,15 +50,12 @@ export default {
 			//si on trouve un user via mail login classique 
 			if (user) {
 				console.log('ALREADY USER');
-			//	if (user.twoFaAuth) {
-	  		//	  const response : IUserReply[200] = {success: true, twoFaAuth: true};
-	  		//	  reply.code(200).send(response);
-	  		//	}
       			const token = reply.server.jwt.sign(
       			  { 
 	  			    login: user.login,
 	  			    email: user.email,
 	  			    id: user.id, 
+					favLang: user.favLang,
 	  			    twoFaAuth: user.twoFaAuth
 	  			  },
       			  { expiresIn: '4h' }
@@ -87,6 +84,7 @@ export default {
 					email: email,
 					avatar: '',
 					password: 'Github42***',
+					favLang: 'en',
 					provider: 'github',
 						
 				};
@@ -102,7 +100,8 @@ export default {
 	  			    login: newUser.login,
 	  			    email: newUser.email,
 	  			    id: newUser.id, 
-	  			    twoFaAuth: newUser.twoFaAuth
+	  			    twoFaAuth: newUser.twoFaAuth,
+					favLang: newUser.favLang,
 	  			  },
       			  { expiresIn: '4h' }
       			)

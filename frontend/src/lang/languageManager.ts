@@ -9,7 +9,7 @@ interface Translations {
     [key: string]: string | Translations;
 }
 
-class LanguageManager {
+export class LanguageManager {
     private currentLanguage: Language = 'en';
     private translations: Record<Language, Translations> = {
         en,

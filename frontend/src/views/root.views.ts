@@ -82,7 +82,7 @@ export async function RootView() {
 					<!-- Bloc Let's talk - 4 colonnes, 1 ligne -->
 					<div class="bg-white rounded-xl shadow-lg p-8" style="grid-column: 1 / 3; grid-row: 3">
 						<div class="h-full flex flex-col justify-between">
-							<h3 class="font-montserrat font-bold text-6xl mb-6">Let's talk</h3>
+							<h3 class="font-montserrat font-bold text-6xl mb-6" data-translate="dashboard.letsTalk">Let's talk</h3>
 							<div id="recent-contacts-container" class="flex items-start space-x-6">
 								<!-- Le contenu sera injecte dynamiquement -->
 								<div class="text-center">
@@ -245,7 +245,7 @@ export async function PongChoice() {
 						href="/pong/matchmaking/localgame"
 						class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors"
 					>
-						<p class="font-montserrat font-medium text-base text-gray-600">Local</p>
+						<p class="font-montserrat font-medium text-base text-white" data-translate="pong.local">Local</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🏠</span>
 						</div>
@@ -255,7 +255,7 @@ export async function PongChoice() {
 						href="/pong/matchmaking/game"
 						class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors"
 					>
-						<p class="font-montserrat font-medium text-base text-gray-600">Online</p>
+						<p class="font-montserrat font-medium text-base text-gray-600" data-translate="pong.online">Online</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🌏</span>
 						</div>
@@ -265,14 +265,14 @@ export async function PongChoice() {
 						href="/pong/tournament"
 						class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors"
 					>
-						<p class="font-montserrat font-medium text-base text-gray-600">Tournament</p>
+						<p class="font-montserrat font-medium text-base text-gray-600" data-translate="pong.tournament">Tournament</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🏆</span>
 						</div>
 					</a>
 
 					<div class="mt-2 flex flex-col">
-						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors" data-translate="nav.backToDashboard">← Retour au Dashboard</a>
 					</div>
 				</div>
 			</div>
@@ -300,7 +300,7 @@ export async function SnakeChoice() {
 						href="/snake/local"
 						class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors"
 					>
-						<p class="font-montserrat font-medium text-base text-gray-600">Local</p>
+						<p class="font-montserrat font-medium text-base text-white" data-translate="snake.local">Local</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🏠</span>
 						</div>
@@ -311,14 +311,14 @@ export async function SnakeChoice() {
 						href="/snake"
 						class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors"
 					>
-						<p class="font-montserrat font-medium text-base text-gray-600">Online</p>
+						<p class="font-montserrat font-medium text-base text-gray-600" data-translate="snake.online">Online</p>
 						<div class="flex-1 flex items-center justify-center">
 							<span class="text-2xl">🌏</span>
 						</div>
 					</a>
 
 					<div class="mt-2 flex flex-col">
-						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors" data-translate="nav.backToDashboard">← Retour au Dashboard</a>
 					</div>
 				</div>
 			</div>
@@ -823,9 +823,13 @@ export async function UpdateInfosview() {
                         <!-- Menu latéral pour onglet General (caché par défaut) -->
                         <div id="general-menu" class="tab-menu hidden">
                             <div class="space-y-2">
+                                <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="language">
+                                    <span class="w-5 h-5 mr-3">🗣</span>
+                                    <span data-translate="settings.language">General privacy police terms of service</span>
+                                </button>
                                 <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="privacy-policy">
                                     <span class="w-5 h-5 mr-3 text-lg">⚖︎</span>
-                                    <span data-translate="settings.privacyTerms">General privacy police & terms of service</span>
+                                    <span data-translate="settings.privacyTerms">General privacy police terms of service</span>
                                 </button>
                                 <button class="menu-item w-full text-left px-4 py-3 rounded-lg font-medium text-sm transition-colors flex items-center" data-content="delete">
                                     <span class="w-5 h-5 mr-3">🗑</span>
