@@ -115,9 +115,14 @@ function drawBrackets(matchIdx: number, roundnb: number): HTMLDivElement {
 		for (let j = 0; j < tournament.rounds.games[i].length; j++) {
 			const match = document.createElement('div');
 			match.className = 'flex flex-col border hover:bg-gray-500 items-center bg-gray-600 p-2 rounded shadow-sm mx-4';
-			if (j === matchIdx && i === roundnb){
+			if (j === matchIdx && i === roundnb) {
 				match.className += ' animate-bounce outline outline-yellow-500';
 				// envoyer la notif sur le chat tournament
+				const p1 = tournament.rounds.games[roundnb][matchIdx].p1.nickName;
+				const p2 = tournament.rounds.games[roundnb][matchIdx].p2.nickName;
+				tournament.socket.emit('nextMatch', p1, p2);
+				//-> socket.on("nextMatch", (p1: string, p2: string) => {
+				//})
 			}
 
 			const player1 = document.createElement('div');
@@ -568,6 +573,9 @@ function drawFinalBoard() {
 	form.appendChild(endTitle);
 	form.appendChild(end);
 	drawScoreBoard();
+	tournament.socket.emit('winner', winner?.nickName); // string
+	// -> socket.on("winner", (winner: string) =>{
+	//})
 	const button = document.createElement('button');
 	button.type = 'button';
 	button.id = 'returnDashboard';

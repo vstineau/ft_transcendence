@@ -1180,8 +1180,8 @@ export async function pongTournamentView() {
 			<div id="formNb" class="min-h-screen min-w-full rounded-xl shadow-lg border-4 border-gray-800 bg-black p-8">
 				<form id="playersForm">
 					<div class="text-white">
-						<h2 class="text-2xl font-bold mb-4">Tournoi - Saisie des joueurs</h2>
-						<label for="nbPlayers" class="block mb-2">Nombre de joueurs :</label>
+						<h2 class="text-2xl font-bold mb-4">Pong Tournament</h2>
+						<label for="nbPlayers" class="block mb-2">Number of Players :</label>
 						<select
 							id="nbPlayers"
 							name="nbPlayers"
@@ -1196,7 +1196,7 @@ export async function pongTournamentView() {
 							type="submit"
 							class="w-full bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-150"
 						>
-							Valider la liste et démarrer
+							Choose Player's name
 						</button>
 					</div>
 				</form>

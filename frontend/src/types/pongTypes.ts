@@ -2,6 +2,8 @@
 // import { initGame } from '../../../backend/app/pong/pong';
 // import { playerEntrance } from '../../../backend/app/pong/tournament';
 
+import { io, Socket } from "socket.io-client";
+
 export interface Game {
 	p1: PlayerTournament;
 	p2: PlayerTournament;
@@ -51,6 +53,10 @@ export class Tournament {
 	rounds: Round;
 	win_width: number = window.innerWidth;
 	win_height: number = window.innerHeight;
+	private host = window.location.hostname;
+	private port = window.location.port;
+	private protocol = window.location.protocol;
+	socket: Socket = io(`${this.protocol}//${this.host}:${this.port}/chat`);
 
 	constructor(names: string[]) {
 		this.rounds = { games: [], max: names.length === 8 ? 2 : 1, nb: 0 };
@@ -147,7 +153,7 @@ export interface Window {
 	height: number;
 }
 
-export interface PongGameHistory{
+export interface PongGameHistory {
 	gamecount?: number;
 	type?: string;
 	date?: string;
@@ -156,37 +162,36 @@ export interface PongGameHistory{
 	win?: string;
 	finalBallSpeed?: number;
 	gameTime?: number;
-    opponentLogin?: string;
+	opponentLogin?: string;
 
-    opponentStats?: {
-        finalBallSpeed?: number;
-        gameTime?: number;
-
-    } | null;
+	opponentStats?: {
+		finalBallSpeed?: number;
+		gameTime?: number;
+	} | null;
 }
 
-export interface PongPlayerRanking{
+export interface PongPlayerRanking {
 	login: string;
-    nickName: string;
-    totalWins: number;
-    totalGames: number;
-    maxSpeed: number;
-    bestTime: number;
-    lastGameDate: string;
+	nickName: string;
+	totalWins: number;
+	totalGames: number;
+	maxSpeed: number;
+	bestTime: number;
+	lastGameDate: string;
 }
 
-export interface ProfilePong{
-	 user: {
-        login: string;
-        nickName: string;
-        avatar?: string;
-    };
-    stats: {
-        ranking: number;
-        maxSpeed: number;
-        averageSpeed: number;
-        totalGoals: number;
-        totalGames: number;
-        totalWins: number;
-    };
+export interface ProfilePong {
+	user: {
+		login: string;
+		nickName: string;
+		avatar?: string;
+	};
+	stats: {
+		ranking: number;
+		maxSpeed: number;
+		averageSpeed: number;
+		totalGoals: number;
+		totalGames: number;
+		totalWins: number;
+	};
 }
