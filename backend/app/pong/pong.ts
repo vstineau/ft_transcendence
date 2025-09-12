@@ -14,9 +14,11 @@ declare module 'fastify' {
 	}
 }
 
+let rooms: Room[] = [];
+let roomcount = 0;
 const WIN_HEIGHT = 720;
 const WIN_WIDTH = 1280;
-
+let gameInterval: NodeJS.Timeout | null = null;
 let intervalStarted = false;
 
 function initPlayer(socket: Socket, user: User, room: Room): Player {
@@ -74,6 +76,7 @@ function initGame(): Game {
 			radius: (WIN_HEIGHT * WIN_WIDTH) / 80000,
 			vx: Math.random() < 0.5 ? -6 : 6, //* 0.005),
 			vy: Math.random() < 0.5 ? -4 : 4, //* 0.005),* 0.007),
+			finalSpeed: 0,
 		},
 		win: {
 			width: WIN_WIDTH,
@@ -84,9 +87,6 @@ function initGame(): Game {
 	};
 	return game;
 }
-
-let rooms: Room[] = [];
-let roomcount = 0;
 
 export function getRoom(user: User, socket: Socket, arr?: string[]) {
 	if (arr && arr.length === 2) {
@@ -197,8 +197,6 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 	});
 }
 
-let gameInterval: NodeJS.Timeout | null = null;
-
 export function launchGame(rooms: Room[]) {
 	if (!intervalStarted) {
 		if (gameInterval) clearInterval(gameInterval);
@@ -306,118 +304,51 @@ function movePlayer(game: Game) {
 	}
 }
 
-// async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
-//     stored = true;
-
-//     // console.log('=== SAVING PONG HISTORY ===');
-//     // console.log('Ball vx:', game.ball.vx);
-//     // console.log('Ball vy:', game.ball.vy);
-//     // console.log('typeof vx:', typeof game.ball.vx);
-//     // console.log('typeof vy:', typeof game.ball.vy);
-
-//     // Test du calcul étape par étape
-//     const vx_squared = game.ball.vx * game.ball.vx;
-//     const vy_squared = game.ball.vy * game.ball.vy;
-//     const sum = vx_squared + vy_squared;
-//     const finalBallSpeed = Math.sqrt(sum);
-
-//     // console.log('vx_squared:', vx_squared);
-//     // console.log('vy_squared:', vy_squared);
-//     // console.log('sum:', sum);
-//     // console.log('sqrt(sum):', finalBallSpeed);
-
-//     // Alternative simple
-//     const alternativeSpeed = Math.abs(game.ball.vx) + Math.abs(game.ball.vy);
-//     // console.log('Alternative calculation:', alternativeSpeed);
-
-//     const user1 = await User.findOneBy({ id: game.p1.uid });
-//     const user2 = await User.findOneBy({ id: game.p2.uid });
-
-//     if (!user1 || !user2) {
-//         console.log('Users not found');
-//         return;
-//     }
-
-//     const gametime = game.gameStart ? Date.now() - game.gameStart : 0;
-
-//     const historyp1: UserHistory = {
-//         type: 'pong',
-//         date: new Date().toISOString(),
-//         win: winner === 'P1' ? 'WIN' : 'LOOSE',
-//         opponent: user2.id,
-//         score: `${game.p1.score}:${game.p2.score}`,
-//         finalLength: 0,
-//         finalBallSpeed: Math.round(alternativeSpeed),
-//         gameTime: gametime,
-//     };
-
-//     const historyp2: UserHistory = {
-//         type: 'pong',
-//         date: new Date().toISOString(),
-//         win: winner === 'P2' ? 'WIN' : 'LOOSE',
-//         opponent: user1.id,
-//         score: `${game.p2.score}:${game.p1.score}`,
-//         finalLength: 0,
-//         finalBallSpeed: Math.round(finalBallSpeed),
-//         gameTime: gametime,
-//     };
-
-//     console.log('Saving with finalBallSpeed:', Math.round(finalBallSpeed));
-
-//     const historyEntry1 = new History(user1, historyp1);
-//     const historyEntry2 = new History(user2, historyp2);
-
-//     await historyEntry1.save();
-//     await historyEntry2.save();
-
-//     console.log('History savsed for both player');
-// }
-
 async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
-    stored = true;
+	stored = true;
 
-    const user1 = await User.findOneBy({ id: game.p1.uid });
-    const user2 = await User.findOneBy({ id: game.p2.uid });
+	const user1 = await User.findOneBy({ id: game.p1.uid });
+	const user2 = await User.findOneBy({ id: game.p2.uid });
 
-    if (!user1 || !user2) {
-        console.log('Users not found');
-        return;
-    }
+	if (!user1 || !user2) {
+		console.log('Users not found');
+		return;
+	}
 
-    const gametime = game.gameStart ? Date.now() - game.gameStart : 0;
+	const gametime = game.gameStart ? Date.now() - game.gameStart : 0;
 
-    // Utilisez la méthode qui fonctionne
-    const finalBallSpeed = Math.abs(game.ball.vx) + Math.abs(game.ball.vy);
+	// Utilisez la méthode qui fonctionne
+	const finalBallSpeed = game.ball.finalSpeed / (game.p1.score + game.p2.score);
 
-    const historyp1: UserHistory = {
-        type: 'pong',
-        date: new Date().toISOString(),
-        win: winner === 'P1' ? 'WIN' : 'LOOSE',
-        opponent: user2.id,
-        score: `${game.p1.score}:${game.p2.score}`,
-        finalLength: 0,
-        finalBallSpeed: finalBallSpeed,
-        gameTime: gametime,
-    };
+	const historyp1: UserHistory = {
+		type: 'pong',
+		date: new Date().toISOString(),
+		win: winner === 'P1' ? 'WIN' : 'LOOSE',
+		opponent: user2.id,
+		score: `${game.p1.score}:${game.p2.score}`,
+		finalLength: 0,
+		finalBallSpeed: finalBallSpeed,
+		gameTime: gametime,
+	};
 
-    const historyp2: UserHistory = {
-        type: 'pong',
-        date: new Date().toISOString(),
-        win: winner === 'P2' ? 'WIN' : 'LOOSE',
-        opponent: user1.id,
-        score: `${game.p2.score}:${game.p1.score}`,
-        finalLength: 0,
-        finalBallSpeed: finalBallSpeed,
-        gameTime: gametime,
-    };
+	const historyp2: UserHistory = {
+		type: 'pong',
+		date: new Date().toISOString(),
+		win: winner === 'P2' ? 'WIN' : 'LOOSE',
+		opponent: user1.id,
+		score: `${game.p2.score}:${game.p1.score}`,
+		finalLength: 0,
+		finalBallSpeed: finalBallSpeed,
+		gameTime: gametime,
+	};
 
-    const historyEntry1 = new History(user1, historyp1);
-    const historyEntry2 = new History(user2, historyp2);
+	const historyEntry1 = new History(user1, historyp1);
+	const historyEntry2 = new History(user2, historyp2);
 
-    await historyEntry1.save();
-    await historyEntry2.save();
+	await historyEntry1.save();
+	await historyEntry2.save();
 
-    console.log('History saved for both players');
+	console.log('History saved for both players');
 }
 
 function checkWin(game: Game, app: FastifyInstance) {
@@ -492,12 +423,13 @@ function gameLoop(game: Game, app: FastifyInstance) {
 	// Score check
 	if (game.ball.x < 0) {
 		game.p2.score += 1;
+		game.ball.finalSpeed += (Math.abs(game.ball.vx) + Math.abs(game.ball.vy)) / 2;
 		resetBall(game);
 	}
 	if (game.ball.x > WIN_WIDTH) {
 		game.p1.score += 1;
+		game.ball.finalSpeed += (Math.abs(game.ball.vx) + Math.abs(game.ball.vy)) / 2;
 		resetBall(game);
-
 	}
 }
 
