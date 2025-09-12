@@ -100,7 +100,7 @@ export function getRoom(user: User, socket: Socket, arr?: string[]) {
 				room.private &&
 				room.private.length === 2 &&
 				arr.every((id, i) => room.private![i] === id) &&
-				room.private.includes(user.login)
+				room.private.includes(user.id) //changer pour user.id
 		);
 		if (privateRoom) {
 			privateRoom.game.p2 = initPlayer(socket, user, privateRoom);
@@ -111,8 +111,8 @@ export function getRoom(user: User, socket: Socket, arr?: string[]) {
 			console.log('Room found ' + privateRoom.private);
 			return;
 		}
-		if (arr.includes(user.login)) {
-			const newRoom = createRoom(arr, user.login); // modifier par userID
+		if (arr.includes(user.id)) { //changer pour user.id
+			const newRoom = createRoom(arr, user.id); // modifier par userID
 			newRoom.game.p1 = initPlayer(socket, user, newRoom);
 			socket.join(newRoom.name);
 			getInputs(socket, newRoom);
@@ -149,7 +149,7 @@ async function initPlayerRoom(socket: Socket, cookie: string, arr: string[]) {
 		}
 		// const queryString = !window.location.search ? '/dashboard' : window.location.search.substring(1);
 		const room = getRoom(user, socket, arr.length === 2 ? arr : undefined); //modifier par userID
-		if (arr && arr.length === 2 && arr.includes(user.login)) return;
+		if (arr && arr.length === 2 && arr.includes(user.id)) return; //changer pour user.id
 		if (room && user.id != room.game.p1.uid) {
 			room.game.p2 = initPlayer(socket, user, room);
 			room.game.p2.x = WIN_WIDTH * 0.98;
@@ -157,7 +157,7 @@ async function initPlayerRoom(socket: Socket, cookie: string, arr: string[]) {
 			room.locked = true;
 			getInputs(socket, room);
 		} else {
-			const newRoom = createRoom(arr, user.login); // modifier par userID
+			const newRoom = createRoom(arr, user.id); // modifier par userID
 			newRoom.game.p1 = initPlayer(socket, user, newRoom);
 			socket.join(newRoom.name);
 			getInputs(socket, newRoom);
