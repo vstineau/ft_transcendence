@@ -8,8 +8,8 @@ export default {
     },
     "dashboard": {
         "title": "FT_TRANSCENDENCE",
-        "welcome": "Bienvenue",
-        "back": "de retour",
+        "welcome": "Bon retour",
+        "back": "parmi nous",
         "games": "Jeux",
         "letsTalk": "Discutons",
         "lightMode": "Mode clair",

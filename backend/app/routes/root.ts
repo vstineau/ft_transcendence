@@ -1,6 +1,6 @@
 
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { IUserReply } from '../types/userTypes.js'
+import { IUserReply , JwtPayload} from '../types/userTypes.js'
 
 // savoir si l'user est connecte
 export default {
@@ -12,8 +12,8 @@ export default {
   ): Promise<void> => {
     try {
       if (request.cookies.token) {
-        reply.server.jwt.verify(request.cookies.token)
-		const response : IUserReply[200] = {success: true};
+        const payload = reply.server.jwt.verify<JwtPayload>(request.cookies.token)
+		const response : IUserReply[200] = {success: true, favLang: payload.favLang};
         reply.code(200).send(response);
       } else {
 		const response : IUserReply[401] = {success: false, error: 'user not connected'};
