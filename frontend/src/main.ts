@@ -179,7 +179,7 @@ export async function renderPage() {
 		case '/dashboard':
 			rootUser();
 			displayChatButton();
-			setTimeout(() => {
+			setTimeout(async () => {
 				initThemeToggle();
 				initProfilePage();
 				updateRecentContacts();
@@ -187,6 +187,13 @@ export async function renderPage() {
 				const viewBtn = document.getElementById('view-profile-btn');
 				if (viewBtn) {
 					viewBtn.addEventListener('click', showProfileDetails);
+				}
+				try {
+					await authenticatedFetch('/api/updateInfos');
+					updateUserProfile();
+					updateUserProfilePong();
+				} catch {
+					console.log('Not authenticated, skipping profile update');
 				}
 			}, 100);
 			break;

@@ -542,6 +542,7 @@ export async function LoginView() {
 
                 <!-- Titre -->
                 <h2 class="text-2xl font-semibold text-center text-black mb-8" data-translate="auth.welcomeBack">Welcome back !</h2>
+
                 <form id="login-form" class="space-y-4">
 
                     <!--login-->
@@ -583,6 +584,8 @@ export async function LoginView() {
                         <a href="/register?/login" class="text-black hover:underline font-medium" data-translate="auth.signUp">Sign up</a>
                     </p>
                 </div>
+
+				<div id="error-message" class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg"role="alert""></div>
 
             </div>
 	`;
