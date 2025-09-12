@@ -1,6 +1,5 @@
 import { fetchSnakeHistory } from '../graph/init';
 import { fetchPongHistory } from '../graph/initPong';
-import { PongGameHistory } from '../types/pongTypes';
 
 
 export async function analyzeGameTimes(): Promise<{labels: string[], data: number[]}> {
