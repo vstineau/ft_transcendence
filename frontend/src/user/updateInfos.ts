@@ -368,7 +368,6 @@ function getContentHTML(contentKey: string): string {
 		'delete': `
 			<div class="space-y-6">
 				<h2 class="font-montserrat font-medium text-black mb-4">Delete your account</h2>
-
 				<div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
 					<div class="flex">
 						<div class="text-red-500 mr-3">⚠️</div>
@@ -382,32 +381,10 @@ function getContentHTML(contentKey: string): string {
 					</div>
 				</div>
 
-				<form id="delete-account-form" class="space-y-4">
-					<p class="text-sm text-gray-600 mb-4">
-						To confirm account deletion, please enter your email and password:
-					</p>
-
-            	<input
-				type="email"
-				name="email"
-				id="delete-email"
-				placeholder="Email"
-				class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-red-500 transition-colors bg-transparent"
-				required
-            	/>
-
-            	<input
-				type="password"
-				name="password"
-				id="delete-password"
-				placeholder="Password"
-				class="w-full px-0 py-3 border-0 border-b border-gray-300 focus:outline-none focus:border-red-500 transition-colors bg-transparent"
-				required
-            	/>
-
-            <div style="width: 100%; display: flex; justify-content: center; padding-top: 16px;">
+				<div style="width: 100%; display: flex; justify-content: center; padding-top: 16px;">
 					<button
-						type="submit"
+						id="delete-account-btn"
+						type="button"
 						style="background-color: #DC2626; color: white; padding: 12px 32px; border-radius: 8px; border: none; cursor: pointer; transition: background-color 0.3s;"
 						onmouseover="this.style.backgroundColor='#B91C1C'"
 						onmouseout="this.style.backgroundColor='#DC2626'"
@@ -415,9 +392,8 @@ function getContentHTML(contentKey: string): string {
 						Delete Account Forever
 					</button>
 				</div>
-			</form>
-		</div>
-	`,
+			</div>
+		`,
 
 	'edit-profile': `
 		<div class="space-y-6">
@@ -763,69 +739,48 @@ function initProfilePictureUpload(): void {
 
 
 function initDeleteAccountForm(): void {
-    const form = document.getElementById('delete-account-form') as HTMLFormElement;
-    if (!form) return;
+    const deleteBtn = document.getElementById('delete-account-btn') as HTMLButtonElement;
+    if (!deleteBtn) return;
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        // Double confirmation avant suppression
+    deleteBtn.addEventListener('click', async () => {
+        // Confirmation simple avec popup
         const confirmed = confirm(
-            "Are you absolutely sure you want to delete your account? This action cannot be undone."
+            "Are you absolutely sure you want to delete your account?\n\nThis action will permanently remove:\n• All your game history\n• Your profile and settings\n• All your data\n\nThis CANNOT be undone."
         );
 
         if (!confirmed) return;
 
-        const formData = new FormData(form);
-        const email = formData.get('email')?.toString().trim();
-        const password = formData.get('password')?.toString().trim();
-
-        if (!email || !password) {
-            displayError('Please enter both email and password');
-            return;
-        }
-
         try {
             // Désactiver le bouton pendant la requête
-            const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
-            if (submitButton) {
-                submitButton.disabled = true;
-                submitButton.textContent = 'Deleting...';
-                submitButton.style.backgroundColor = '#9CA3AF';
-            }
+            deleteBtn.disabled = true;
+            deleteBtn.textContent = 'Deleting...';
+            deleteBtn.style.backgroundColor = '#9CA3AF';
 
-            // Appel à votre API de suppression
+            // Appel à votre API de suppression (sans email/password)
             const host = window.location.hostname;
             const port = window.location.port;
             const protocol = window.location.protocol;
 
             const response = await fetch(`${protocol}//${host}:${port}/api/deleteAccount`, {
-                method: 'POST', // Changé en POST pour envoyer les données
+                method: 'DELETE', // Changé en DELETE car plus approprié
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                credentials: 'include', // Pour les cookies
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                }),
+                credentials: 'include', // Pour les cookies (authentification)
             });
 
             const result = await response.json();
 
-            if (result.success) {
+            if (response.ok && result.success) {
                 alert('Your account has been successfully deleted.');
                 // Rediriger vers la page d'accueil
                 window.location.href = '/';
             } else {
-                displayError(result.error || 'Failed to delete account. Please check your credentials.');
-
+                displayError(result.error || 'Failed to delete account. Please try again.');
                 // Réactiver le bouton
-                if (submitButton) {
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Delete Account Forever';
-                    submitButton.style.backgroundColor = '#DC2626';
-                }
+                deleteBtn.disabled = false;
+                deleteBtn.textContent = 'Delete Account Forever';
+                deleteBtn.style.backgroundColor = '#DC2626';
             }
 
         } catch (error) {
@@ -833,12 +788,9 @@ function initDeleteAccountForm(): void {
             displayError('Network error occurred. Please try again.');
 
             // Réactiver le bouton
-            const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
-            if (submitButton) {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Delete Account Forever';
-                submitButton.style.backgroundColor = '#DC2626';
-            }
+            deleteBtn.disabled = false;
+            deleteBtn.textContent = 'Delete Account Forever';
+            deleteBtn.style.backgroundColor = '#DC2626';
         }
     });
 }
