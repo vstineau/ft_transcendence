@@ -41,9 +41,9 @@ export default {
                     },
                     stats: {
                         ranking: 0,
-                        maxSize: 0,
-                        averageSize: 0,
-                        eatenApples: 0,
+                        maxSpeed: 0,
+                        averageSpeed: 0,
+                        totalGoals: 0,
                         totalGames: 0,
                         totalWins: 0
                     }

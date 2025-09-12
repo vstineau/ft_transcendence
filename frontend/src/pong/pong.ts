@@ -18,12 +18,13 @@ export function createPongSocket(): Socket {
 
 	let socket = io(`${protocol}//${host}:${port}/pong`);
 	socket.on('connect', () => {
-		console.log(`gameOver ${gameOver}`);
-		console.log(`lastGame ${lastGame}`);
-		console.log(`winner ${winner}`);
-		console.log('socket pong create');
+		const params = new URLSearchParams(window.location.search);
+		const id1 = params.get('p1');
+		const id2 = params.get('p2');
+		const arr = [id1, id2].filter(Boolean);
+
 		let cookie = getCookie('token');
-		socket.emit('initGame', cookie);
+		socket.emit('initGame', cookie, arr);
 		initCanvas();
 	});
 	return socket;
@@ -152,7 +153,12 @@ function drawWaitingScreen(room: any) {
 	ctx.fillStyle = 'white';
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
-	ctx.fillText('Waiting for player ... (1 / 2)', (room.game.win.width * scale_x) / 2, (room.game.win.height * scale_y) / 2, (room.game.win.width * scale_x) * 0.80);
+	ctx.fillText(
+		'Waiting for player ... (1 / 2)',
+		(room.game.win.width * scale_x) / 2,
+		(room.game.win.height * scale_y) / 2,
+		room.game.win.width * scale_x * 0.8
+	);
 }
 
 function drawWinner(winner: Player, game: Game) {

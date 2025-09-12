@@ -14,10 +14,11 @@ declare module 'fastify' {
 	}
 }
 
+let rooms: Room[] = [];
+let roomcount = 0;
 const WIN_HEIGHT = 720;
 const WIN_WIDTH = 1280;
-
-// let game: Game;
+let gameInterval: NodeJS.Timeout | null = null;
 let intervalStarted = false;
 
 function initPlayer(socket: Socket, user: User, room: Room): Player {
@@ -75,6 +76,7 @@ function initGame(): Game {
 			radius: (WIN_HEIGHT * WIN_WIDTH) / 80000,
 			vx: Math.random() < 0.5 ? -6 : 6, //* 0.005),
 			vy: Math.random() < 0.5 ? -4 : 4, //* 0.005),* 0.007),
+			finalSpeed: 0,
 		},
 		win: {
 			width: WIN_WIDTH,
@@ -86,14 +88,40 @@ function initGame(): Game {
 	return game;
 }
 
-let rooms: Room[] = [];
-let roomcount = 0;
-
-export function getRoom() {
-	return rooms.find(room => room.playersNb < 2 && !room.locked);
+export function getRoom(user: User, socket: Socket, arr?: string[]) {
+	if (arr && arr.length === 2) {
+		const privateRoom = rooms.find(
+			room =>
+				room.playersNb < 2 &&
+				!room.locked &&
+				room.private &&
+				room.private.length === 2 &&
+				arr.every((id, i) => room.private![i] === id) &&
+				room.private.includes(user.id)
+		);
+		if (privateRoom) {
+			privateRoom.game.p2 = initPlayer(socket, user, privateRoom);
+			privateRoom.game.p2.x = WIN_WIDTH * 0.98;
+			socket.join(privateRoom.name);
+			privateRoom.locked = true;
+			getInputs(socket, privateRoom);
+			console.log('Room found ' + privateRoom.private);
+			return;
+		}
+		if (arr.includes(user.id)) {
+			const newRoom = createRoom(arr, user.id);
+			newRoom.game.p1 = initPlayer(socket, user, newRoom);
+			socket.join(newRoom.name);
+			getInputs(socket, newRoom);
+			console.log(newRoom);
+			app.io.of('/pong').to(newRoom.name).emit('p1Name', newRoom.game.p1);
+			return;
+		}
+	}
+	return rooms.find(room => room.playersNb < 2 && !room.locked && !room.private);
 }
 
-export function createRoom(): Room {
+export function createRoom(arr: string[], userId: string): Room {
 	let newRoom: Room = {
 		name: `room_${roomcount++}`,
 		playersNb: 0,
@@ -101,12 +129,13 @@ export function createRoom(): Room {
 		locked: false,
 		winner: null,
 		nameSet: false,
+		private: arr && arr.length === 2 && arr.includes(userId) ? arr : null,
 	};
 	rooms.push(newRoom);
 	return newRoom;
 }
 
-async function initPlayerRoom(socket: Socket, cookie: string) {
+async function initPlayerRoom(socket: Socket, cookie: string, arr: string[]) {
 	if (cookie) {
 		const payload = app.jwt.verify<JwtPayload>(cookie);
 		const user = await User.findOneBy({ id: payload.id });
@@ -114,7 +143,8 @@ async function initPlayerRoom(socket: Socket, cookie: string) {
 			socket.emit('notLogged');
 			return;
 		}
-		const room = getRoom();
+		const room = getRoom(user, socket, arr.length === 2 ? arr : undefined);
+		if (arr && arr.length === 2 && arr.includes(user.id)) return;
 		if (room && user.id != room.game.p1.uid) {
 			room.game.p2 = initPlayer(socket, user, room);
 			room.game.p2.x = WIN_WIDTH * 0.98;
@@ -122,11 +152,10 @@ async function initPlayerRoom(socket: Socket, cookie: string) {
 			room.locked = true;
 			getInputs(socket, room);
 		} else {
-			const newRoom = createRoom();
-
+			const newRoom = createRoom(arr, user.id); // modifier par userID
 			newRoom.game.p1 = initPlayer(socket, user, newRoom);
 			socket.join(newRoom.name);
-			getInputs(socket, newRoom); 
+			getInputs(socket, newRoom);
 			app.io.of('/pong').to(newRoom.name).emit('p1Name', newRoom.game.p1);
 		}
 	} else {
@@ -156,7 +185,7 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 			}
 			if (room.playersNb === 0) rooms = rooms.filter(r => r !== room);
 			if (gameInterval) {
-				console.log('aaaaaaaaaa');
+				// console.log('aaaaaaaaaa');
 				clearInterval(gameInterval);
 				stored = false;
 			}
@@ -168,28 +197,17 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 	});
 }
 
-// let intervalStarted = false;
-let gameInterval: NodeJS.Timeout | null = null;
-// let gamecountdown: NodeJS.Timeout | null = null;
-
 export function launchGame(rooms: Room[]) {
 	if (!intervalStarted) {
 		if (gameInterval) clearInterval(gameInterval);
 		gameInterval = setInterval(() => {
-			// Pour chaque room prête, broadcast son état de jeu à tous ses joueurs
 			for (const room of rooms) {
 				if (room.playersNb === 2 && room.locked && !room.game!.over) {
 					!room.game.gameStart ? (room.game.gameStart = Date.now()) : 0;
-					// console.log('ball speed');
-					// console.log(room.game.ball.vx);
-					// console.log(room.game.ball.vy);
 					if (!room.game.started) {
 						app.io.of('/pong').to(room.name).emit('countdown', room.game);
-						// if (gamecountdown) clearTimeout(gamecountdown);
 						setTimeout(() => {
 							room.game.started = true;
-							// gameLoop(room.game!, app);
-							// app.io.of('/pong').to(room.name).emit('gameState', room.game);
 						}, 3500);
 					} else {
 						gameLoop(room.game!, app);
@@ -205,7 +223,6 @@ export function launchGame(rooms: Room[]) {
 				}
 			}
 		}, 1000 / 60);
-		// intervalStarted = true;
 	}
 }
 
@@ -213,8 +230,8 @@ export async function startPongGame(app: FastifyInstance) {
 	app.ready().then(() => {
 		app.io.of('/pong').on('connection', (socket: Socket) => {
 			handleDisconnect(app, socket);
-			socket.on('initGame', (cookie: string) => {
-				initPlayerRoom(socket, cookie);
+			socket.on('initGame', (cookie: string, arr: string[]) => {
+				initPlayerRoom(socket, cookie, arr);
 				launchGame(rooms);
 			});
 		});
@@ -227,13 +244,11 @@ export function getInputs(sock: Socket, room: Room) {
 		if (id === room.game.p1.id) {
 			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') {
 				room.game.p1.key_up = false;
-				// sock.emit('p1UpKeyUp');
 				app.io.of('/pong').to(room.name).emit('p1UpKeyUp');
 			}
 			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') {
 				room.game.p1.key_down = false;
 				app.io.of('/pong').to(room.name).emit('p1DownKeyUp');
-				// sock.emit('p1DownKeyUp');
 			}
 		}
 		//p2
@@ -241,12 +256,10 @@ export function getInputs(sock: Socket, room: Room) {
 			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') {
 				room.game.p2.key_up = false;
 				app.io.of('/pong').to(room.name).emit('p2UpKeyUp');
-				// sock.emit('p2UpKeyUp');
 			}
 			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') {
 				room.game.p2.key_down = false;
 				app.io.of('/pong').to(room.name).emit('p2DownKeyUp');
-				// sock.emit('p2DownKeyUp');
 			}
 		}
 	});
@@ -256,12 +269,10 @@ export function getInputs(sock: Socket, room: Room) {
 			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') {
 				room.game.p1.key_up = true;
 				app.io.of('/pong').to(room.name).emit('p1UpKeyDown');
-				// sock.emit('p1UpKeyDown');
 			}
 			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') {
 				room.game.p1.key_down = true;
 				app.io.of('/pong').to(room.name).emit('p1DownKeyDown');
-				// sock.emit('p1DownKeyDown');
 			}
 		}
 		//p2
@@ -269,11 +280,9 @@ export function getInputs(sock: Socket, room: Room) {
 			if (key.key === 'w' || key.key === 'W' || key.key === 'ArrowUp') {
 				room.game.p2.key_up = true;
 				app.io.of('/pong').to(room.name).emit('p2UpKeyDown');
-				// sock.emit('p2UpKeyDown');
 			}
 			if (key.key === 's' || key.key === 'S' || key.key === 'ArrowDown') {
 				room.game.p2.key_down = true;
-				// sock.emit('p2DownKeyDown');
 				app.io.of('/pong').to(room.name).emit('p2DownKeyDown');
 			}
 		}
@@ -297,18 +306,19 @@ function movePlayer(game: Game) {
 
 async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
 	stored = true;
+
 	const user1 = await User.findOneBy({ id: game.p1.uid });
-	if (!user1) {
-		console.log('cant get user1');
-		return;
-	}
 	const user2 = await User.findOneBy({ id: game.p2.uid });
-	if (!user2) {
-		console.log('cant get user2');
+
+	if (!user1 || !user2) {
+		console.log('Users not found');
 		return;
 	}
 
 	const gametime = game.gameStart ? Date.now() - game.gameStart : 0;
+
+	// Utilisez la méthode qui fonctionne
+	const finalBallSpeed = game.ball.finalSpeed / (game.p1.score + game.p2.score);
 
 	const historyp1: UserHistory = {
 		type: 'pong',
@@ -317,7 +327,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
 		opponent: user2.id,
 		score: `${game.p1.score}:${game.p2.score}`,
 		finalLength: 0,
-		finalBallSpeed: game.ball.vx + game.ball.vy / 2,
+		finalBallSpeed: finalBallSpeed,
 		gameTime: gametime,
 	};
 
@@ -328,7 +338,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
 		opponent: user1.id,
 		score: `${game.p2.score}:${game.p1.score}`,
 		finalLength: 0,
-		finalBallSpeed: game.ball.vx + game.ball.vy / 2,
+		finalBallSpeed: finalBallSpeed,
 		gameTime: gametime,
 	};
 
@@ -343,16 +353,17 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
 
 function checkWin(game: Game, app: FastifyInstance) {
 	if (game.p1.score === SCORETOWIN || game.p2.score === SCORETOWIN) {
-		if (!stored) game.p1.score === SCORETOWIN ? saveDataInHistory(game, 'P1') : saveDataInHistory(game, 'P2');
-		game.ball.vx = 0;
-		game.ball.vy = 0;
-		game.ball.x = WIN_WIDTH / 2;
-		game.ball.y = WIN_HEIGHT / 2;
+		let save = game;
+		if (!stored) game.p1.score === SCORETOWIN ? saveDataInHistory(save, 'P1') : saveDataInHistory(save, 'P2');
 		const room = rooms.find(r => r.game.p1.id === game.p1.id || r.game.p2.id === game.p2.id);
 		if (room) {
 			if (!room.winner) room.winner = room.game.p1.score > room.game.p2.score ? room.game.p1 : room.game.p2;
 			app.io.of('/pong').to(room.name).emit('playerWin', room.winner, game);
 		}
+		game.ball.vx = 0;
+		game.ball.vy = 0;
+		game.ball.x = WIN_WIDTH / 2;
+		game.ball.y = WIN_HEIGHT / 2;
 		return true;
 	}
 	return false;
@@ -393,10 +404,6 @@ function handlePaddleCollisionP2(game: Game) {
 }
 
 function gameLoop(game: Game, app: FastifyInstance) {
-	// console.log('game is gaming');
-	// getInputs(socket, game);
-	// Pour chaque room prête, broadcast son état de jeu à tous ses joueurs
-	// showCountdown();
 	movePlayer(game);
 	if (checkWin(game, app)) return;
 
@@ -416,23 +423,17 @@ function gameLoop(game: Game, app: FastifyInstance) {
 	// Score check
 	if (game.ball.x < 0) {
 		game.p2.score += 1;
+		game.ball.finalSpeed += (Math.abs(game.ball.vx) + Math.abs(game.ball.vy)) / 2;
 		resetBall(game);
 	}
 	if (game.ball.x > WIN_WIDTH) {
 		game.p1.score += 1;
+		game.ball.finalSpeed += (Math.abs(game.ball.vx) + Math.abs(game.ball.vy)) / 2;
 		resetBall(game);
 	}
 }
 
-// function resetGame(game: Game) {
-// 	resetBall(game);
-// 	game.p1.score = 0;
-// 	game.p2.score = 0;
-// }
-
 function resetBall(game: Game) {
-	// game.p1.score = 0;
-	// game.p2.score = 0;
 	game.p1.y = WIN_HEIGHT / 2;
 	game.p2.y = WIN_HEIGHT / 2;
 	game.ball.x = WIN_WIDTH / 2;
