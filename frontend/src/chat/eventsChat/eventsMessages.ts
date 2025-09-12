@@ -4,7 +4,7 @@ import { CHAT_EVENTS } from '../config';
 export function eventsMessages(this: ChatManager) {
 
 	this.on(CHAT_EVENTS.NEW_MESSAGE, (message: any) => {
-	    console.log('📩 New message received:', message);
+	    //console.log('📩 New message received:', message);
 		const isBlocked = (this as any).state.currentUserId.blockedList.includes(message.userId) || message.blockedList.includes((this as any).state.currentUserId.id);
 
 	    // Si c'est un message privé, gérer côté client
@@ -17,7 +17,6 @@ export function eventsMessages(this: ChatManager) {
 				const isOwn = message.userId === (this as any).state.currentUserId?.id;
 
 				if (!isOwn) {
-					console.log('JE SUIS ICIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII');
 					// Message privé reçu - créer la room si nécessaire
 					(this as any).createAndShowPrivateRoom(message);
 				} else {

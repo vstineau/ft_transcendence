@@ -47,36 +47,8 @@ export async function handleSendMessage(
       return;
     }
     
-    // Diffuser selon le type de room
-    if (roomService.isPrivateRoom(room)) {
-      // S'assurer que l'expéditeur est dans la room
-      socket.join(room);
-      // Trouver l'autre participant et le joindre si connecté
-      const ids = roomService.extractUserIdsFromPrivateRoom(room);
-      const otherId = ids?.find(id => id !== user.id);
-      if (otherId) {
-        const target = userService.findUserById(otherId);
-        if (target?.socketId) {
-          chatNamespace.in(target.socketId).socketsJoin(room);
-          // Notifier le destinataire qu'une room privée existe (si son UI doit la créer)
-          chatNamespace.to(target.socketId).emit(CHAT_EVENTS.PRIVATE_ROOM_CREATED, {
-            roomName: room,
-            withUser: {
-              id: user.id,
-              username: dbUser.nickName || dbUser.login,
-              avatar: dbUser.avatar || ''
-            }
-          });
-          // Émettre directement le nouveau message
-          chatNamespace.to(target.socketId).emit(CHAT_EVENTS.NEW_MESSAGE, broadcastMessage);
-        }
-      }
-      // Émettre aussi à l'expéditeur
-      socket.emit(CHAT_EVENTS.NEW_MESSAGE, broadcastMessage);
-    } else {
-      // Rooms publiques: broadcast dans la room
-      chatNamespace.to(room).emit(CHAT_EVENTS.NEW_MESSAGE, broadcastMessage);
-    }
+    // Diffuser le message à tous les utilisateurs de la room
+    chatNamespace.to(room).emit(CHAT_EVENTS.NEW_MESSAGE, broadcastMessage);
     
     app.log.info(`Chat message from ${user.login}: ${data.content}`);
   } catch (error) {

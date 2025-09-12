@@ -25,7 +25,7 @@ export async function handleDisconnect(
     // Envoyer la liste complète mise à jour
     chatNamespace.to(CHAT_CONFIG.ROOMS.GLOBAL).emit(
       CHAT_EVENTS.ONLINE_USERS_UPDATED, 
-      await userService.getAllUsers()
+      userService.getAllUsers()
     );
     
     app.log.info(`Chat user disconnected: ${user.login}`);
