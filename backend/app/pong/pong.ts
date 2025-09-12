@@ -90,7 +90,7 @@ let rooms: Room[] = [];
 // let privateRooms: Room[] = [];
 let roomcount = 0;
 
-export function getRoom(userId: string, arr?: string[]) {
+export function getRoom(user: User, socket: Socket, arr?: string[]) {
 	if (arr && arr.length === 2) {
 		// On cherche la room privée qui matche exactement ce duo
 		const privateRoom = rooms.find(
@@ -100,9 +100,26 @@ export function getRoom(userId: string, arr?: string[]) {
 				room.private &&
 				room.private.length === 2 &&
 				arr.every((id, i) => room.private![i] === id) &&
-				room.private.includes(userId)
+				room.private.includes(user.login)
 		);
-		if (privateRoom) return privateRoom;
+		if (privateRoom) {
+			privateRoom.game.p2 = initPlayer(socket, user, privateRoom);
+			privateRoom.game.p2.x = WIN_WIDTH * 0.98;
+			socket.join(privateRoom.name);
+			privateRoom.locked = true;
+			getInputs(socket, privateRoom);
+			console.log('Room found ' + privateRoom.private);
+			return;
+		}
+		if (arr.includes(user.login)) {
+			const newRoom = createRoom(arr, user.login); // modifier par userID
+			newRoom.game.p1 = initPlayer(socket, user, newRoom);
+			socket.join(newRoom.name);
+			getInputs(socket, newRoom);
+			console.log(newRoom);
+			app.io.of('/pong').to(newRoom.name).emit('p1Name', newRoom.game.p1);
+			return;
+		}
 	}
 	// Sinon, on ne propose qu'une room publique
 	return rooms.find(room => room.playersNb < 2 && !room.locked && !room.private);
@@ -131,7 +148,8 @@ async function initPlayerRoom(socket: Socket, cookie: string, arr: string[]) {
 			return;
 		}
 		// const queryString = !window.location.search ? '/dashboard' : window.location.search.substring(1);
-		const room = getRoom(user.login, arr.length === 2 ? arr : undefined); //modifier par userID
+		const room = getRoom(user, socket, arr.length === 2 ? arr : undefined); //modifier par userID
+		if (arr && arr.length === 2 && arr.includes(user.login)) return;
 		if (room && user.id != room.game.p1.uid) {
 			room.game.p2 = initPlayer(socket, user, room);
 			room.game.p2.x = WIN_WIDTH * 0.98;
