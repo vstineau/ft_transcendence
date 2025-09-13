@@ -71,16 +71,34 @@ function updateProfileDisplay(profile: ProfileSnake): void {
     });
 }
 
-export async function updateUserProfile(): Promise<void> {
-    try {
+// export async function updateUserProfile(): Promise<void> {
+//     try {
 
-        const profile = await fetchUserProfile();
-        if (profile) {
-            updateProfileDisplay(profile);
-        }
-    } catch (error) {
-        console.error('Error updating profile:', error);
-    }
-}
+//         const profile = await fetchUserProfile();
+//         if (profile) {
+//             updateProfileDisplay(profile);
+//         }
+//     } catch (error) {
+//         console.error('Error updating profile:', error);
+//     }
+// }
 
 
+// export async function updateUserProfile(): Promise<void> {
+//     try {
+//         // Vérifier si on regarde le profil d'un autre utilisateur
+//         const targetUserId = document.querySelector('.content-section')?.getAttribute('data-target-user');
+
+//         let profileUrl = '/api/snake/profile';
+//         if (targetUserId) {
+//             profileUrl = `/api/snake/profile/${targetUserId}`;
+//         }
+
+//         const profile = await fetchUserProfile(profileUrl);
+//         if (profile) {
+//             updateProfileDisplay(profile);
+//         }
+//     } catch (error) {
+//         console.error('Error updating profile:', error);
+//     }
+// } TO DO 

@@ -73,7 +73,17 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/updateInfos': UpdateInfosview,
 	'/2fa-verification': TwoFAVerifyView,
 	'/statisticsPong': StatsPongView,
-	'/statisticsSnake': StatsSnakeView,
+	'/statisticsSnake': async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetUserId = urlParams.get('user');
+
+        if (targetUserId) {
+            return await StatsSnakeView(targetUserId);
+        } else {
+            return await StatsSnakeView();
+        }
+    },
+	// '/statisticsSnake': StatsSnakeView,
 };
 
 export async function navigateTo(url: string) {
