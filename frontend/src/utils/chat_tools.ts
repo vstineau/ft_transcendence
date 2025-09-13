@@ -1,4 +1,6 @@
+import { ChatSingleton } from '../chat';
 // Afficher le bouton de chat après connexion
+
 export async function displayChatButton() {
     // Vérifier si le bouton n'existe pas déjà
     if (document.getElementById('chat-fab')) {
@@ -11,13 +13,13 @@ export async function displayChatButton() {
     document.body.insertAdjacentHTML('beforeend', ChatFloatingButton());
     
     // Initialiser le chat immédiatement (connexion Socket.IO, état initial)
-    const { ChatSingleton } = await import('../chat');
-    
+    const chatInstance = ChatSingleton.getInstance(); 
+
     // Le bouton ne fait que toggle l'interface (ouvrir/fermer le panel)
     const chatFab = document.getElementById('chat-fab');
     if (chatFab) {
         chatFab.addEventListener('click', () => {
-        ChatSingleton.getInstance().Manager.toggleChat();
+            chatInstance.Manager.toggleChat();
         });
     }
 }

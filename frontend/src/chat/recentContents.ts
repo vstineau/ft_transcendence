@@ -1,4 +1,8 @@
 import { User } from '../chat/types';
+import { ChatSingleton } from '../chat';
+
+
+let chatInstance = ChatSingleton.getInstance();
 
 async function fetchRecentContacts(): Promise<User[]> {
     try {
@@ -100,13 +104,14 @@ export async function updateRecentContacts(): Promise<void> {
 function openChat(userId: string): void {
     // Rediriger vers le chat ou ouvrir une modal
     console.log('Opening chat with user:', userId);
-    //--------------------- >ici pour gerer les events <-----------------
-	// regarde en bas la fonction lie avec
+    chatInstance.Manager.openChat();
+    chatInstance.Manager.startPrivateChat(userId);
 }
 
 function openGlobalChat(): void {
     console.log('Opening global chat');
-    // Rediriger vers le chat global ou ouvrir une modal comme tu veux 
+    chatInstance.Manager.openChat();
+    chatInstance.Manager.switchRoom('global');
     // window.location.href = '/chat';
 }
 

@@ -308,7 +308,7 @@ export class ChatManager extends SocketService {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    private async switchRoom(roomId: string) {
+    public async switchRoom(roomId: string) {
         // console.log(`🔄 Changement vers room: ${roomId}`);
         
         // Mettre à jour l'état local
@@ -696,7 +696,7 @@ export class ChatManager extends SocketService {
         this.updateNotificationBadge();
     }
 
-    private startPrivateChat(userId: string) {
+    public startPrivateChat(userId: string) {
         // Trouver l'utilisateur dans la liste des utilisateurs en ligne
         const targetUser = this.state.onlineUsers?.find(u => u.id === userId);
         if (!targetUser) {
