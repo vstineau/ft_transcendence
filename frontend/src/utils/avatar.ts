@@ -60,7 +60,7 @@ export function updateProfileAvatar(avatarData?: string): void {
 
 	const container = document.getElementById('profile-avatar-container');
 	if (!container) {
-		console.error('Profile avatar container not found!');
+		console.log('Profile avatar container');
 		return;
 	}
 

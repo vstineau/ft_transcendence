@@ -44,7 +44,16 @@ import { showProfileDetails } from './user/popProfile'
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
-	'/': WelcomeView,
+	'/': async () => {
+        // Vérifier si l'utilisateur est connecté
+        const token = document.cookie.split('; ')
+            .find(row => row.startsWith('token='))
+            ?.split('=')[1];
+        const isLoggedIn = !!token;
+
+        // Retourner la vue avec le bon paramètre
+        return await WelcomeView(isLoggedIn);
+    },
 	'/dashboard': RootView,
 	'/games': GamesView,
 	'/pong-choice': PongChoice,
@@ -169,7 +178,6 @@ export async function renderPage() {
 	switch (path) {
 		case '/':
 			WelcomeView();
-			//displayChatButton(); // Affichage debbug.
 			setTimeout(() => {
 				initScrollAnimations();
 				initThemeToggle();

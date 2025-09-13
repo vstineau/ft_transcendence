@@ -3,11 +3,11 @@ import { showProfileDetails } from '../user/popProfile'
 export async function RootView() {
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
-		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
-				FT<span class="text-blue-600">_</span>TRANSCENDENCE
-			</h1>
-		</div>
+	<div class="bg-gray-100 py-2">
+		<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black">
+			FT<span class="text-blue-600">_</span>TRANSCENDENCE
+		</h1>
+	</div>
 
 <!-- Section avec les blocs -->
 <div class="content-section min-h-screen bg-gray-100 py-16">
@@ -56,7 +56,7 @@ export async function RootView() {
 						</div>
 
 						<p class="font-montserrat font-medium text-gray-700 text-sm leading-5 mb-4">
-							<span data-translate="games.pong.description">Pong is one of the first computer games that ever created, the goal is to defeat your opponent.</span><br><br>
+							<span data-translate="games.pong.description">Pong was the first commercially successful video game, the goal is to defeat your opponent.</span><br><br>
 							<span data-translate="games.snake.description">For Snake you must keep the snake from colliding with both other obstacles and itself.</span>
 						</p>
 
@@ -153,20 +153,19 @@ export async function RootView() {
 	`;
 }
 
-export async function WelcomeView() {
-	return /* HTML */ `
-        <!-- Titre isolé - position absolue dès le départ -->
+export async function WelcomeView(isLoggedIn: boolean = false) {
+    return /* HTML */ `
+        <!-- Titre isolé -->
         <h1 id="main-title" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl font-bold text-black z-50 mb-24">
             FT<span class="text-blue-600">_</span>TRANSCENDENCE
         </h1>
 
-        <!-- Section Hero - écran complet SANS le titre -->
+        <!-- Section Hero -->
         <div class="hero-section h-screen flex flex-col justify-center items-center bg-gray-100 relative">
             <div class="hero-content text-center pt-20">
                 <p class="text-gray-600 text-lg mb-8 mt-8" data-translate="welcome.subtitle">Choose your adventure.</p>
             </div>
 
-            <!-- Indicateur de scroll en bas -->
             <div class="scroll-indicator absolute bottom-12 left-1/2 transform -translate-x-1/2">
                 <span class="text-gray-500 text-sm block mb-2" data-translate="welcome.scroll">scroll</span>
                 <div class="w-px h-8 bg-gray-200 mx-auto animate-pulse"></div>
@@ -176,7 +175,7 @@ export async function WelcomeView() {
         <!-- Section avec les blocs -->
         <div class="content-section min-h-screen bg-gray-100 py-16">
             <div class="max-w-4xl mx-auto px-8">
-                <!-- Language Selector - en haut à droite -->
+                <!-- Language Selector -->
                 <div class="flex justify-end mb-8">
                     <div class="bg-white rounded-lg shadow-sm p-2">
                         <select id="language-selector-welcome" class="bg-transparent border-none outline-none cursor-pointer text-sm">
@@ -187,50 +186,81 @@ export async function WelcomeView() {
                     </div>
                 </div>
 
-                <!-- Container des blocs en grid simple -->
-                <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 200px 200px 200px; max-width: 600px;">
+                <!-- Container des blocs - Conditionnel selon si connecté -->
+                ${isLoggedIn ? /* HTML */`
+                    <!-- Version pour utilisateur connecté - seulement 2 blocs -->
+                    <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 200px 200px; max-width: 400px;">
 
-                    <!-- Bloc Sign up - Plus large -->
-                    <a href="/login" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors ">
-                        <p class="font-montserrat font-medium text-white text-base mb-2" data-translate="auth.signIn">Sign in</p>
-                    </a>
-
-                    <!-- Bloc Light mode - Carré -->
-                    <div id="theme-toggle" class="bg-white rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col cursor-pointer hover:bg-gray-50 transition-colors">
-                        <p class="font-montserrat font-medium text-base text-gray-600" id="theme-text" data-translate="dashboard.lightMode">Light mode</p>
-                        <div class="flex-1 flex items-center justify-center">
-                            <span class="text-3xl" id="theme-icon">☼</span>
+                        <!-- Bloc Light mode -->
+                        <div id="theme-toggle" class="bg-white rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col cursor-pointer hover:bg-gray-50 transition-colors">
+                            <p class="font-montserrat font-medium text-base text-gray-600" id="theme-text" data-translate="dashboard.lightMode">Light mode</p>
+                            <div class="flex-1 flex items-center justify-center">
+                                <span class="text-3xl" id="theme-icon">☼</span>
+                            </div>
                         </div>
+
+                        <!-- Bloc Games -->
+                        <a href="/games" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
+                            <p class="font-montserrat font-medium text-base text-gray-600" data-translate="nav.games">Games</p>
+                            <div class="flex-1 flex items-center justify-center">
+                                <span class="text-2xl">▶</span>
+                            </div>
+                        </a>
                     </div>
 
-                    <!-- Bloc Games - Carré -->
-                    <a href="/games" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
-                        <p class="font-montserrat font-medium text-base text-gray-600" data-translate="nav.games">Games</p>
-                        <div class="flex-1 flex items-center justify-center">
-                            <span class="text-2xl">▶</span>
-                        </div>
-                    </a>
-                </div>
+                    <!-- Bouton Retour Dashboard -->
+                    <div class="mt-8 text-center">
+							<a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">
+								<span data-translate="settings.backToDashboard">← Back to Dashboard</span>
+							</a>
+					</div>
+                ` : `
+                    <!-- Version pour utilisateur non connecté - version originale -->
+                    <div class="grid gap-4 mx-auto mt-36 justify-center" style="grid-template-columns: 200px 200px 200px; max-width: 600px;">
 
-                <!-- Bouton Create an account - Large en dessous -->
-                <div class="mt-4" style="max-width: 616px; margin-left: auto; margin-right: auto;">
-                    <a href="/register" class="font-montserrat block bg-black hover:bg-gray-800 text-white py-4 rounded-xl font-medium text-lg transition-colors text-center" data-translate="auth.createAccount">
-                        Create an account
-                    </a>
-                </div>
+                        <!-- Bloc Sign up -->
+                        <a href="/login" class="bg-black hover:bg-gray-800 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col items-start justify-start transition-colors">
+                            <p class="font-montserrat font-medium text-white text-base mb-2" data-translate="auth.signIn">Sign in</p>
+                        </a>
+
+                        <!-- Bloc Light mode -->
+                        <div id="theme-toggle" class="bg-white rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col cursor-pointer hover:bg-gray-50 transition-colors">
+                            <p class="font-montserrat font-medium text-base text-gray-600" id="theme-text" data-translate="dashboard.lightMode">Light mode</p>
+                            <div class="flex-1 flex items-center justify-center">
+                                <span class="text-3xl" id="theme-icon">☼</span>
+                            </div>
+                        </div>
+
+                        <!-- Bloc Games -->
+                        <a href="/games" class="bg-white hover:bg-gray-50 rounded-xl shadow-lg pt-2 pl-3 pr-6 pb-6 flex flex-col transition-colors">
+                            <p class="font-montserrat font-medium text-base text-gray-600" data-translate="nav.games">Games</p>
+                            <div class="flex-1 flex items-center justify-center">
+                                <span class="text-2xl">▶</span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Bouton Create an account -->
+                    <div class="mt-4" style="max-width: 616px; margin-left: auto; margin-right: auto;">
+                        <a href="/register" class="font-montserrat block bg-black hover:bg-gray-800 text-white py-4 rounded-xl font-medium text-lg transition-colors text-center" data-translate="auth.createAccount">
+                            Create an account
+                        </a>
+                    </div>
+                `}
             </div>
         </div>
-    </div>
-`;
+    `;
 }
 
 export async function PongChoice() {
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
-				FT<span class="text-blue-600">_</span>TRANSCENDENCE
-			</h1>
+			 <a href="/dashboard"  class="block text-center text-4xl font-bold text-black cursor-pointer">
+				<h1 id="dash-main-title">
+					FT<span class="text-blue-600">_</span>TRANSCENDENCE
+				</h1>
+			</a>
 		</div>
 
 		<!-- Section avec les blocs -->
@@ -272,7 +302,7 @@ export async function PongChoice() {
 					</a>
 
 					<div class="mt-2 flex flex-col">
-						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors" data-translate="nav.backToDashboard">← Retour au Dashboard</a>
+						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors" data-translate="nav.backToDashboard">← Back to Dashboard</a>
 					</div>
 				</div>
 			</div>
@@ -284,9 +314,11 @@ export async function SnakeChoice() {
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
-				FT<span class="text-blue-600">_</span>TRANSCENDENCE
-			</h1>
+			 <a href="/dashboard"  class="block text-center text-4xl font-bold text-black cursor-pointer">
+				<h1 id="dash-main-title">
+					FT<span class="text-blue-600">_</span>TRANSCENDENCE
+				</h1>
+			</a>
 		</div>
 
 		<div class="content-section min-h-screen bg-gray-100 py-16">
@@ -318,7 +350,7 @@ export async function SnakeChoice() {
 					</a>
 
 					<div class="mt-2 flex flex-col">
-						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors" data-translate="nav.backToDashboard">← Retour au Dashboard</a>
+						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors" data-translate="nav.backToDashboard">← Back to Dashboard</a>
 					</div>
 				</div>
 			</div>
@@ -330,9 +362,11 @@ export async function GamesView() {
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
 		<div class="bg-gray-100 py-2">
-			<h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
-				FT<span class="text-blue-600">_</span>TRANSCENDENCE
-			</h1>
+			 <a href="/dashboard"  class="block text-center text-4xl font-bold text-black cursor-pointer">
+				<h1 id="dash-main-title">
+					FT<span class="text-blue-600">_</span>TRANSCENDENCE
+				</h1>
+			</a>
 		</div>
 
 		<div class="content-section min-h-screen bg-gray-100 py-16">
@@ -364,7 +398,7 @@ export async function GamesView() {
 					</a>
 
 					<div class="mt-2 flex flex-col">
-						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+						<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Back to Dashboard</a>
 					</div>
 				</div>
 			</div>
@@ -407,10 +441,12 @@ function createStatsView(gameType: 'snake' | 'pong') {
     return /* HTML */ `
         <!-- Titre FT_TRANSCENDENCE en haut -->
         <div class="bg-gray-100 py-2">
-            <h1 id="dash-main-title" class="text-center text-4xl font-bold text-black mb-24">
-                FT<span class="text-blue-600">_</span>TRANSCENDENCE
-            </h1>
-        </div>
+			 <a href="/dashboard"  class="block text-center text-4xl font-bold text-black cursor-pointer">
+				<h1 id="dash-main-title">
+					FT<span class="text-blue-600">_</span>TRANSCENDENCE
+				</h1>
+			</a>
+		</div>
 
         <div class="content-section min-h-screen bg-gray-100 py-16">
             <div class="max-w-7xl mx-auto px-8">
@@ -487,7 +523,7 @@ function createStatsView(gameType: 'snake' | 'pong') {
 	                    </div>
 
                     <div class="mt-2 flex flex-col">
-                        <a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">← Retour au Dashboard</a>
+                        <a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">← Back to Dashboard</a>
                     </div>
 	                </div>
 	            </div>
@@ -746,10 +782,12 @@ export async function UpdateInfosview() {
 
 <!-- Titre FT_TRANSCENDENCE en haut -->
 	<div class="bg-gray-100 py-2">
-		<h1 class="text-center text-4xl font-bold text-black mb-24">
-			FT<span class="text-blue-600">_</span>TRANSCENDENCE
-		</h1>
-	</div>
+			 <a href="/dashboard"  class="block text-center text-4xl font-bold text-black cursor-pointer">
+				<h1 id="dash-main-title">
+					FT<span class="text-blue-600">_</span>TRANSCENDENCE
+				</h1>
+			</a>
+		</div>
 
 
 	<div class="min-h-screen bg-gray-100 py-8 px-4">
@@ -853,7 +891,7 @@ export async function UpdateInfosview() {
 						<!-- Bouton retour -->
 						<div class="mt-8 text-center">
 							<a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">
-								<span data-translate="settings.backToDashboard">← Retour au Dashboard</span>
+								<span data-translate="settings.backToDashboard">← Back to Dashboard</span>
 							</a>
 						</div>
 					</div>
