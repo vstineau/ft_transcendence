@@ -3,6 +3,7 @@ export const CHAT_CONFIG = {
   MAX_ROOM_MESSAGES: 100,
   MESSAGE_CLEANUP_DAYS: 30,
   CLEANUP_INTERVAL: 24 * 60 * 60 * 1000, // 24 heures
+  LOADING_MESSAGE: 'Chargement des messages...',
   ROOMS: {
     GLOBAL: 'global',
     PONG: 'pong',
@@ -20,7 +21,12 @@ export const CHAT_EVENTS = {
   GAME_INVITATION_RESPONSE: 'gameInvitationResponse',
   STATUS_CHANGE: 'statusChange',
   JOIN_PUBLIC_ROOM: 'joinPublicRoom',
-  
+  ADD_FRIEND: 'addFriend',
+  DELETE_FRIEND: 'deleteFriend',
+  BLOCK_USER: 'blockUser',
+  UNBLOCK_USER: 'unblockUser',
+  DELETE_MESSAGE: 'deleteMessage',
+
   // Server -> Client
   USER_CONNECTED: 'userConnected',
   USER_JOINED: 'userJoined',
@@ -28,10 +34,17 @@ export const CHAT_EVENTS = {
   ONLINE_USERS_UPDATED: 'onlineUsersUpdated',
   NEW_MESSAGE: 'newMessage',
   ROOM_JOINED: 'roomJoined',
+  PRIVATE_ROOM_CREATED: 'privateRoomCreated',
   MESSAGE_HISTORY: 'messageHistory',
+  LOADING_MESSAGES: 'loadingMessages',
   GAME_INVITATION_RECEIVED: 'gameInvitationReceived',
   GAME_INVITATION_ANSWER: 'gameInvitationAnswer',
   USER_STATUS_CHANGED: 'userStatusChanged',
+  FRIEND_ADDED: 'friendAdded',
+  FRIEND_ERROR: 'friendError',
+  FRIEND_LIST_UPDATED: 'friendListUpdated',
+  USER_DEBLOCKED: 'userDeblocked',
+  USER_BLOCKED: 'userBlocked',
   AUTH_ERROR: 'authError',
   ERROR: 'error'
 } as const;

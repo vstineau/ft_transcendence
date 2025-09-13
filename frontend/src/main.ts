@@ -177,12 +177,12 @@ export async function renderPage() {
 			}, 100);
 			break;
 		case '/dashboard':
-			rootUser();
-			displayChatButton();
-			setTimeout(() => {
+			await rootUser();
+			setTimeout(async () => {
 				initThemeToggle();
-				initProfilePage();
-				updateRecentContacts();
+				await initProfilePage();
+				await updateRecentContacts();
+				await displayChatButton();
 				initLanguageSelector();
 				const viewBtn = document.getElementById('view-profile-btn');
 				if (viewBtn) {
@@ -192,22 +192,22 @@ export async function renderPage() {
 			break;
 		case '/updateInfos':
 			initThemeToggle();
-			displayDarkModeButton();
+			await displayDarkModeButton();
 			initLanguageSelector();
-			updateInfos();
-			displayChatButton();
+			await updateInfos();
+			await displayChatButton();
 			break;
 		case '/register':
+			await displayDarkModeButton();
+			await registerUser();
 			initThemeToggle();
-			displayDarkModeButton();
 			initLanguageSelector();
-			registerUser();
 			break;
 		case '/login':
+			await logUser();
 			initThemeToggle();
-			displayDarkModeButton();
+			await displayDarkModeButton();
 			initLanguageSelector();
-			logUser();
 			break;
 		case '/pong/matchmaking/game':
 			await pongGame();
@@ -215,15 +215,15 @@ export async function renderPage() {
 			break;
 		case '/pong/matchmaking/localgame':
 			localpongGame();
-			displayChatButton();
+			await displayChatButton();
 			break;
 		case '/snake':
 			await snakeGame();
 			break;
 		case '/snake/local':
-			displayDarkModeButton();
+			await displayDarkModeButton();
 			localSnakeGame();
-			displayChatButton();
+			await displayChatButton();
 			break;
 		case '/2fa-verification':
 			initTwoFALogin();
@@ -231,7 +231,7 @@ export async function renderPage() {
 		case '/statisticsSnake':
 			setTimeout(async() => {
 				initThemeToggle();
-				displayDarkModeButton();
+				await displayDarkModeButton();
 				initSnakeStats();
 				updateRanking();
 				updateInfos();
@@ -248,7 +248,7 @@ export async function renderPage() {
 			setTimeout(async () => {
 				console.log('About to call initPongStats');
 				initThemeToggle();
-				displayDarkModeButton();
+				await displayDarkModeButton();
 				initPongStats();
 				updateRankingPong();
 				updateInfos();
@@ -282,8 +282,8 @@ export async function renderPage() {
 
 document.addEventListener('DOMContentLoaded', async () => {
 	await initializeLanguage();
-	// updateUserProfile();
-	// updateUserProfilePong();
+	updateUserProfile();
+	updateUserProfilePong();
 
 	document.body.addEventListener('click', async e => {
 		const target = e.target as HTMLElement;

@@ -5,6 +5,7 @@ export interface ChatUser {
   nickName: string;
   avatar?: string;
   status: 'online' | 'offline' | 'in-game';
+  blocklist: string[];
 }
 
 export interface ChatMessage {
@@ -15,5 +16,11 @@ export interface ChatMessage {
   content: string;
   timestamp: Date;
   type: 'text' | 'system' | 'game-invitation';
+  roomId: string; // Changé de 'room' à 'roomId' pour correspondre au frontend
+  blockedList: string[];
+}
+
+export interface LoadingMessage {
   room: string;
+  message: string;
 }

@@ -40,9 +40,11 @@ export default {
                         login: message.user.login,
                         nickName: message.user.nickName,
                         avatar: message.user.avatar,
-                        status: message.user.isOnline ? 'online' : 'offline'
+                        status: message.user.isOnline ? 'online' : 'offline',
+                        blocklist: message.user.blocklist || []
                     });
-
+                    console.log('AVATAR USER: ', message.user.avatar);
+                    
                     // if (contactsMap.size >= 3) break;
                 }
             }
@@ -69,7 +71,8 @@ export default {
                         login: user.login,
                         nickName: user.nickName,
                         avatar: user.avatar,
-                        status: user.isOnline ? 'online' : 'offline'
+                        status: user.isOnline ? 'online' : 'offline',
+                        blocklist: user.blocklist || []
                     });
                 }
             }

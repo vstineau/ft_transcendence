@@ -54,7 +54,8 @@ class MessageService {
         content: content,
         timestamp: savedMessage.timestamp,
         type: type,
-        room: room
+        roomId: room,
+        blockedList: dbUser.blocklist || []
       };
     } catch (error) {
       console.error('Error saving message:', error);
@@ -71,7 +72,8 @@ class MessageService {
       content: msg.content,
       timestamp: msg.timestamp,
       type: msg.type as 'text' | 'system' | 'game-invitation',
-      room: msg.room
+      roomId: msg.room,
+      blockedList: msg.user.blocklist || []
     };
   }
 
@@ -84,7 +86,8 @@ class MessageService {
       content: content,
       timestamp: new Date(),
       type: 'text',
-      room: room
+      roomId: room,
+      blockedList: user.blocklist || []
     };
   }
 
@@ -102,6 +105,20 @@ class MessageService {
       console.log('Old chat messages cleaned up');
     } catch (error) {
       console.error('Error cleaning old messages:', error);
+    }
+  }
+
+  async deleteMessage(messageId: string): Promise<void> {
+    try {
+      await SqliteDataSource.getRepository(ChatMessageEntity)
+        .createQueryBuilder()
+        .delete()
+        .where('id = :messageId', { messageId })
+        .execute();
+        
+      console.log(`Message ${messageId} deleted`);
+    } catch (error) {
+      console.error(`Error deleting message ${messageId}:`, error);
     }
   }
 }

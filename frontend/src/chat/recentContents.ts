@@ -1,4 +1,8 @@
 import { User } from '../chat/types';
+import { ChatSingleton } from '../chat';
+
+
+let chatInstance = ChatSingleton.getInstance();
 
 async function fetchRecentContacts(): Promise<User[]> {
     try {
@@ -19,7 +23,7 @@ async function fetchRecentContacts(): Promise<User[]> {
             username: contact.login, // ou contact.nickName selon vos préférences
             avatar: contact.avatar,
             status: contact.status
-        } as User));
+        } as User), console.log('Mapped contacts:', data));
         // return await response.json();
     } catch (error) {
         console.error('Error fetching recent contacts:', error);
@@ -85,9 +89,11 @@ function generateContactHTML(contacts: User[]): string {
 export async function updateRecentContacts(): Promise<void> {
     try {
         const contacts = await fetchRecentContacts();
+        console.log('Fetched contacts:', contacts);
         const contactsContainer = document.getElementById('recent-contacts-container');
 
         if (contactsContainer) {
+            console.warn('Updating recent contacts container');
             contactsContainer.innerHTML = generateContactHTML(contacts);
         }
     } catch (error) {
@@ -98,13 +104,14 @@ export async function updateRecentContacts(): Promise<void> {
 function openChat(userId: string): void {
     // Rediriger vers le chat ou ouvrir une modal
     console.log('Opening chat with user:', userId);
-    //--------------------- >ici pour gerer les events <-----------------
-	// regarde en bas la fonction lie avec
+    chatInstance.Manager.openChat();
+    chatInstance.Manager.startPrivateChat(userId);
 }
 
 function openGlobalChat(): void {
     console.log('Opening global chat');
-    // Rediriger vers le chat global ou ouvrir une modal comme tu veux 
+    chatInstance.Manager.openChat();
+    chatInstance.Manager.switchRoom('global');
     // window.location.href = '/chat';
 }
 

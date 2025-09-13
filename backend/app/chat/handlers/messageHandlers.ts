@@ -21,7 +21,7 @@ export async function handleSendMessage(
   }
 
   const room = data.room || CHAT_CONFIG.ROOMS.GLOBAL;
-  
+
   // Vérifier l'accès à la room
   if (!roomService.validateRoomAccess(user.id, room)) {
     socket.emit(CHAT_EVENTS.ERROR, 'Access denied to this room');
@@ -70,6 +70,12 @@ export async function handleGetMessageHistory(
     socket.emit(CHAT_EVENTS.ERROR, 'Access denied to this room');
     return;
   }
+
+  // Émettre l'événement de chargement
+  socket.emit(CHAT_EVENTS.LOADING_MESSAGES, { 
+    room: data.room, 
+    message: CHAT_CONFIG.LOADING_MESSAGE 
+  });
 
   const limit = data.limit || CHAT_CONFIG.MAX_RECENT_MESSAGES;
   

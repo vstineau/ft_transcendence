@@ -5,7 +5,7 @@ export interface Message {
     content: string;
     avatarPath: string;
     timestamp: Date | string;
-    type: 'text' | 'system' | 'game-invitation';
+    type: 'public' | 'private' | 'system' | 'game-invitation';
     roomId?: string; // identifiant de la room (global, pong, snake ou id dynamique)
 }
 
@@ -13,6 +13,7 @@ export interface ChatRoom {
     id: string;
     name: string;
     type: 'global' | 'private';
+    messages: Message[];
     participants?: string[];
     unreadCount: number;
 }
@@ -20,7 +21,7 @@ export interface ChatRoom {
 export interface Friend {
     id: string;
     username: string;
-    avatar?: string;
+    avatar: string;
     status: 'online' | 'offline' | 'in-game';
 }
 
@@ -28,19 +29,16 @@ export interface User {
     id: string;
     username: string;
     status: 'online' | 'offline' | 'in-game';
-    avatar?: string;
+    avatar: string;
+    friendList: Friend[];
+    blockedList: string[]; // liste des IDs des utilisateurs bloqués
 }
 
 export interface ChatState {
-    currentUserId: string;
-    avatar: string;
+    currentUserId: User;
     isOpen: boolean;
-    activeTab: 'global' | 'pong' | 'snake';
-    currentRoom: ChatRoom | null;
-    messages: Message[];
+    activeTab: 'global' | 'pong' | 'snake' | 'private' | '';
     unreadCount: number;
-    rooms?: ChatRoom[]; // liste des rooms disponibles (incluant global)
-    friends?: Friend[]; // liste des amis
     onlineUsers?: Friend[]; // utilisateurs actuellement connectés (non filtrés par amitié)
     searchResults?: Friend[]; // résultats de recherche coté UI
     searchTerm?: string; // terme de recherche courant

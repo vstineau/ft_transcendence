@@ -1,21 +1,27 @@
 // @ts-ignore
 import io, { Socket } from 'socket.io-client';
-import type { Message, Friend } from '../types';
+import { RoomsService } from './RoomsService';
 
 /**
  * Service de gestion des connexions Socket.IO pour le chat
  */
-export class SocketService {
-    private socket: Socket | null = null;
-    private eventHandlers: { [event: string]: Function[] } = {};
+export class SocketService extends RoomsService {
+    protected socket: Socket | null = null;
+    protected eventHandlers: { [event: string]: Function[] } = {};
 
     createConnection(): Socket {
+        console.log('🌐 Creating chat socket connection...');
         const host = window.location.hostname;
         const port = window.location.port;
         const protocol = window.location.protocol;
 
         this.socket = io(`${protocol}//${host}:${port}/chat`);
         return this.socket;
+    }
+
+    constructor() {
+        super();
+        this.createConnection();
     }
 
     getSocket(): Socket | null {
