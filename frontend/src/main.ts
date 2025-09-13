@@ -44,7 +44,16 @@ import { showProfileDetails } from './user/popProfile'
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
-	'/': WelcomeView,
+	'/': async () => {
+        // Vérifier si l'utilisateur est connecté
+        const token = document.cookie.split('; ')
+            .find(row => row.startsWith('token='))
+            ?.split('=')[1];
+        const isLoggedIn = !!token;
+
+        // Retourner la vue avec le bon paramètre
+        return await WelcomeView(isLoggedIn);
+    },
 	'/dashboard': RootView,
 	'/games': GamesView,
 	'/pong-choice': PongChoice,
@@ -169,7 +178,6 @@ export async function renderPage() {
 	switch (path) {
 		case '/':
 			WelcomeView();
-			//displayChatButton(); // Affichage debbug.
 			setTimeout(() => {
 				initScrollAnimations();
 				initThemeToggle();
@@ -179,7 +187,7 @@ export async function renderPage() {
 		case '/dashboard':
 			rootUser();
 			displayChatButton();
-			setTimeout(() => {
+			setTimeout(async () => {
 				initThemeToggle();
 				initProfilePage();
 				updateRecentContacts();
@@ -187,6 +195,13 @@ export async function renderPage() {
 				const viewBtn = document.getElementById('view-profile-btn');
 				if (viewBtn) {
 					viewBtn.addEventListener('click', showProfileDetails);
+				}
+				try {
+					await authenticatedFetch('/api/updateInfos');
+					updateUserProfile();
+					updateUserProfilePong();
+				} catch {
+					console.log('Not authenticated, skipping profile update');
 				}
 			}, 100);
 			break;

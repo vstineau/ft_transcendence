@@ -60,7 +60,7 @@ export function updateProfileAvatar(avatarData?: string): void {
 
 	const container = document.getElementById('profile-avatar-container');
 	if (!container) {
-		console.error('Profile avatar container not found!');
+		console.log('Profile avatar container');
 		return;
 	}
 
@@ -215,7 +215,7 @@ function updateAvatarDisplay(avatarData?: string, containerId: string = 'avatar-
 
     const container = document.getElementById(containerId);
     if (!container) {
-        console.error(`Avatar container with ID '${containerId}' not found!`);
+        console.log('Avatar container not found, skipping (normal on pages without avatar)');
         return;
     }
 
@@ -273,29 +273,35 @@ function showFallback(container: HTMLElement): void {
 export function initUserAvatar(): void {
 	console.log("=== initUserAvatar called ===");
 
-		const userData = getCurrentUser();
-		if (!userData) {
-			updateAvatarDisplay(); // fallback
-			return;
-		}
+	const container = document.getElementById('avatar-container');
+    if (!container) {
+        console.log('Avatar container not found, skipping (normal on pages without avatar)');
+        return; // Sortir silencieusement sans erreur
+    }
+
+	const userData = getCurrentUser();
+	if (!userData) {
+		updateAvatarDisplay(); // fallback
+		return;
+	}
 		// console.log("User data in initUserAvatar:", userData);
 		// console.log("Has avatar:", !!userData?.avatar);
 		// console.log("Avatar starts with:", userData?.avatar?.substring(0, 20));
 
   // MAJ nom/email si présents
-  const userName = document.getElementById('user-name') as HTMLElement | null;
-  if (userName) userName.textContent = getDisplayName(userData);
+	// const userName = document.getElementById('user-name') as HTMLElement | null;
+	// if (userName) userName.textContent = getDisplayName(userData);
 
-  const userEmail = document.getElementById('user-email') as HTMLElement | null;
-  if (userEmail && userData.email) userEmail.textContent = userData.email;
+	// const userEmail = document.getElementById('user-email') as HTMLElement | null;
+	// if (userEmail && userData.email) userEmail.textContent = userData.email;
 
-  const container = document.getElementById('avatar-container');
-  if (!container) {
-    // Attendre que la vue soit montée (SPA)
-    setTimeout(initUserAvatar, 100);
-    return;
-  }
-  updateAvatarDisplay(userData.avatar, 'avatar-container');
+	// const container = document.getElementById('avatar-container');
+	// if (!container) {
+	// 	// Attendre que la vue soit montée (SPA)
+	// 	setTimeout(initUserAvatar, 100);
+	// 	return;
+	// }
+	updateAvatarDisplay(userData.avatar, 'avatar-container');
 }
 
 // Fonction pour obtenir le nom d'affichage

@@ -12,14 +12,28 @@ export default {
     reply: FastifyReply
   ): Promise<void> => {
     try {
-      const invalidInfoError = 'the provided user details are invalid'
+      // const invalidInfoError = 'the provided user details are invalid'
       const user = await User.findOneBy({ login: request.body.login })
       let isPasswordValid = false;
       if (user && request.body.password){
       	isPasswordValid = await comparePassword(request.body.password, user.password);
       }
-      if (!user || !request.body.password || !isPasswordValid || user.provider === 'github') {
-        throw new Error(invalidInfoError)
+      // if (!user || !request.body.password || !isPasswordValid || user.provider === 'github') {
+      //   throw new Error(invalidInfoError)
+      // }
+      if (!user) {
+        throw new Error('User not found. Please check your username or register an account.');
+      }
+      // Validation du mot de passe
+      if (!request.body.password) {
+          throw new Error('Password is required.');
+      } else if (!isPasswordValid) {
+          throw new Error('Incorrect password. Please try again.');
+      }
+
+      // Validation pour les comptes GitHub
+      if (user.provider === 'github') {
+          throw new Error('This account uses GitHub authentication. Please use the GitHub login option.');
       }
     if (user.twoFaAuth) {
       const tmpToken = reply.server.jwt.sign(
@@ -30,10 +44,10 @@ export default {
       const response: IUserReply[200] = {
           success: true,
           twoFaAuth: true,
-          tmpToken: tmpToken  
+          tmpToken: tmpToken
       };
       reply.code(200).send(response);
-      return; 
+      return;
   }
       const token = reply.server.jwt.sign(
         {
@@ -64,8 +78,8 @@ export default {
       if (error instanceof Error) {
         errorMessage = error.message
       }
-	  const response : IUserReply[400] = {success: false, error: errorMessage};
-      reply.code(400).send(response);
+	  const response: IUserReply[200] = {success: false, error: errorMessage};
+    reply.code(200).send(response); 
     }
   }
 }

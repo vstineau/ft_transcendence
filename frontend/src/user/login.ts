@@ -38,11 +38,11 @@ export async function logUser() {
             console.log('Response status:', response.status);
             console.log('Response ok:', response.ok);
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.log('Login error response:', errorText);
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            // if (!response.ok) {
+            //     const errorText = await response.text();
+            //     console.log('Login error response:', errorText);
+            //     throw new Error(`HTTP error! status: ${response.status}`);
+            // }
 
             const result = await response.json(); // Une seule fois
             console.log('Login response:', result);

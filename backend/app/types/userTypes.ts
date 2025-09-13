@@ -1,6 +1,6 @@
 
 export interface IUserReply {
-	200: { success: boolean, user?: UserJson, qrCode?: string, twoFaAuth?: boolean, tmpToken?: string, favLang?: string };
+	200: { success: boolean, user?: UserJson, qrCode?: string, twoFaAuth?: boolean, tmpToken?: string, favLang?: string, error?: string; };
 	302: { success: boolean, message?: string ,user?: UserJson };
 	401: { success: boolean, error: string };
 	400: { success: boolean, error: string };
