@@ -7,6 +7,7 @@ import { CHAT_EVENTS } from './config';
 import { eventsSocket, eventsMessages, eventsUsers, eventsRooms, eventsFriends } from './eventsChat';
 import { navigateTo } from '../main';
 
+
 export class ChatManager extends SocketService {
     private state: ChatState = {
         currentUserId: {} as any,
@@ -85,6 +86,8 @@ export class ChatManager extends SocketService {
     public closeChat() {
         const chatPanel = document.getElementById('chat-panel');
         if (chatPanel) {
+            this.profileUIAttached = false;
+            this.state.isOpen = false;
             chatPanel.remove();
         }
     }
@@ -108,6 +111,7 @@ export class ChatManager extends SocketService {
                 '#chat-search-results',
             ]);
             this.profileUIAttached = true;
+            this.state.isOpen = true;
         }
         
         const messagesContainer = document.getElementById('messages-container');
@@ -582,6 +586,7 @@ export class ChatManager extends SocketService {
                 </div>
             </div>`;
         }).join('');
+
     }
 
     private renderSearchResults() {
