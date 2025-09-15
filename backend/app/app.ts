@@ -45,6 +45,7 @@ await SqliteDataSource.initialize()
 .catch((err) => {
 	console.error("Error during Data Source initialization", err);
 })
+try { await SqliteDataSource.runMigrations(); } catch (err) {console.log(err);}
 
 
 await startPongGame(app);

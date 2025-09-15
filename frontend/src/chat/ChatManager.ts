@@ -36,7 +36,7 @@ export class ChatManager extends SocketService {
         // Instanciation du mini UI profil (handlers à adapter selon ton routing/backend)
         this.profileUI = new UIprofileService({
             viewProfile: (userId: string) => {
-                TODO: navigateTo('/pong/matchmaking/localgame');
+                navigateTo(`/statisticsSnake?user=${userId}`);
             },
             privateMessage: (userId: string) => {
                 this.startPrivateChat(userId);
@@ -99,7 +99,7 @@ export class ChatManager extends SocketService {
         this.setupPanelEventListeners();
         this.updateMessagesDisplay();
         this.updateCurrentRoomIndicator(this.state.activeTab);
-        this.renderOnlineUsers();   
+        this.renderOnlineUsers();
         this.renderSidebar();
 
         // Brancher le popover sur les conteneurs pertinents (une seule fois)
@@ -113,7 +113,7 @@ export class ChatManager extends SocketService {
             this.profileUIAttached = true;
             this.state.isOpen = true;
         }
-        
+
         const messagesContainer = document.getElementById('messages-container');
         if (messagesContainer) {
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -132,14 +132,14 @@ export class ChatManager extends SocketService {
         // Envoyer un message
         const sendBtn = document.getElementById('send-message');
         const messageInput = document.getElementById('message-input') as HTMLInputElement;
-        
+
         if (sendBtn && messageInput) {
             sendBtn.addEventListener('click', () => {
                 this.sendMessage(messageInput.value);
                 messageInput.value = '';
             });
 
-		//boutons pour inviter dans une partie de snake ou pong 
+		//boutons pour inviter dans une partie de snake ou pong
         const host = window.location.hostname;
         const port = window.location.port;
         const protocol = window.location.protocol;
@@ -190,7 +190,7 @@ export class ChatManager extends SocketService {
             roomsContainer.addEventListener('click', (e) => {
                 const target = e.target as HTMLElement;
                 const roomElement = target.closest('[data-room-id]') as HTMLElement;
-                
+
                 if (roomElement) {
                     const roomId = roomElement.dataset.roomId;
                     // console.log(`🎯 Clic sur room: ${roomId}`);
@@ -207,7 +207,7 @@ export class ChatManager extends SocketService {
             onlineUsersContainer.addEventListener('click', (e) => {
                 const target = e.target as HTMLElement;
                 const userElement = target.closest('[data-online-id]') as HTMLElement;
-                
+
                 if (userElement) {
                     const userId = userElement.dataset.onlineId;
                     console.log(`💬 Clic sur utilisateur: ${userId}`);
@@ -404,7 +404,7 @@ export class ChatManager extends SocketService {
 
     public async switchRoom(roomId: string) {
         // console.log(`🔄 Changement vers room: ${roomId}`);
-        
+
         // Mettre à jour l'état local
         this.state.activeTab = roomId as any;
         this.currentRoom = this.rooms?.find(r => r.id === roomId) || null;
@@ -420,18 +420,18 @@ export class ChatManager extends SocketService {
             case 'global':
                 // console.log('💬 Chat global activé');
                 break;
-                
+
             case 'pong':
                 // console.log('🏓 Room Pong activée');
                 // Rejoindre la room pong côté serveur
                 this.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: 'pong' });
                 break;
-                
+
             case 'snake':
                 console.log('🐍 Room Snake activée');
                 this.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: 'snake' });
                 break;
-                
+
             default:
                 console.log(`📁 Room personnalisée: ${roomId}`);
                 // Si c'est une room privée, joindre avec le bon payload
@@ -450,13 +450,13 @@ export class ChatManager extends SocketService {
                 }
                 break;
         }
-        
+
         // Mettre à jour la sélection visuelle
         this.updateRoomSelection(roomId);
-        
+
         // Mettre à jour l'indicateur de room courante
         this.updateCurrentRoomIndicator(roomId);
-        
+
     // Reset unread counter for the room we just switched to
     this.resetUnread(roomId);
     // Re-sync global badge with total unread across rooms
@@ -466,8 +466,8 @@ export class ChatManager extends SocketService {
     // Mettre à jour l'affichage des messages avec ceux de la nouvelle room
         this.updateMessagesDisplay();
     }
-    
-    
+
+
     private updateRoomSelection(activeRoomId: string) {
         // La sélection est maintenant gérée directement dans renderRoomsList()
         // Il suffit de re-rendre la liste des rooms
@@ -478,19 +478,19 @@ export class ChatManager extends SocketService {
         const indicatorElement = document.getElementById('current-room-indicator');
         const iconElement = document.getElementById('room-indicator-icon');
         const textElement = document.getElementById('room-indicator-text');
-        
+
         if (!indicatorElement || !iconElement || !textElement) return;
 
         // Trouver la room correspondante
         const room = this.rooms?.find(r => r.id === roomId);
-        
+
         let icon = '💬';
         let roomName = roomId;
         let bgColor = 'bg-gray-700'; // couleur par défaut
-        
+
         if (room) {
             roomName = room.name;
-            
+
             // Déterminer l'icône et la couleur selon le type de room
             if (room.id === 'global') {
                 icon = '🌐';
@@ -506,9 +506,9 @@ export class ChatManager extends SocketService {
                 // Pour les rooms privées, afficher l'avatar avec le statut
                 const otherUserId = room.participants?.find(id => id !== this.state.currentUserId?.id);
                 const otherUser = this.state.onlineUsers?.find(u => u.id === otherUserId);
-                
+
                 if (otherUser) {
-                    
+
                     const avatar = createAvatarElement(otherUser.username, otherUser.avatar, 'sm');
                     let statusColor = 'bg-gray-500';
                     if (otherUser.status === 'online') statusColor = 'bg-green-500';
@@ -549,16 +549,16 @@ export class ChatManager extends SocketService {
                 bgColor = 'bg-gray-600';
             }
         }
-        
+
         // Enlever toutes les classes de couleur et ajouter la nouvelle
         indicatorElement.className = indicatorElement.className.replace(/bg-\w+-\d+/g, '');
         indicatorElement.classList.add(bgColor);
-        
+
         // Seulement mettre à jour l'icône si ce n'est pas une room privée (car on a déjà mis l'avatar)
         if (!room || room.type !== 'private' || !room.participants?.find(id => id !== this.state.currentUserId?.id)) {
             iconElement.textContent = icon;
         }
-        
+
         textElement.textContent = roomName;
     }
 
@@ -574,14 +574,14 @@ export class ChatManager extends SocketService {
         if (!container) return;
 
         const rooms = this.rooms || [];
-        
+
         container.innerHTML = rooms.map(room => {
             const isActive = room.id === this.state.activeTab;
             const activeClass = isActive ? 'bg-gray-700' : '';
-            
+
             // Déterminer l'icône selon le type de room
             let iconHtml = '';
-            
+
             if (room.id === 'global') {
                 iconHtml = '<span class="text-[10px] text-gray-500">🌐</span>';
             } else if (room.id === 'pong') {
@@ -614,7 +614,7 @@ export class ChatManager extends SocketService {
             return `
                 <div data-room-id="${room.id}" class="flex items-center px-2 py-1.5 rounded hover:bg-gray-800 cursor-pointer group ${activeClass}">
                     <div class="mr-2 w-5 flex items-center justify-center">
-                        ${room.unreadCount > 0 
+                        ${room.unreadCount > 0
                             ? `<span class=\"bg-red-500 text-white text-[9px] font-semibold rounded-full w-4 h-4 flex items-center justify-center\">${room.unreadCount > 9 ? '9+' : room.unreadCount}</span>`
                             : `<span class=\"w-2 h-2 bg-gray-500 rounded-full\"></span>`}
                     </div>
@@ -657,13 +657,13 @@ export class ChatManager extends SocketService {
     private renderOnlineUsers() {
         const container = document.getElementById('chat-online-users');
         if (!container) return;
-        
+
         const online = (this.state.onlineUsers || []).filter(u => u.status === 'online');
         if (!online.length) {
             container.innerHTML = `<div class="text-[11px] text-gray-500 px-1">Personne</div>`;
             return;
         }
-        
+
         container.innerHTML = online.map(u => {
             const avatar = createAvatarElement(u.username, u.avatar, 'sm');
             return `<div data-online-id="${u.id}" class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-800 cursor-pointer">
@@ -682,14 +682,14 @@ export class ChatManager extends SocketService {
     private renderSearchResults() {
         const container = document.getElementById('chat-search-results');
         if (!container) return;
-        
+
         const results = this.state.searchResults || [];
         if (!this.state.searchTerm || this.state.searchTerm.length < 2 || results.length === 0) {
             container.classList.add('hidden');
             container.innerHTML = '';
             return;
         }
-        
+
         container.classList.remove('hidden');
         const currentId = this.state.currentUserId?.id;
         const friendIds = new Set((this.state.currentUserId?.friendList || []).map(f => f.id));
@@ -810,7 +810,7 @@ export class ChatManager extends SocketService {
 
         // Vérifier si la room existe déjà
         const existingRoom = this.rooms?.find(r => r.id === roomId);
-        
+
         if (!existingRoom) {
             // Créer une nouvelle room privée
             const newRoom: ChatRoom = {
@@ -843,7 +843,7 @@ export class ChatManager extends SocketService {
 
     private createAndShowPrivateRoom(message: Message) {
         console.log('💬 Message privé reçu, affichage de la room:', message.roomId);
-        
+
         // Trouver l'expéditeur du message
         const sender = this.state.onlineUsers?.find(u => u.id === message.userId);
         if (!sender) {
@@ -852,10 +852,10 @@ export class ChatManager extends SocketService {
         }
 
         const roomId = message.roomId!;
-        
+
         // Vérifier si la room existe déjà dans la liste
         const existingRoom = this.rooms?.find(r => r.id === roomId);
-        
+
         if (!existingRoom) {
             // Créer la room dans l'interface
             const newRoom: ChatRoom = {
@@ -869,9 +869,9 @@ export class ChatManager extends SocketService {
 
             if (!this.rooms) this.rooms = [];
             this.rooms.push(newRoom);
-            
+
             console.log(`✅ Room privée ajoutée: ${roomId} avec ${sender.username}`);
-            
+
             // Mettre à jour l'affichage des rooms
             this.renderRoomsList();
         }
@@ -881,17 +881,17 @@ export class ChatManager extends SocketService {
 
     private handleOutgoingPrivateMessage(message: Message) {
         console.log('📤 Message privé envoyé, s\'assurer que la room existe côté serveur:', message.roomId);
-        
+
         // Extraire l'ID de l'autre utilisateur depuis le roomId
         const roomId = message.roomId;
         if (!roomId?.startsWith('private_')) return;
-        
+
         // Extraire les IDs des participants depuis l'ID de la room (format: private_userId1_userId2)
         const userIds = roomId.replace('private_', '').split('_');
         const otherUserId = userIds.find(id => id !== this.state.currentUserId?.id);
 
         if (!otherUserId) return;
-        
+
         // N'envoyer JOIN_PRIVATE_ROOM qu'une seule fois pour cette room
         if (!this.initializedPrivateRooms.has(roomId)) {
             console.log(`🔄 Initialisation côté serveur de la room privée avec l'utilisateur ${otherUserId}`);
@@ -929,7 +929,7 @@ export class ChatManager extends SocketService {
         // Redirection sur acceptation
         if (data.url) {
             this.goTo(data.url);
-            this.closeChat();
+            //this.closeChat();
         } else if (data.from && data.from.id && this.state.currentUserId?.id) {
             const url = this.buildPongUrl(this.state.currentUserId.id, data.from.id);
             this.goTo(url);
@@ -947,5 +947,4 @@ export class ChatManager extends SocketService {
             window.location.href = urlOrPath;
         }
     }
-
 }

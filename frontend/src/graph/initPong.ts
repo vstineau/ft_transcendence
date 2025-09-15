@@ -27,10 +27,13 @@ export function initPongStats(){
 			return;
 		}
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetUserId = urlParams.get('user');
+
 		console.log('Creating charts...');
 		const scoreCtx = (scoreCanvas as HTMLCanvasElement).getContext('2d');
         if(scoreCtx) {
-            const speedData = await analyzeBallSpeedDistribution(); // Fonction Pong
+            const speedData = await analyzeBallSpeedDistribution(targetUserId || undefined); // Fonction Pong
 
             new Chart(scoreCtx, {
                 type: 'bar',
@@ -55,7 +58,7 @@ export function initPongStats(){
 
         const timeCtx = (timeCanvas as HTMLCanvasElement).getContext('2d');
         if(timeCtx){
-            const timeData = await analyzePongGameTimes(); // Fonction Pong
+            const timeData = await analyzePongGameTimes(targetUserId || undefined); // Fonction Pong
 
             new Chart(timeCtx, {
                 type: 'doughnut',
@@ -80,7 +83,10 @@ export function initPongStats(){
 
         // Vos fonctions Pong existantes
         if (lastGamesContainer) {
-            updateLastGamesPong();
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetUserId = urlParams.get('user');
+
+            updateLastGamesPong(targetUserId || undefined);
             updateRankingPong();
             updateUserProfilePong();
         }
@@ -108,7 +114,7 @@ export async function fetchPongHistory(): Promise<PongGameHistory[]> {
     }
 }
 
-function generateLastGamesHTML(games: SnakeGameHistory[]): string {
+function generateLastGamesHTML(games: PongGameHistory[], targetUserId?: string, targetUserName?: string): string {
 	if (games.length === 0) {
 		return `
 			<div class="flex flex-col items-center justify-center py-8 text-center">
@@ -120,8 +126,20 @@ function generateLastGamesHTML(games: SnakeGameHistory[]): string {
 	const lastGames = games.slice(0, 3);
 
 	return lastGames.map((game, index) => {
-		let leftPlayer = 'YOU';
-		let rightPlayer = game.opponentLogin || 'Opponent';
+		// let leftPlayer = 'YOU';
+		// let rightPlayer = game.opponentLogin || 'Opponent';
+
+        let leftPlayer, rightPlayer;
+        
+        if (targetUserId && targetUserName) {
+            // Si on regarde le profil d'un autre utilisateur
+            leftPlayer = targetUserName; // Le nom de l'utilisateur dont on regarde le profil
+            rightPlayer = game.opponentLogin || 'Opponent';
+        } else {
+            // Si on regarde son propre profil
+            leftPlayer = 'YOU';
+            rightPlayer = game.opponentLogin || 'Opponent';
+        }
 
 		if (game.win === 'WIN') {
 			leftPlayer = '👑 YOU';
@@ -144,7 +162,7 @@ function generateLastGamesHTML(games: SnakeGameHistory[]): string {
 						${rightPlayer}
 					</p>
 					<p class="text-gray-500 text-xs truncate">
-						${formatGameTime(game.gameTime || 0)} • Length: ${game.finalLength}
+						${formatGameTime(game.gameTime || 0)} • Speed: ${game.finalBallSpeed}
 					</p>
 				</div>
 			</div>
@@ -153,20 +171,53 @@ function generateLastGamesHTML(games: SnakeGameHistory[]): string {
 }
 
 
-export async function updateLastGamesPong(): Promise<void> {
-	try {
-		const games = await fetchPongHistory();
-		setCurrentGamesPong(games); // ← Stocker les parties globalement
+export async function updateLastGamesPong(targetUserId?: string): Promise<void> {
+    try {
+        let games;
+        if (targetUserId) {
+            games = await fetchPongHistoryOther(targetUserId);
+        } else {
+            games = await fetchPongHistory();
+        }
+        
+        setCurrentGamesPong(games);
+        const lastGamesContainer = document.querySelector('#last-games-content');
+        if (lastGamesContainer) {
+            if (!games || games.length === 0) {
+                lastGamesContainer.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-8 text-center">
+                        <p class="text-gray-500 text-sm">No games played yet</p>
+                    </div>
+                `;
+            } else {
+                const displayName = document.getElementById('profile-display-name')?.textContent;
+                lastGamesContainer.innerHTML = generateLastGamesHTML(games, targetUserId, displayName || undefined);
+            }
+        }
+    } catch (error) {
+        console.error('Error updating last games:', error);
+        setCurrentGamesPong([]);
+    }
+}
 
-		const lastGamesContainer = document.querySelector('#last-games-content');
-
-		if (lastGamesContainer) {
-			lastGamesContainer.innerHTML = generateLastGamesHTML(games);
-		}
-	} catch (error) {
-		console.error('Error updating last games:', error);
-		setCurrentGamesPong([]);
-	}
+export async function fetchPongHistoryOther(targetUserId: string): Promise<PongGameHistory[]> {
+    try {
+        const host = window.location.hostname;
+        const port = window.location.port;
+        const protocol = window.location.protocol;
+        
+        const response = await fetch(`${protocol}//${host}:${port}/api/pong/history/${targetUserId}`);
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch pong history for other user');
+        }
+        
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching other user pong history:', error);
+        return [];
+    }
 }
 
 

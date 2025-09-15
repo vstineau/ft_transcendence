@@ -123,6 +123,8 @@ export function eventsMessages(this: ChatManager) {
 
 	// Réponse à invitation: si acceptée, rediriger les deux clients
 	this.on(CHAT_EVENTS.GAME_INVITATION_ANSWER, (data: { invitationId: string; accepted: boolean; url?: string; from?: any }) => {
+		console.log('THIS USER STARTED A GAME', (this as any).state.currentUserId.id);
+		console.log('URL GAMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE = ', data.url);
 		(this as any).handleInvitationAnswer(data);
 		// je change le status des users en in-game
 		console.warn('GAME_INVITATION_ANSWER data:', data);
