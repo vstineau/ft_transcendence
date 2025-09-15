@@ -199,7 +199,10 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 
 export function launchGame(rooms: Room[]) {
 	if (!intervalStarted) {
-		if (gameInterval) clearInterval(gameInterval);
+		if (gameInterval){
+			clearInterval(gameInterval);
+			gameInterval = null;
+		} 
 		gameInterval = setInterval(() => {
 			for (const room of rooms) {
 				if (room.playersNb === 2 && room.locked && !room.game!.over) {
@@ -231,6 +234,7 @@ export async function startPongGame(app: FastifyInstance) {
 		app.io.of('/pong').on('connection', (socket: Socket) => {
 			handleDisconnect(app, socket);
 			socket.on('initGame', (cookie: string, arr: string[]) => {
+				console.log('New connection to /pong');
 				initPlayerRoom(socket, cookie, arr);
 				launchGame(rooms);
 			});

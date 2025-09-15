@@ -12,6 +12,10 @@ export function getCookie(name: string) {
 }
 
 export function createPongSocket(): Socket {
+	if(currentSocket && currentSocket.connected){
+		currentSocket.disconnect();
+		currentSocket = null;
+	}
 	const host = window.location.hostname;
 	const port = window.location.port;
 	const protocol = window.location.protocol;
@@ -27,6 +31,7 @@ export function createPongSocket(): Socket {
 		socket.emit('initGame', cookie, arr);
 		initCanvas();
 	});
+	currentSocket = socket;
 	return socket;
 }
 
@@ -36,6 +41,7 @@ let ctx: CanvasRenderingContext2D | null = null;
 let win_width = window.innerWidth;
 let win_height = window.innerHeight;
 let gameOver = false;
+let currentSocket: Socket | null = null;
 
 function initCanvas() {
 	canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
@@ -234,6 +240,10 @@ export function keyHandler(socket: Socket) {
 
 export async function pongGame() {
 	let countdown = false;
+	// if(countdown){
+	// 	clearTimeout(countdown)
+	// 	countdown = false
+	// }
 	const socket = createPongSocket();
 	listenUserInputs(socket);
 	socket.on('countdown', () => {

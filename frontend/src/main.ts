@@ -77,14 +77,14 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/statisticsSnake': StatsSnakeView,
 };
 
-export async function navigateTo(url: string) {
-	// Nettoyer les animations de la page précédente
-	cleanupScrollAnimations();
-	cleanupThemeToggle();
+// export async function navigateTo(url: string) {
+// 	// Nettoyer les animations de la page précédente
+// 	cleanupScrollAnimations();
+// 	cleanupThemeToggle();
 
-	history.pushState(null, '', url);
-	await renderPage();
-}
+// 	history.pushState(null, '', url);
+// 	await renderPage();
+// }
 
 export async function authenticatedFetch(url: string, options: RequestInit = {}): Promise<Response> {
 	const response = await fetch(url, {
@@ -293,25 +293,78 @@ export async function renderPage() {
 	}
 }
 
+// Ajoute ces variables en haut du fichier (scope module)
+let navigating = false;
+let favLangChecked = false;
+
+// Optionnel: mini-registry de nettoyages par route
+let routeCleanupFns: Array<() => void> = [];
+export function registerRouteCleanup(fn: () => void) {
+  routeCleanupFns.push(fn);
+}
+function runRouteCleanup() {
+  for (const fn of routeCleanupFns) {
+    try { fn(); } catch {}
+  }
+  routeCleanupFns = [];
+}
+
+export async function navigateTo(url: string) {
+  // Évite les navigations concurrentes
+  if (navigating) return;
+
+  const newPath = new URL(url, window.location.origin).pathname;
+  // Pas de re-render si on est déjà sur la même route
+  if (window.location.pathname === newPath) return;
+
+  navigating = true;
+
+  // Nettoyage global avant de changer de page
+  runRouteCleanup();
+  cleanupScrollAnimations();
+  cleanupThemeToggle();
+
+  history.pushState(null, '', url);
+  await renderPage();
+
+  navigating = false;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
-	await initializeLanguage();
-	updateUserProfile();
-	updateUserProfilePong();
+  await initializeLanguage();
+  updateUserProfile();
+  updateUserProfilePong();
 
-	document.body.addEventListener('click', async e => {
-		const target = e.target as HTMLElement;
-		// if (target instanceof HTMLAnchorElement)
-		if (target instanceof HTMLAnchorElement && target.getAttribute('href')?.startsWith('/')) {
-			e.preventDefault();
-			await navigateTo((target as HTMLAnchorElement).getAttribute('href')!);
-		}
-	});
+  document.body.addEventListener('click', async (e) => {
+    const anchor = (e.target as HTMLElement).closest('a[href]');
+    if (!anchor) return;
 
-	// 5. Gère le bouton "Retour" du navigateur
-	window.addEventListener('popstate', () => {
-		renderPage();
-	});
+    const href = anchor.getAttribute('href') || '';
+    // N'intercepte que les routes internes du SPA
+    if (!href.startsWith('/')) return;
 
-	// 6. Rendu initial
-	await renderPage();
+    const me = e as MouseEvent;
+    const isLeftClick = me.button === 0;
+    const isModifiedClick = me.metaKey || me.ctrlKey || me.shiftKey || me.altKey;
+    const targetAttr = anchor.getAttribute('target');
+    const hasTarget = !!targetAttr && targetAttr !== '_self';
+    const isDownload = anchor.hasAttribute('download') || anchor.getAttribute('rel') === 'external';
+
+    if (!isLeftClick || isModifiedClick || hasTarget || isDownload) return;
+
+    // Évite le re-render si même route
+    const newPath = new URL(href, window.location.origin).pathname;
+    if (window.location.pathname === newPath) return;
+
+    e.preventDefault();
+    await navigateTo(href);
+  });
+
+  window.addEventListener('popstate', () => {
+    // Nettoie aussi quand on revient en arrière
+    runRouteCleanup();
+    renderPage();
+  });
+
+  await renderPage();
 });
