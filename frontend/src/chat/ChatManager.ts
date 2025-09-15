@@ -1,6 +1,6 @@
 // @ts-ignore
 import type { ChatState, Message, ChatRoom } from './types';
-import { ChatPanel } from './components/ChatPanel';
+import { ChatPanel, ButtonGameInvite } from './components';
 import { SocketService, UIprofileService } from './services';
 import { formatTime, escapeHtml, createAvatarElement } from './utils';
 import { CHAT_EVENTS } from './config';
@@ -226,6 +226,71 @@ export class ChatManager extends SocketService {
                     }
             });
         }
+        
+        // Gestion des clics sur les boutons de jeux (pong snake)
+        const pong = document.getElementById('pong-button');
+        const snake = document.getElementById('snake-button');
+
+        if (pong) {
+            pong.addEventListener('click', () => {
+                // Doit être dans une room privée
+                if (!this.currentRoom || this.currentRoom.type !== 'private') {
+                    console.warn('Invitation Pong: action disponible uniquement en chat privé');
+                    return;
+                }
+                const p2 = this.getOtherParticipantId();
+                if (!p2) {
+                    console.warn('Invitation Pong: aucun destinataire trouvé');
+                    return;
+                }
+                console.log('Invitation Pong: envoi de l\'invitation');
+                this.emit(CHAT_EVENTS.GAME_INVITATION, { targetUserId: p2, gameType: 'pong' });
+            });
+        }
+
+        if (snake) {
+            snake.addEventListener('click', () => {
+                // À implémenter
+            });
+        }
+
+        // Délégation: accepter une invitation de jeu dans les messages
+        const messagesContainer = document.getElementById('messages-container');
+        if (messagesContainer) {
+            messagesContainer.addEventListener('click', (e) => {
+                const target = (e.target as HTMLElement);
+                // Accept
+                const acceptBtn = target.closest('[data-accept-invite]') as HTMLElement | null;
+                if (acceptBtn) {
+                    const inviteId = acceptBtn.getAttribute('data-invite-id') || '';
+                    const url = acceptBtn.getAttribute('data-url') || '';
+                    const targetSocketId = acceptBtn.getAttribute('data-target-socket-id') || '';
+                    this.emit(CHAT_EVENTS.GAME_INVITATION_RESPONSE, { invitationId: inviteId, accepted: true, targetSocketId });
+                    // Clean both buttons
+                    document.querySelectorAll(`[data-invite-id="${CSS.escape(inviteId)}"]`).forEach(el => el.remove());
+                    if (url) this.goTo(url);
+                    return;
+                }
+
+                // Decline
+                const declineBtn = target.closest('[data-decline-invite]') as HTMLElement | null;
+                if (declineBtn) {
+                    const inviteId = declineBtn.getAttribute('data-invite-id') || '';
+                    const targetSocketId = declineBtn.getAttribute('data-target-socket-id') || '';
+                    this.emit(CHAT_EVENTS.GAME_INVITATION_RESPONSE, { invitationId: inviteId, accepted: false, targetSocketId });
+                    // Remove both buttons and show declined note
+                    document.querySelectorAll(`[data-invite-id="${CSS.escape(inviteId)}"]`).forEach(el => el.remove());
+                    const row = document.querySelector(`[data-invite-row="${CSS.escape(inviteId)}"]`);
+                    if (row) {
+                        const note = document.createElement('div');
+                        note.className = 'mt-2 text-[11px] text-red-500';
+                        note.textContent = 'Invitation refusée';
+                        row.appendChild(note);
+                    }
+                    return;
+                }
+            });
+        }
     }
 
     private sendMessage(content: string) {
@@ -257,6 +322,34 @@ export class ChatManager extends SocketService {
             avatar = `<img src="${this.state.currentUserId.avatar}" alt="avatar" class="w-8 h-8 rounded-full object-cover shrink-0" />`;
         } else {
             avatar = createAvatarElement(message.username, message.avatarPath, 'md');
+        }
+
+        // Invitation de jeu (rendu spécial)
+                if ((message as any).type === 'game-invitation') {
+            // Supporte message.id comme identifiant d'invitation, sinon 'invitationId'
+            const invitationId = (message as any).invitationId || message.id;
+            const meta = (message as any) || {};
+            const p1 = meta.p1;
+            const p2 = meta.p2;
+            const path = meta.url || this.buildPongUrl(p1, p2);
+            const isInvitee = this.state.currentUserId?.id && p2 && this.state.currentUserId.id === p2;
+                        const actions = isInvitee
+                                ? `
+                                        <div class="mt-2 flex gap-2">
+                                                <button class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white rounded px-2 py-1"
+                                                                data-accept-invite
+                                                                data-invite-id="${invitationId}"
+                                                                data-url="${path}"
+                                                                data-target-socket-id="${meta.targetSocketId || ''}">Accepter</button>
+                                                <button class="text-xs bg-red-600 hover:bg-red-500 text-white rounded px-2 py-1"
+                                                                data-decline-invite
+                                                                data-invite-id="${invitationId}"
+                                                                data-target-socket-id="${meta.targetSocketId || ''}">Refuser</button>
+                                        </div>
+                                    `
+                                : `<span class="mt-2 text-[11px] text-gray-400">En attente d'acceptation…</span>`;
+
+            return ButtonGameInvite(avatar, invitationId, message, time, actions);
         }
 
         if (isOwn) {
@@ -422,7 +515,7 @@ export class ChatManager extends SocketService {
                     const avatar = createAvatarElement(otherUser.username, otherUser.avatar, 'sm');
                     let statusColor = 'bg-gray-500';
                     if (otherUser.status === 'online') statusColor = 'bg-green-500';
-                    else if (otherUser.status === 'in-game') statusColor = 'bg-yellow-500';
+                    else if (otherUser.status === 'in-game') statusColor = 'bg-blue-500';
                     
                     if (otherUser.status === 'online') {
                         iconElement.innerHTML = `
@@ -506,7 +599,7 @@ export class ChatManager extends SocketService {
                 if (otherUser) {
                     const avatar = createAvatarElement(otherUser.username, otherUser.avatar, 'sm');
                     const statusColor = otherUser.status === 'online' ? 'bg-green-500' : 
-                                      otherUser.status === 'in-game' ? 'bg-yellow-500' : 'bg-gray-500';
+                                      otherUser.status === 'in-game' ? 'bg-blue-500' : 'bg-gray-500';
                     
                     iconHtml = `
                         <div class="relative w-5 h-5">
@@ -549,8 +642,8 @@ export class ChatManager extends SocketService {
 
         list.innerHTML = friends.map(f => {
             const ou = online.get(f.id);
-            const status = ou?.status || f.status || 'offline';
-            const statusColor = status === 'online' ? 'bg-green-500' : (status === 'in-game' ? 'bg-yellow-500' : 'bg-gray-500');
+            const status = ou?.status || f.status || 'offline' || 'in-game';
+            const statusColor = status === 'online' ? 'bg-green-500' : (status === 'in-game' ? 'bg-blue-500' : 'bg-gray-500');
             const avatar = createAvatarElement(f.username, f.avatar, 'sm');
             return `<div data-friend-id="${f.id}" class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-800 cursor-pointer">
                 <div class="relative w-8 h-8" data-user-id="${f.id}">
@@ -605,7 +698,7 @@ export class ChatManager extends SocketService {
         const friendIds = new Set((this.state.currentUserId?.friendList || []).map(f => f.id));
 
         container.innerHTML = results.map(u => {
-            const statusColor = u.status === 'online' ? 'bg-green-500' : (u.status === 'in-game' ? 'bg-yellow-500' : 'bg-gray-500');
+            const statusColor = u.status === 'online' ? 'bg-green-500' : (u.status === 'in-game' ? 'bg-blue-500' : 'bg-gray-500');
             const avatar = createAvatarElement(u.username, u.avatar, 'sm');
             const isSelf = u.id === currentId;
             const isFriend = friendIds.has(u.id);
@@ -807,6 +900,54 @@ export class ChatManager extends SocketService {
             console.log(`🔄 Initialisation côté serveur de la room privée avec l'utilisateur ${otherUserId}`);
             this.emit(CHAT_EVENTS.JOIN_PRIVATE_ROOM, { targetUserId: otherUserId });
             this.initializedPrivateRooms.add(roomId);
+        }
+    }
+
+    // Utilitaires invitation Pong
+    private getOtherParticipantId(): string | null {
+        if (!this.currentRoom?.participants) return null;
+        const me = this.state.currentUserId?.id;
+        return this.currentRoom.participants.find(id => id !== me) || null;
+    }
+
+    private buildPongUrl(p1: string, p2: string): string {
+        return `/pong/matchmaking/game?p1=${encodeURIComponent(p1)}&p2=${encodeURIComponent(p2)}`;
+    }
+
+    public handleInvitationAnswer(data: { invitationId: string; accepted: boolean; url?: string; from?: any }) {
+        // Clean any buttons for this invite
+        document.querySelectorAll(`[data-invite-id="${CSS.escape(data.invitationId)}"]`).forEach(el => el.remove());
+
+        if (!data.accepted) {
+            // Marquer refus dans l'UI (si on a le conteneur)
+            const row = document.querySelector(`[data-invite-row="${CSS.escape(data.invitationId)}"]`);
+            if (row) {
+                const note = document.createElement('div');
+                note.className = 'mt-2 text-[11px] text-red-500';
+                note.textContent = 'Invitation refusée';
+                row.appendChild(note);
+            }
+            return;
+        }
+        // Redirection sur acceptation
+        if (data.url) {
+            this.goTo(data.url);
+            this.closeChat();
+        } else if (data.from && data.from.id && this.state.currentUserId?.id) {
+            const url = this.buildPongUrl(this.state.currentUserId.id, data.from.id);
+            this.goTo(url);
+        }
+    }
+
+    private goTo(urlOrPath: string) {
+        // navigateTo attend un path relatif
+        try {
+            const origin = `${window.location.protocol}//${window.location.host}`;
+            const path = urlOrPath.startsWith(origin) ? urlOrPath.substring(origin.length) : urlOrPath;
+            navigateTo(path);
+        } catch {
+            // Fallback
+            window.location.href = urlOrPath;
         }
     }
 

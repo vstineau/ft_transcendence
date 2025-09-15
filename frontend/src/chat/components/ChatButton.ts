@@ -1,3 +1,5 @@
+import { escapeHtml } from '../utils';
+
 /**
  * Bouton flottant de chat
  */
