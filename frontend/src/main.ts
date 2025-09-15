@@ -72,8 +72,27 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/register': RegisterView,
 	'/updateInfos': UpdateInfosview,
 	'/2fa-verification': TwoFAVerifyView,
-	'/statisticsPong': StatsPongView,
-	'/statisticsSnake': StatsSnakeView,
+	// '/statisticsPong': StatsPongView,
+	'/statisticsPong': async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetUserId = urlParams.get('user');
+
+        if (targetUserId) {
+            return await StatsPongView(targetUserId);
+        } else {
+            return await StatsPongView();
+        }
+    },
+	'/statisticsSnake': async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetUserId = urlParams.get('user');
+
+        if (targetUserId) {
+            return await StatsSnakeView(targetUserId);
+        } else {
+            return await StatsSnakeView();
+        }
+    },
 };
 
 export async function navigateTo(url: string) {
@@ -117,6 +136,8 @@ function showAuthMessage() {
 export async function renderPage() {
 	const path = window.location.pathname;
 	console.log('Current path:', path);
+    console.log('Route exists:', !!routes[path]);
+
 
 	const publicPaths = [
 		'/',
@@ -250,14 +271,33 @@ export async function renderPage() {
 				await displayDarkModeButton();
 				initSnakeStats();
 				updateRanking();
-				updateInfos();
-				initProfilePage();
-				try {
-					await authenticatedFetch('/api/updateInfos');
-					updateUserProfile(); // Seulement si authentifié
-				} catch {
-					console.log('Not authenticated, skipping profile update');
+				
+				const urlParams = new URLSearchParams(window.location.search);
+				const targetUserId = urlParams.get('user');
+				
+				if (!targetUserId) {
+					// Seulement pour vos propres stats
+					updateInfos();
+					initProfilePage();
+					try {
+						await authenticatedFetch('/api/updateInfos');
+						updateUserProfile();
+					} catch {
+						console.log('Not authenticated, skipping profile update');
+					}
 				}
+				document.getElementById('pong-stats-btn')?.addEventListener('click', () => {
+					const params = new URLSearchParams(window.location.search);
+					const userId = params.get('user');
+					navigateTo(`/statisticsPong${userId ? `?user=${userId}` : ''}`);
+				});
+
+				document.getElementById('snake-stats-btn')?.addEventListener('click', () => {
+					const params = new URLSearchParams(window.location.search);
+					const userId = params.get('user');
+					navigateTo(`/statisticsSnake${userId ? `?user=${userId}` : ''}`);
+				});
+
 			}, 100);
 			break;
 		case '/statisticsPong':
@@ -267,22 +307,38 @@ export async function renderPage() {
 				await displayDarkModeButton();
 				initPongStats();
 				updateRankingPong();
-				updateInfos();
-				initProfilePage();
-				try {
-					await authenticatedFetch('/api/updateInfos');
-					updateUserProfilePong(); // Seulement si authentifié
-				} catch {
-					console.log('Not authenticated, skipping profile update');
+				
+				// Même logique que Snake : ne pas appeler updateInfos/initProfilePage si on regarde un autre utilisateur
+				const urlParams = new URLSearchParams(window.location.search);
+				const targetUserId = urlParams.get('user');
+				
+				if (!targetUserId) {
+					// Seulement pour vos propres stats
+					updateInfos();
+					initProfilePage();
+					try {
+						await authenticatedFetch('/api/updateInfos');
+						updateUserProfilePong();
+					} catch {
+						console.log('Not authenticated, skipping profile update');
+					}
 				}
+				
+				// Ajouter les event listeners pour les boutons Snake/Pong
+				document.getElementById('snake-stats-btn')?.addEventListener('click', () => {
+					const params = new URLSearchParams(window.location.search);
+					const userId = params.get('user');
+					navigateTo(`/statisticsSnake${userId ? `?user=${userId}` : ''}`);
+				});
+
+				document.getElementById('pong-stats-btn')?.addEventListener('click', () => {
+					const params = new URLSearchParams(window.location.search);
+					const userId = params.get('user');
+					navigateTo(`/statisticsPong${userId ? `?user=${userId}` : ''}`);
+				});
+				
 			}, 100);
 			break;
-		// case '/profile/':
-		// 	if(path.startsWith('/profile/')){
-		// 		const username = path.split('/')[2];
-		// 		await showUserProfile(username);
-		// 	}
-		// 	break;
 		case '/pong/tournament':
 			pongTournament();
 			displayChatButton();

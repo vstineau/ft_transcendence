@@ -1,11 +1,16 @@
-import { fetchSnakeHistory } from '../graph/init';
-import { fetchPongHistory } from '../graph/initPong';
+import { fetchSnakeHistoryOther, fetchSnakeHistory } from '../graph/init';
+import { fetchPongHistory, fetchPongHistoryOther } from '../graph/initPong';
 
 
-export async function analyzeGameTimes(): Promise<{labels: string[], data: number[]}> {
+export async function analyzeGameTimes(targetUserId?: string): Promise<{labels: string[], data: number[]}> {
     try {
-        const games = await fetchSnakeHistory();
-
+        let games;
+        if (targetUserId) {
+            games = await fetchSnakeHistoryOther(targetUserId);
+        } else {
+            games = await fetchSnakeHistory();
+        }
+          
         if (games.length === 0) {
             return {
                 labels: ['0-30s', '31-60s', '61-90s', '90s+'],
@@ -21,7 +26,7 @@ export async function analyzeGameTimes(): Promise<{labels: string[], data: numbe
             '90s+': 0
         };
 
-        games.forEach(game => {
+        games.forEach((game: any) => {
             if (game.gameTime) {
                 const seconds = Math.floor(game.gameTime / 1000);
 
@@ -51,9 +56,14 @@ export async function analyzeGameTimes(): Promise<{labels: string[], data: numbe
     }
 }
 
-export async function analyzeLengthDistribution(): Promise<{labels: string[], data: number[]}> {
+export async function analyzeLengthDistribution(targetUserId?: string): Promise<{labels: string[], data: number[]}> {
     try {
-        const games = await fetchSnakeHistory();
+        let games;
+        if (targetUserId) {
+            games = await fetchSnakeHistoryOther(targetUserId);
+        } else {
+            games = await fetchSnakeHistory();
+        }
 
         if (games.length === 0) {
             return {
@@ -69,7 +79,7 @@ export async function analyzeLengthDistribution(): Promise<{labels: string[], da
             '31-40': 0
         };
 
-        games.forEach(game => {
+        games.forEach((game: any) => {
             if (game.finalLength) {
                 const length = game.finalLength;
 
@@ -100,9 +110,15 @@ export async function analyzeLengthDistribution(): Promise<{labels: string[], da
 }
 
 // Pour analyser les vitesses de balle (équivalent des tailles de serpent)
-export async function analyzeBallSpeedDistribution(): Promise<{labels: string[], data: number[]}> {
+export async function analyzeBallSpeedDistribution(targetUserId?: string): Promise<{labels: string[], data: number[]}> {
     try {
-        const games = await fetchPongHistory();
+        let games;
+        if (targetUserId) {
+            games = await fetchPongHistoryOther(targetUserId);
+        } else {
+            games = await fetchPongHistory();
+        }
+        
         if (games.length === 0) {
             return {
                 labels: ['0-5', '6-10', '11-15', '16+'],
@@ -146,9 +162,15 @@ export async function analyzeBallSpeedDistribution(): Promise<{labels: string[],
 }
 
 // Pour analyser les temps de jeu Pong
-export async function analyzePongGameTimes(): Promise<{labels: string[], data: number[]}> {
+export async function analyzePongGameTimes(targetUserId?: string): Promise<{labels: string[], data: number[]}> {
     try {
-        const games = await fetchPongHistory();
+        let games;
+        if (targetUserId) {
+            games = await fetchPongHistoryOther(targetUserId);
+        } else {
+            games = await fetchPongHistory();
+        }
+
         if (games.length === 0) {
             return {
                 labels: ['0-1min', '1-3min', '3-5min', '5min+'],

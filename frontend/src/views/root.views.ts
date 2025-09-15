@@ -406,7 +406,7 @@ export async function GamesView() {
 	`;
 }
 
-function createStatsView(gameType: 'snake' | 'pong') {
+function createStatsView(gameType: 'snake' | 'pong', targetUserId?: string) {
     const config = {
         snake: {
             title: 'Snake stats',
@@ -438,6 +438,10 @@ function createStatsView(gameType: 'snake' | 'pong') {
 
     const currentConfig = config[gameType];
 
+	const isViewingOther = !!targetUserId;
+    const profileTitle = isViewingOther ? "User profile" : "My profil";
+    const statsTitle = isViewingOther ? "User stats" : "My stats";
+
     return /* HTML */ `
         <!-- Titre FT_TRANSCENDENCE en haut -->
         <div class="bg-gray-100 py-2">
@@ -448,13 +452,24 @@ function createStatsView(gameType: 'snake' | 'pong') {
 			</a>
 		</div>
 
-        <div class="content-section min-h-screen bg-gray-100 py-16">
+         <!-- Passer le targetUserId aux éléments qui en ont besoin -->
+        <div class="content-section min-h-screen bg-gray-100 py-16" data-target-user="${targetUserId || ''}">
             <div class="max-w-7xl mx-auto px-8">
+
+				<div class="flex justify-center gap-2 mb-6">
+                    <button id="snake-stats-btn" class="px-6 py-2 ${gameType === 'snake' ? 'bg-gray-700' : 'bg-gray-300'} text-white rounded-lg font-medium transition-colors hover:opacity-80">
+                        Snake
+                    </button>
+                    <button id="pong-stats-btn" class="px-6 py-2 ${gameType === 'pong' ? 'bg-gray-700' : 'bg-gray-300'} text-white rounded-lg font-medium transition-colors hover:opacity-80">
+                        Pong
+                    </button>
+                </div>
+
                 <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
 
-                    <!-- Bloc My Profile -->
+                    <!-- Bloc Profile -->
                     <div class="bg-white rounded-xl shadow-lg p-6">
-                        <h3 class="font-bold text-lg mb-4">My profil</h3>
+                        <h3 class="font-bold text-lg mb-4">${profileTitle}</h3>
                         <div class="flex items-center mb-4">
                             <div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden"></div>
                             <div class="ml-2 mt-12">
@@ -472,23 +487,23 @@ function createStatsView(gameType: 'snake' | 'pong') {
                         </div>
                     </div>
 
-	                    <!-- Bloc Last Games -->
-	                    <div class="bg-white rounded-xl shadow-lg p-6">
-		                        <h3 class="font-bold text-lg mb-4">Last games</h3>
-	                        <div id="last-games-content" class="space-y-3">
-		                            <div class="flex flex-col items-center justify-center py-8 text-center">
-	                                <p class="text-gray-500 text-sm">Loading...</p>
-	                            </div>
-	                        </div>
-	                    </div>
+                    <!-- Bloc Last Games -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="font-bold text-lg mb-4">Last games</h3>
+                        <div id="last-games-content" class="space-y-3">
+                            <div class="flex flex-col items-center justify-center py-8 text-center">
+                                <p class="text-gray-500 text-sm">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
 
-	                    <!-- Bloc My Stats -->
-	                    <div class="bg-white rounded-xl shadow-lg p-6">
-	                        <h3 class="font-bold text-lg mb-4">My stats</h3>
-	                        <p class="text-gray-800 text-sm">${currentConfig.chartTitle}</p>
+                    <!-- Bloc Stats -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="font-bold text-lg mb-4">${statsTitle}</h3>
+                        <p class="text-gray-800 text-sm">${currentConfig.chartTitle}</p>
                         <p class="text-gray-500 text-sm mb-4">${currentConfig.chartSubtitle}</p>
-	                        <canvas id="scoreDistributionChart" width="250" height="180"></canvas>
-	                    </div>
+                        <canvas id="scoreDistributionChart" width="250" height="180"></canvas>
+                    </div>
 
                     <!-- Bloc Global Ranking -->
                     <div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
@@ -531,12 +546,12 @@ function createStatsView(gameType: 'snake' | 'pong') {
     `;
 }
 
-export async function StatsSnakeView() {
-    return createStatsView('snake');
+export async function StatsSnakeView(targetUserId?: string) {
+    return createStatsView('snake', targetUserId);
 }
 
-export async function StatsPongView() {
-    return createStatsView('pong');
+export async function StatsPongView(targetUserId?: string) {
+    return createStatsView('pong', targetUserId);
 }
 
 // <img src="https://i.gifer.com/QgxJ.gif" alt="pong" />
