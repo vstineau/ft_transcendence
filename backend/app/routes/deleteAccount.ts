@@ -4,7 +4,7 @@ import { IUserReply, JwtPayload } from '../types/userTypes.js'
 // import { comparePassword } from '../utils/hashPassword.js'
 
 export default {
-    method: 'DELETE', // Changé en DELETE (plus approprié sémantiquement)
+    method: 'DELETE', 
     url: '/deleteAccount',
     handler: async (
         request: FastifyRequest,
@@ -20,7 +20,7 @@ export default {
             }
 
             const payload = reply.server.jwt.verify<JwtPayload>(token);
-            const user = await User.findOneBy({ login: payload.login });
+            const user = await User.findOneBy({ id: payload.id });
 
             if (!user) {
                 const response: IUserReply[401] = { success: false, error: 'User not found' };
@@ -28,7 +28,6 @@ export default {
                 return;
             }
 
-            // Supprimer l'utilisateur directement (plus besoin de vérifier email/password)
             await user.remove();
 
             const response: IUserReply[200] = { success: true };
