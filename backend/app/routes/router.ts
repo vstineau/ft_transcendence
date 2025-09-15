@@ -18,6 +18,10 @@ import profileSnake from '../snake/profileSnake.js'
 import profilePong from '../pong/profilePong.js'
 import rankingPong from '../pong/rankingPong.js'
 import recentContacts from './recentContacts.js'
+import profileSnakeOther from './profileSnakeOther.js'
+import historySnakeOther from './historySnakeOther.js'
+import historyPongOther from './historyPongOther.js'
+import profilePongOther from './profilePongOther.js'
 
 export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
     fastify.route(verifyEnable2fa);
@@ -33,9 +37,13 @@ export const userRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
     fastify.route(login2fa);
     fastify.route(enable2fa);
     fastify.route(fixpassword);
+    fastify.route(historySnakeOther); //creer pour le pong
+    fastify.route(historyPongOther);
     fastify.route(historySnake);
     fastify.route(ranking);
     fastify.route(rankingPong);
+    fastify.route(profileSnakeOther); //creer pour le pong
+    fastify.route(profilePongOther);
     fastify.route(profileSnake);
     fastify.route(profilePong);
     fastify.route(recentContacts);

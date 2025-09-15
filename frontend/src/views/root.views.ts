@@ -455,6 +455,16 @@ function createStatsView(gameType: 'snake' | 'pong', targetUserId?: string) {
          <!-- Passer le targetUserId aux éléments qui en ont besoin -->
         <div class="content-section min-h-screen bg-gray-100 py-16" data-target-user="${targetUserId || ''}">
             <div class="max-w-7xl mx-auto px-8">
+
+				<div class="flex justify-center gap-2 mb-6">
+                    <button id="snake-stats-btn" class="px-6 py-2 ${gameType === 'snake' ? 'bg-gray-700' : 'bg-gray-300'} text-white rounded-lg font-medium transition-colors hover:opacity-80">
+                        Snake
+                    </button>
+                    <button id="pong-stats-btn" class="px-6 py-2 ${gameType === 'pong' ? 'bg-gray-700' : 'bg-gray-300'} text-white rounded-lg font-medium transition-colors hover:opacity-80">
+                        Pong
+                    </button>
+                </div>
+
                 <div class="grid gap-6 auto-rows-min mx-auto mt-16" style="grid-template-columns: 280px 320px 280px; max-width: 1000px;">
 
                     <!-- Bloc Profile -->

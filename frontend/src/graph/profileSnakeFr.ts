@@ -2,19 +2,23 @@ import { SnakeGameHistory, ProfileSnake } from '../types/snakeTypes';
 import { navigateTo, authenticatedFetch} from '../main';
 import { formatGameTime, formatDate } from '../graph/init';
 
-async function fetchUserProfile(): Promise<ProfileSnake | null> {
+async function fetchUserProfile(targetUserId?: string): Promise<ProfileSnake | null> {
     try {
         console.log('=== FETCHING USER PROFILE ===');
         const host = window.location.hostname;
         const port = window.location.port;
         const protocol = window.location.protocol;
-
-        const response = await fetch(`${protocol}//${host}:${port}/api/snake/profile`);
-
+        
+        let url = `${protocol}//${host}:${port}/api/snake/profile`;
+        if (targetUserId) {
+            url = `${protocol}//${host}:${port}/api/snake/profile/${targetUserId}`;
+        }
+        
+        const response = await fetch(url);
         if (!response.ok) {
             throw new Error('Failed to fetch profile');
         }
-
+        
         const data = await response.json();
         console.log('Profile data received:', data);
         return data;
@@ -24,23 +28,39 @@ async function fetchUserProfile(): Promise<ProfileSnake | null> {
     }
 }
 
+
 function updateProfileDisplay(profile: ProfileSnake): void {
     // Mettre à jour l'avatar
+    console.log('🔥 updateProfileDisplay called with:', profile.user.nickName, profile.user.login);
+    
+    // Vérifiez que ces éléments existent
     const avatarContainer = document.getElementById('avatar-container');
+    const displayName = document.getElementById('profile-display-name');
+    const username = document.getElementById('profile-username');
+    
+    console.log('Elements found:', {
+        avatarContainer: !!avatarContainer,
+        displayName: !!displayName,
+        username: !!username
+    });
+    
     if (avatarContainer && profile.user.avatar) {
-        avatarContainer.innerHTML = `<img src="data:image/jpeg;base64,${profile.user.avatar}" class="w-full h-full object-cover" alt="Avatar">`;
+        let avatarSrc = profile.user.avatar;
+        if (!avatarSrc.startsWith('data:')) {
+            avatarSrc = `data:image/jpeg;base64,${avatarSrc}`;
+        }
+        avatarContainer.innerHTML = `<img src="${avatarSrc}" class="w-full h-full object-cover" alt="Avatar">`;
+        console.log('Avatar updated');
     }
 
-    // Maj le nom
-    const displayName = document.getElementById('profile-display-name');
     if (displayName) {
         displayName.textContent = profile.user.nickName;
+        console.log('Display name updated to:', profile.user.nickName);
     }
 
-    // Maj le username
-    const username = document.getElementById('profile-username');
     if (username) {
         username.textContent = `@${profile.user.login}`;
+        console.log('Username updated to:', profile.user.login);
     }
 
     // Maj les statistiques
@@ -69,36 +89,25 @@ function updateProfileDisplay(profile: ProfileSnake): void {
             element.textContent = stat.value.toString();
         }
     });
+    console.log('✅ Profile display updated successfully');
+
 }
 
-// export async function updateUserProfile(): Promise<void> {
-//     try {
-
-//         const profile = await fetchUserProfile();
-//         if (profile) {
-//             updateProfileDisplay(profile);
-//         }
-//     } catch (error) {
-//         console.error('Error updating profile:', error);
-//     }
-// }
-
-
-// export async function updateUserProfile(): Promise<void> {
-//     try {
-//         // Vérifier si on regarde le profil d'un autre utilisateur
-//         const targetUserId = document.querySelector('.content-section')?.getAttribute('data-target-user');
-
-//         let profileUrl = '/api/snake/profile';
-//         if (targetUserId) {
-//             profileUrl = `/api/snake/profile/${targetUserId}`;
-//         }
-
-//         const profile = await fetchUserProfile(profileUrl);
-//         if (profile) {
-//             updateProfileDisplay(profile);
-//         }
-//     } catch (error) {
-//         console.error('Error updating profile:', error);
-//     }
-// } TO DO 
+export async function updateUserProfile(): Promise<void> {
+    try {
+        console.log('=== DEBUG UPDATE USER PROFILE ===');
+        console.log('Current URL:', window.location.href);
+        console.log('Search params:', window.location.search);
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetUserId = urlParams.get('user');
+        console.log('Target user ID extracted:', targetUserId);
+        
+        const profile = await fetchUserProfile(targetUserId || undefined);
+        if (profile) {
+            updateProfileDisplay(profile); // ← Rajoutez cette ligne !
+        }
+    } catch (error) {
+        console.error('Error updating profile:', error);
+    }
+}
