@@ -11,6 +11,7 @@ import fastifyOauth2 from '@fastify/oauth2';
 import { startChat } from './chat/chat.js';
 import {userRoutes} from './routes/router.js'
 import oauth2Options from './auth/oauth2Options.js'
+import { startTournament } from './pong/tournament.js';
 
 export const app = Fastify({
 	logger: true,
@@ -50,6 +51,7 @@ await SqliteDataSource.initialize()
 await startPongGame(app);
 await startSnakeGame(app);
 await startChat(app);
+await startTournament(app);
 
 authJwt(app, {jwtSecret: config.jwt.secret});
 await app.register(userRoutes);

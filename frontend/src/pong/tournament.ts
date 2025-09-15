@@ -5,8 +5,11 @@ let tournament: Tournament;
 let names: string[] = [];
 let gameStart = false;
 
+import { io } from 'socket.io-client';
 import { navigateTo } from '../main';
 import { Game, Tournament } from '../types/pongTypes';
+import { getCookie } from './pong';
+// import { promises } from 'readline';
 
 // init game canvas with player button and names
 export function initGame(game: Game) {
@@ -62,7 +65,19 @@ export function initGame(game: Game) {
 	form.appendChild(container);
 }
 
-function getPlayersName(nb: number) {
+function getPlayersName(nb: number, firstInput:string) {
+	// let firstinput = '';
+	// const host = window.location.hostname;
+	// const port = window.location.port;
+	// const protocol = window.location.protocol;
+	// let socket = io(`${protocol}//${host}:${port}/tournament`);
+	// let cookie = getCookie('token');
+	// socket.on('connect', () => {
+	// 	socket.emit('getPlayerName', cookie);
+	// });
+	// socket.on('NameIs', async (name: string) => {
+	// 	firstinput = name;
+	// });
 	// create user inputs to fill players name
 	const container = document.createElement('div'); // conteneur global
 	container.id = '';
@@ -78,6 +93,7 @@ function getPlayersName(nb: number) {
 			dark:bg-gray-800 dark:hover:bg-gray-600 dark:shadow-none \
 			dark:-outline-offset-1 dark:outline-white/10 my-2';
 		input.style.color = 'white';
+		if (i === 1) input.value = firstInput;
 		container.appendChild(input);
 	}
 	submitNames(container);
@@ -423,12 +439,9 @@ function movePlayer(game: Game) {
 	if (game.p2.key_down === true && game.p2.y + game.p2.vy <= game.win.height - game.p2.height) game.p2.y += game.p2.vy;
 }
 
-let gameOver = false;
-
 // check if on of the players won
 function checkWin(game: Game) {
 	if ((game.p1.score === 3 || game.p2.score === 3) && ctx) {
-		gameOver = true;
 		const px = (canvas.height * canvas.width) / 35000;
 		game.ball.vx = 0;
 		game.ball.vy = 0;
@@ -649,6 +662,20 @@ function submitNames(container: HTMLDivElement) {
 
 // tournament function
 export function pongTournament() {
+	let firstInput = '';
+	const host = window.location.hostname;
+	const port = window.location.port;
+	const protocol = window.location.protocol;
+	let socket = io(`${protocol}//${host}:${port}/tournament`);
+	let cookie = getCookie('token');
+	socket.on('connect', () => {
+		socket.emit('getPlayerName', cookie);
+	});
+	socket.on('NameIs', async (name: string) => {
+		firstInput = name;
+		socket.disconnect();
+		socket.off();
+	});
 	const playerForm = document.getElementById('playersForm') as HTMLFormElement;
 	form = document.getElementById('formNb') as HTMLFormElement;
 	form.className = 'flex items-center justify-center w-screen h-screen bg-gray-900';
@@ -660,8 +687,8 @@ export function pongTournament() {
 			alert('You need pair number of players');
 			return;
 		}
-		const uiInput = getPlayersName(nbPlayers);
+		const uiInput = getPlayersName(nbPlayers, firstInput);
 		playerForm.hidden = true;
-		form.append(uiInput);
+		if (uiInput) form.append(uiInput);
 	});
 }

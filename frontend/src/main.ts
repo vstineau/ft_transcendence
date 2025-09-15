@@ -38,22 +38,23 @@ import { updateRankingPong } from './graph/rankPong';
 import { updateUserProfile } from './graph/profileSnakeFr';
 import { updateUserProfilePong } from './graph/profilePongFr';
 import { updateRecentContacts } from './chat/recentContents';
-import { displayDarkModeButton } from './theme/lightButton'
+import { displayDarkModeButton } from './theme/lightButton';
 import { initLanguageSelector, initializeLanguage, languageManager } from './lang/languageManager';
-import { showProfileDetails } from './user/popProfile'
+import { showProfileDetails } from './user/popProfile';
 
 // 1. Déclaration des routes
 const routes: { [key: string]: () => Promise<string> } = {
 	'/': async () => {
-        // Vérifier si l'utilisateur est connecté
-        const token = document.cookie.split('; ')
-            .find(row => row.startsWith('token='))
-            ?.split('=')[1];
-        const isLoggedIn = !!token;
+		// Vérifier si l'utilisateur est connecté
+		const token = document.cookie
+			.split('; ')
+			.find(row => row.startsWith('token='))
+			?.split('=')[1];
+		const isLoggedIn = !!token;
 
-        // Retourner la vue avec le bon paramètre
-        return await WelcomeView(isLoggedIn);
-    },
+		// Retourner la vue avec le bon paramètre
+		return await WelcomeView(isLoggedIn);
+	},
 	'/dashboard': RootView,
 	'/games': GamesView,
 	'/pong-choice': PongChoice,
@@ -84,7 +85,6 @@ export async function navigateTo(url: string) {
 	history.pushState(null, '', url);
 	await renderPage();
 }
-
 
 export async function authenticatedFetch(url: string, options: RequestInit = {}): Promise<Response> {
 	const response = await fetch(url, {
@@ -140,10 +140,10 @@ export async function renderPage() {
 			// Récupération du favlang
 			if (!favLangChecked) {
 				const host = window.location.hostname;
-        		const port = window.location.port;
-        		const protocol = window.location.protocol;
+				const port = window.location.port;
+				const protocol = window.location.protocol;
 
-        		const response = await fetch(`${protocol}//${host}:${port}/api/`);
+				const response = await fetch(`${protocol}//${host}:${port}/api/`);
 				if (response.status === 200) {
 					const repBody = await response.json();
 					const favLang = repBody.favLang;
@@ -162,14 +162,11 @@ export async function renderPage() {
 		}
 	}
 
-
-
 	cleanupScrollAnimations();
 	cleanupThemeToggle();
 
 	const view = routes[path] ? await routes[path]() : '<h1>404 Not Found</h1>';
 	const rootElement: HTMLElement | null = document.getElementById('root');
-
 
 	if (rootElement) {
 		rootElement.innerHTML = view;
@@ -245,7 +242,7 @@ export async function renderPage() {
 			initTwoFALogin();
 			break;
 		case '/statisticsSnake':
-			setTimeout(async() => {
+			setTimeout(async () => {
 				initThemeToggle();
 				await displayDarkModeButton();
 				initSnakeStats();
@@ -285,7 +282,7 @@ export async function renderPage() {
 		// 	break;
 		case '/pong/tournament':
 			pongTournament();
-			displayChatButton();
+			await displayChatButton();
 			break;
 		case '/pong-choice':
 			languageManager.updatePageTranslations();
