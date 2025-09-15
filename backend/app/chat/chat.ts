@@ -81,9 +81,9 @@ export async function startChat(app: FastifyInstance) {
       handleGameInvitationResponse(socket, data)
     );
 
-    socket.on(CHAT_EVENTS.STATUS_CHANGE, (status: 'online' | 'in-game') => 
-      handleStatusChange(socket, status, chatNamespace)
-    );
+    socket.on(CHAT_EVENTS.STATUS_CHANGE, (data: {userId: string; status: 'online' | 'in-game' }) => {
+        handleStatusChange(socket, data, chatNamespace)
+    });
 
     // ===== CONNEXION =====
     socket.on('disconnect', () => 

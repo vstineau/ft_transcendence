@@ -5,7 +5,7 @@ import { app } from '../app.js';
 import { JwtPayload, UserHistory } from '../types/userTypes.js';
 import { User, History } from '../models.js';
 
-const SCORETOWIN = 3;
+const SCORETOWIN = -1;
 let stored: boolean = false;
 
 declare module 'fastify' {
@@ -143,6 +143,11 @@ async function initPlayerRoom(socket: Socket, cookie: string, arr: string[]) {
 			socket.emit('notLogged');
 			return;
 		}
+		// if(user.status === 'in-game') {
+		//	socket.emit('notInGame');
+
+		//	return;
+		// };
 		const room = getRoom(user, socket, arr.length === 2 ? arr : undefined);
 		if (arr && arr.length === 2 && arr.includes(user.id)) return;
 		if (room && user.id != room.game.p1.uid) {

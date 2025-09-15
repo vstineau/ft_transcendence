@@ -1,4 +1,4 @@
-import { ChatManager } from '../ChatManager';
+import { ChatManager } from '../../chat';
 import { CHAT_EVENTS } from '../config';
 
 export function eventsMessages(this: ChatManager) {
@@ -65,6 +65,78 @@ export function eventsMessages(this: ChatManager) {
 				}
 			}
 		}
+	});
+
+	// Invitation de jeu reçue: afficher dans le flux comme un message spécial
+	this.on(CHAT_EVENTS.GAME_INVITATION_RECEIVED, (payload: any) => {
+		const from = payload.from || {};
+		const inviterId = from.id;
+		const inviterName = from.nickName || from.login || 'Invitation';
+		const inviterAvatar = from.avatar || '';
+		const targetSocketId = from.socketId || '';
+		const me = (this as any).state.currentUserId?.id;
+		if (!inviterId || !me) return;
+		const url = (this as any).buildPongUrl(inviterId, me);
+
+		// Déterminer la room privée dédiée
+		const privateRoomId = (this as any).createPrivateRoomId(inviterId, me);
+		// Créer la room privée si elle n'existe pas encore côté client
+		let room = (this as any).rooms?.find((r: any) => r.id === privateRoomId);
+		if (!room) {
+			const newRoom: any = {
+				id: privateRoomId,
+				name: inviterName,
+				type: 'private',
+				participants: [inviterId, me],
+				messages: [],
+				unreadCount: 0
+			};
+			if (!(this as any).rooms) (this as any).rooms = [];
+			(this as any).rooms.push(newRoom);
+			(this as any).renderRoomsList();
+		}
+
+		const msg: any = {
+			id: payload.invitationId || `invite_${Date.now()}`,
+			userId: inviterId,
+			username: inviterName,
+			content: '',
+			avatarPath: inviterAvatar,
+			timestamp: new Date().toISOString(),
+			type: 'game-invitation',
+			roomId: privateRoomId,
+			p1: inviterId,
+			p2: me,
+			url,
+			targetSocketId
+		};
+		(this as any).addMessage(msg);
+		const currentRoom = (this as any).currentRoom?.id || (this as any).state?.activeTab;
+		if (msg.roomId === currentRoom) {
+			(this as any).appendMessageToDom(msg);
+		} else {
+			// Marquer non lu dans la room privée concernée
+			(this as any).incrementUnread(privateRoomId);
+			(this as any).state.unreadCount = (this as any).getTotalUnread();
+			(this as any).updateNotificationBadge();
+			(this as any).renderRoomsList();
+		}
+	});
+
+	// Réponse à invitation: si acceptée, rediriger les deux clients
+	this.on(CHAT_EVENTS.GAME_INVITATION_ANSWER, (data: { invitationId: string; accepted: boolean; url?: string; from?: any }) => {
+		console.log('THIS USER STARTED A GAME', (this as any).state.currentUserId.id);
+		console.log('URL GAMEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE = ', data.url);
+		(this as any).handleInvitationAnswer(data);
+		// je change le status des users en in-game
+		console.warn('GAME_INVITATION_ANSWER data:', data);
+		let status;
+		if (data.accepted) {
+			status = 'in-game';
+		} else {
+			status = 'online';
+		}
+		(this as any).emit(CHAT_EVENTS.STATUS_CHANGE, { userId: (this as any).state.currentUserId.id, status });
 	});
 
 }

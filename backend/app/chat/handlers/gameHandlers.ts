@@ -11,11 +11,19 @@ export function handleGameInvitation(
   const user = userService.getUser(socket.id);
   if (!user) return;
 
+  // Trouver le socketId du destinataire
   const targetUser = userService.findUserById(data.targetUserId);
 
+  // Envoyer l'invitation au destinataire
   if (targetUser) {
     chatNamespace.to(targetUser.socketId).emit(CHAT_EVENTS.GAME_INVITATION_RECEIVED, {
-      from: user,
+      from: {
+        id: user.id,
+        login: user.login,
+        nickName: user.nickName,
+        avatar: user.avatar,
+        socketId: user.socketId
+      },
       gameType: data.gameType,
       invitationId: Date.now().toString()
     });
@@ -34,22 +42,28 @@ export function handleGameInvitationResponse(
     accepted: data.accepted,
     invitationId: data.invitationId
   });
+
+  socket.emit(CHAT_EVENTS.GAME_INVITATION_ANSWER, {
+    from: user,
+    accepted: data.accepted,
+    invitationId: data.invitationId
+  });
 }
 
 export function handleStatusChange(
   socket: Socket,
-  status: 'online' | 'in-game',
+  data: { userId: string; status: 'online' | 'in-game' },
   chatNamespace: any
 ): void {
-  const success = userService.updateUserStatus(socket.id, status);
-  
+  const success = userService.updateUserStatus(socket.id, data.status);
+
   if (success) {
     const user = userService.getUser(socket.id);
     if (user) {
       // Notifier tous les utilisateurs du changement de statut
       chatNamespace.emit(CHAT_EVENTS.USER_STATUS_CHANGED, {
         userId: user.id,
-        status: status
+        status: data.status
       });
     }
   }
