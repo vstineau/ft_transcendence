@@ -28,5 +28,5 @@ export class ChatSingleton {
 	public get Manager() : ChatManager {
 		return this.chatManager;
 	}
-	
+
 }

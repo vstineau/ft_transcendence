@@ -15,6 +15,7 @@ export async function displayChatButton() {
     // Initialiser le chat immédiatement (connexion Socket.IO, état initial)
     const chatInstance = ChatSingleton.getInstance(); 
 
+    chatInstance.Manager.startChat();
     // Le bouton ne fait que toggle l'interface (ouvrir/fermer le panel)
     const chatFab = document.getElementById('chat-fab');
     if (chatFab) {
