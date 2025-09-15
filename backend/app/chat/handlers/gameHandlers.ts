@@ -35,19 +35,28 @@ export function handleGameInvitationResponse(
   data: { invitationId: string; accepted: boolean; targetSocketId: string }
 ): void {
   const user = userService.getUser(socket.id);
-  if (!user) return;
+  const targetUser = userService.getUser(data.targetSocketId);
+  if (!user || !targetUser) return;
 
+  const url = `/pong/matchmaking/game?p1=${encodeURIComponent(user.id)}&p2=${encodeURIComponent(targetUser.id)}`;
+
+  // Envoyer la réponse à l'inviteur (targetSocketId)
   socket.to(data.targetSocketId).emit(CHAT_EVENTS.GAME_INVITATION_ANSWER, {
     from: user,
+    url: url,
     accepted: data.accepted,
     invitationId: data.invitationId
   });
 
-  socket.emit(CHAT_EVENTS.GAME_INVITATION_ANSWER, {
-    from: user,
-    accepted: data.accepted,
-    invitationId: data.invitationId
-  });
+  // Envoyer la réponse à l'invité (socket) seulement si acceptée
+  if (data.accepted) {
+    socket.emit(CHAT_EVENTS.GAME_INVITATION_ANSWER, {
+      from: user,
+      url: url,
+      accepted: data.accepted,
+      invitationId: data.invitationId
+    });
+  }
 }
 
 export function handleStatusChange(

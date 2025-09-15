@@ -76,7 +76,6 @@ export function eventsMessages(this: ChatManager) {
 		const targetSocketId = from.socketId || '';
 		const me = (this as any).state.currentUserId?.id;
 		if (!inviterId || !me) return;
-		const url = (this as any).buildPongUrl(inviterId, me);
 
 		// Déterminer la room privée dédiée
 		const privateRoomId = (this as any).createPrivateRoomId(inviterId, me);
@@ -107,7 +106,6 @@ export function eventsMessages(this: ChatManager) {
 			roomId: privateRoomId,
 			p1: inviterId,
 			p2: me,
-			url,
 			targetSocketId
 		};
 		(this as any).addMessage(msg);

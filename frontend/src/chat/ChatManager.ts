@@ -263,12 +263,11 @@ export class ChatManager extends SocketService {
                 const acceptBtn = target.closest('[data-accept-invite]') as HTMLElement | null;
                 if (acceptBtn) {
                     const inviteId = acceptBtn.getAttribute('data-invite-id') || '';
-                    const url = acceptBtn.getAttribute('data-url') || '';
                     const targetSocketId = acceptBtn.getAttribute('data-target-socket-id') || '';
                     this.emit(CHAT_EVENTS.GAME_INVITATION_RESPONSE, { invitationId: inviteId, accepted: true, targetSocketId });
                     // Clean both buttons
                     document.querySelectorAll(`[data-invite-id="${CSS.escape(inviteId)}"]`).forEach(el => el.remove());
-                    if (url) this.goTo(url);
+                    // La redirection se fera via handleInvitationAnswer() avec l'URL du backend
                     return;
                 }
 
@@ -331,7 +330,6 @@ export class ChatManager extends SocketService {
             const meta = (message as any) || {};
             const p1 = meta.p1;
             const p2 = meta.p2;
-            const path = meta.url || this.buildPongUrl(p1, p2);
             const isInvitee = this.state.currentUserId?.id && p2 && this.state.currentUserId.id === p2;
                         const actions = isInvitee
                                 ? `
@@ -339,7 +337,6 @@ export class ChatManager extends SocketService {
                                                 <button class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white rounded px-2 py-1"
                                                                 data-accept-invite
                                                                 data-invite-id="${invitationId}"
-                                                                data-url="${path}"
                                                                 data-target-socket-id="${meta.targetSocketId || ''}">Accepter</button>
                                                 <button class="text-xs bg-red-600 hover:bg-red-500 text-white rounded px-2 py-1"
                                                                 data-decline-invite
