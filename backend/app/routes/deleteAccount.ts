@@ -24,7 +24,7 @@ export default {
 
             if (!user) {
                 const response: IUserReply[401] = { success: false, error: 'User not found' };
-                reply.code(404).send(response);
+                reply.code(401).send(response);
                 return;
             }
 
