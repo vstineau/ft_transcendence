@@ -2,17 +2,14 @@
 import { DataSource } from "typeorm"
 import { User, History, ChatMessage } from "./models.js"
 
-//generer la migrations
-//npx typeorm migration:generate -d migration -n CreateUserTable
 
-//appliquer la migration
-//npx typeorm migration:run
+//https://typeorm.io/docs/advanced-topics/migrations/
 
 export const SqliteDataSource = new DataSource({
     type: "sqlite",
     database: "./db/transcendence.db",
 	entities: [ User, History, ChatMessage],
-	migrations: ["./migration/**/*.ts"],
-	synchronize: true, //a passer a false une fois en prod pour utiliser les migrations
+	migrations: [ "/app/dist/app/migrations/*.js"],
+	synchronize: false, //a passer a false une fois en prod pour utiliser les migrations
 })
 
