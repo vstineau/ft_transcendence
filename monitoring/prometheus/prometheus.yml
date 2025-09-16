@@ -17,13 +17,7 @@ scrape_configs:
       # Utilise le nom du service Docker + port interne
       - targets: ['backend:3000']
 
-  # 2) cAdvisor (métriques conteneurs Docker)
-  - job_name: 'cadvisor'
-    metrics_path: /metrics
-    static_configs:
-      - targets: ['cadvisor:8080']
-
-  # 3) Prometheus lui-même (auto-surveillance)
+  # 2) Prometheus lui-même (auto-surveillance)
   - job_name: 'prometheus'
     metrics_path: /metrics
     static_configs:

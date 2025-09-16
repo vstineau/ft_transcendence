@@ -38,27 +38,14 @@
       "gridPos": {"h": 8, "w": 12, "x": 6, "y": 16},
       "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
       "options": {"legend": {"showLegend": true}, "tooltip": {"mode": "single"}}
-    },
-    {"type": "timeseries", "title": "CPU conteneur backend %", "id": 6, "datasource": null,
-      "targets": [{"expr": "rate(container_cpu_usage_seconds_total{container=~\"$container\"}[5m]) * 100", "legendFormat": "cpu %", "refId": "A"}],
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
-      "fieldConfig": {"defaults": {"unit": "percent"}, "overrides": []},
-      "options": {"legend": {"showLegend": true}, "tooltip": {"mode": "single"}}
-    },
-    {"type": "timeseries", "title": "Mémoire conteneur backend", "id": 7, "datasource": null,
-      "targets": [{"expr": "container_memory_usage_bytes{container=~\"$container\"}", "legendFormat": "mem", "refId": "A"}],
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
-      "fieldConfig": {"defaults": {"unit": "bytes"}, "overrides": []},
-      "options": {"legend": {"showLegend": true}, "tooltip": {"mode": "single"}}
-    }
+  }
   ],
   "refresh": "10s",
   "schemaVersion": 39,
   "style": "dark",
   "tags": ["transcendence", "system", "backend", "docker", "nodejs"],
   "templating": {"list": [
-    {"name": "job", "type": "query", "hide": 0, "datasource": null, "query": "label_values(up, job)", "refresh": 1, "current": {"text": "backend", "value": "backend", "selected": true}, "includeAll": false, "multi": false},
-    {"name": "container", "type": "query", "hide": 0, "datasource": null, "query": "label_values(container_memory_usage_bytes, container)", "refresh": 1, "current": {"text": "backend", "value": "backend", "selected": true}, "includeAll": false, "multi": false}
+    {"name": "job", "type": "query", "hide": 0, "datasource": null, "query": "label_values(up, job)", "refresh": 1, "current": {"text": "backend", "value": "backend", "selected": true}, "includeAll": false, "multi": false}
   ]},
   "time": {"from": "now-1h", "to": "now"},
   "timezone": "",
