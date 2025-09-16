@@ -114,7 +114,7 @@ function nextMatchButton(game: Game): HTMLButtonElement {
 	return button;
 }
 
-function drawTitle(title: string): HTMLHeadingElement {
+export function drawTitle(title: string): HTMLHeadingElement {
 	const header = document.createElement('h2');
 	header.textContent = title;
 	header.className = 'mb-10 text-2xl font-bold text-white';

@@ -23,7 +23,7 @@ import {
 	WelcomeView,
 	pongTournamentView,
 } from './views/root.views';
-import { pongGame } from './pong/pong';
+import { pongGame, disconnectSocket, ui, abortUIListeners } from './pong/pong';
 import { initScrollAnimations, cleanupScrollAnimations } from './utils/animations';
 import { initThemeToggle, cleanupThemeToggle } from './theme/darkMode';
 import { snakeGame } from './snake/snake';
@@ -75,25 +75,25 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/2fa-verification': TwoFAVerifyView,
 	// '/statisticsPong': StatsPongView,
 	'/statisticsPong': async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const targetUserId = urlParams.get('user');
+		const urlParams = new URLSearchParams(window.location.search);
+		const targetUserId = urlParams.get('user');
 
-        if (targetUserId) {
-            return await StatsPongView(targetUserId);
-        } else {
-            return await StatsPongView();
-        }
-    },
+		if (targetUserId) {
+			return await StatsPongView(targetUserId);
+		} else {
+			return await StatsPongView();
+		}
+	},
 	'/statisticsSnake': async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const targetUserId = urlParams.get('user');
+		const urlParams = new URLSearchParams(window.location.search);
+		const targetUserId = urlParams.get('user');
 
-        if (targetUserId) {
-            return await StatsSnakeView(targetUserId);
-        } else {
-            return await StatsSnakeView();
-        }
-    },
+		if (targetUserId) {
+			return await StatsSnakeView(targetUserId);
+		} else {
+			return await StatsSnakeView();
+		}
+	},
 };
 
 // export async function navigateTo(url: string) {
@@ -136,8 +136,7 @@ function showAuthMessage() {
 export async function renderPage() {
 	const path = window.location.pathname;
 	console.log('Current path:', path);
-    console.log('Route exists:', !!routes[path]);
-
+	console.log('Route exists:', !!routes[path]);
 
 	const publicPaths = [
 		'/',
@@ -268,10 +267,10 @@ export async function renderPage() {
 				await displayDarkModeButton();
 				initSnakeStats();
 				updateRanking();
-				
+
 				const urlParams = new URLSearchParams(window.location.search);
 				const targetUserId = urlParams.get('user');
-				
+
 				if (!targetUserId) {
 					// Seulement pour vos propres stats
 					updateInfos();
@@ -294,7 +293,6 @@ export async function renderPage() {
 					const userId = params.get('user');
 					navigateTo(`/statisticsSnake${userId ? `?user=${userId}` : ''}`);
 				});
-
 			}, 100);
 			break;
 		case '/statisticsPong':
@@ -304,11 +302,11 @@ export async function renderPage() {
 				await displayDarkModeButton();
 				initPongStats();
 				updateRankingPong();
-				
+
 				// Même logique que Snake : ne pas appeler updateInfos/initProfilePage si on regarde un autre utilisateur
 				const urlParams = new URLSearchParams(window.location.search);
 				const targetUserId = urlParams.get('user');
-				
+
 				if (!targetUserId) {
 					// Seulement pour vos propres stats
 					updateInfos();
@@ -320,7 +318,7 @@ export async function renderPage() {
 						console.log('Not authenticated, skipping profile update');
 					}
 				}
-				
+
 				// Ajouter les event listeners pour les boutons Snake/Pong
 				document.getElementById('snake-stats-btn')?.addEventListener('click', () => {
 					const params = new URLSearchParams(window.location.search);
@@ -333,7 +331,6 @@ export async function renderPage() {
 					const userId = params.get('user');
 					navigateTo(`/statisticsPong${userId ? `?user=${userId}` : ''}`);
 				});
-				
 			}, 100);
 			break;
 		case '/pong/tournament':
@@ -356,71 +353,76 @@ let favLangChecked = false;
 // Optionnel: mini-registry de nettoyages par route
 let routeCleanupFns: Array<() => void> = [];
 export function registerRouteCleanup(fn: () => void) {
-  routeCleanupFns.push(fn);
+	routeCleanupFns.push(fn);
 }
 function runRouteCleanup() {
-  for (const fn of routeCleanupFns) {
-    try { fn(); } catch {}
-  }
-  routeCleanupFns = [];
+	for (const fn of routeCleanupFns) {
+		try {
+			fn();
+		} catch {}
+	}
+	routeCleanupFns = [];
 }
 
 export async function navigateTo(url: string) {
-  // Évite les navigations concurrentes
-  if (navigating) return;
+	// Évite les navigations concurrentes
+	// disconnectSocket();
+	if (navigating) return;
 
-  const newPath = new URL(url, window.location.origin).pathname;
-  // Pas de re-render si on est déjà sur la même route
-  if (window.location.pathname === newPath) return;
+	const newPath = new URL(url, window.location.origin).pathname;
+	// Pas de re-render si on est déjà sur la même route
+	if (window.location.pathname === newPath) return;
 
-  navigating = true;
+	navigating = true;
 
-  // Nettoyage global avant de changer de page
-  runRouteCleanup();
-  cleanupScrollAnimations();
-  cleanupThemeToggle();
+	// Nettoyage global avant de changer de page
+	runRouteCleanup();
+	cleanupScrollAnimations();
+	cleanupThemeToggle();
 
-  history.pushState(null, '', url);
-  await renderPage();
+	history.pushState(null, '', url);
+	await renderPage();
 
-  navigating = false;
+	navigating = false;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  await initializeLanguage();
-  updateUserProfile();
-  updateUserProfilePong();
+	await initializeLanguage();
+	updateUserProfile();
+	updateUserProfilePong();
 
-  document.body.addEventListener('click', async (e) => {
-    const anchor = (e.target as HTMLElement).closest('a[href]');
-    if (!anchor) return;
+	document.body.addEventListener('click', async e => {
+		const anchor = (e.target as HTMLElement).closest('a[href]');
+		if (!anchor) return;
 
-    const href = anchor.getAttribute('href') || '';
-    // N'intercepte que les routes internes du SPA
-    if (!href.startsWith('/')) return;
+		const href = anchor.getAttribute('href') || '';
+		// N'intercepte que les routes internes du SPA
+		if (!href.startsWith('/')) return;
 
-    const me = e as MouseEvent;
-    const isLeftClick = me.button === 0;
-    const isModifiedClick = me.metaKey || me.ctrlKey || me.shiftKey || me.altKey;
-    const targetAttr = anchor.getAttribute('target');
-    const hasTarget = !!targetAttr && targetAttr !== '_self';
-    const isDownload = anchor.hasAttribute('download') || anchor.getAttribute('rel') === 'external';
+		const me = e as MouseEvent;
+		const isLeftClick = me.button === 0;
+		const isModifiedClick = me.metaKey || me.ctrlKey || me.shiftKey || me.altKey;
+		const targetAttr = anchor.getAttribute('target');
+		const hasTarget = !!targetAttr && targetAttr !== '_self';
+		const isDownload = anchor.hasAttribute('download') || anchor.getAttribute('rel') === 'external';
 
-    if (!isLeftClick || isModifiedClick || hasTarget || isDownload) return;
+		if (!isLeftClick || isModifiedClick || hasTarget || isDownload) return;
 
-    // Évite le re-render si même route
-    const newPath = new URL(href, window.location.origin).pathname;
-    if (window.location.pathname === newPath) return;
+		// Évite le re-render si même route
+		const newPath = new URL(href, window.location.origin).pathname;
+		if (window.location.pathname === newPath) return;
 
-    e.preventDefault();
-    await navigateTo(href);
-  });
+		e.preventDefault();
+		await navigateTo(href);
+	});
 
-  window.addEventListener('popstate', () => {
-    // Nettoie aussi quand on revient en arrière
-    runRouteCleanup();
-    renderPage();
-  });
+	window.addEventListener('popstate', () => {
+		disconnectSocket();
+		abortUIListeners();
+		// Nettoie aussi quand on revient en arrière
+		runRouteCleanup();
+		renderPage();
+	});
 
-  await renderPage();
+	await renderPage();
 });

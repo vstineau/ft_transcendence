@@ -1,7 +1,7 @@
 import io, { Socket } from 'socket.io-client';
 import { Game, Player } from '../types/pongTypes';
 import { navigateTo } from '../main';
-import { showCountdown } from './tournament';
+import { drawTitle, showCountdown } from './tournament';
 // import { Socket } from 'socket.io';
 
 export function getCookie(name: string) {
@@ -11,26 +11,21 @@ export function getCookie(name: string) {
 	return null;
 }
 
-function disconnectSocket() {
-	if (currentSocket) {
+export function disconnectSocket() {
+	abortUIListeners();
+	if (SocketStore.current) {
 		try {
-			currentSocket.off();
-			currentSocket.removeAllListeners?.();
+			SocketStore.current.off();
+			SocketStore.current.removeAllListeners?.();
 		} catch {}
 		try {
-			if (currentSocket.connected) currentSocket.disconnect();
+			if (SocketStore.current.connected) SocketStore.current.disconnect();
 		} catch {}
-		currentSocket = null;
+		SocketStore.current = null;
 	}
 }
 
 export function createPongSocket(): Socket {
-	// if(currentSocket && currentSocket.connected){
-	// 	currentSocket.off();
-	// 	currentSocket.removeAllListeners();
-	// 	currentSocket.disconnect();
-	// 	currentSocket = null;
-	// }
 	disconnectSocket();
 	canvas = null as any;
 	ctx = null;
@@ -38,16 +33,6 @@ export function createPongSocket(): Socket {
 	winner = null;
 	lastGame = null;
 	abortUIListeners();
-	// if (currentSocket) {
-	// 	try {
-	// 		currentSocket.off();
-	// 		currentSocket.removeAllListeners?.();
-	// 	} catch {}
-	// 	try {
-	// 		if (currentSocket.connected) currentSocket.disconnect();
-	// 	} catch {}
-	// 	currentSocket = null;
-	// }
 	initCanvas();
 	const host = window.location.hostname;
 	const port = window.location.port;
@@ -63,7 +48,7 @@ export function createPongSocket(): Socket {
 		let cookie = getCookie('token');
 		socket.emit('initGame', cookie, arr);
 	});
-	currentSocket = socket;
+	SocketStore.current = socket;
 	return socket;
 }
 
@@ -73,7 +58,9 @@ let ctx: CanvasRenderingContext2D | null = null;
 let win_width = window.innerWidth;
 let win_height = window.innerHeight;
 let gameOver = false;
-let currentSocket: Socket | null = null;
+export const SocketStore = {
+	current: null as Socket | null,
+};
 
 function initCanvas() {
 	canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
@@ -128,17 +115,20 @@ export function drawGame(game: Game) {
 	ctx.fillText(game.p2.score.toString(), canvas.width * 0.75, canvas.height * 0.1);
 }
 
-let uiController: AbortController | null = null;
+// export let uiController: AbortController | null = null;
+export const ui = {
+	controller: null as AbortController | null,
+};
 
-function abortUIListeners() {
-	if (uiController) uiController.abort();
-	uiController = null;
+export function abortUIListeners() {
+	if (ui.controller) ui.controller.abort();
+	ui.controller = null;
 }
 
 function listenUserInputs(socket: Socket) {
 	abortUIListeners();
-	uiController = new AbortController();
-	const { signal } = uiController;
+	ui.controller = new AbortController();
+	const { signal } = ui.controller;
 	window.addEventListener('keypress', e => {
 		socket.emit('keypress', { key: e.key });
 	});
@@ -151,8 +141,9 @@ function listenUserInputs(socket: Socket) {
 			gameOver = false;
 			winner = null;
 			lastGame = null;
-			// canvas = null;
+			canvas = null as any;
 			ctx = null;
+			abortUIListeners();
 			if (socket && socket.connected) {
 				socket.disconnect();
 			}
@@ -179,6 +170,7 @@ function listenUserInputs(socket: Socket) {
 		winner = null;
 		lastGame = null;
 		ctx = null;
+		canvas = null as any;
 		abortUIListeners();
 	});
 }
@@ -235,6 +227,37 @@ function drawWinner(winner: Player, game: Game) {
 
 let winner: Player | null = null;
 let lastGame: Game | null = null;
+
+function resetButtons(looser: string, win: string) {
+	const keyUpP1 = document.getElementById('p1keyup');
+	const keyDownP1 = document.getElementById('p1keydown');
+	const keyUpP2 = document.getElementById('p2keyup');
+	const keyDownP2 = document.getElementById('p2keydown');
+	const lost = document.getElementById(looser) as HTMLImageElement;
+	const won = document.getElementById(win) as HTMLImageElement;
+	if (won) won.className = 'w-40 h-40 rounded-xl mb-2 border-4 border-green-500 object-cover';
+	if (lost) {
+		lost.className = 'w-40 h-40 rounded-xl mb-2 border-4 border-red-500 object-cover';
+		lost.style.filter = 'brightness(50%)';
+	}
+	if (keyUpP1) {
+		keyUpP1.remove();
+		// keyUpP1.className = 'bg-gray-700 brightness-50 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	}
+	if (keyDownP1) {
+		keyDownP1.remove();
+		// keyDownP1.className = 'bg-gray-700 brightness-50 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	}
+
+	if (keyUpP2) {
+		keyUpP2.remove();
+		// keyUpP2.className = 'bg-gray-700 brightness-50 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	}
+	if (keyDownP2) {
+		keyDownP2.remove();
+		// keyDownP2.className = 'bg-gray-700 brightness-50 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
+	}
+}
 
 export function keyHandler(socket: Socket) {
 	let keyUpP1 = document.getElementById('p1keyup');
@@ -304,6 +327,33 @@ export async function pongGame() {
 	});
 	socket.on('playerWin', (player: Player, game) => {
 		if (!gameOver) {
+			canvas.remove();
+			const title = document.getElementById('title') as HTMLElement;
+			title.textContent = `${player.nickName} Wins!`;
+			title.className = 'mb-10 text-2xl font-bold text-white';
+			title.hidden = false;
+			// Crée le bouton de retour au dashboard
+			const button = document.getElementById('endButton') as HTMLElement;
+			button.textContent = 'Return to Dashboard';
+			button.className =
+				'rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white mt-4';
+			button.hidden = false;
+			button.addEventListener('click', () => {
+				navigateTo('/dashboard');
+			});
+
+			// Ajoute le titre et le bouton dans le container principal
+			const page = document.getElementById('pongGame');
+			if (page) {
+				page.appendChild(title);
+				page.appendChild(button);
+			}
+			page?.append(title);
+			page?.append(button);
+			const win = player.id === game.p1.id ? 'p1Avatar' : 'p2Avatar';
+			const looser = player.id === game.p1.id ? 'p2Avatar' : 'p1Avatar';
+			disconnectSocket();
+			resetButtons(looser, win);
 			lastGame = game;
 			winner = player;
 		}
