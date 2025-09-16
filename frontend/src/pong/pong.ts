@@ -11,11 +11,44 @@ export function getCookie(name: string) {
 	return null;
 }
 
-export function createPongSocket(): Socket {
-	if(currentSocket && currentSocket.connected){
-		currentSocket.disconnect();
+function disconnectSocket() {
+	if (currentSocket) {
+		try {
+			currentSocket.off();
+			currentSocket.removeAllListeners?.();
+		} catch {}
+		try {
+			if (currentSocket.connected) currentSocket.disconnect();
+		} catch {}
 		currentSocket = null;
 	}
+}
+
+export function createPongSocket(): Socket {
+	// if(currentSocket && currentSocket.connected){
+	// 	currentSocket.off();
+	// 	currentSocket.removeAllListeners();
+	// 	currentSocket.disconnect();
+	// 	currentSocket = null;
+	// }
+	disconnectSocket();
+	canvas = null as any;
+	ctx = null;
+	gameOver = false;
+	winner = null;
+	lastGame = null;
+	abortUIListeners();
+	// if (currentSocket) {
+	// 	try {
+	// 		currentSocket.off();
+	// 		currentSocket.removeAllListeners?.();
+	// 	} catch {}
+	// 	try {
+	// 		if (currentSocket.connected) currentSocket.disconnect();
+	// 	} catch {}
+	// 	currentSocket = null;
+	// }
+	initCanvas();
 	const host = window.location.hostname;
 	const port = window.location.port;
 	const protocol = window.location.protocol;
@@ -29,7 +62,6 @@ export function createPongSocket(): Socket {
 
 		let cookie = getCookie('token');
 		socket.emit('initGame', cookie, arr);
-		initCanvas();
 	});
 	currentSocket = socket;
 	return socket;
@@ -96,7 +128,17 @@ export function drawGame(game: Game) {
 	ctx.fillText(game.p2.score.toString(), canvas.width * 0.75, canvas.height * 0.1);
 }
 
+let uiController: AbortController | null = null;
+
+function abortUIListeners() {
+	if (uiController) uiController.abort();
+	uiController = null;
+}
+
 function listenUserInputs(socket: Socket) {
+	abortUIListeners();
+	uiController = new AbortController();
+	const { signal } = uiController;
 	window.addEventListener('keypress', e => {
 		socket.emit('keypress', { key: e.key });
 	});
@@ -132,13 +174,12 @@ function listenUserInputs(socket: Socket) {
 		// socket.emit('resize');
 	});
 	window.addEventListener('beforeunload', () => {
-		if (socket && socket.connected) {
-			socket.disconnect();
-			socket.off();
-			gameOver = false;
-			winner = null;
-			lastGame = null;
-		}
+		disconnectSocket();
+		gameOver = false;
+		winner = null;
+		lastGame = null;
+		ctx = null;
+		abortUIListeners();
 	});
 }
 
