@@ -1,4 +1,15 @@
 // import { register } from 'ts-node';
+
+declare global {
+    interface Window {
+        spaTestCounter: number;
+    }
+}
+
+window.spaTestCounter = (window.spaTestCounter || 0) + 1;
+console.log(`SPA Counter au chargement: ${window.spaTestCounter}`);
+
+
 import { registerUser } from './user/register';
 import { logUser, initTwoFALogin, TwoFAVerifyView } from './user/login';
 import { rootUser } from './user/root';
@@ -72,7 +83,6 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/register': RegisterView,
 	'/updateInfos': UpdateInfosview,
 	'/2fa-verification': TwoFAVerifyView,
-	// '/statisticsPong': StatsPongView,
 	'/statisticsPong': async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const targetUserId = urlParams.get('user');
@@ -134,6 +144,19 @@ function showAuthMessage() {
 }
 
 export async function renderPage() {
+	if (!document.getElementById('spa-test')) {
+        const testEl = document.createElement('div');
+        testEl.id = 'spa-test';
+        testEl.innerHTML = 'SPA Test Element';
+        testEl.style.position = 'fixed';
+        testEl.style.top = '0';
+        testEl.style.right = '0';
+        testEl.style.background = 'red';
+        testEl.style.color = 'white';
+        testEl.style.padding = '5px';
+        testEl.style.fontSize = '10px';
+        document.body.appendChild(testEl);
+    }
 	const path = window.location.pathname;
 	console.log('Current path:', path);
     console.log('Route exists:', !!routes[path]);
@@ -266,15 +289,16 @@ export async function renderPage() {
 			initTwoFALogin();
 			break;
 		case '/statisticsSnake':
+			console.log('🔄 Entering /statisticsSnake case - NO PAGE RELOAD');
 			setTimeout(async() => {
 				initThemeToggle();
 				await displayDarkModeButton();
 				initSnakeStats();
 				updateRanking();
-				
+
 				const urlParams = new URLSearchParams(window.location.search);
 				const targetUserId = urlParams.get('user');
-				
+
 				if (!targetUserId) {
 					// Seulement pour vos propres stats
 					updateInfos();
@@ -307,11 +331,11 @@ export async function renderPage() {
 				await displayDarkModeButton();
 				initPongStats();
 				updateRankingPong();
-				
+
 				// Même logique que Snake : ne pas appeler updateInfos/initProfilePage si on regarde un autre utilisateur
 				const urlParams = new URLSearchParams(window.location.search);
 				const targetUserId = urlParams.get('user');
-				
+
 				if (!targetUserId) {
 					// Seulement pour vos propres stats
 					updateInfos();
@@ -323,7 +347,7 @@ export async function renderPage() {
 						console.log('Not authenticated, skipping profile update');
 					}
 				}
-				
+
 				// Ajouter les event listeners pour les boutons Snake/Pong
 				document.getElementById('snake-stats-btn')?.addEventListener('click', () => {
 					const params = new URLSearchParams(window.location.search);
@@ -336,7 +360,7 @@ export async function renderPage() {
 					const userId = params.get('user');
 					navigateTo(`/statisticsPong${userId ? `?user=${userId}` : ''}`);
 				});
-				
+
 			}, 100);
 			break;
 		case '/pong/tournament':
@@ -352,19 +376,63 @@ export async function renderPage() {
 	}
 }
 
+// document.addEventListener('DOMContentLoaded', async () => {
+// 	await initializeLanguage();
+// 	updateUserProfile();
+// 	updateUserProfilePong();
+
+// 	document.body.addEventListener('click', async e => {
+// 		const target = e.target as HTMLElement;
+// 		console.log('Click detected on:', target.tagName, target.getAttribute('href'));
+// 		if (target instanceof HTMLAnchorElement && target.getAttribute('href')?.startsWith('/')) {
+// 			e.preventDefault();
+// 			await navigateTo((target as HTMLAnchorElement).getAttribute('href')!);
+// 		 } else {
+//         console.log('Not intercepting this click');
+//    		 }
+// 	});
+
+// 	// 5. Gère le bouton "Retour" du navigateur
+// 	window.addEventListener('popstate', () => {
+// 		renderPage();
+// 	});
+
+// 	// 6. Rendu initial
+// 	await renderPage();
+// });
+
+
 document.addEventListener('DOMContentLoaded', async () => {
 	await initializeLanguage();
 	updateUserProfile();
 	updateUserProfilePong();
 
-	document.body.addEventListener('click', async e => {
-		const target = e.target as HTMLElement;
-		// if (target instanceof HTMLAnchorElement)
-		if (target instanceof HTMLAnchorElement && target.getAttribute('href')?.startsWith('/')) {
-			e.preventDefault();
-			await navigateTo((target as HTMLAnchorElement).getAttribute('href')!);
-		}
-	});
+			document.addEventListener('DOMContentLoaded', async () => {
+			await initializeLanguage();
+			updateUserProfile();
+			updateUserProfilePong();
+
+			console.log('🔗 Attaching click event listener to body...');
+			document.body.addEventListener('click', async e => {
+				const target = e.target as HTMLElement;
+				console.log('👆 Click detected on:', {
+					tagName: target.tagName,
+					href: target.getAttribute('href'),
+					textContent: target.textContent?.trim().substring(0, 20)
+				});
+
+				if (target instanceof HTMLAnchorElement && target.getAttribute('href')?.startsWith('/')) {
+					console.log('✅ Intercepting link click, using SPA navigation');
+					e.preventDefault();
+					await navigateTo(target.getAttribute('href')!);
+				} else {
+					console.log('❌ Not intercepting this click');
+				}
+			});
+			console.log('✅ Click event listener attached successfully');
+
+			// ... reste de votre code
+		});
 
 	// 5. Gère le bouton "Retour" du navigateur
 	window.addEventListener('popstate', () => {

@@ -210,7 +210,7 @@ export async function WelcomeView(isLoggedIn: boolean = false) {
 
                     <!-- Bouton Retour Dashboard -->
                     <div class="mt-8 text-center">
-							<a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">
+							<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">
 								<span data-translate="settings.backToDashboard">← Back to Dashboard</span>
 							</a>
 					</div>
@@ -538,7 +538,7 @@ function createStatsView(gameType: 'snake' | 'pong', targetUserId?: string) {
 	                    </div>
 
                     <div class="mt-2 flex flex-col">
-                        <a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">← Back to Dashboard</a>
+                        <a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Back to Dashboard</a>
                     </div>
 	                </div>
 	            </div>
@@ -905,7 +905,7 @@ export async function UpdateInfosview() {
 
 						<!-- Bouton retour -->
 						<div class="mt-8 text-center">
-							<a href="../../../../../dashboard" class="text-gray-600 hover:text-black transition-colors">
+							<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">
 								<span data-translate="settings.backToDashboard">← Back to Dashboard</span>
 							</a>
 						</div>
