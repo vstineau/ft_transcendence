@@ -1,30 +1,38 @@
 {
-  "annotations": {"list": [{"builtIn": 1, "datasource": {"type": "grafana", "uid": "grafana"}, "enable": true, "hide": true, "iconColor": "rgba(0, 211, 255, 1)", "name": "Annotations & Alerts", "type": "dashboard"}]},
+  "annotations": {"list": [{"builtIn": 1, "enable": true, "hide": true, "iconColor": "rgba(0, 211, 255, 1)", "name": "Annotations & Alerts", "type": "dashboard"}]},
   "editable": true,
-  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
   "links": [],
   "liveNow": false,
   "panels": [
-    {"type": "stat", "title": "Users online (chat)", "gridPos": {"h": 4, "w": 8, "x": 0, "y": 0},
-     "targets": [{"datasource": {"uid": "prometheus"}, "expr": "ft_users_online{service=\"chat\"}"}],
-     "options": {"reduceOptions": {"calcs": ["lastNotNull"], "values": false}, "orientation": "horizontal"}}
-    ,{"type": "stat", "title": "Active chat rooms", "gridPos": {"h": 4, "w": 8, "x": 8, "y": 0},
-     "targets": [{"datasource": {"uid": "prometheus"}, "expr": "ft_chat_active_rooms"}],
-     "options": {"reduceOptions": {"calcs": ["lastNotNull"], "values": false}, "orientation": "horizontal"}}
-    ,{"type": "timeseries", "title": "Messages per room", "gridPos": {"h": 8, "w": 24, "x": 0, "y": 4},
-     "options": {"legend": {"displayMode": "list", "placement": "bottom"}},
-     "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum by (room_type,room_id)(rate(ft_chat_messages_total[5m]))"}]}
+    {"type": "stat", "title": "Utilisateurs en ligne (chat)", "id": 8, "datasource": null,
+      "targets": [{"expr": "ft_users_online{service=\"chat\"}", "legendFormat": "online", "refId": "A"}],
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "colorMode": "value", "graphMode": "none", "justifyMode": "center", "textMode": "auto"},
+      "fieldConfig": {"defaults": {"unit": "none"}, "overrides": []}
+    },
+    {"type": "stat", "title": "Total messages envoyés", "id": 17, "datasource": null,
+      "targets": [{"expr": "sum(ft_chat_messages_total{room_type=~\"$room_type\"})", "legendFormat": "total", "refId": "A"}],
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 4},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "colorMode": "value", "graphMode": "none", "justifyMode": "center", "textMode": "auto"},
+      "fieldConfig": {"defaults": {"unit": "none"}, "overrides": []}
+    },
+    {"type": "timeseries", "title": "Messages chat /s (par type)", "id": 9, "datasource": null,
+      "targets": [{"expr": "sum by (room_type)(rate(ft_chat_messages_total{room_type=~\"$room_type\"}[5m]))", "legendFormat": "{{room_type}}", "refId": "A"}],
+      "gridPos": {"h": 8, "w": 12, "x": 6, "y": 0},
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []},
+      "options": {"legend": {"showLegend": true}, "tooltip": {"mode": "single"}}
+    }
   ],
-  "refresh": "30s",
+  "refresh": "10s",
   "schemaVersion": 39,
   "style": "dark",
-  "tags": ["Transcendence"],
-  "templating": {"list": []},
-  "time": {"from": "now-6h", "to": "now"},
+  "tags": ["transcendence", "chat", "product"],
+  "templating": {"list": [
+    {"name": "room_type", "type": "query", "hide": 0, "datasource": null, "query": "label_values(ft_chat_messages_total, room_type)", "refresh": 1, "current": {"text": "All", "value": ".*", "selected": true}, "includeAll": true, "allValue": ".*", "multi": false}
+  ]},
+  "time": {"from": "now-1h", "to": "now"},
   "timezone": "",
-  "title": "Transcendence - Chat",
-  "uid": "transcendence-chat",
+  "title": "Transcendence — Chat",
   "version": 1
 }
