@@ -5,7 +5,7 @@ import { app } from '../app.js';
 import { JwtPayload, UserHistory } from '../types/userTypes.js';
 import { User, History } from '../models.js';
 
-const SCORETOWIN = -1;
+const SCORETOWIN = 3;
 let stored: boolean = false;
 
 declare module 'fastify' {
