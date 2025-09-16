@@ -7,6 +7,7 @@ import { userService } from '../services/userService.js';
 import { messageService } from '../services/messageService.js';
 import { CHAT_CONFIG, CHAT_EVENTS } from '../config/chatConfig.js';
 import { buildFriendList } from './friendHandlers.js';
+import { usersOnlineGauge } from '../../monitoring/metrics.js';
 
 export async function handleInitUser(
   socket: Socket,
@@ -69,6 +70,9 @@ export async function handleInitUser(
     );
 
     app.log.info(`Chat user connected: ${user.login}`);
+
+  // Metrics: utilisateurs en ligne
+  try { usersOnlineGauge.set({ service: 'chat' }, userService.getAllUsers().length); } catch {}
 
   } catch (error) {
     app.log.error('Chat auth error:', error);

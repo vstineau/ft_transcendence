@@ -3,6 +3,7 @@ import type { Socket } from 'socket.io';
 import type { FastifyInstance } from 'fastify';
 import { userService } from '../services/userService.js';
 import { CHAT_CONFIG, CHAT_EVENTS } from '../config/chatConfig.js';
+import { usersOnlineGauge } from '../../monitoring/metrics.js';
 
 export async function handleDisconnect(
   socket: Socket,
@@ -29,6 +30,9 @@ export async function handleDisconnect(
     );
 
     // app.log.info(`Chat user disconnected: ${user.login}`);
+
+  // Metrics: utilisateurs en ligne
+  try { usersOnlineGauge.set({ service: 'chat' }, userService.getAllUsers().length); } catch {}
   }
 }
 
