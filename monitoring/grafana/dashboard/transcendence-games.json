@@ -1,0 +1,26 @@
+{
+  "annotations": {"list": [{"builtIn": 1, "datasource": {"type": "grafana", "uid": "grafana"}, "enable": true, "hide": true, "iconColor": "rgba(0, 211, 255, 1)", "name": "Annotations & Alerts", "type": "dashboard"}]},
+  "editable": true,
+  "graphTooltip": 0,
+  "panels": [
+    {"type": "stat", "title": "Pong games started", "gridPos": {"h": 4, "w": 8, "x": 0, "y": 0},
+     "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(increase(ft_games_started_total{game=\"pong\"}[6h]))"}],
+     "options": {"reduceOptions": {"calcs": ["lastNotNull"], "values": false}, "orientation": "horizontal"}},
+    {"type": "stat", "title": "Pong games finished", "gridPos": {"h": 4, "w": 8, "x": 8, "y": 0},
+     "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum(increase(ft_games_finished_total{game=\"pong\"}[6h]))"}],
+     "options": {"reduceOptions": {"calcs": ["lastNotNull"], "values": false}, "orientation": "horizontal"}},
+    {"type": "timeseries", "title": "Game duration (s)", "gridPos": {"h": 8, "w": 24, "x": 0, "y": 4},
+     "targets": [{"datasource": {"uid": "prometheus"}, "expr": "histogram_quantile(0.9, sum by (le) (rate(ft_game_duration_seconds_bucket{game=\"pong\"}[5m])))"}],
+     "options": {"legend": {"displayMode": "table", "placement": "bottom"}}},
+    {"type": "table", "title": "Finished games details (sample)", "gridPos": {"h": 8, "w": 24, "x": 0, "y": 12},
+     "targets": [{"datasource": {"uid": "prometheus"}, "expr": "topk(10, ft_pong_games_finished_info_total)"}]}
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": ["Transcendence"],
+  "time": {"from": "now-6h", "to": "now"},
+  "title": "Transcendence - Games",
+  "uid": "transcendence-games",
+  "version": 1
+}

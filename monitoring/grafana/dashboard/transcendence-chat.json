@@ -1,0 +1,30 @@
+{
+  "annotations": {"list": [{"builtIn": 1, "datasource": {"type": "grafana", "uid": "grafana"}, "enable": true, "hide": true, "iconColor": "rgba(0, 211, 255, 1)", "name": "Annotations & Alerts", "type": "dashboard"}]},
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {"type": "stat", "title": "Users online (chat)", "gridPos": {"h": 4, "w": 8, "x": 0, "y": 0},
+     "targets": [{"datasource": {"uid": "prometheus"}, "expr": "ft_users_online{service=\"chat\"}"}],
+     "options": {"reduceOptions": {"calcs": ["lastNotNull"], "values": false}, "orientation": "horizontal"}}
+    ,{"type": "stat", "title": "Active chat rooms", "gridPos": {"h": 4, "w": 8, "x": 8, "y": 0},
+     "targets": [{"datasource": {"uid": "prometheus"}, "expr": "ft_chat_active_rooms"}],
+     "options": {"reduceOptions": {"calcs": ["lastNotNull"], "values": false}, "orientation": "horizontal"}}
+    ,{"type": "timeseries", "title": "Messages per room", "gridPos": {"h": 8, "w": 24, "x": 0, "y": 4},
+     "options": {"legend": {"displayMode": "list", "placement": "bottom"}},
+     "targets": [{"datasource": {"uid": "prometheus"}, "expr": "sum by (room_type,room_id)(rate(ft_chat_messages_total[5m]))"}]}
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": ["Transcendence"],
+  "templating": {"list": []},
+  "time": {"from": "now-6h", "to": "now"},
+  "timezone": "",
+  "title": "Transcendence - Chat",
+  "uid": "transcendence-chat",
+  "version": 1
+}

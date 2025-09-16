@@ -13,7 +13,7 @@ import {userRoutes} from './routes/router.js'
 import oauth2Options from './auth/oauth2Options.js'
 
 export const app = Fastify({
-	logger: true,
+	logger: false,
 	trustProxy: true,
 	ignoreTrailingSlash: true,
 	ignoreDuplicateSlashes: true
