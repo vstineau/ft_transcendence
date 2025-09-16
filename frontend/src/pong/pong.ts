@@ -327,35 +327,35 @@ export async function pongGame() {
 	});
 	socket.on('playerWin', (player: Player, game) => {
 		if (!gameOver) {
+			disconnectSocket();
 			canvas.remove();
-			const title = document.getElementById('title') as HTMLElement;
-			title.textContent = `${player.nickName} Wins!`;
-			title.className = 'mb-10 text-2xl font-bold text-white';
-			title.hidden = false;
-			// Crée le bouton de retour au dashboard
-			const button = document.getElementById('endButton') as HTMLElement;
-			button.textContent = 'Return to Dashboard';
-			button.className =
-				'rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white mt-4';
-			button.hidden = false;
-			button.addEventListener('click', () => {
-				navigateTo('/dashboard');
-			});
-
-			// Ajoute le titre et le bouton dans le container principal
-			const page = document.getElementById('pongGame');
-			if (page) {
-				page.appendChild(title);
-				page.appendChild(button);
-			}
-			page?.append(title);
-			page?.append(button);
 			const win = player.id === game.p1.id ? 'p1Avatar' : 'p2Avatar';
 			const looser = player.id === game.p1.id ? 'p2Avatar' : 'p1Avatar';
-			disconnectSocket();
-			resetButtons(looser, win);
 			lastGame = game;
 			winner = player;
+			resetButtons(looser, win);
+			// const title = document.getElementById('title') as HTMLElement;
+			// title.textContent = `${player.nickName} Wins!`;
+			// title.className = 'mb-10 text-2xl font-bold text-white';
+			// title.hidden = false;
+			// // Crée le bouton de retour au dashboard
+			// const button = document.getElementById('endButton') as HTMLElement;
+			// button.textContent = 'Return to Dashboard';
+			// button.className =
+			// 	'rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white mt-4';
+			// button.hidden = false;
+			// button.addEventListener('click', () => {
+			// 	navigateTo('/dashboard');
+			// });
+
+			// Ajoute le titre et le bouton dans le container principal
+			// const page = document.getElementById('pongGame');
+			// if (page) {
+			// 	page.appendChild(title);
+			// 	page.appendChild(button);
+			// }
+			// page?.append(title);
+			// page?.append(button);
 		}
 		gameOver = true;
 		if (gameOver && winner && lastGame) {
