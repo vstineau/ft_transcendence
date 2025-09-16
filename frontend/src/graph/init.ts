@@ -26,10 +26,13 @@ export function initSnakeStats(){
 			return;
 		}
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetUserId = urlParams.get('user');
+
 		console.log('Creating charts...');
         const scoreCtx = (scoreCanvas as HTMLCanvasElement).getContext('2d');
         if(scoreCtx) {
-                const lengthData = await analyzeLengthDistribution();
+                const lengthData = await analyzeLengthDistribution(targetUserId || undefined);
 
                 new Chart(scoreCtx, {
                     type: 'bar',
@@ -54,7 +57,7 @@ export function initSnakeStats(){
 
         const timeCtx = (timeCanvas as HTMLCanvasElement).getContext('2d');
         if(timeCtx){
-            const timeData = await analyzeGameTimes();
+            const timeData = await analyzeGameTimes(targetUserId || undefined);
 
             new Chart(timeCtx, {
                 type: 'doughnut',
@@ -79,22 +82,31 @@ export function initSnakeStats(){
 
 		if (lastGamesContainer) {
             console.log('Calling updateLastGames...');
-            updateLastGames();
+            
+            // Détecter si on regarde le profil d'un autre utilisateur
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetUserId = urlParams.get('user');
+            
+            updateLastGames(targetUserId || undefined); // targetUserId
             updateRanking();
             updateUserProfile();
         } else {
             console.error('Element #last-games-content not found!');
-            // Reessayer apres un delai comme pour les canvas
             setTimeout(() => {
                 const container = document.querySelector('#last-games-content');
                 if (container) {
                     console.log('Found container on retry, calling updateLastGames...');
-                    updateLastGames();
+                    
+                    // Même logique pour le retry
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const targetUserId = urlParams.get('user');
+                    
+                    updateLastGames(targetUserId || undefined);
                 } else {
                     console.error('Still no #last-games-content found after retry');
                 }
             }, 100);
-		}
+        }
     };
 
     tryInit();
@@ -150,7 +162,7 @@ export function formatGameTime(timeInMs: number): string {
 }
 
 
-function generateLastGamesHTML(games: SnakeGameHistory[]): string {
+function generateLastGamesHTML(games: SnakeGameHistory[], targetUserId?: string, targetUserName?: string): string {
     if (games.length === 0) {
         return `
             <div class="flex flex-col items-center justify-center py-8 text-center">
@@ -162,8 +174,19 @@ function generateLastGamesHTML(games: SnakeGameHistory[]): string {
     const lastGames = games.slice(0, 3);
 
     return lastGames.map((game, index) => {
-        let leftPlayer = 'YOU';
-        let rightPlayer = game.opponentLogin || 'Opponent';
+        // let leftPlayer = 'YOU';
+        // let rightPlayer = game.opponentLogin || 'Opponent';
+        let leftPlayer, rightPlayer;
+        
+        if (targetUserId && targetUserName) {
+            // Si on regarde le profil d'un autre utilisateur
+            leftPlayer = targetUserName; // Le nom de l'utilisateur dont on regarde le profil
+            rightPlayer = game.opponentLogin || 'Opponent';
+        } else {
+            // Si on regarde son propre profil
+            leftPlayer = 'YOU';
+            rightPlayer = game.opponentLogin || 'Opponent';
+        }
 
         if (game.win === 'WIN') {
             leftPlayer = '👑 YOU';
@@ -195,19 +218,72 @@ function generateLastGamesHTML(games: SnakeGameHistory[]): string {
 }
 
 
-export async function updateLastGames(): Promise<void> {
+// export async function updateLastGames(): Promise<void> {
+//     try {
+//         const games = await fetchSnakeHistory();
+//         setCurrentGames(games); // ← Stocker les parties globalement
+
+//         const lastGamesContainer = document.querySelector('#last-games-content');
+
+//         if (lastGamesContainer) {
+//             lastGamesContainer.innerHTML = generateLastGamesHTML(games);
+//         }
+//     } catch (error) {
+//         console.error('Error updating last games:', error);
+//         setCurrentGames([]);
+//     }
+// }
+
+export async function updateLastGames(targetUserId?: string): Promise<void> {
     try {
-        const games = await fetchSnakeHistory();
-        setCurrentGames(games); // ← Stocker les parties globalement
-
+        let games;
+        if (targetUserId) {
+            // Récupérer l'historique de l'autre utilisateur
+            games = await fetchSnakeHistoryOther(targetUserId);
+        } else {
+            // Récupérer votre propre historique
+            games = await fetchSnakeHistory();
+        }
+        
+        setCurrentGames(games);
         const lastGamesContainer = document.querySelector('#last-games-content');
-
         if (lastGamesContainer) {
-            lastGamesContainer.innerHTML = generateLastGamesHTML(games);
+            if (!games || games.length === 0) {
+                lastGamesContainer.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-8 text-center">
+                        <p class="text-gray-500 text-sm">No games played yet</p>
+                    </div>
+                `;
+            } else {
+                const displayName = document.getElementById('profile-display-name')?.textContent;
+                lastGamesContainer.innerHTML = generateLastGamesHTML(games, targetUserId, displayName || undefined);
+            }
         }
     } catch (error) {
         console.error('Error updating last games:', error);
         setCurrentGames([]);
+    }
+}
+
+export async function fetchSnakeHistoryOther(targetUserId: string): Promise<SnakeGameHistory[]> {
+    try {
+        console.log('=== FETCHING SNAKE HISTORY FOR OTHER USER ===');
+        const host = window.location.hostname;
+        const port = window.location.port;
+        const protocol = window.location.protocol;
+        
+        const response = await fetch(`${protocol}//${host}:${port}/api/snake/history/${targetUserId}`);
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch snake history for other user');
+        }
+        
+        const data = await response.json();
+        console.log('Other user snake history received:', data);
+        return data;
+    } catch (error) {
+        console.log('Error fetching other user snake history:', error);
+        return [];
     }
 }
 

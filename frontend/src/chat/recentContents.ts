@@ -34,12 +34,15 @@ async function fetchRecentContacts(): Promise<User[]> {
 function generateContactHTML(contacts: User[]): string {
     console.log('Number of contacts:', contacts.length);
 
-    if (contacts.length === 0) {
+    // Garder uniquement les personnes connectées (online ou en jeu)
+    const connected = contacts.filter(c => c.status === 'online' || c.status === 'in-game');
+
+    if (connected.length === 0) {
         return `
             <div class="flex flex-col items-center justify-center w-full text-center py-4">
                 <div class="mb-4">
-                    <h4 class="font-semibold text-gray-700 mb-2">No recent chats</h4>
-                    <p class="text-sm text-gray-500 mb-2">Start a conversation with other players!</p>
+                    <h4 class="font-semibold text-gray-700 mb-2">No online users</h4>
+                    <p class="text-sm text-gray-500 mb-2">Invite friends or join the global chat!</p>
                 </div>
                 <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors" onclick="openGlobalChat()">
                     Join Global Chat
@@ -48,8 +51,8 @@ function generateContactHTML(contacts: User[]): string {
         `;
     }
 
-    // Limiter à 3 contacts maximum
-    const displayContacts = contacts.slice(0, 3);
+    // Limiter à 3 contacts maximum parmi les connectés
+    const displayContacts = connected.slice(0, 3);
 
     return displayContacts.map((contact, index) => {
         let avatarContent;
@@ -72,7 +75,7 @@ function generateContactHTML(contacts: User[]): string {
             </div>`;
         }
 
-        const statusClass = contact.status === 'online' ? 'bg-green-500' : 'bg-gray-400';
+    const statusClass = contact.status === 'online' ? 'bg-green-500' : (contact.status === 'in-game' ? 'bg-yellow-500' : 'bg-gray-400');
 
         return `
             <div class="text-center cursor-pointer hover:opacity-80 transition-opacity" onclick="openChat('${contact.id}')">
@@ -119,8 +122,10 @@ declare global {
     interface Window {
         openChat: (userId: string) => void;
 		openGlobalChat: () => void;
+    updateRecentContacts?: () => Promise<void>;
     }
 }
 
 window.openChat = openChat; //c'est lie a ca
 window.openGlobalChat = openGlobalChat;
+window.updateRecentContacts = updateRecentContacts;

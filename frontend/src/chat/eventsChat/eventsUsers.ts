@@ -22,10 +22,12 @@ export function eventsUsers(this: ChatManager) {
 				u.id === user.id ? { ...u, username: user.nickName || user.login, avatar: user.avatar, status: 'online' } : u
 			);
 		}
-		(this as any).renderOnlineUsers();
+        (this as any).renderOnlineUsers();
 		(this as any).renderRoomsList();
 		(this as any).renderFriendsList();
 		(this as any).updateCurrentRoomIndicator((this as any).state.activeTab);
+        // Rafraîchir les "recent contacts" si disponible
+        window.updateRecentContacts?.();
 	});
 
     this.on('userLeft', (user: any) => {
@@ -39,6 +41,7 @@ export function eventsUsers(this: ChatManager) {
             (this as any).renderRoomsList();
             (this as any).renderFriendsList();
             (this as any).updateCurrentRoomIndicator((this as any).state.activeTab);
+            window.updateRecentContacts?.();
         }
     });
 
@@ -76,8 +79,27 @@ export function eventsUsers(this: ChatManager) {
         (this as any).renderRoomsList();
         (this as any).renderFriendsList();
         (this as any).updateCurrentRoomIndicator((this as any).state.activeTab);
+        window.updateRecentContacts?.();
     });
 
+
+    // ==== STATUS CHANGE =====
+    
+    this.on(CHAT_EVENTS.USER_STATUS_CHANGED, (data: { userId: string; status: 'online' | 'in-game' }) => {
+        console.log('🔄 User status changed:', data);
+        const updated = (this as any).state.onlineUsers.map((u: any) =>
+            u.id === data.userId ? { ...u, status: data.status } : u
+        );
+        //if ((this as any).state.currentUser.id === data.userId) {
+        //    (this as any).state.currentUser.status = data.status;
+        //}
+        (this as any).state.onlineUsers = updated;
+        (this as any).renderOnlineUsers();
+        (this as any).renderRoomsList();
+        (this as any).renderFriendsList();
+        (this as any).updateCurrentRoomIndicator((this as any).state.activeTab);
+        window.updateRecentContacts?.();
+    });
 
     // ==== BLOCK / UNBLOCK =====
 

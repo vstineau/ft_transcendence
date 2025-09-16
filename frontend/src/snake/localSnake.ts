@@ -1,3 +1,4 @@
+// @ts-ignore
 import { Game, pos, Snake } from '../types/snakeTypes';
 import { navigateTo } from '../main';
 
@@ -325,7 +326,7 @@ class LocalSnakeGame {
 		this.ctx.font = `${px}px Arial`;
 		console.log(winner.name);
 		this.ctx.fillText(
-			winner.name + ' wins! hjksdfghkjsdhfsjkdfhskjdfhskjdf',
+			winner.name + ' wins!',
 			this.canvas.width * 0.5,
 			this.canvas.height * 0.32,
 			this.canvas.width * 0.4

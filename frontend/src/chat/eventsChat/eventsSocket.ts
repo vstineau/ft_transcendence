@@ -7,12 +7,6 @@ export function eventsSocket(this: ChatManager) {
 	// Événement de connexion au serveur
 	this.on('connect', () => {
 		console.log('💬 Chat socket connected');
-		let cookie = getCookie('token');
-		if (cookie) {
-			this.emit(CHAT_EVENTS.INIT_USER, cookie);
-		} else {
-			console.error('❌ No auth token found in cookies');
-		}
 	});
 
 	// Écouter les événements du serveur

@@ -1,11 +1,12 @@
 // @ts-ignore
 import type { ChatState, Message, ChatRoom } from './types';
-import { ChatPanel } from './components/ChatPanel';
+import { ChatPanel, ButtonGameInvite } from './components';
 import { SocketService, UIprofileService } from './services';
 import { formatTime, escapeHtml, createAvatarElement } from './utils';
 import { CHAT_EVENTS } from './config';
 import { eventsSocket, eventsMessages, eventsUsers, eventsRooms, eventsFriends } from './eventsChat';
 import { navigateTo } from '../main';
+
 
 export class ChatManager extends SocketService {
     private state: ChatState = {
@@ -35,7 +36,7 @@ export class ChatManager extends SocketService {
         // Instanciation du mini UI profil (handlers à adapter selon ton routing/backend)
         this.profileUI = new UIprofileService({
             viewProfile: (userId: string) => {
-                TODO: navigateTo('/pong/matchmaking/localgame');
+                navigateTo(`/statisticsSnake?user=${userId}`);
             },
             privateMessage: (userId: string) => {
                 this.startPrivateChat(userId);
@@ -85,6 +86,8 @@ export class ChatManager extends SocketService {
     public closeChat() {
         const chatPanel = document.getElementById('chat-panel');
         if (chatPanel) {
+            this.profileUIAttached = false;
+            this.state.isOpen = false;
             chatPanel.remove();
         }
     }
@@ -96,7 +99,7 @@ export class ChatManager extends SocketService {
         this.setupPanelEventListeners();
         this.updateMessagesDisplay();
         this.updateCurrentRoomIndicator(this.state.activeTab);
-        this.renderOnlineUsers();   
+        this.renderOnlineUsers();
         this.renderSidebar();
 
         // Brancher le popover sur les conteneurs pertinents (une seule fois)
@@ -108,8 +111,9 @@ export class ChatManager extends SocketService {
                 '#chat-search-results',
             ]);
             this.profileUIAttached = true;
+            this.state.isOpen = true;
         }
-        
+
         const messagesContainer = document.getElementById('messages-container');
         if (messagesContainer) {
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -128,14 +132,14 @@ export class ChatManager extends SocketService {
         // Envoyer un message
         const sendBtn = document.getElementById('send-message');
         const messageInput = document.getElementById('message-input') as HTMLInputElement;
-        
+
         if (sendBtn && messageInput) {
             sendBtn.addEventListener('click', () => {
                 this.sendMessage(messageInput.value);
                 messageInput.value = '';
             });
 
-		//boutons pour inviter dans une partie de snake ou pong 
+		//boutons pour inviter dans une partie de snake ou pong
         const host = window.location.hostname;
         const port = window.location.port;
         const protocol = window.location.protocol;
@@ -186,7 +190,7 @@ export class ChatManager extends SocketService {
             roomsContainer.addEventListener('click', (e) => {
                 const target = e.target as HTMLElement;
                 const roomElement = target.closest('[data-room-id]') as HTMLElement;
-                
+
                 if (roomElement) {
                     const roomId = roomElement.dataset.roomId;
                     // console.log(`🎯 Clic sur room: ${roomId}`);
@@ -203,7 +207,7 @@ export class ChatManager extends SocketService {
             onlineUsersContainer.addEventListener('click', (e) => {
                 const target = e.target as HTMLElement;
                 const userElement = target.closest('[data-online-id]') as HTMLElement;
-                
+
                 if (userElement) {
                     const userId = userElement.dataset.onlineId;
                     console.log(`💬 Clic sur utilisateur: ${userId}`);
@@ -220,6 +224,70 @@ export class ChatManager extends SocketService {
                     console.log(`💬 Clic sur ami: ${userId}`)
                     this.startPrivateChat(userId!)
                     }
+            });
+        }
+        
+        // Gestion des clics sur les boutons de jeux (pong snake)
+        const pong = document.getElementById('pong-button');
+        const snake = document.getElementById('snake-button');
+
+        if (pong) {
+            pong.addEventListener('click', () => {
+                // Doit être dans une room privée
+                if (!this.currentRoom || this.currentRoom.type !== 'private') {
+                    console.warn('Invitation Pong: action disponible uniquement en chat privé');
+                    return;
+                }
+                const p2 = this.getOtherParticipantId();
+                if (!p2) {
+                    console.warn('Invitation Pong: aucun destinataire trouvé');
+                    return;
+                }
+                console.log('Invitation Pong: envoi de l\'invitation');
+                this.emit(CHAT_EVENTS.GAME_INVITATION, { targetUserId: p2, gameType: 'pong' });
+            });
+        }
+
+        if (snake) {
+            snake.addEventListener('click', () => {
+                // À implémenter
+            });
+        }
+
+        // Délégation: accepter une invitation de jeu dans les messages
+        const messagesContainer = document.getElementById('messages-container');
+        if (messagesContainer) {
+            messagesContainer.addEventListener('click', (e) => {
+                const target = (e.target as HTMLElement);
+                // Accept
+                const acceptBtn = target.closest('[data-accept-invite]') as HTMLElement | null;
+                if (acceptBtn) {
+                    const inviteId = acceptBtn.getAttribute('data-invite-id') || '';
+                    const targetSocketId = acceptBtn.getAttribute('data-target-socket-id') || '';
+                    this.emit(CHAT_EVENTS.GAME_INVITATION_RESPONSE, { invitationId: inviteId, accepted: true, targetSocketId });
+                    // Clean both buttons
+                    document.querySelectorAll(`[data-invite-id="${CSS.escape(inviteId)}"]`).forEach(el => el.remove());
+                    // La redirection se fera via handleInvitationAnswer() avec l'URL du backend
+                    return;
+                }
+
+                // Decline
+                const declineBtn = target.closest('[data-decline-invite]') as HTMLElement | null;
+                if (declineBtn) {
+                    const inviteId = declineBtn.getAttribute('data-invite-id') || '';
+                    const targetSocketId = declineBtn.getAttribute('data-target-socket-id') || '';
+                    this.emit(CHAT_EVENTS.GAME_INVITATION_RESPONSE, { invitationId: inviteId, accepted: false, targetSocketId });
+                    // Remove both buttons and show declined note
+                    document.querySelectorAll(`[data-invite-id="${CSS.escape(inviteId)}"]`).forEach(el => el.remove());
+                    const row = document.querySelector(`[data-invite-row="${CSS.escape(inviteId)}"]`);
+                    if (row) {
+                        const note = document.createElement('div');
+                        note.className = 'mt-2 text-[11px] text-red-500';
+                        note.textContent = 'Invitation refusée';
+                        row.appendChild(note);
+                    }
+                    return;
+                }
             });
         }
     }
@@ -253,6 +321,32 @@ export class ChatManager extends SocketService {
             avatar = `<img src="${this.state.currentUserId.avatar}" alt="avatar" class="w-8 h-8 rounded-full object-cover shrink-0" />`;
         } else {
             avatar = createAvatarElement(message.username, message.avatarPath, 'md');
+        }
+
+        // Invitation de jeu (rendu spécial)
+                if ((message as any).type === 'game-invitation') {
+            // Supporte message.id comme identifiant d'invitation, sinon 'invitationId'
+            const invitationId = (message as any).invitationId || message.id;
+            const meta = (message as any) || {};
+            const p1 = meta.p1;
+            const p2 = meta.p2;
+            const isInvitee = this.state.currentUserId?.id && p2 && this.state.currentUserId.id === p2;
+                        const actions = isInvitee
+                                ? `
+                                        <div class="mt-2 flex gap-2">
+                                                <button class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white rounded px-2 py-1"
+                                                                data-accept-invite
+                                                                data-invite-id="${invitationId}"
+                                                                data-target-socket-id="${meta.targetSocketId || ''}">Accepter</button>
+                                                <button class="text-xs bg-red-600 hover:bg-red-500 text-white rounded px-2 py-1"
+                                                                data-decline-invite
+                                                                data-invite-id="${invitationId}"
+                                                                data-target-socket-id="${meta.targetSocketId || ''}">Refuser</button>
+                                        </div>
+                                    `
+                                : `<span class="mt-2 text-[11px] text-gray-400">En attente d'acceptation…</span>`;
+
+            return ButtonGameInvite(avatar, invitationId, message, time, actions);
         }
 
         if (isOwn) {
@@ -310,7 +404,7 @@ export class ChatManager extends SocketService {
 
     public async switchRoom(roomId: string) {
         // console.log(`🔄 Changement vers room: ${roomId}`);
-        
+
         // Mettre à jour l'état local
         this.state.activeTab = roomId as any;
         this.currentRoom = this.rooms?.find(r => r.id === roomId) || null;
@@ -326,18 +420,18 @@ export class ChatManager extends SocketService {
             case 'global':
                 // console.log('💬 Chat global activé');
                 break;
-                
+
             case 'pong':
                 // console.log('🏓 Room Pong activée');
                 // Rejoindre la room pong côté serveur
                 this.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: 'pong' });
                 break;
-                
+
             case 'snake':
                 console.log('🐍 Room Snake activée');
                 this.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: 'snake' });
                 break;
-                
+
             default:
                 console.log(`📁 Room personnalisée: ${roomId}`);
                 // Si c'est une room privée, joindre avec le bon payload
@@ -356,13 +450,13 @@ export class ChatManager extends SocketService {
                 }
                 break;
         }
-        
+
         // Mettre à jour la sélection visuelle
         this.updateRoomSelection(roomId);
-        
+
         // Mettre à jour l'indicateur de room courante
         this.updateCurrentRoomIndicator(roomId);
-        
+
     // Reset unread counter for the room we just switched to
     this.resetUnread(roomId);
     // Re-sync global badge with total unread across rooms
@@ -372,8 +466,8 @@ export class ChatManager extends SocketService {
     // Mettre à jour l'affichage des messages avec ceux de la nouvelle room
         this.updateMessagesDisplay();
     }
-    
-    
+
+
     private updateRoomSelection(activeRoomId: string) {
         // La sélection est maintenant gérée directement dans renderRoomsList()
         // Il suffit de re-rendre la liste des rooms
@@ -384,19 +478,19 @@ export class ChatManager extends SocketService {
         const indicatorElement = document.getElementById('current-room-indicator');
         const iconElement = document.getElementById('room-indicator-icon');
         const textElement = document.getElementById('room-indicator-text');
-        
+
         if (!indicatorElement || !iconElement || !textElement) return;
 
         // Trouver la room correspondante
         const room = this.rooms?.find(r => r.id === roomId);
-        
+
         let icon = '💬';
         let roomName = roomId;
         let bgColor = 'bg-gray-700'; // couleur par défaut
-        
+
         if (room) {
             roomName = room.name;
-            
+
             // Déterminer l'icône et la couleur selon le type de room
             if (room.id === 'global') {
                 icon = '🌐';
@@ -412,13 +506,13 @@ export class ChatManager extends SocketService {
                 // Pour les rooms privées, afficher l'avatar avec le statut
                 const otherUserId = room.participants?.find(id => id !== this.state.currentUserId?.id);
                 const otherUser = this.state.onlineUsers?.find(u => u.id === otherUserId);
-                
+
                 if (otherUser) {
-                    
+
                     const avatar = createAvatarElement(otherUser.username, otherUser.avatar, 'sm');
                     let statusColor = 'bg-gray-500';
                     if (otherUser.status === 'online') statusColor = 'bg-green-500';
-                    else if (otherUser.status === 'in-game') statusColor = 'bg-yellow-500';
+                    else if (otherUser.status === 'in-game') statusColor = 'bg-blue-500';
                     
                     if (otherUser.status === 'online') {
                         iconElement.innerHTML = `
@@ -455,16 +549,16 @@ export class ChatManager extends SocketService {
                 bgColor = 'bg-gray-600';
             }
         }
-        
+
         // Enlever toutes les classes de couleur et ajouter la nouvelle
         indicatorElement.className = indicatorElement.className.replace(/bg-\w+-\d+/g, '');
         indicatorElement.classList.add(bgColor);
-        
+
         // Seulement mettre à jour l'icône si ce n'est pas une room privée (car on a déjà mis l'avatar)
         if (!room || room.type !== 'private' || !room.participants?.find(id => id !== this.state.currentUserId?.id)) {
             iconElement.textContent = icon;
         }
-        
+
         textElement.textContent = roomName;
     }
 
@@ -480,14 +574,14 @@ export class ChatManager extends SocketService {
         if (!container) return;
 
         const rooms = this.rooms || [];
-        
+
         container.innerHTML = rooms.map(room => {
             const isActive = room.id === this.state.activeTab;
             const activeClass = isActive ? 'bg-gray-700' : '';
-            
+
             // Déterminer l'icône selon le type de room
             let iconHtml = '';
-            
+
             if (room.id === 'global') {
                 iconHtml = '<span class="text-[10px] text-gray-500">🌐</span>';
             } else if (room.id === 'pong') {
@@ -502,7 +596,7 @@ export class ChatManager extends SocketService {
                 if (otherUser) {
                     const avatar = createAvatarElement(otherUser.username, otherUser.avatar, 'sm');
                     const statusColor = otherUser.status === 'online' ? 'bg-green-500' : 
-                                      otherUser.status === 'in-game' ? 'bg-yellow-500' : 'bg-gray-500';
+                                      otherUser.status === 'in-game' ? 'bg-blue-500' : 'bg-gray-500';
                     
                     iconHtml = `
                         <div class="relative w-5 h-5">
@@ -520,7 +614,7 @@ export class ChatManager extends SocketService {
             return `
                 <div data-room-id="${room.id}" class="flex items-center px-2 py-1.5 rounded hover:bg-gray-800 cursor-pointer group ${activeClass}">
                     <div class="mr-2 w-5 flex items-center justify-center">
-                        ${room.unreadCount > 0 
+                        ${room.unreadCount > 0
                             ? `<span class=\"bg-red-500 text-white text-[9px] font-semibold rounded-full w-4 h-4 flex items-center justify-center\">${room.unreadCount > 9 ? '9+' : room.unreadCount}</span>`
                             : `<span class=\"w-2 h-2 bg-gray-500 rounded-full\"></span>`}
                     </div>
@@ -545,8 +639,8 @@ export class ChatManager extends SocketService {
 
         list.innerHTML = friends.map(f => {
             const ou = online.get(f.id);
-            const status = ou?.status || f.status || 'offline';
-            const statusColor = status === 'online' ? 'bg-green-500' : (status === 'in-game' ? 'bg-yellow-500' : 'bg-gray-500');
+            const status = ou?.status || f.status || 'offline' || 'in-game';
+            const statusColor = status === 'online' ? 'bg-green-500' : (status === 'in-game' ? 'bg-blue-500' : 'bg-gray-500');
             const avatar = createAvatarElement(f.username, f.avatar, 'sm');
             return `<div data-friend-id="${f.id}" class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-800 cursor-pointer">
                 <div class="relative w-8 h-8" data-user-id="${f.id}">
@@ -563,13 +657,13 @@ export class ChatManager extends SocketService {
     private renderOnlineUsers() {
         const container = document.getElementById('chat-online-users');
         if (!container) return;
-        
+
         const online = (this.state.onlineUsers || []).filter(u => u.status === 'online');
         if (!online.length) {
             container.innerHTML = `<div class="text-[11px] text-gray-500 px-1">Personne</div>`;
             return;
         }
-        
+
         container.innerHTML = online.map(u => {
             const avatar = createAvatarElement(u.username, u.avatar, 'sm');
             return `<div data-online-id="${u.id}" class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-800 cursor-pointer">
@@ -582,25 +676,26 @@ export class ChatManager extends SocketService {
                 </div>
             </div>`;
         }).join('');
+
     }
 
     private renderSearchResults() {
         const container = document.getElementById('chat-search-results');
         if (!container) return;
-        
+
         const results = this.state.searchResults || [];
         if (!this.state.searchTerm || this.state.searchTerm.length < 2 || results.length === 0) {
             container.classList.add('hidden');
             container.innerHTML = '';
             return;
         }
-        
+
         container.classList.remove('hidden');
         const currentId = this.state.currentUserId?.id;
         const friendIds = new Set((this.state.currentUserId?.friendList || []).map(f => f.id));
 
         container.innerHTML = results.map(u => {
-            const statusColor = u.status === 'online' ? 'bg-green-500' : (u.status === 'in-game' ? 'bg-yellow-500' : 'bg-gray-500');
+            const statusColor = u.status === 'online' ? 'bg-green-500' : (u.status === 'in-game' ? 'bg-blue-500' : 'bg-gray-500');
             const avatar = createAvatarElement(u.username, u.avatar, 'sm');
             const isSelf = u.id === currentId;
             const isFriend = friendIds.has(u.id);
@@ -715,7 +810,7 @@ export class ChatManager extends SocketService {
 
         // Vérifier si la room existe déjà
         const existingRoom = this.rooms?.find(r => r.id === roomId);
-        
+
         if (!existingRoom) {
             // Créer une nouvelle room privée
             const newRoom: ChatRoom = {
@@ -748,7 +843,7 @@ export class ChatManager extends SocketService {
 
     private createAndShowPrivateRoom(message: Message) {
         console.log('💬 Message privé reçu, affichage de la room:', message.roomId);
-        
+
         // Trouver l'expéditeur du message
         const sender = this.state.onlineUsers?.find(u => u.id === message.userId);
         if (!sender) {
@@ -757,10 +852,10 @@ export class ChatManager extends SocketService {
         }
 
         const roomId = message.roomId!;
-        
+
         // Vérifier si la room existe déjà dans la liste
         const existingRoom = this.rooms?.find(r => r.id === roomId);
-        
+
         if (!existingRoom) {
             // Créer la room dans l'interface
             const newRoom: ChatRoom = {
@@ -774,9 +869,9 @@ export class ChatManager extends SocketService {
 
             if (!this.rooms) this.rooms = [];
             this.rooms.push(newRoom);
-            
+
             console.log(`✅ Room privée ajoutée: ${roomId} avec ${sender.username}`);
-            
+
             // Mettre à jour l'affichage des rooms
             this.renderRoomsList();
         }
@@ -786,17 +881,17 @@ export class ChatManager extends SocketService {
 
     private handleOutgoingPrivateMessage(message: Message) {
         console.log('📤 Message privé envoyé, s\'assurer que la room existe côté serveur:', message.roomId);
-        
+
         // Extraire l'ID de l'autre utilisateur depuis le roomId
         const roomId = message.roomId;
         if (!roomId?.startsWith('private_')) return;
-        
+
         // Extraire les IDs des participants depuis l'ID de la room (format: private_userId1_userId2)
         const userIds = roomId.replace('private_', '').split('_');
         const otherUserId = userIds.find(id => id !== this.state.currentUserId?.id);
 
         if (!otherUserId) return;
-        
+
         // N'envoyer JOIN_PRIVATE_ROOM qu'une seule fois pour cette room
         if (!this.initializedPrivateRooms.has(roomId)) {
             console.log(`🔄 Initialisation côté serveur de la room privée avec l'utilisateur ${otherUserId}`);
@@ -805,4 +900,51 @@ export class ChatManager extends SocketService {
         }
     }
 
+    // Utilitaires invitation Pong
+    private getOtherParticipantId(): string | null {
+        if (!this.currentRoom?.participants) return null;
+        const me = this.state.currentUserId?.id;
+        return this.currentRoom.participants.find(id => id !== me) || null;
+    }
+
+    private buildPongUrl(p1: string, p2: string): string {
+        return `/pong/matchmaking/game?p1=${encodeURIComponent(p1)}&p2=${encodeURIComponent(p2)}`;
+    }
+
+    public handleInvitationAnswer(data: { invitationId: string; accepted: boolean; url?: string; from?: any }) {
+        // Clean any buttons for this invite
+        document.querySelectorAll(`[data-invite-id="${CSS.escape(data.invitationId)}"]`).forEach(el => el.remove());
+
+        if (!data.accepted) {
+            // Marquer refus dans l'UI (si on a le conteneur)
+            const row = document.querySelector(`[data-invite-row="${CSS.escape(data.invitationId)}"]`);
+            if (row) {
+                const note = document.createElement('div');
+                note.className = 'mt-2 text-[11px] text-red-500';
+                note.textContent = 'Invitation refusée';
+                row.appendChild(note);
+            }
+            return;
+        }
+        // Redirection sur acceptation
+        if (data.url) {
+            this.goTo(data.url);
+            //this.closeChat();
+        } else if (data.from && data.from.id && this.state.currentUserId?.id) {
+            const url = this.buildPongUrl(this.state.currentUserId.id, data.from.id);
+            this.goTo(url);
+        }
+    }
+
+    private goTo(urlOrPath: string) {
+        // navigateTo attend un path relatif
+        try {
+            const origin = `${window.location.protocol}//${window.location.host}`;
+            const path = urlOrPath.startsWith(origin) ? urlOrPath.substring(origin.length) : urlOrPath;
+            navigateTo(path);
+        } catch {
+            // Fallback
+            window.location.href = urlOrPath;
+        }
+    }
 }

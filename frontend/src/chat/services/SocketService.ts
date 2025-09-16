@@ -1,6 +1,8 @@
 // @ts-ignore
 import io, { Socket } from 'socket.io-client';
 import { RoomsService } from './RoomsService';
+import { getCookie } from '../../pong/pong';
+import { CHAT_EVENTS } from '../config'
 
 /**
  * Service de gestion des connexions Socket.IO pour le chat
@@ -22,6 +24,15 @@ export class SocketService extends RoomsService {
     constructor() {
         super();
         this.createConnection();
+    }
+
+    startChat() {
+        let cookie = getCookie('token');
+        if (cookie) {
+            this.emit(CHAT_EVENTS.INIT_USER, cookie);
+        } else {
+            console.error('❌ No auth token found in cookies');
+        }
     }
 
     getSocket(): Socket | null {

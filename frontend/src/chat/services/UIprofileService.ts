@@ -96,17 +96,17 @@ export class UIprofileService {
 
 	private readStatusFromDom(scopeEl: HTMLElement, userId: string): 'online' | 'offline' | 'in-game' | undefined {
 		// Recherche locale dans l'élément cible
-		const local = scopeEl.querySelector('span.bg-green-500, span.bg-yellow-500, span.bg-gray-500');
+		const local = scopeEl.querySelector('span.bg-green-500, span.bg-blue-500, span.bg-gray-500');
 		const mapped = this.mapStatus(local);
 		if (mapped) return mapped;
 
 		// Fallback: chercher dans la liste des en ligne
-		const inOnline = document.querySelector(`[data-online-id="${CSS.escape(userId)}"] span.bg-green-500, [data-online-id="${CSS.escape(userId)}"] span.bg-yellow-500, [data-online-id="${CSS.escape(userId)}"] span.bg-gray-500`) as HTMLElement | null;
+		const inOnline = document.querySelector(`[data-online-id="${CSS.escape(userId)}"] span.bg-green-500, [data-online-id="${CSS.escape(userId)}"] span.bg-blue-500, [data-online-id="${CSS.escape(userId)}"] span.bg-gray-500`) as HTMLElement | null;
 		const m2 = this.mapStatus(inOnline);
 		if (m2) return m2;
 
 		// Fallback: chercher dans la liste des amis
-		const inFriends = document.querySelector(`[data-friend-id="${CSS.escape(userId)}"] span.bg-green-500, [data-friend-id="${CSS.escape(userId)}"] span.bg-yellow-500, [data-friend-id="${CSS.escape(userId)}"] span.bg-gray-500`) as HTMLElement | null;
+		const inFriends = document.querySelector(`[data-friend-id="${CSS.escape(userId)}"] span.bg-green-500, [data-friend-id="${CSS.escape(userId)}"] span.bg-blue-500, [data-friend-id="${CSS.escape(userId)}"] span.bg-gray-500`) as HTMLElement | null;
 		const m3 = this.mapStatus(inFriends);
 		if (m3) return m3;
 
@@ -117,7 +117,7 @@ export class UIprofileService {
 		if (!dotEl) return undefined;
 		const cls = (dotEl as HTMLElement).className || '';
 		if (cls.includes('bg-green-500')) return 'online';
-		if (cls.includes('bg-yellow-500')) return 'in-game';
+		if (cls.includes('bg-blue-500')) return 'in-game';
 		if (cls.includes('bg-gray-500')) return 'offline';
 		return undefined;
 	}
@@ -235,12 +235,13 @@ export class UIprofileService {
 	}
 
 	private buildStatusBadge(status?: 'online' | 'offline' | 'in-game'): string {
+		console.log('STAAAAAAAAAAAAAATUUUUUUS: ', status);
 		// Conserve le style "Disponible", mais adapte couleur/texte selon le statut détecté dans le DOM
 		if (status === 'online') {
 			return '<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 shadow-sm">• Disponible</span>';
 		}
 		if (status === 'in-game') {
-			return '<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] bg-yellow-500/10 text-yellow-300 border border-yellow-500/20 shadow-sm">🎮 En jeu</span>';
+			return '<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] bg-blue-500/10 text-blue-300 border border-yellow-500/20 shadow-sm">• In-game</span>';
 		}
 		if (status === 'offline') {
 			return '<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] bg-gray-500/10 text-gray-300 border border-gray-500/20 shadow-sm">• Hors-ligne</span>';

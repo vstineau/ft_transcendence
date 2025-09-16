@@ -839,9 +839,6 @@ function initDeleteAccountForm(): void {
 
             const response = await fetch(`${protocol}//${host}:${port}/api/deleteAccount`, {
                 method: 'DELETE', // Changé en DELETE car plus approprié
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 credentials: 'include', // Pour les cookies (authentification)
             });
 

@@ -6,6 +6,7 @@ export * from './utils';
 export * from './types';
 export * from './config';
 export * from './eventsChat';
+//export * from './recentContents';
 
 // Instance globale du chat (pour compatibilité avec l'existant)
 import { ChatManager } from './ChatManager';
@@ -28,5 +29,5 @@ export class ChatSingleton {
 	public get Manager() : ChatManager {
 		return this.chatManager;
 	}
-	
+
 }

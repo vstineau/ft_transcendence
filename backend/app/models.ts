@@ -9,6 +9,7 @@ import {v4 as uuidv4} from 'uuid';
 @Unique(['email'])
 @Unique(['login'])
 
+
 export class User extends BaseEntity {
 
 	@BeforeInsert()
