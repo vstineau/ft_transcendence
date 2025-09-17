@@ -752,7 +752,7 @@ function initProfilePictureUpload(): void {
 //					console.log("Saved user after update:", savedUser);
 //					console.log("Saved avatar length:", savedUser?.avatar?.length);
 				} else {
-//					console.log("Missing data - reply.user:", !!reply.user, "avatar:", !!reply.user?.avatar);
+					console.log("Missing data - reply.user:", !!reply.user, "avatar:", !!reply.user?.avatar);
 				}
 
 				setTimeout(() => {
