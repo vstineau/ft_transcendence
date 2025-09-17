@@ -12,7 +12,7 @@ export function eventsRooms(this: ChatManager) {
 
 		// Réception de l'historique des messages pour une room spécifique
         this.on(CHAT_EVENTS.MESSAGE_HISTORY, (data: any) => {
-            console.log(`📨 Messages reçus pour room ${data.room}:`, data.messages);
+            // console.log(`📨 Messages reçus pour room ${data.room}:`, data.messages);
             const room = data.room;
             const messages = data.messages || [];
 
@@ -31,7 +31,7 @@ export function eventsRooms(this: ChatManager) {
 
         // Écouter la confirmation de rejoindre une room privée
         this.on(CHAT_EVENTS.ROOM_JOINED, (data: any) => {
-            console.log(`✅ Room private rejointe: ${data.roomName}`, data.messages);
+            // console.log(`✅ Room private rejointe: ${data.roomName}`, data.messages);
             
             //// Mettre à jour les messages avec l'historique de la room privée
             //this.messages = data.messages || [];
@@ -42,7 +42,7 @@ export function eventsRooms(this: ChatManager) {
 
         // Écouter la création automatique d'une room privée par quelqu'un d'autre
         this.on(CHAT_EVENTS.PRIVATE_ROOM_CREATED, (data: any) => {
-            console.log(`🔔 Room privée créée par ${data.withUser.username}:`, data.roomName);
+            // console.log(`🔔 Room privée créée par ${data.withUser.username}:`, data.roomName);
             
             // Créer la room dans l'interface si elle n'existe pas
             const existingRoom = (this as any).rooms?.find((r: any) => r.id === data.roomName);
@@ -59,7 +59,7 @@ export function eventsRooms(this: ChatManager) {
 				if (!(this as any).rooms) (this as any).rooms = [];
                 (this as any).rooms.push(newRoom);
                 
-                console.log(`✅ Room privée ajoutée automatiquement: ${data.roomName} avec ${data.withUser.username}`);
+                // console.log(`✅ Room privée ajoutée automatiquement: ${data.roomName} avec ${data.withUser.username}`);
                 
                 // Mettre à jour l'affichage des rooms
                 (this as any).renderSidebar();

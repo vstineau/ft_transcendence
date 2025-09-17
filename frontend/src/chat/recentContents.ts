@@ -16,7 +16,7 @@ async function fetchRecentContacts(): Promise<User[]> {
             throw new Error('Failed to fetch recent contacts');
         }
 		const data = await response.json();
-		console.log('Raw API response:', data);
+		// console.log('Raw API response:', data);
 
 		 return data.map((contact: any) => ({
             id: contact.id,
@@ -32,7 +32,7 @@ async function fetchRecentContacts(): Promise<User[]> {
 }
 
 function generateContactHTML(contacts: User[]): string {
-    console.log('Number of contacts:', contacts.length);
+    // console.log('Number of contacts:', contacts.length);
 
     // Garder uniquement les personnes connectées (online ou en jeu)
     const connected = contacts.filter(c => c.status === 'online' || c.status === 'in-game');
@@ -92,7 +92,7 @@ function generateContactHTML(contacts: User[]): string {
 export async function updateRecentContacts(): Promise<void> {
     try {
         const contacts = await fetchRecentContacts();
-        console.log('Fetched contacts:', contacts);
+        // console.log('Fetched contacts:', contacts);
         const contactsContainer = document.getElementById('recent-contacts-container');
 
         if (contactsContainer) {
@@ -106,13 +106,13 @@ export async function updateRecentContacts(): Promise<void> {
 
 function openChat(userId: string): void {
     // Rediriger vers le chat ou ouvrir une modal
-    console.log('Opening chat with user:', userId);
+    // console.log('Opening chat with user:', userId);
     chatInstance.Manager.openChat();
     chatInstance.Manager.startPrivateChat(userId);
 }
 
 function openGlobalChat(): void {
-    console.log('Opening global chat');
+    // console.log('Opening global chat');
     chatInstance.Manager.openChat();
     chatInstance.Manager.switchRoom('global');
     // window.location.href = '/chat';

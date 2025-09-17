@@ -210,7 +210,7 @@ export class ChatManager extends SocketService {
 
                 if (userElement) {
                     const userId = userElement.dataset.onlineId;
-                    console.log(`💬 Clic sur utilisateur: ${userId}`);
+                    // console.log(`💬 Clic sur utilisateur: ${userId}`);
                     this.startPrivateChat(userId!);
                 }
             });
@@ -221,7 +221,7 @@ export class ChatManager extends SocketService {
                 const userElement = target.closest('[data-friend-id]') as HTMLElement;
                 if (userElement) {
                     const userId = userElement.dataset.friendId;
-                    console.log(`💬 Clic sur ami: ${userId}`)
+                    // console.log(`💬 Clic sur ami: ${userId}`)
                     this.startPrivateChat(userId!)
                     }
             });
@@ -243,7 +243,7 @@ export class ChatManager extends SocketService {
                     console.warn('Invitation Pong: aucun destinataire trouvé');
                     return;
                 }
-                console.log('Invitation Pong: envoi de l\'invitation');
+                // console.log('Invitation Pong: envoi de l\'invitation');
                 this.emit(CHAT_EVENTS.GAME_INVITATION, { targetUserId: p2, gameType: 'pong' });
             });
         }
@@ -410,7 +410,7 @@ export class ChatManager extends SocketService {
         this.currentRoom = this.rooms?.find(r => r.id === roomId) || null;
 
         // Demander les messages de cette room au backend
-        console.log(`📥 Chargement des messages pour room: ${roomId} + 'valeur de room.message[], ${this.currentRoom?.messages}'`);
+        // console.log(`📥 Chargement des messages pour room: ${roomId} + 'valeur de room.message[], ${this.currentRoom?.messages}'`);
         if (this.currentRoom?.messages.length === 0) {
             await this.loadRoomMessages(roomId);
         }
@@ -428,12 +428,12 @@ export class ChatManager extends SocketService {
                 break;
 
             case 'snake':
-                console.log('🐍 Room Snake activée');
+                // console.log('🐍 Room Snake activée');
                 this.emit(CHAT_EVENTS.JOIN_PUBLIC_ROOM, { room: 'snake' });
                 break;
 
             default:
-                console.log(`📁 Room personnalisée: ${roomId}`);
+                // console.log(`📁 Room personnalisée: ${roomId}`);
                 // Si c'est une room privée, joindre avec le bon payload
                 if (roomId.startsWith('private_')) {
                     const parts = roomId.replace('private_', '').split('_');
@@ -742,10 +742,10 @@ export class ChatManager extends SocketService {
         if (messagesContainer) {
             // Filtrer les messages pour afficher seulement ceux de la room active
             const currentRoom = this.state.activeTab; // 'global', 'pong' ou 'snake'
-            console.log('INITIALISATION des messages pour la room:', currentRoom);
+            // console.log('INITIALISATION des messages pour la room:', currentRoom);
             const roomMessages = this.currentRoom?.messages.filter(msg => msg.roomId === currentRoom);
             if (roomMessages) {
-                console.log('Messages trouvés pour la room:', roomMessages);
+                // console.log('Messages trouvés pour la room:', roomMessages);
                 messagesContainer.innerHTML = this.renderMessages(roomMessages);
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }
@@ -826,7 +826,7 @@ export class ChatManager extends SocketService {
         if (!this.rooms) this.rooms = [];
             this.rooms.push(newRoom);
 
-            console.log(`✅ Nouvelle room privée créée: ${roomId} avec ${targetUser.username}`);
+            // console.log(`✅ Nouvelle room privée créée: ${roomId} avec ${targetUser.username}`);
         }
 
         // Changer vers cette room (la room sera créée côté serveur seulement lors de l'envoi du premier message)
@@ -842,7 +842,7 @@ export class ChatManager extends SocketService {
     }
 
     private createAndShowPrivateRoom(message: Message) {
-        console.log('💬 Message privé reçu, affichage de la room:', message.roomId);
+        // console.log('💬 Message privé reçu, affichage de la room:', message.roomId);
 
         // Trouver l'expéditeur du message
         const sender = this.state.onlineUsers?.find(u => u.id === message.userId);
@@ -870,7 +870,7 @@ export class ChatManager extends SocketService {
             if (!this.rooms) this.rooms = [];
             this.rooms.push(newRoom);
 
-            console.log(`✅ Room privée ajoutée: ${roomId} avec ${sender.username}`);
+            // console.log(`✅ Room privée ajoutée: ${roomId} avec ${sender.username}`);
 
             // Mettre à jour l'affichage des rooms
             this.renderRoomsList();
@@ -880,7 +880,7 @@ export class ChatManager extends SocketService {
     }
 
     private handleOutgoingPrivateMessage(message: Message) {
-        console.log('📤 Message privé envoyé, s\'assurer que la room existe côté serveur:', message.roomId);
+        // console.log('📤 Message privé envoyé, s\'assurer que la room existe côté serveur:', message.roomId);
 
         // Extraire l'ID de l'autre utilisateur depuis le roomId
         const roomId = message.roomId;
@@ -894,7 +894,7 @@ export class ChatManager extends SocketService {
 
         // N'envoyer JOIN_PRIVATE_ROOM qu'une seule fois pour cette room
         if (!this.initializedPrivateRooms.has(roomId)) {
-            console.log(`🔄 Initialisation côté serveur de la room privée avec l'utilisateur ${otherUserId}`);
+            // console.log(`🔄 Initialisation côté serveur de la room privée avec l'utilisateur ${otherUserId}`);
             this.emit(CHAT_EVENTS.JOIN_PRIVATE_ROOM, { targetUserId: otherUserId });
             this.initializedPrivateRooms.add(roomId);
         }

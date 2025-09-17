@@ -27,12 +27,12 @@ export default {
             // Cherchez par login comme vous voulez
             const user = await User.findOneBy({ id: decoded.id })
 
-            if(user) console.log('contenue login2fa:', user.login,);
+            // if(user) console.log('contenue login2fa:', user.login,);
             // Vérifiez que l'ID correspond au tmpToken (sécurité)
             if (!user) {
                 throw new Error('Invalid session')
             }
-            if(user) console.log('2FA not cofig:', user.twoFaAuth, user.twoFaSecret);
+            // if(user) console.log('2FA not cofig:', user.twoFaAuth, user.twoFaSecret);
             if (!user.twoFaAuth || !user.twoFaSecret) {
                 throw new Error('2FA not configured')
             }
@@ -72,7 +72,7 @@ export default {
                 .send(response);
 
         } catch (error: any) {
-            console.log('LOGIN2FA ERROR:', error);
+            // console.log('LOGIN2FA ERROR:', error);
             let errorMessage = 'unknown error'
             if (error instanceof Error) {
                 errorMessage = error.message

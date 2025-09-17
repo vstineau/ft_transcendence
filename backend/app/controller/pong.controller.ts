@@ -24,7 +24,7 @@ export const PongController: FastifyPluginCallback = (server, _opts, done) => {
 						avatar: user.avatar,
 						twoFaAuth: user.twoFaAuth,
 					}});
-					console.log("user successfully retrieved");
+					// console.log("user successfully retrieved");
 				} 
 			}
 		}

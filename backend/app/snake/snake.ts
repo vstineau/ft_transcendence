@@ -76,7 +76,6 @@ function createRoom(socket: Socket, user: User): Room {
 
 function handleDisconnect(app: FastifyInstance, socket: Socket) {
     socket.on('disconnect', () => {
-		console.log('SOCKET DISCONNECTED');
         const room = snakeRooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
         if (room) {
             if (room.interval) {
@@ -252,12 +251,12 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
 
 	const user1 = await User.findOneBy({id: game.p1.uid});
     if (!user1) {
-        console.log('cant get user1');
+        // console.log('cant get user1');
         return;
     }
     const user2 = await User.findOneBy({id: game.p2.uid});
     if (!user2) {
-        console.log('cant get user2');
+        // console.log('cant get user2');
         return;
     }
 
@@ -291,7 +290,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
     await historyEntry1.save(); 
     await historyEntry2.save();
 
-    console.log('History saved for both players');
+    // console.log('History saved for both players');
 }
 
 

@@ -11,9 +11,9 @@ export default {
     url: '/enable2fa',
     handler: async (request: any, reply: any) => {
         try {
-            console.log('=== activer 2fa BACKEND ===');
-            console.log('request.body:', request.body);
-            console.log('cookie header:', request.headers.cookie);
+            // console.log('=== activer 2fa BACKEND ===');
+            // console.log('request.body:', request.body);
+            // console.log('cookie header:', request.headers.cookie);
 
             // Extraire le token depuis les headers directement
             const cookieHeader = request.headers.cookie;

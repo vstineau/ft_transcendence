@@ -12,7 +12,7 @@ export class SocketService extends RoomsService {
     protected eventHandlers: { [event: string]: Function[] } = {};
 
     createConnection(): Socket {
-        console.log('🌐 Creating chat socket connection...');
+        // console.log('🌐 Creating chat socket connection...');
         const host = window.location.hostname;
         const port = window.location.port;
         const protocol = window.location.protocol;

@@ -6,7 +6,7 @@ export function initScrollAnimations() {
     const heroSection = document.querySelector('.hero-section') as HTMLElement;
 
     if (!title || !heroSection) {
-        console.log('Elements not found for animation');
+        // console.log('Elements not found for animation');
         return;
     }
 
@@ -47,12 +47,12 @@ export function initScrollAnimations() {
             title.style.removeProperty('transform');
             title.style.removeProperty('z-index');
 
-            console.log('Animation OFF - position normale');
+            // console.log('Animation OFF - position normale');
         }
     };
 
     window.addEventListener('scroll', scrollHandler);
-    console.log('Scroll animations initialized');
+    // console.log('Scroll animations initialized');
 }
 
 // Fonction pour nettoyer les animations
@@ -60,6 +60,6 @@ export function cleanupScrollAnimations() {
     if (scrollHandler) {
         window.removeEventListener('scroll', scrollHandler);
         scrollHandler = null;
-        console.log('Scroll animations cleaned up');
+        // console.log('Scroll animations cleaned up');
     }
 }

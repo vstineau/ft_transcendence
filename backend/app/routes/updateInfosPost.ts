@@ -23,7 +23,7 @@ export default {
           const payload = reply.server.jwt.verify<JwtPayload>(token)
           const user = await User.findOneBy({ login: payload.login })
           if (user) {
-		  console.log('BODYYYYYYYYYY = ',request.body);
+		  // console.log('BODYYYYYYYYYY = ',request.body);
 		  if (request.body.favLang)
 		  	user.favLang = request.body.favLang;
           let qrCodeDataURL: string = '';

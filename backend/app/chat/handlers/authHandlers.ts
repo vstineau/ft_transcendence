@@ -18,7 +18,7 @@ export async function handleInitUser(
   try {
     if (!token) {
       socket.emit(CHAT_EVENTS.AUTH_ERROR, 'No token provided');
-      console.log('No token provided on chat initUser');
+      // console.log('No token provided on chat initUser');
       return;
     }
 
@@ -28,7 +28,7 @@ export async function handleInitUser(
 
     if (!user) {
       socket.emit(CHAT_EVENTS.AUTH_ERROR, 'User not found');
-      console.log('User not found on chat initUser');
+      // console.log('User not found on chat initUser');
       return;
     }
 

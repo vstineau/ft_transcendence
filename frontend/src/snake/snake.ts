@@ -56,7 +56,7 @@ class SnakeGame {
 	}
 
 	private createSnakeSocket(custom?: string[]): Socket {
-		console.log('createsocket');
+		// console.log('createsocket');
 		const host = window.location.hostname;
 		const port = window.location.port;
 		const protocol = window.location.protocol;
@@ -64,7 +64,7 @@ class SnakeGame {
 
 		socket.on('connect', () => {
 			const cookie = this.getCookie('token');
-			console.log(cookie);
+			// console.log(cookie);
 			socket.emit('isConnected', cookie, custom);
 			socket.on('roomJoined_snake', () => {
 				socket.emit('initGame_snake');
@@ -152,7 +152,7 @@ class SnakeGame {
 			}
 
 			if (this.gameOver && e.key === 'Escape') {
-				console.log('escape');
+				// console.log('escape');
 				this.cleanup();
 				navigateTo('/dashboard');
 			} 
@@ -288,7 +288,7 @@ class SnakeGame {
 	}
 
 	public async start(): Promise<void> {
-		console.log('start');
+		// console.log('start');
 		const url = window.location.href;
 		const myUrl = new URL(url);
 		const params = new URLSearchParams(myUrl.search);
@@ -301,10 +301,10 @@ class SnakeGame {
 		}
 
 		if (!this.initCanvas()) return;
-		console.log('canva ok');
+		// console.log('canva ok');
 
 		this.socket = this.createSnakeSocket(custom);
-		console.log('socket good');
+		// console.log('socket good');
 		this.setupSocketListeners();
 		this.listenUserInputs();
 	}
@@ -318,8 +318,8 @@ export async function snakeGame() {
 	//	navigateTo('/snake-choice');
 	//	return;
 	//}
-	console.log('enter snakeGame');
+	// console.log('enter snakeGame');
 	const game = new SnakeGame();
-	console.log('snakeGame created');
+	// console.log('snakeGame created');
 	await game.start();
 }

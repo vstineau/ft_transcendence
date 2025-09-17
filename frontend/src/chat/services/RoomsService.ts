@@ -21,7 +21,7 @@ export class RoomsService {
 
 	public addMessage(message: Message) {
 		const room = message.roomId ? this.rooms.find(r => r.id === message.roomId) : null;
-		console.log(`Adding message to room ${message.roomId}:`, message);
+		// console.log(`Adding message to room ${message.roomId}:`, message);
 		room?.messages.push(message);
 	}
 
@@ -76,14 +76,14 @@ export class RoomsService {
 
 	public async loadRoomMessages(roomId: string) {
 	try {
-		console.log(`📥 Chargement des messages pour room: ${roomId}`);
+		// console.log(`📥 Chargement des messages pour room: ${roomId}`);
 		
 		// Émettre une demande de messages au backend
 
 		(this as any).emit(CHAT_EVENTS.GET_MESSAGE_HISTORY, { room: roomId });
 
 		} catch (error) {
-		console.error('❌ Erreur lors du chargement des messages:', error);
+		console.warn('❌ Erreur lors du chargement des messages:', error);
 		}
 	}
 

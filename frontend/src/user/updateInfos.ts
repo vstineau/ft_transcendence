@@ -98,14 +98,14 @@ export async function updateInfos() {
 				body: JSON.stringify(body),
 			});
 			const reply = await response.json();
-			console.log(reply);
+			// console.log(reply);
 			if (reply.success) {
 				navigateTo('/dashboard');
 			} else {
 				displayError(reply.error || 'registration failed please try again');
 			}
 		} catch (err) {
-			console.log(err);
+			// console.log(err);
 		}
 	});
 }
@@ -119,7 +119,7 @@ function imageExtension(base64: string): string {
 }
 
 function initUpdateInfosPage(): void {
-	console.log('=== Initializing UpdateInfos page ===');
+	// console.log('=== Initializing UpdateInfos page ===');
 
 	// Initialiser les onglets
 	initTabs();
@@ -148,7 +148,7 @@ function initTabs(): void {
 }
 
 function switchTab(tabName: string): void {
-	console.log('Switching to tab:', tabName);
+	// console.log('Switching to tab:', tabName);
 
 	// Mettre à jour les boutons d'onglets
 	document.querySelectorAll('.tab-button').forEach(btn => {
@@ -214,7 +214,7 @@ function initMenuItems(): void {
 }
 
 function showContent(contentKey: string): void {
-	console.log('Showing content:', contentKey);
+	// console.log('Showing content:', contentKey);
 
 	const contentArea = document.getElementById('content-area');
 	if (!contentArea) return;
@@ -473,7 +473,7 @@ function initEditProfileForm(): void {
 
 	const form = document.getElementById('edit-profile-form') as HTMLFormElement;
 	if (!form) {
-		console.log("❌ Form not found");
+		// console.log("❌ Form not found");
 		return;
 	}
 
@@ -520,17 +520,17 @@ function initEditProfileForm(): void {
 			});
 
 			const result = await response.json();
-			console.log("Full response:", result);
+			// console.log("Full response:", result);
 
 			if (result.success) {
-				console.log("✅ Success!");
+				// console.log("✅ Success!");
 				alert('Profile updated successfully!');
 			} else {
-				console.log("❌ Backend error:", result.error);
+				// console.log("❌ Backend error:", result.error);
 				displayError(result.error || 'Failed to update profile');
 			}
 		} catch (error) {
-			console.log("❌ Network error:", error);
+			// console.log("❌ Network error:", error);
 			displayError('Network error occurred');
 		}
 	});
@@ -555,7 +555,7 @@ export function initLangageForm(): void {
 	            displayError('Please select a language.');
 	            return;
 	        }
-			console.log('value', selectedLang.value);
+			// console.log('value', selectedLang.value);
 
             const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
 				method: 'POST',
@@ -570,7 +570,7 @@ export function initLangageForm(): void {
                 displayError(result.error || 'Failed to change default language');
             }
         } catch (error) {
-            console.log('default language update error: ', error);
+            // console.log('default language update error: ', error);
             displayError('Connection error. Please try again.');
         }
 	});

@@ -4,11 +4,11 @@ import { ChatSingleton } from '../chat';
 export async function displayChatButton() {
     // Vérifier si le bouton n'existe pas déjà
     if (document.getElementById('chat-fab')) {
-        console.log('Bouton chat déjà présent');
+        // console.log('Bouton chat déjà présent');
         return;
     }
     
-    console.log('✅ Création du bouton chat après connexion');
+    // console.log('✅ Création du bouton chat après connexion');
     const { ChatFloatingButton } = await import('../chat/components');
     document.body.insertAdjacentHTML('beforeend', ChatFloatingButton());
     
@@ -32,7 +32,7 @@ export function hideChatButton() {
 	
 	if (chatButton) {
 		chatButton.remove();
-		console.log('❌ Bouton chat supprimé après déconnexion');
+		// console.log('❌ Bouton chat supprimé après déconnexion');
 	}
 	
 	if (chatPanel) {

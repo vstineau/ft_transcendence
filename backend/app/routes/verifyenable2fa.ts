@@ -13,8 +13,8 @@ export default {
         reply: FastifyReply
     ): Promise<void> => {
         try {
-			console.log('=== Verify enable2fa ===');
-			console.log('request.body:', request.body);
+			// console.log('=== Verify enable2fa ===');
+			// console.log('request.body:', request.body);
 
 			const { token } = request.body
 			if(!request.cookies.token){

@@ -12,10 +12,10 @@ interface UserData {
 }
 
 function updateProfileBlock(userData?: UserData): void {
-	console.log('=== updateProfileBlock called ===');
+	// console.log('=== updateProfileBlock called ===');
 
 	if (!userData) {
-		console.log('No user data provided');
+		// console.log('No user data provided');
 		return;
 	}
 
@@ -27,7 +27,7 @@ function updateProfileBlock(userData?: UserData): void {
 	if (displayNameEl) {
 		const displayName = getDisplayName(userData);
 		displayNameEl.textContent = displayName;
-		console.log('✅ Display name updated:', displayName);
+		// console.log('✅ Display name updated:', displayName);
 	}
 
 	// 3. METTRE À JOUR LE USERNAME
@@ -35,7 +35,7 @@ function updateProfileBlock(userData?: UserData): void {
 	if (usernameEl) {
 		const username = userData.login || userData.nickName || 'user';
 		usernameEl.textContent = `@${username}`;
-		console.log('✅ Username updated:', username);
+		// console.log('✅ Username updated:', username);
 	}
 
 	// 4. METTRE À JOUR LA LOCALISATION/EMAIL
@@ -47,12 +47,12 @@ function updateProfileBlock(userData?: UserData): void {
 		} else {
 			locationEl.textContent = '📍 Unknown';
 		}
-		console.log('✅ Location/Email updated');
+		// console.log('✅ Location/Email updated');
 	}
 }
 
 export function updateProfileAvatar(avatarData?: string): void {
-	console.log("=== initUserAvatar called ===");
+	// console.log("=== initUserAvatar called ===");
     const userData = getCurrentUser();
     // console.log("User data in initUserAvatar:", userData);
     // console.log("Has avatar:", !!userData?.avatar);
@@ -60,7 +60,7 @@ export function updateProfileAvatar(avatarData?: string): void {
 
 	const container = document.getElementById('profile-avatar-container');
 	if (!container) {
-		console.log('Profile avatar container');
+		// console.log('Profile avatar container');
 		return;
 	}
 
@@ -98,12 +98,12 @@ export function updateProfileAvatar(avatarData?: string): void {
 		}
 	}
 
-	console.log('Final image src:', imageSrc.substring(0, 50) + '...');
+	// console.log('Final image src:', imageSrc.substring(0, 50) + '...');
 
 		img.src = imageSrc;
 
 		img.onload = () => {
-			console.log('✅ Profile avatar loaded successfully!');
+			// console.log('✅ Profile avatar loaded successfully!');
 		};
 		img.onerror = () => {
 			console.error('❌ Profile avatar failed to load, showing fallback');
@@ -128,7 +128,7 @@ export function showProfileFallback(container: HTMLElement): void {
 }
 
 export async function initProfilePage(): Promise<void> {
-	console.log('=== initProfilePage called ===');
+	// console.log('=== initProfilePage called ===');
 
 	// 1. Récupérer les données utilisateur depuis le serveur
 	await fetchAndSaveUserInfo();
@@ -142,7 +142,7 @@ export async function initProfilePage(): Promise<void> {
 			// console.log('User data found:', userData);
 			updateProfileBlock(userData);
 		} else {
-			console.log('No user data found, showing default');
+			// console.log('No user data found, showing default');
 			updateProfileBlock({
 				nickName: 'Guest User',
 				login: 'guest',
@@ -197,8 +197,8 @@ export async function fetchAndSaveUserInfo(): Promise<void> {
 			//saugarde des donnees
 			localStorage.setItem('currentUser', JSON.stringify(completeUserData));
 
-			console.log('Complete user data saved:', completeUserData);
-			console.log('Avatar found:', !!avatar);
+			// console.log('Complete user data saved:', completeUserData);
+			// console.log('Avatar found:', !!avatar);
 
 			//maj affichage apres la sauvegarde
 			setTimeout(() => {
@@ -206,16 +206,16 @@ export async function fetchAndSaveUserInfo(): Promise<void> {
 			}, 100);
 		}
 	} catch (error) {
-		console.log('Error fetching failed:', error);
+		// console.log('Error fetching failed:', error);
 	}
 }
 
 function updateAvatarDisplay(avatarData?: string, containerId: string = 'avatar-container'): void {
-    console.log(`=== updateAvatar called for container: ${containerId} ===`);
+    // console.log(`=== updateAvatar called for container: ${containerId} ===`);
 
     const container = document.getElementById(containerId);
     if (!container) {
-        console.log('Avatar container not found, skipping (normal on pages without avatar)');
+        // console.log('Avatar container not found, skipping (normal on pages without avatar)');
         return;
     }
 
@@ -247,9 +247,9 @@ function updateAvatarDisplay(avatarData?: string, containerId: string = 'avatar-
         }
 
         img.src = imageSrc;
-        img.onload = () => console.log('✅ Avatar loaded successfully!');
+        img.onload = () => {};
         img.onerror = () => {
-            console.error('❌ Avatar failed to load, showing fallback');
+            console.warn('❌ Avatar failed to load, showing fallback');
             showProfileFallback(container);
 		};
         container.appendChild(img);
@@ -271,11 +271,11 @@ function showFallback(container: HTMLElement): void {
 }
 
 export function initUserAvatar(): void {
-	console.log("=== initUserAvatar called ===");
+	// console.log("=== initUserAvatar called ===");
 
 	const container = document.getElementById('avatar-container');
     if (!container) {
-        console.log('Avatar container not found, skipping (normal on pages without avatar)');
+        // console.log('Avatar container not found, skipping (normal on pages without avatar)');
         return; // Sortir silencieusement sans erreur
     }
 

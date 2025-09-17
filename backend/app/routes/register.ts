@@ -78,7 +78,7 @@ export default {
 	  const response : IUserReply[200] = {success: true, qrCode: qrCodeDataURL};
       reply.code(200).send(response);
     }  catch (error) {
-            console.log(error);
+            // console.log(error);
             let errorMessage = 'Unknown error occurred';
 
             if (error instanceof Error) {

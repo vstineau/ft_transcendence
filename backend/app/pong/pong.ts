@@ -106,7 +106,7 @@ export function getRoom(user: User, socket: Socket, arr?: string[]) {
 			socket.join(privateRoom.name);
 			privateRoom.locked = true;
 			getInputs(socket, privateRoom);
-			console.log('Room found ' + privateRoom.private);
+			// console.log('Room found ' + privateRoom.private);
 			return;
 		}
 		if (arr.includes(user.id)) {
@@ -114,7 +114,7 @@ export function getRoom(user: User, socket: Socket, arr?: string[]) {
 			newRoom.game.p1 = initPlayer(socket, user, newRoom);
 			socket.join(newRoom.name);
 			getInputs(socket, newRoom);
-			console.log(newRoom);
+			// console.log(newRoom);
 			app.io.of('/pong').to(newRoom.name).emit('p1Name', newRoom.game.p1);
 			return;
 		}
@@ -259,7 +259,7 @@ export async function startPongGame(app: FastifyInstance) {
 		app.io.of('/pong').on('connection', (socket: Socket) => {
 			handleDisconnect(app, socket);
 			socket.on('initGame', (cookie: string, arr: string[]) => {
-				console.log('New connection to /pong');
+				// console.log('New connection to /pong');
 				initPlayerRoom(socket, cookie, arr);
 				launchGame(rooms);
 			});
@@ -340,7 +340,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
 	const user2 = await User.findOneBy({ id: game.p2.uid });
 
 	if (!user1 || !user2) {
-		console.log('Users not found');
+		// console.log('Users not found');
 		return;
 	}
 
@@ -377,7 +377,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
 	await historyEntry1.save();
 	await historyEntry2.save();
 
-	console.log('History saved for both players');
+	// console.log('History saved for both players');
 }
 
 function checkWin(game: Game, app: FastifyInstance) {

@@ -44,7 +44,7 @@ await SqliteDataSource.initialize()
 	console.log("Data Source has been initialized!");
 })
 .catch((err) => {
-	console.error("Error during Data Source initialization", err);
+	console.warn("Error during Data Source initialization", err);
 })
 try { await SqliteDataSource.runMigrations(); } catch (err) {console.log(err);}
 

@@ -64,12 +64,12 @@ export async function startChat(app: FastifyInstance) {
     // ==== BLOCK / UNBLOCK =====
     socket.on(CHAT_EVENTS.BLOCK_USER, (data: { targetUserId: string, currentUserId: string }) => {
       handleBlockUser(socket, data, app);
-      console.log(`🔒 Bloquer l'utilisateur: ${data.targetUserId}`);
+      // console.log(`🔒 Bloquer l'utilisateur: ${data.targetUserId}`);
     });
 
     socket.on(CHAT_EVENTS.UNBLOCK_USER, (data: { targetUserId: string, currentUserId: string }) => {
       handleBlockUser(socket, data, app);
-      console.log(`🔓 Débloquer l'utilisateur: ${data.targetUserId}`);
+      // console.log(`🔓 Débloquer l'utilisateur: ${data.targetUserId}`);
     });
 
     // ===== JEUX =====

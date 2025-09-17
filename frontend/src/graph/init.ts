@@ -10,18 +10,18 @@ console.log('Snake stats file loaded');
 declare var Chart: any;
 
 export function initSnakeStats(){
-	console.log('=============> initSnakeStats called');
+	// console.log('=============> initSnakeStats called');
 	const tryInit = async() => {
-		console.log('tryInit called');
+		// console.log('tryInit called');
 		const scoreCanvas = document.getElementById('scoreDistributionChart');
 		const timeCanvas = document.getElementById('survivalTimeChart');
-		console.log('Canvas found:', scoreCanvas, timeCanvas);
+		// console.log('Canvas found:', scoreCanvas, timeCanvas);
 
 		const lastGamesContainer = document.querySelector('#last-games-content');
-        console.log('Last games container found:', lastGamesContainer);
+        // console.log('Last games container found:', lastGamesContainer);
 
 		if (!scoreCanvas || !timeCanvas) {
-			console.log('Canvas not found, retrying...');
+			// console.log('Canvas not found, retrying...');
 			setTimeout(tryInit, 50);
 			return;
 		}
@@ -29,7 +29,7 @@ export function initSnakeStats(){
         const urlParams = new URLSearchParams(window.location.search);
         const targetUserId = urlParams.get('user');
 
-		console.log('Creating charts...');
+		// console.log('Creating charts...');
         const scoreCtx = (scoreCanvas as HTMLCanvasElement).getContext('2d');
         if(scoreCtx) {
                 const lengthData = await analyzeLengthDistribution(targetUserId || undefined);
@@ -81,7 +81,7 @@ export function initSnakeStats(){
         }
 
 		if (lastGamesContainer) {
-            console.log('Calling updateLastGames...');
+            // console.log('Calling updateLastGames...');
 
             // Détecter si on regarde le profil d'un autre utilisateur
             const urlParams = new URLSearchParams(window.location.search);
@@ -95,7 +95,7 @@ export function initSnakeStats(){
             setTimeout(() => {
                 const container = document.querySelector('#last-games-content');
                 if (container) {
-                    console.log('Found container on retry, calling updateLastGames...');
+                    // console.log('Found container on retry, calling updateLastGames...');
 
                     // Même logique pour le retry
                     const urlParams = new URLSearchParams(window.location.search);
@@ -115,27 +115,27 @@ export function initSnakeStats(){
 
 export async function fetchSnakeHistory(): Promise<SnakeGameHistory[]> {
     try {
-        console.log('=== FETCHING SNAKE HISTORY ===');
-        console.log('Current cookies:', document.cookie);
+        // console.log('=== FETCHING SNAKE HISTORY ===');
+        // console.log('Current cookies:', document.cookie);
         const host = window.location.hostname;
         const port = window.location.port;
         const protocol = window.location.protocol;
 
         const response = await fetch(`${protocol}//${host}:${port}/api/user/history?type=snake`);
 
-        console.log('Response status:', response.status);
-        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+        // console.log('Response status:', response.status);
+        // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.log('Error response text:', errorText);
+            // console.log('Error response text:', errorText);
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
          const data = await response.json();
         return data;
     } catch (error) {
-        console.log('Error fetching snake history', error);
+        // console.log('Error fetching snake history', error);
         return [];
     }
 }
@@ -250,7 +250,7 @@ export async function updateLastGames(targetUserId?: string): Promise<void> {
 
 export async function fetchSnakeHistoryOther(targetUserId: string): Promise<SnakeGameHistory[]> {
     try {
-        console.log('=== FETCHING SNAKE HISTORY FOR OTHER USER ===');
+        // console.log('=== FETCHING SNAKE HISTORY FOR OTHER USER ===');
         const host = window.location.hostname;
         const port = window.location.port;
         const protocol = window.location.protocol;
@@ -262,10 +262,10 @@ export async function fetchSnakeHistoryOther(targetUserId: string): Promise<Snak
         }
 
         const data = await response.json();
-        console.log('Other user snake history received:', data);
+        // console.log('Other user snake history received:', data);
         return data;
     } catch (error) {
-        console.log('Error fetching other user snake history:', error);
+        // console.log('Error fetching other user snake history:', error);
         return [];
     }
 }

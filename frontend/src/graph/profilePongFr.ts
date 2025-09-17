@@ -25,7 +25,7 @@ import { ProfilePong } from '../types/pongTypes';
 
 async function fetchUserProfilePong(targetUserId?: string): Promise<ProfilePong | null> {
 	try {
-		console.log('=== FETCHING USER PROFILE ===');
+		// console.log('=== FETCHING USER PROFILE ===');
 		const host = window.location.hostname;
 		const port = window.location.port;
 		const protocol = window.location.protocol;
@@ -41,10 +41,10 @@ async function fetchUserProfilePong(targetUserId?: string): Promise<ProfilePong 
 		}
 		
 		const data = await response.json();
-		console.log('Profile data received:', data);
+		// console.log('Profile data received:', data);
 		return data;
 	} catch (error) {
-		console.log('Error fetching profile', error);
+		// console.log('Error fetching profile', error);
 		return null;
 	}
 }
@@ -61,7 +61,7 @@ function updateProfileDisplayPong(profile: ProfilePong): void {
             avatarSrc = `data:image/jpeg;base64,${avatarSrc}`;
         }
         avatarContainer.innerHTML = `<img src="${avatarSrc}" class="w-full h-full object-cover" alt="Avatar">`;
-        console.log('Avatar updated');
+        // console.log('Avatar updated');
     }
 
 	// Maj le nom
@@ -105,19 +105,19 @@ function updateProfileDisplayPong(profile: ProfilePong): void {
 
 export async function updateUserProfilePong(): Promise<void> {
 	try {
-		console.log('=== DEBUG UPDATE USER PROFILE ===');
-		console.log('Current URL:', window.location.href);
-		console.log('Search params:', window.location.search);
+		// console.log('=== DEBUG UPDATE USER PROFILE ===');
+		// console.log('Current URL:', window.location.href);
+		// console.log('Search params:', window.location.search);
 		
 		const urlParams = new URLSearchParams(window.location.search);
 		const targetUserId = urlParams.get('user');
-		console.log('Target user ID extracted:', targetUserId);
+		// console.log('Target user ID extracted:', targetUserId);
 		
 		const profile = await fetchUserProfilePong(targetUserId || undefined);
 		if (profile) {
 			updateProfileDisplayPong(profile); // ← Rajoutez cette ligne !
 		}
 	} catch (error) {
-		console.error('Error updating profile:', error);
+		console.warn('Error updating profile:', error);
 	}
 }

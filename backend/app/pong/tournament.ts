@@ -16,7 +16,7 @@ export async function startTournament(app: FastifyInstance) {
 				socket.removeAllListeners();
 				socket.disconnect();
 				socket.off;
-				console.log('A user disconnected from /tournament');
+				// console.log('A user disconnected from /tournament');
 			});
 			socket.on('getPlayerName', async (cookie: string) => {
 				if (cookie) {
@@ -26,7 +26,7 @@ export async function startTournament(app: FastifyInstance) {
 						socket.emit('NameIs', '');
 						return;
 					}
-					console.log('name is = ' + user.nickName);
+					// console.log('name is = ' + user.nickName);
 					socket.emit('NameIs', user.nickName);
 				}
 			});
