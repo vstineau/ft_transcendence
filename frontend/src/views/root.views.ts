@@ -1101,8 +1101,16 @@ export async function SnakeCanvas() {
 	return /* HTML */ `
 		<div class="flex flex-col items-center justify-center w-screen h-screen bg-gray-900">
 			<!-- Zone de texte (20%) -->
-			<div class="flex items-center justify-center w-full h-[20vh] px-8">
-				<div class="text-center text-white text-4xl font-bold">SNAKE GAME ONLINE</div>
+			<div class="flex flex-col items-center justify-center w-full h-[20vh] px-8 relative">
+				<!-- Bouton Return to Dashboard en haut à gauche -->
+				<button
+					id="returnDashboardBtn"
+					class="absolute top-0 left-0 mt-4 ml-4 bg-gray-500 hover:bg-gray-700 text-white px-8 py-3 rounded-lg text-2xl font-bold transition cursor-pointer" data-navigate="/dashboard"
+					style="z-index:10;"
+				>
+					Return to Dashboard
+				</button>
+				<div class="text-center text-white text-4xl font-bold mb-4">SNAKE GAME ONLINE</div>
 			</div>
 
 			<!-- Zone centrale avec blocs latéraux et canvas (80%) -->
@@ -1161,14 +1169,8 @@ export async function SnakeCanvas() {
 						style="position:relative; top:200px;"
 					>
 						<button
-							id="replayBtn"
-							class="bg-green-500 :bg-green-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition"
-						>
-							click or Press 'Enter' for replay
-						</button>
-						<button
 							id="quitBtn"
-							class="bg-red-500 hover:bg-red-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition"
+							class="items-center bg-red-500 hover:bg-red-800 text-white px-15 py-8 rounded-lg text-[1vw] font-bold transition"
 						>
 							click or press 'Escape' for quit
 						</button>

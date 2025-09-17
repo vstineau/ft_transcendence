@@ -30,7 +30,6 @@ function initRoom(socket: Socket, user: User, friend?: string[]) {
     const room = getRoom(friend);
     if (room && user.id != room.game.p1.uid) {
 		if (!friend) {
-			console.log('NORMAL GAME');
 			socket.join(room.name);
         	room.playersNb = 2;
         	room.game.p2.id = socket.id;
@@ -40,7 +39,6 @@ function initRoom(socket: Socket, user: User, friend?: string[]) {
 			return room;
 		}
 		else if (room && friend && user.id != room.game.p1.uid && isInvited(room.game.p1.uid, user.id, friend)) {
-			console.log('CUSTOM GAME');
 			socket.join(room.name);
         	room.playersNb = 2;
         	room.game.p2.id = socket.id;
@@ -57,7 +55,6 @@ function initRoom(socket: Socket, user: User, friend?: string[]) {
 			return newRoom;
 		}
     } else {
-		console.log("0 ROOM ON EN CREE UNE")
         const newRoom = createRoom(socket, user);
 		friend? newRoom.custom = true: newRoom.custom=false;
         socket.join(newRoom.name);
@@ -349,7 +346,6 @@ async function getUser(socket: Socket, cookie: string): Promise<User | undefined
 export async function startSnakeGame(app: FastifyInstance) {
     app.io.of('/snake').on('connection', (socket: Socket) => {
         socket.on('isConnected', async (cookie: string, friend?: string[]) => {
-				console.log("FRIEND = ", friend);
             const user = await getUser(socket, cookie);
             if (!user) return; // non connecté
             const room = initRoom(socket, user, friend);

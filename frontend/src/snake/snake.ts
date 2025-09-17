@@ -3,6 +3,34 @@ import io, { Socket } from 'socket.io-client';
 import { Game, Snake } from '../types/snakeTypes';
 import { navigateTo } from '../main';
 
+
+export const SnakeSocketStore = {
+	current: null as Socket | null,
+};
+
+export const uiSnake = {
+	controller: null as AbortController | null,
+};
+
+export function abortUIListenersSnake() {
+	if (uiSnake.controller) uiSnake.controller.abort();
+	uiSnake.controller = null;
+}
+
+export function disconnectSocketSnake() {
+	//abortUIListenersSnake();
+	if (SnakeSocketStore.current) {
+		try {
+			SnakeSocketStore.current.off();
+			SnakeSocketStore.current.removeAllListeners?.();
+		} catch {}
+		try {
+			if (SnakeSocketStore.current.connected) SnakeSocketStore.current.disconnect();
+		} catch {}
+		SnakeSocketStore.current = null;
+	}
+}
+
 class SnakeGame {
 	private canvas: HTMLCanvasElement | null = null;
 	private ctx: CanvasRenderingContext2D | null = null;
@@ -28,6 +56,7 @@ class SnakeGame {
 	}
 
 	private createSnakeSocket(custom?: string[]): Socket {
+		console.log('createsocket');
 		const host = window.location.hostname;
 		const port = window.location.port;
 		const protocol = window.location.protocol;
@@ -42,6 +71,7 @@ class SnakeGame {
 			});
 		});
 
+		SnakeSocketStore.current = socket;
 		return socket;
 	}
 
@@ -122,12 +152,16 @@ class SnakeGame {
 			}
 
 			if (this.gameOver && e.key === 'Escape') {
+				console.log('escape');
 				this.cleanup();
-				navigateTo('/snake-choice');
-			} else if (this.gameOver && e.key === 'Enter') {
-				this.cleanup();
-				navigateTo('/snake');
-			}
+				navigateTo('/dashboard');
+			} 
+		//	else if (this.gameOver && e.key === 'Enter') {
+		//		console.log('enter');
+		//		this.cleanup();
+		//		navigateTo('/snake-choice');
+		//	}
+		//	console.log('pas enter');
 		};
 
 		this.resizeHandler = () => {
@@ -162,22 +196,18 @@ class SnakeGame {
 	}
 
 	private endgameButtons(): void {
-		const replayBtn = document.getElementById('replayBtn');
+		//const replayBtn = document.getElementById('replayBtn');
 		const quitBtn = document.getElementById('quitBtn');
+		//replayBtn?.addEventListener("click", () => {
+		//		this.cleanup();
+		//		navigateTo('/snake-choice');
+		//})
 
-		if (replayBtn) {
-			replayBtn.onclick = () => {
+		quitBtn?.addEventListener("click", () => {
 				this.cleanup();
-				navigateTo('/snake');
-			};
-		}
+				navigateTo('/dashboard');
+		})
 
-		if (quitBtn) {
-			quitBtn.onclick = () => {
-				this.cleanup();
-				navigateTo('/snake-choice');
-			};
-		}
 	}
 
 	private displayInfoPlayer(game: Game): void {
@@ -258,6 +288,7 @@ class SnakeGame {
 	}
 
 	public async start(): Promise<void> {
+		console.log('start');
 		const url = window.location.href;
 		const myUrl = new URL(url);
 		const params = new URLSearchParams(myUrl.search);
@@ -270,20 +301,25 @@ class SnakeGame {
 		}
 
 		if (!this.initCanvas()) return;
+		console.log('canva ok');
 
 		this.socket = this.createSnakeSocket(custom);
+		console.log('socket good');
 		this.setupSocketListeners();
 		this.listenUserInputs();
 	}
 }
 
 export async function snakeGame() {
-	if (performance.navigation.type === 1) {
-		// 1 = reload
-		// La page a été actualisée
-		navigateTo('/snake-choice');
-		return;
-	}
+	//if (performance.navigation.type === 1) {
+	//	console.log('ll');
+	//	// 1 = reload
+	//	// La page a été actualisée
+	//	navigateTo('/snake-choice');
+	//	return;
+	//}
+	console.log('enter snakeGame');
 	const game = new SnakeGame();
+	console.log('snakeGame created');
 	await game.start();
 }

@@ -1,15 +1,3 @@
-// import { register } from 'ts-node';
-
-// declare global {
-//     interface Window {
-//         spaTestCounter: number;
-//     }
-// }
-
-// window.spaTestCounter = (window.spaTestCounter || 0) + 1;
-// console.log(`SPA Counter au chargement: ${window.spaTestCounter}`);
-
-
 import { registerUser } from './user/register';
 import { logUser, initTwoFALogin, TwoFAVerifyView } from './user/login';
 import { rootUser } from './user/root';
@@ -34,10 +22,10 @@ import {
 	WelcomeView,
 	pongTournamentView,
 } from './views/root.views';
-import { pongGame, disconnectSocket, ui, abortUIListeners } from './pong/pong';
+import { pongGame, disconnectSocket, abortUIListeners } from './pong/pong';
 import { initScrollAnimations, cleanupScrollAnimations } from './utils/animations';
 import { initThemeToggle, cleanupThemeToggle } from './theme/darkMode';
-import { snakeGame } from './snake/snake';
+import { snakeGame, disconnectSocketSnake, abortUIListenersSnake } from './snake/snake';
 import { localSnakeGame } from './snake/localSnake';
 import { localpongGame } from './pong/localPong';
 import { initProfilePage } from './utils/avatar';
@@ -174,6 +162,11 @@ export async function renderPage() {
 				const protocol = window.location.protocol;
 
 				const response = await fetch(`${protocol}//${host}:${port}/api/`);
+window.addEventListener('popstate', function(event) {
+  // Code à exécuter quand l'utilisateur clique sur "retour en arrière"
+  console.log('L\'utilisateur a utilisé le bouton retour du navigateur');
+  // Tu peux faire une redirection, afficher un message, etc.
+});
 				if (response.status === 200) {
 					const repBody = await response.json();
 					const favLang = repBody.favLang;
@@ -280,6 +273,12 @@ export async function renderPage() {
 			break;
 		case '/snake':
 			await snakeGame();
+			setTimeout(() => {
+				document.querySelector('[data-navigate="/dashboard"]')?.addEventListener('click', (e) => {
+					e.preventDefault();
+					navigateTo('/dashboard');
+				});
+			}, 100);
 			break;
 		case '/snake/local':
 			await displayDarkModeButton();
@@ -451,6 +450,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	window.addEventListener('popstate', () => {
 		disconnectSocket();
+		disconnectSocketSnake();
+		abortUIListenersSnake();
 		abortUIListeners();
 		// Nettoie aussi quand on revient en arrière
 		runRouteCleanup();
