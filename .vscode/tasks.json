@@ -1,0 +1,83 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "docker-compose up -d",
+			"type": "shell",
+			"command": "docker compose up -d",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "curl backend metrics",
+			"type": "shell",
+			"command": "bash -lc 'curl -s http://localhost:3000/metrics | grep -E \"^ft_games_(started|finished)_total|^ft_game_duration_seconds_bucket\" | head -n 20'",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "test"
+		},
+		{
+			"label": "curl backend metrics",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"curl -s http://localhost:3000/metrics | grep -E \"^ft_games_(started|finished)_total|^ft_game_duration_seconds_bucket\" | head -n 20"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "curl backend detailed metrics",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"curl -s http://localhost:3000/metrics | grep -E '^ft_pong_games_finished_info_total' | head -n 10"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "curl backend detailed metrics",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"curl -s http://localhost:3000/metrics | grep -E '^ft_pong_games_finished_info_total' | head -n 10"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "curl backend detailed metrics",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"curl -s http://localhost:3000/metrics | grep -E '^ft_pong_games_finished_info_total' | head -n 10 || true"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		}
+	]
+}

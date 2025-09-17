@@ -6,6 +6,7 @@ import { SqliteDataSource } from '../../dataSource.js';
 import { userService } from '../services/userService.js';
 import { messageService } from '../services/messageService.js';
 import { roomService } from '../services/roomService.js';
+import { chatMessagesTotal } from '../../monitoring/metrics.js';
 import { CHAT_CONFIG, CHAT_EVENTS } from '../config/chatConfig.js';
 
 export async function handleSendMessage(
@@ -49,6 +50,20 @@ export async function handleSendMessage(
     
     // Diffuser le message à tous les utilisateurs de la room
     chatNamespace.to(room).emit(CHAT_EVENTS.NEW_MESSAGE, broadcastMessage);
+
+    // Metrics: incrémenter le compteur de messages avec labels
+    const roomType = roomService.isPrivateRoom(room)
+      ? 'private'
+      : roomService.isGlobalRoom(room)
+        ? 'global'
+        : roomService.isPongRoom(room)
+          ? 'pong'
+          : roomService.isSnakeRoom(room)
+            ? 'snake'
+            : 'other';
+    try {
+      chatMessagesTotal.inc({ room_type: roomType, room_id: room }, 1);
+    } catch {}
     
     app.log.info(`Chat message from ${user.login}: ${data.content}`);
   } catch (error) {

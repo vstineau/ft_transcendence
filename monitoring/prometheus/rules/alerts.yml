@@ -1,0 +1,62 @@
+groups:
+  - name: app-health
+    rules:
+      - alert: BackendDown
+        expr: up{job="backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backend is down"
+          description: "Prometheus can't scrape /metrics on backend for > 1m"
+
+      - alert: TargetDown
+        expr: up == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "A scrape target is down"
+          description: "Job {{ $labels.job }} instance {{ $labels.instance }} is down"
+
+  - name: performance
+    rules:
+      - alert: HighCPUProcess
+        expr: 100 * (rate(ft_process_cpu_user_seconds_total[5m]) + rate(ft_process_cpu_system_seconds_total[5m])) > 80
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High process CPU (>80% for 10m)"
+          description: "CPU high on {{ $labels.instance }}"
+
+      - alert: EventLoopLagHigh
+        expr: ft_nodejs_eventloop_lag_seconds > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Node.js event loop lag high (>0.5s)"
+          description: "Lag high on {{ $labels.instance }}"
+
+  - name: chat-activity
+    rules:
+      - alert: ChatMessageSurge
+        expr: sum(rate(ft_chat_messages_total[1m])) > 50
+        for: 2m
+        labels:
+          severity: info
+        annotations:
+          summary: "Chat messages surge (>50/s)"
+          description: "Spike in chat throughput"
+
+  - name: recordings
+    rules:
+      - record: job:up:ratio
+        expr: sum by (job) (up) / count by (job) (up)
+
+      - record: job:process_cpu_percent:rate5m
+        expr: 100 * (rate(ft_process_cpu_user_seconds_total[5m]) + rate(ft_process_cpu_system_seconds_total[5m]))
+
+      - record: chat:messages_total:rate5m
+        expr: sum by (room_type) (rate(ft_chat_messages_total[5m]))

@@ -1,0 +1,25 @@
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: Container Alerts
+    folder: Transcendence
+    interval: 1m
+    rules:
+      - uid: high-cpu-container
+        title: HighCPUContainer (Grafana)
+        condition: A
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: prometheus
+            model:
+              expr: rate(container_cpu_usage_seconds_total{container="backend"}[5m]) * 100 > 80
+              instant: false
+              interval: ""
+              legendFormat: ""
+              refId: A
+        noDataState: NoData
+        execErrState: Error
+        for: 10m
+        annotations: { severity: warning }
+        labels: { container: backend }
