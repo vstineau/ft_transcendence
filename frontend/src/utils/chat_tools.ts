@@ -17,7 +17,7 @@ export async function displayChatButton() {
     if (chatInstance) {
         chatInstance.Manager.startChat();
     } else {
-        console.error('Erreur lors de l\'initialisation du chat');
+        console.log('Erreur lors de l\'initialisation du chat');
         return;
     }
     // Le bouton ne fait que toggle l'interface (ouvrir/fermer le panel)
