@@ -623,7 +623,7 @@ export async function LoginView() {
 									<span class="flex-shrink mx-4 text-gray-400 text-sm">or</span>
 									<div class="flex-grow border-t border-gray-300"></div>
 								</div>
-				
+
 				<!-- Bouton GitHub -->
 					<div class="flex justify-center pt-3">
 						<button
@@ -761,16 +761,6 @@ export async function RegisterView() {
 						</button>
 					</div>
 				</form>
-
-				<!-- infos private privacy -->
-				<div class="mt-6 text-center">
-					<p class="text-sm text-gray-600">
-						<span data-translate="auth.agreeTerms">Signing up for a Ft_transcendence means you agree to the .</span>
-						<a href="/privacy" class="text-black hover:underline font-medium" data-translate="auth.privacyPolicy">Privacy Policy</a>
-						<span data-translate="auth.and"> and </span>
-						<a href="/terms" class="text-black hover:underline font-medium" data-translate="auth.termsOfService">Terms of Service</a>.
-					</p>
-				</div>
 
 				<!-- Lien vers connexion -->
 				<div class="mt-6 text-center">
