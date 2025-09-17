@@ -75,7 +75,7 @@ function generateContactHTML(contacts: User[]): string {
             </div>`;
         }
 
-    const statusClass = contact.status === 'online' ? 'bg-green-500' : (contact.status === 'in-game' ? 'bg-yellow-500' : 'bg-gray-400');
+    const statusClass = contact.status === 'online' ? 'bg-green-500' : (contact.status === 'in-game' ? 'bg-blue-500' : 'bg-gray-400');
 
         return `
             <div class="text-center cursor-pointer hover:opacity-80 transition-opacity" onclick="openChat('${contact.id}')">

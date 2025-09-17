@@ -18,6 +18,10 @@ export class SocketService extends RoomsService {
         const protocol = window.location.protocol;
 
         this.socket = io(`${protocol}//${host}:${port}/chat`);
+        let token = getCookie('token');
+        if (token) {
+            this.emit(CHAT_EVENTS.INIT_USER, token);
+        }
         return this.socket;
     }
 
@@ -27,9 +31,9 @@ export class SocketService extends RoomsService {
     }
 
     startChat() {
-        let cookie = getCookie('token');
-        if (cookie) {
-            this.emit(CHAT_EVENTS.INIT_USER, cookie);
+        let token = getCookie('token');
+        if (token) {
+            this.emit(CHAT_EVENTS.INIT_USER, token);
         } else {
             console.log('❌ No auth token found in cookies');
         }

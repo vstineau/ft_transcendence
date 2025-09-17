@@ -205,13 +205,12 @@ export async function renderPage() {
 			}, 100);
 			break;
 		case '/dashboard':
-			rootUser();
-			displayChatButton();
+			await rootUser();
+			await displayChatButton();
 			setTimeout(async () => {
 				initThemeToggle();
 				await initProfilePage();
 				await updateRecentContacts();
-				await displayChatButton();
 				initLanguageSelector();
 				const viewBtn = document.getElementById('view-profile-btn');
 				if (viewBtn) {
@@ -242,7 +241,6 @@ export async function renderPage() {
 			await displayDarkModeButton();
 			initLanguageSelector();
 			await updateInfos();
-			await displayChatButton();
 
 			setTimeout(() => {
 				document.querySelector('[data-navigate="/dashboard"]')?.addEventListener('click', e => {
@@ -260,16 +258,14 @@ export async function renderPage() {
 		case '/login':
 			await logUser();
 			initThemeToggle();
-			await displayDarkModeButton();
 			initLanguageSelector();
+			await displayDarkModeButton();
 			break;
 		case '/pong/matchmaking/game':
 			await pongGame();
-			await displayChatButton();
 			break;
 		case '/pong/matchmaking/localgame':
 			localpongGame();
-			await displayChatButton();
 			break;
 		case '/snake':
 			await snakeGame();
@@ -283,7 +279,6 @@ export async function renderPage() {
 		case '/snake/local':
 			await displayDarkModeButton();
 			localSnakeGame();
-			await displayChatButton();
 			break;
 		case '/2fa-verification':
 			initTwoFALogin();
@@ -364,7 +359,6 @@ export async function renderPage() {
 			break;
 		case '/pong/tournament':
 			pongTournament();
-			await displayChatButton();
 			break;
 		case '/pong-choice':
 			languageManager.updatePageTranslations();
