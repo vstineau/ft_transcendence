@@ -13,9 +13,13 @@ export async function displayChatButton() {
     document.body.insertAdjacentHTML('beforeend', ChatFloatingButton());
     
     // Initialiser le chat immédiatement (connexion Socket.IO, état initial)
-    const chatInstance = ChatSingleton.getInstance(); 
-
-    chatInstance.Manager.startChat();
+    const chatInstance = ChatSingleton.getInstance();
+    if (chatInstance) {
+        chatInstance.Manager.startChat();
+    } else {
+        console.error('Erreur lors de l\'initialisation du chat');
+        return;
+    }
     // Le bouton ne fait que toggle l'interface (ouvrir/fermer le panel)
     const chatFab = document.getElementById('chat-fab');
     if (chatFab) {

@@ -5,6 +5,8 @@ import { app } from '../app.js';
 import { JwtPayload, UserHistory } from '../types/userTypes.js';
 import { User, History } from '../models.js';
 import { gamesStartedTotal, gamesFinishedTotal, gameDurationHistogram, pongGamesFinishedInfoTotal } from '../monitoring/metrics.js';
+import { userService } from '../chat/services/userService.js';
+import { CHAT_EVENTS } from '../chat/config/chatConfig.js';
 
 const SCORETOWIN = 3;
 let stored: boolean = false;
@@ -176,6 +178,17 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 		const room = rooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
 		if (room) {
 			room.playersNb--;
+
+			// Update chat presence for both players back to 'online'
+			const chatNs = app.io.of('/chat');
+			for (const uid of [room.game.p1.uid, room.game.p2.uid]) {
+				if (!uid) continue;
+				const chatUser = userService.findUserById(uid);
+				if (chatUser) {
+					userService.updateUserStatus(chatUser.socketId, 'online');
+					chatNs.emit(CHAT_EVENTS.USER_STATUS_CHANGED, { userId: chatUser.id, status: 'online' });
+				}
+			}
 
 			const sock = app.io
 				.of('/pong')

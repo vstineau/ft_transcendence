@@ -11,7 +11,7 @@ export function getCookie(name: string) {
 }
 
 export function disconnectSocket() {
-	abortUIListeners();
+	//abortUIListeners();
 	if (SocketStore.current) {
 		try {
 			SocketStore.current.off();

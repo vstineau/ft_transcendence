@@ -658,18 +658,20 @@ export class ChatManager extends SocketService {
         const container = document.getElementById('chat-online-users');
         if (!container) return;
 
-        const online = (this.state.onlineUsers || []).filter(u => u.status === 'online');
-        if (!online.length) {
+        // Show users that are connected: online or in-game
+        const connected = (this.state.onlineUsers || []).filter(u => u.status === 'online' || u.status === 'in-game');
+        if (!connected.length) {
             container.innerHTML = `<div class="text-[11px] text-gray-500 px-1">Personne</div>`;
             return;
         }
 
-        container.innerHTML = online.map(u => {
+        container.innerHTML = connected.map(u => {
             const avatar = createAvatarElement(u.username, u.avatar, 'sm');
+            const statusColor = u.status === 'online' ? 'bg-green-500' : (u.status === 'in-game' ? 'bg-blue-500' : 'bg-gray-500');
             return `<div data-online-id="${u.id}" class="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-800 cursor-pointer">
                 <div class="relative w-7 h-7" data-user-id="${u.id}">
                     ${avatar}
-                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-gray-900 bg-green-500"></span>
+                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-gray-900 ${statusColor}"></span>
                 </div>
                 <div class="flex-1 min-w-0">
                     <div class="text-xs text-gray-200 truncate">${escapeHtml(u.username)}</div>
