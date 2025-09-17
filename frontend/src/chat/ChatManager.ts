@@ -929,7 +929,7 @@ export class ChatManager extends SocketService {
         // Redirection sur acceptation
         if (data.url) {
             this.goTo(data.url);
-            //this.closeChat();
+            this.closeChat();
         } else if (data.from && data.from.id && this.state.currentUserId?.id) {
             const url = this.buildPongUrl(this.state.currentUserId.id, data.from.id);
             this.goTo(url);
