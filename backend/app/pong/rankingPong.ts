@@ -66,7 +66,7 @@ export default {
             return reply.send(ranking);
 
         } catch (error) {
-            console.error('Error fetching ranking:', error);
+            console.log('Error fetching ranking:', error);
             return reply.code(500).send({ error: 'Failed to fetch ranking' });
         }
     }

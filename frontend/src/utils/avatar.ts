@@ -106,7 +106,7 @@ export function updateProfileAvatar(avatarData?: string): void {
 			// console.log('✅ Profile avatar loaded successfully!');
 		};
 		img.onerror = () => {
-			console.error('❌ Profile avatar failed to load, showing fallback');
+			console.log('❌ Profile avatar failed to load, showing fallback');
 			showProfileFallback(container);
 		};
 		container.appendChild(img);
@@ -162,7 +162,7 @@ export function getCurrentUser(): UserData | null {
 		}
 		return null;
 	} catch (error) {
-		console.error('Error getting user data:', error);
+		console.log('Error getting user data:', error);
 		return null;
 	}
 }

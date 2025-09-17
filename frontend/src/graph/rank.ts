@@ -77,7 +77,7 @@ export async function updateRanking(): Promise<void> {
             rankingTableBody.outerHTML = generateRankingHTML(ranking);
         }
     } catch (error) {
-        console.error('Error updating ranking:', error);
+        console.log('Error updating ranking:', error);
     }
 }
 

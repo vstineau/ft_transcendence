@@ -109,7 +109,7 @@ export async function fetchPongHistory(): Promise<PongGameHistory[]> {
         }
         return [];
     } catch (error) {
-        console.error('Error fetching pong history:', error);
+        console.log('Error fetching pong history:', error);
         return [];
     }
 }
@@ -195,7 +195,7 @@ export async function updateLastGamesPong(targetUserId?: string): Promise<void> 
             }
         }
     } catch (error) {
-        console.error('Error updating last games:', error);
+        console.log('Error updating last games:', error);
         setCurrentGamesPong([]);
     }
 }
@@ -215,7 +215,7 @@ export async function fetchPongHistoryOther(targetUserId: string): Promise<PongG
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error fetching other user pong history:', error);
+        console.log('Error fetching other user pong history:', error);
         return [];
     }
 }

@@ -133,7 +133,7 @@ async function loadProfileData(): Promise<void> {
         }
 
     } catch (error) {
-        console.error('Error loading profile data:', error);
+        console.log('Error loading profile data:', error);
     }
 }
 
@@ -151,7 +151,7 @@ async function fetchPongLastGame(): Promise<{win: string} | null> {
         }
         return null;
     } catch (error) {
-        console.error('Error fetching last Pong game:', error);
+        console.log('Error fetching last Pong game:', error);
         return null;
     }
 }
@@ -170,7 +170,7 @@ async function fetchSnakeLastGame(): Promise<{win: string} | null> {
         }
         return null;
     } catch (error) {
-        console.error('Error fetching last Snake game:', error);
+        console.log('Error fetching last Snake game:', error);
         return null;
     }
 }
@@ -236,7 +236,7 @@ async function fetchUserProfileData(): Promise<{
         };
 
     } catch (error) {
-        console.error('Error fetching user profile data:', error);
+        console.log('Error fetching user profile data:', error);
         return {
             avatar: undefined,
             totalGames: 0,

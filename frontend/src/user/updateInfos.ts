@@ -650,7 +650,7 @@ function initChangePasswordForm(): void {
 					displayError(reply.error || 'Password change failed');
 				}
 			} catch (err) {
-				console.error(err);
+				console.log(err);
 				displayError('Network error occurred');
 			}
 		});
@@ -765,7 +765,7 @@ function initProfilePictureUpload(): void {
 				displayError(reply.error || "Upload failed");
 			}
 		} catch (err) {
-			console.error(err);
+			console.log(err);
 			displayError("Network error during upload");
 		}
 	});
@@ -815,7 +815,7 @@ function initDeleteAccountForm(): void {
             }
 
 		} catch (error) {
-			console.error('Delete account error:', error);
+			console.log('Delete account error:', error);
 			displayError('Network error occurred. Please try again.');
 
             // Réactiver le bouton

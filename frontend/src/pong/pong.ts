@@ -64,14 +64,14 @@ export const SocketStore = {
 function initCanvas() {
 	canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
 	if (!canvas) {
-		console.error("❌ Canvas 'gameCanvas' not found");
+		console.log("❌ Canvas 'gameCanvas' not found");
 		return;
 	}
 	canvas.width = win_width * 0.6;
 	canvas.height = win_height * 0.6;
 	ctx = canvas.getContext('2d');
 	if (!ctx) {
-		console.error('❌ Failed to get canvas context');
+		console.log('❌ Failed to get canvas context');
 	}
 }
 

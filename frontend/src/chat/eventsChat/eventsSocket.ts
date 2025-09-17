@@ -29,11 +29,11 @@ export function eventsSocket(this: ChatManager) {
 	});
 
 	this.on(CHAT_EVENTS.AUTH_ERROR, (error: string) => {
-		console.error('❌ Chat auth error:', error);
+		console.log('❌ Chat auth error:', error);
 	});
 
 	this.on(CHAT_EVENTS.ERROR, (error: any) => {
-		console.error('❌ Chat error:', error);
+		console.log('❌ Chat error:', error);
 	});
 
 }

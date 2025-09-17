@@ -33,7 +33,7 @@ export function init2FASetup(): void {
                 displayError(result.error || 'Failed to enable 2FA');
             }
         } catch (error) {
-            console.error('2FA setup error:', error);
+            console.log('2FA setup error:', error);
             displayError('Connection error. Please try again.');
         }
 	});

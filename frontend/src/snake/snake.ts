@@ -78,14 +78,14 @@ class SnakeGame {
 	private initCanvas(): boolean {
 		this.canvas = document.getElementById('SnakeGameCanvas') as HTMLCanvasElement;
 		if (!this.canvas) {
-			console.error("❌ Canvas 'SnakeGameCanvas' not found");
+			console.log("❌ Canvas 'SnakeGameCanvas' not found");
 			return false;
 		}
 		this.canvas.width = this.win_height * 0.8;
 		this.canvas.height = this.win_height * 0.8;
 		this.ctx = this.canvas.getContext('2d');
 		if (!this.ctx) {
-			console.error('❌ Failed to get canvas context');
+			console.log('❌ Failed to get canvas context');
 			return false;
 		}
 		return true;

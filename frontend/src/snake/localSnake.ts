@@ -336,7 +336,7 @@ class LocalSnakeGame {
 	private initCanvas(): boolean {
 		this.canvas = document.getElementById('localSnakeGameCanvas') as HTMLCanvasElement;
 		if (!this.canvas) {
-			console.error("❌ Canvas 'localSnakeGameCanvas' not found");
+			console.log("❌ Canvas 'localSnakeGameCanvas' not found");
 			return false;
 		}
 
@@ -348,7 +348,7 @@ class LocalSnakeGame {
 		this.canvas.height = this.WIN;
 		this.ctx = this.canvas.getContext('2d');
 		if (!this.ctx) {
-			console.error('❌ Failed to get canvas context');
+			console.log('❌ Failed to get canvas context');
 			return false;
 		}
 		return true;

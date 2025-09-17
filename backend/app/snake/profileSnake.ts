@@ -106,7 +106,7 @@ export default {
                 });
 
         } catch (error) {
-            console.error('Error fetching user profile:', error);
+            console.log('Error fetching user profile:', error);
             return reply.code(401).send({ error: 'Invalid token' });
         }
     }

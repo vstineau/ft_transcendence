@@ -91,7 +91,7 @@ export function initSnakeStats(){
             updateRanking();
             updateUserProfile();
         } else {
-            console.error('Element #last-games-content not found!');
+            console.log('Element #last-games-content not found!');
             setTimeout(() => {
                 const container = document.querySelector('#last-games-content');
                 if (container) {
@@ -103,7 +103,7 @@ export function initSnakeStats(){
 
                     updateLastGames(targetUserId || undefined);
                 } else {
-                    console.error('Still no #last-games-content found after retry');
+                    console.log('Still no #last-games-content found after retry');
                 }
             }, 100);
         }
@@ -243,7 +243,7 @@ export async function updateLastGames(targetUserId?: string): Promise<void> {
             }
         }
     } catch (error) {
-        console.error('Error updating last games:', error);
+        console.log('Error updating last games:', error);
         setCurrentGames([]);
     }
 }

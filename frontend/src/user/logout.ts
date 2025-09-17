@@ -25,7 +25,7 @@ export async function delogUser() {
 				displayError(data.error || 'Erreur inconnue');
 			}
 		} catch (err) {
-			console.error('error = ', err);
+			console.log('error = ', err);
 		}
 	});
 }

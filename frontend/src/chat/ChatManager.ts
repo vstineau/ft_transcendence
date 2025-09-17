@@ -301,7 +301,7 @@ export class ChatManager extends SocketService {
                 room: this.state.activeTab
             });
         } else {
-            // console.error('❌ Socket not connected');
+            // console.log('❌ Socket not connected');
         }
     }
 
@@ -795,7 +795,7 @@ export class ChatManager extends SocketService {
         // Trouver l'utilisateur dans la liste des utilisateurs en ligne
         const targetUser = this.state.onlineUsers?.find(u => u.id === userId);
         if (!targetUser) {
-            console.error('❌ Utilisateur non trouvé:', userId);
+            console.log('❌ Utilisateur non trouvé:', userId);
             return;
         }
 

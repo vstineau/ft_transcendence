@@ -333,7 +333,7 @@ function initGame() {
 	canvas.width = window.innerWidth * 0.6;
 	canvas.height = window.innerHeight * 0.6;
 	if (!canvas) {
-		console.error("Canvas 'game' not found");
+		console.log("Canvas 'game' not found");
 		return;
 	}
 	ctx = canvas.getContext('2d');

@@ -31,7 +31,7 @@ export class SocketService extends RoomsService {
         if (cookie) {
             this.emit(CHAT_EVENTS.INIT_USER, cookie);
         } else {
-            console.error('❌ No auth token found in cookies');
+            console.log('❌ No auth token found in cookies');
         }
     }
 
@@ -48,7 +48,7 @@ export class SocketService extends RoomsService {
         if (this.socket && this.socket.connected) {
             this.socket.emit(event, data);
         } else {
-            console.error('❌ Socket not connected');
+            console.log('❌ Socket not connected');
         }
     }
 

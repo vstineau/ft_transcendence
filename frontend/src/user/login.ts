@@ -74,7 +74,7 @@ export async function logUser() {
                 displayError(result.error || 'Login failed. Please try again.');
             }
         } catch (error) {
-            console.error('Login error:', error);
+            console.log('Login error:', error);
             displayError('Connection error. Please try again.');
         }
     });
@@ -85,7 +85,7 @@ function saveUserData(userData: any): void {
 		localStorage.setItem('currentUser', JSON.stringify(userData));
 		// console.log('USer data saved:', userData);
 	} catch (error) {
-		console.error('Error saving user data:', error);
+		console.log('Error saving user data:', error);
 	}
 }
 

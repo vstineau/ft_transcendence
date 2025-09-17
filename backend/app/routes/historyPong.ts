@@ -62,7 +62,7 @@ export default {
 
 
         } catch (error) {
-            console.error('Error fetching user history:', error);
+            console.log('Error fetching user history:', error);
             return reply.code(401).send({ error: 'Invalid token' });
         }
     }

@@ -26,7 +26,7 @@ async function fetchRecentContacts(): Promise<User[]> {
         } as User), console.log('Mapped contacts:', data));
         // return await response.json();
     } catch (error) {
-        console.error('Error fetching recent contacts:', error);
+        console.log('Error fetching recent contacts:', error);
         return [];
     }
 }
@@ -100,7 +100,7 @@ export async function updateRecentContacts(): Promise<void> {
             contactsContainer.innerHTML = generateContactHTML(contacts);
         }
     } catch (error) {
-        console.error('Error updating recent contacts:', error);
+        console.log('Error updating recent contacts:', error);
     }
 }
 

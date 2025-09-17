@@ -81,7 +81,7 @@ export default {
             return reply.send(recentContacts.slice(0, 3));
 
         } catch (error) {
-            console.error('Error fetching recent contacts:', error);
+            console.log('Error fetching recent contacts:', error);
             return reply.code(500).send({ error: 'Internal server error' });
         }
     }

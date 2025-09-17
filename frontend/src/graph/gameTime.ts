@@ -48,7 +48,7 @@ export async function analyzeGameTimes(targetUserId?: string): Promise<{labels: 
         };
 
     } catch (error) {
-        console.error('Error analyzing game times:', error);
+        console.log('Error analyzing game times:', error);
         return {
             labels: ['0-30s', '31-60s', '61-90s', '90s+'],
             data: [0, 0, 0, 0]
@@ -101,7 +101,7 @@ export async function analyzeLengthDistribution(targetUserId?: string): Promise<
         };
 
     } catch (error) {
-        console.error('Error analyzing length distribution:', error);
+        console.log('Error analyzing length distribution:', error);
         return {
             labels: ['0-10', '11-20', '21-30', '31-40'],
             data: [0, 0, 0, 0]
@@ -153,7 +153,7 @@ export async function analyzeBallSpeedDistribution(targetUserId?: string): Promi
             data: Object.values(speedCategories)
         };
     } catch (error) {
-        console.error('Error analyzing ball speeds:', error);
+        console.log('Error analyzing ball speeds:', error);
         return {
             labels: ['0-5', '6-10', '11-15', '16+'],
             data: [0, 0, 0, 0]
@@ -205,7 +205,7 @@ export async function analyzePongGameTimes(targetUserId?: string): Promise<{labe
             data: Object.values(timeCategories)
         };
     } catch (error) {
-        console.error('Error analyzing pong game times:', error);
+        console.log('Error analyzing pong game times:', error);
         return {
             labels: ['0-1min', '1-3min', '3-5min', '5min+'],
             data: [0, 0, 0, 0]

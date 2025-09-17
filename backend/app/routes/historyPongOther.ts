@@ -48,7 +48,7 @@ export default {
             return reply.send(processedHistory);
 
         } catch (error) {
-            console.error('Error fetching user history:', error);
+            console.log('Error fetching user history:', error);
             return reply.code(500).send({ error: 'Server error' });
         }
     }
