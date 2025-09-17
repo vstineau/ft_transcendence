@@ -296,7 +296,8 @@ export async function renderPage() {
 				await displayDarkModeButton();
 				initSnakeStats();
 				updateRanking();
-
+				languageManager.updatePageTranslations();
+				
 				const urlParams = new URLSearchParams(window.location.search);
 				const targetUserId = urlParams.get('user');
 
@@ -332,7 +333,8 @@ export async function renderPage() {
 				await displayDarkModeButton();
 				initPongStats();
 				updateRankingPong();
-
+				languageManager.updatePageTranslations();
+				
 				// Même logique que Snake : ne pas appeler updateInfos/initProfilePage si on regarde un autre utilisateur
 				const urlParams = new URLSearchParams(window.location.search);
 				const targetUserId = urlParams.get('user');

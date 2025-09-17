@@ -570,7 +570,7 @@ export function initLangageForm(): void {
                 displayError(result.error || 'Failed to change default language');
             }
         } catch (error) {
-            console.error('default language update error: ', error);
+            console.log('default language update error: ', error);
             displayError('Connection error. Please try again.');
         }
 	});
@@ -733,30 +733,30 @@ function initProfilePictureUpload(): void {
 			console.log("Upload response:", reply);
 
 			if (reply.success) {
-				console.log("=== AVATAR UPDATE DEBUG ===");
-				console.log("Full reply:", reply);
-				console.log("reply.user exists:", !!reply.user);
-				console.log("reply.user.avatar exists:", !!reply.user?.avatar);
-				console.log("Avatar data length:", reply.user?.avatar?.length);
+//				console.log("=== AVATAR UPDATE DEBUG ===");
+//				console.log("Full reply:", reply);
+//				console.log("reply.user exists:", !!reply.user);
+//				console.log("reply.user.avatar exists:", !!reply.user?.avatar);
+//				console.log("Avatar data length:", reply.user?.avatar?.length);
 
 				const currentUser = getCurrentUser();
-				console.log("Current user before update:", currentUser);
+//				console.log("Current user before update:", currentUser);
 
 				if (currentUser && reply.user && reply.user.avatar) {
 					currentUser.avatar = reply.user.avatar;
 					localStorage.setItem('currentUser', JSON.stringify(currentUser));
-					console.log("Updated localStorage with new avatar");
+//					console.log("Updated localStorage with new avatar");
 
 					// Vérifier que la sauvegarde a fonctionné
 					const savedUser = getCurrentUser();
-					console.log("Saved user after update:", savedUser);
-					console.log("Saved avatar length:", savedUser?.avatar?.length);
+//					console.log("Saved user after update:", savedUser);
+//					console.log("Saved avatar length:", savedUser?.avatar?.length);
 				} else {
-					console.log("Missing data - reply.user:", !!reply.user, "avatar:", !!reply.user?.avatar);
+//					console.log("Missing data - reply.user:", !!reply.user, "avatar:", !!reply.user?.avatar);
 				}
 
 				setTimeout(() => {
-					console.log("Calling initUserAvatar...");
+//					console.log("Calling initUserAvatar...");
 					initUserAvatar();
 				}, 100);
 

@@ -73,8 +73,8 @@ export async function RootView() {
 					<!-- Bloc Success rate - 1 colonne, 1 ligne -->
 					<div class="row-span-1 bg-white rounded-xl shadow-lg p-4">
 						<div class="text-left cursor-pointer" data-navigate="/statisticsPong">
-							<p class="font-montserrat text-black text-base">Pong stats</p>
-							<p class="font-montserrat text-gray-400 text-sm mb-2">Your max speed</p>
+							<p class="font-montserrat text-black text-base" data-translate="dashboard.pongStats">Pong stats</p>
+							<p class="font-montserrat text-gray-400 text-sm mb-2" data-translate="dashboard.yourMaxSpeed">Your max speed</p>
 							<span class="text-4xl font-bold text-black" data-stat="max-speed"></span>
 						</div>
 					</div>
@@ -105,16 +105,6 @@ export async function RootView() {
 							</div>
 
 							<div class="flex-1 flex gap-3">
-								<!-- Language Selector -->
-								<div class="flex-1 bg-white rounded-xl shadow-lg p-3 flex flex-col">
-									<p class="font-montserrat text-base mb-2">Language</p>
-									<select id="language-selector" class="flex-1 bg-transparent border-none outline-none cursor-pointer text-sm">
-										<option value="en">ENGLISH</option>
-										<option value="fr">FRANCAIS</option>
-										<option value="es">ESPANOL</option>
-									</select>
-								</div>
-
 								<!-- Light mode avec soleil centre -->
 								<div
 									id="dash-theme-toggle"
@@ -409,38 +399,38 @@ export async function GamesView() {
 function createStatsView(gameType: 'snake' | 'pong', targetUserId?: string) {
     const config = {
         snake: {
-            title: 'Snake stats',
+            title: 'snake.statsTitle',
             metrics: [
-                { label: 'Classement', stat: 'classement' },
-                { label: 'Max size', stat: 'max-size' },
-                { label: 'Average size', stat: 'average-size' },
-                { label: 'Eaten apples', stat: 'eaten-apples' }
+                { label: 'snake.classement', stat: 'classement' },
+                { label: 'snake.maxSize', stat: 'max-size' },
+                { label: 'snake.averageSize', stat: 'average-size' },
+                { label: 'snake.eatenApples', stat: 'eaten-apples' }
             ],
-            chartTitle: 'Length distribution',
-            chartSubtitle: 'Your most common final sizes',
-            timeTitle: 'Time game',
-            timeSubtitle: 'Survival time analysis'
+            chartTitle: 'snake.lengthDistribution',
+            chartSubtitle: 'snake.mostCommonSizes',
+            timeTitle: 'snake.timeGame',
+            timeSubtitle: 'snake.survivalTimeAnalysis'
         },
         pong: {
-            title: 'Pong stats',
+            title: 'pong.statsTitle',
             metrics: [
-                { label: 'Classement', stat: 'classement' },
-                { label: 'Max speed', stat: 'max-speed' },
-                { label: 'Average speed', stat: 'average-speed' },
-                { label: 'Total goals', stat: 'total-goals' }
+                { label: 'pong.classement', stat: 'classement' },
+                { label: 'pong.maxSpeed', stat: 'max-speed' },
+                { label: 'pong.averageSpeed', stat: 'average-speed' },
+                { label: 'pong.totalGoals', stat: 'total-goals' }
             ],
-            chartTitle: 'Ball speed distribution',
-			chartSubtitle: 'Your most common final speeds',
-			timeTitle: 'Match duration',
-			timeSubtitle: 'Game duration analysis'
+            chartTitle: 'pong.ballSpeedDistribution',
+            chartSubtitle: 'pong.mostCommonSpeeds',
+            timeTitle: 'pong.matchDuration',
+            timeSubtitle: 'pong.durationAnalysis'
         }
     };
 
     const currentConfig = config[gameType];
 
 	const isViewingOther = !!targetUserId;
-    const profileTitle = isViewingOther ? "User profile" : "My profil";
-    const statsTitle = isViewingOther ? "User stats" : "My stats";
+    const profileTitle = isViewingOther ? "stats.userProfile" : "stats.myProfile";
+    const statsTitle = isViewingOther ? "stats.userStats" : "stats.myStats";
 
     return /* HTML */ `
         <!-- Titre FT_TRANSCENDENCE en haut -->
@@ -457,10 +447,10 @@ function createStatsView(gameType: 'snake' | 'pong', targetUserId?: string) {
             <div class="max-w-7xl mx-auto px-8">
 
 				<div class="flex justify-center gap-2 mb-6">
-                    <button id="snake-stats-btn" class="px-6 py-2 ${gameType === 'snake' ? 'bg-gray-700' : 'bg-gray-300'} text-white rounded-lg font-medium transition-colors hover:opacity-80">
+                    <button id="snake-stats-btn" class="px-6 py-2 ${gameType === 'snake' ? 'bg-gray-700' : 'bg-gray-300'} text-white rounded-lg font-medium transition-colors hover:opacity-80" data-translate="snake.title">
                         Snake
                     </button>
-                    <button id="pong-stats-btn" class="px-6 py-2 ${gameType === 'pong' ? 'bg-gray-700' : 'bg-gray-300'} text-white rounded-lg font-medium transition-colors hover:opacity-80">
+                    <button id="pong-stats-btn" class="px-6 py-2 ${gameType === 'pong' ? 'bg-gray-700' : 'bg-gray-300'} text-white rounded-lg font-medium transition-colors hover:opacity-80" data-translate="pong.title">
                         Pong
                     </button>
                 </div>
@@ -469,7 +459,7 @@ function createStatsView(gameType: 'snake' | 'pong', targetUserId?: string) {
 
                     <!-- Bloc Profile -->
                     <div class="bg-white rounded-xl shadow-lg p-6">
-                        <h3 class="font-bold text-lg mb-4">${profileTitle}</h3>
+                        <h3 class="font-bold text-lg mb-4" data-translate="${profileTitle}">${profileTitle}</h3>
                         <div class="flex items-center mb-4">
                             <div id="avatar-container" class="w-24 h-24 bg-gray-200 rounded-xl overflow-hidden"></div>
                             <div class="ml-2 mt-12">
@@ -480,7 +470,7 @@ function createStatsView(gameType: 'snake' | 'pong', targetUserId?: string) {
                         <div class="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mt-6">
                             ${currentConfig.metrics.map(metric => `
                                 <div class="flex flex-col">
-                                    <span class="text-gray-600">${metric.label}</span>
+                                    <span class="text-gray-600" data-translate="${metric.label}">${metric.label}</span>
                                     <span class="font-semibold" data-stat="${metric.stat}">-</span>
                                 </div>
                             `).join('')}
@@ -489,39 +479,39 @@ function createStatsView(gameType: 'snake' | 'pong', targetUserId?: string) {
 
                     <!-- Bloc Last Games -->
                     <div class="bg-white rounded-xl shadow-lg p-6">
-                        <h3 class="font-bold text-lg mb-4">Last games</h3>
+                        <h3 class="font-bold text-lg mb-4" data-translate="stats.lastGames">Last games</h3>
                         <div id="last-games-content" class="space-y-3">
                             <div class="flex flex-col items-center justify-center py-8 text-center">
-                                <p class="text-gray-500 text-sm">Loading...</p>
+                                <p class="text-gray-500 text-sm" data-translate="stats.loading">Loading...</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Bloc Stats -->
                     <div class="bg-white rounded-xl shadow-lg p-6">
-                        <h3 class="font-bold text-lg mb-4">${statsTitle}</h3>
-                        <p class="text-gray-800 text-sm">${currentConfig.chartTitle}</p>
-                        <p class="text-gray-500 text-sm mb-4">${currentConfig.chartSubtitle}</p>
+                        <h3 class="font-bold text-lg mb-4" data-translate="${statsTitle}">${statsTitle}</h3>
+                        <p class="text-gray-800 text-sm" data-translate="${currentConfig.chartTitle}">${currentConfig.chartTitle}</p>
+                        <p class="text-gray-500 text-sm mb-4" data-translate="${currentConfig.chartSubtitle}">${currentConfig.chartSubtitle}</p>
                         <canvas id="scoreDistributionChart" width="250" height="180"></canvas>
                     </div>
 
                     <!-- Bloc Global Ranking -->
                     <div class="bg-white rounded-xl shadow-lg p-6 col-span-2">
-                        <h3 class="font-bold text-lg mb-4">Global Ranking</h3>
+                        <h3 class="font-bold text-lg mb-4" data-translate="stats.globalRanking">Global Ranking</h3>
                         <div class="overflow-x-auto">
                             <table id="ranking-table" class="w-full text-sm">
                                 <thead>
                                     <tr class="border-b">
-                                        <th class="text-left py-2">Date</th>
-                                        <th class="text-left py-2">Player</th>
-                                        <th class="text-left py-2">Match wins</th>
-                                        <th class="text-left py-2">Max size</th>
-                                        <th class="text-left py-2">Best Time</th>
+                                        <th class="text-left py-2" data-translate="stats.date">Date</th>
+                                        <th class="text-left py-2" data-translate="stats.player">Player</th>
+                                        <th class="text-left py-2" data-translate="stats.matchWins">Match wins</th>
+                                        <th class="text-left py-2" data-translate="stats.maxSize">Max size</th>
+                                        <th class="text-left py-2" data-translate="stats.bestTime">Best Time</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td colspan="5" class="py-8 text-center text-gray-500 text-sm">
+                                        <td colspan="5" class="py-8 text-center text-gray-500 text-sm" data-translate="stats.loadingRankings">
                                             Loading rankings...
                                         </td>
                                     </tr>
@@ -530,12 +520,12 @@ function createStatsView(gameType: 'snake' | 'pong', targetUserId?: string) {
                         </div>
                     </div>
 
-	                    <!-- Bloc Time Game -->
-	                    <div class="bg-white rounded-xl shadow-lg p-6">
-	                        <h3 class="font-bold text-lg mb-4">${currentConfig.timeTitle}</h3>
-	                        <p class="text-gray-500 text-sm mb-4">${currentConfig.timeSubtitle}</p>
-	                        <canvas id="survivalTimeChart" width="250" height="180"></canvas>
-	                    </div>
+	                <!-- Bloc Time Game -->
+	                <div class="bg-white rounded-xl shadow-lg p-6">
+	                    <h3 class="font-bold text-lg mb-4" data-translate="${currentConfig.timeTitle}">${currentConfig.timeTitle}</h3>
+	                    <p class="text-gray-500 text-sm mb-4" data-translate="${currentConfig.timeSubtitle}">${currentConfig.timeSubtitle}</p>
+	                    <canvas id="survivalTimeChart" width="250" height="180"></canvas>
+	                </div>
 
                     <div class="mt-2 flex flex-col">
                         <a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">← Back to Dashboard</a>
@@ -827,17 +817,6 @@ export async function UpdateInfosview() {
 
 	<div class="min-h-screen bg-gray-100 py-8 px-4">
 		<div class="max-w-4xl mx-auto">
-
-			<!-- Language Selector en haut à droite -->
-			<div class="flex justify-end mb-8">
-				<div class="bg-white rounded-lg shadow-sm p-2">
-					<select id="language-selector-settings" class="bg-transparent border-none outline-none cursor-pointer text-sm">
-						<option value="en">🇺🇸 EN</option>
-						<option value="fr">🇫🇷 FR</option>
-						<option value="es">🇪🇸 ES</option>
-					</select>
-				</div>
-			</div>
 
 			<!-- creer les onglets-->
 			<div class="flex border-b border-gray-300 mb-8">
