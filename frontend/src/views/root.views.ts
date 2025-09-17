@@ -42,11 +42,11 @@ export async function RootView() {
 
 					<!-- Bloc Games played - 1 colonne, 1 ligne -->
 					<div class="row-span-1 bg-white rounded-xl shadow-lg p-4">
-						<a href="/statisticsSnake" class="text-left">
+						<div class="text-left cursor-pointer" data-navigate="/statisticsSnake">
 							<p class="font-montserrat text-black text-base" data-translate="dashboard.snakeStats">Snake stats</p>
 							<p class="font-montserrat text-gray-400 text-sm mb-2" data-translate="dashboard.yourMaxSize">Your max size</p>
 							<span class="text-4xl font-bold text-black" data-stat="max-size"></span>
-						</a>
+						</div>
 					</div>
 
 					<!-- Bloc Pong Game - 3 colonnes, 2 lignes -->
@@ -72,11 +72,11 @@ export async function RootView() {
 
 					<!-- Bloc Success rate - 1 colonne, 1 ligne -->
 					<div class="row-span-1 bg-white rounded-xl shadow-lg p-4">
-						<a href="/statisticsPong" class="text-left">
+						<div class="text-left cursor-pointer" data-navigate="/statisticsPong">
 							<p class="font-montserrat text-black text-base">Pong stats</p>
 							<p class="font-montserrat text-gray-400 text-sm mb-2">Your max speed</p>
 							<span class="text-4xl font-bold text-black" data-stat="max-speed"></span>
-						</a>
+						</div>
 					</div>
 
 					<!-- Bloc Let's talk - 4 colonnes, 1 ligne -->
@@ -905,9 +905,9 @@ export async function UpdateInfosview() {
 
 						<!-- Bouton retour -->
 						<div class="mt-8 text-center">
-							<a href="/dashboard" class="text-gray-600 hover:text-black transition-colors">
+							<div class="text-gray-600 hover:text-black transition-colors cursor-pointer" data-navigate="/dashboard">
 								<span data-translate="settings.backToDashboard">← Back to Dashboard</span>
-							</a>
+							</div>
 						</div>
 					</div>
 				</div>

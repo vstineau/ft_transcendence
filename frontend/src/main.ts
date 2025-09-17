@@ -1,13 +1,13 @@
 // import { register } from 'ts-node';
 
-declare global {
-    interface Window {
-        spaTestCounter: number;
-    }
-}
+// declare global {
+//     interface Window {
+//         spaTestCounter: number;
+//     }
+// }
 
-window.spaTestCounter = (window.spaTestCounter || 0) + 1;
-console.log(`SPA Counter au chargement: ${window.spaTestCounter}`);
+// window.spaTestCounter = (window.spaTestCounter || 0) + 1;
+// console.log(`SPA Counter au chargement: ${window.spaTestCounter}`);
 
 
 import { registerUser } from './user/register';
@@ -144,22 +144,9 @@ function showAuthMessage() {
 }
 
 export async function renderPage() {
-	if (!document.getElementById('spa-test')) {
-        const testEl = document.createElement('div');
-        testEl.id = 'spa-test';
-        testEl.innerHTML = 'SPA Test Element';
-        testEl.style.position = 'fixed';
-        testEl.style.top = '0';
-        testEl.style.right = '0';
-        testEl.style.background = 'red';
-        testEl.style.color = 'white';
-        testEl.style.padding = '5px';
-        testEl.style.fontSize = '10px';
-        document.body.appendChild(testEl);
-    }
 	const path = window.location.pathname;
-	console.log('Current path:', path);
-    console.log('Route exists:', !!routes[path]);
+	// console.log('Current path:', path);
+    // console.log('Route exists:', !!routes[path]);
 
 
 	const publicPaths = [
@@ -241,6 +228,17 @@ export async function renderPage() {
 				if (viewBtn) {
 					viewBtn.addEventListener('click', showProfileDetails);
 				}
+
+				document.querySelectorAll('[data-navigate]').forEach(element => {
+					element.addEventListener('click', (e) => {
+						e.preventDefault();
+						const route = (e.currentTarget as HTMLElement).dataset.navigate;
+						if (route) {
+							navigateTo(route);
+						}
+					});
+				});
+
 				try {
 					await authenticatedFetch('/api/updateInfos');
 					updateUserProfile();
@@ -256,6 +254,13 @@ export async function renderPage() {
 			initLanguageSelector();
 			await updateInfos();
 			await displayChatButton();
+
+			setTimeout(() => {
+				document.querySelector('[data-navigate="/dashboard"]')?.addEventListener('click', (e) => {
+					e.preventDefault();
+					navigateTo('/dashboard');
+				});
+			}, 100);
 			break;
 		case '/register':
 			await displayDarkModeButton();
@@ -289,7 +294,6 @@ export async function renderPage() {
 			initTwoFALogin();
 			break;
 		case '/statisticsSnake':
-			console.log('🔄 Entering /statisticsSnake case - NO PAGE RELOAD');
 			setTimeout(async() => {
 				initThemeToggle();
 				await displayDarkModeButton();
@@ -337,7 +341,7 @@ export async function renderPage() {
 				const targetUserId = urlParams.get('user');
 
 				if (!targetUserId) {
-					// Seulement pour vos propres stats
+					// Seulement pour nos propres stats
 					updateInfos();
 					initProfilePage();
 					try {
@@ -376,63 +380,18 @@ export async function renderPage() {
 	}
 }
 
-// document.addEventListener('DOMContentLoaded', async () => {
-// 	await initializeLanguage();
-// 	updateUserProfile();
-// 	updateUserProfilePong();
-
-// 	document.body.addEventListener('click', async e => {
-// 		const target = e.target as HTMLElement;
-// 		console.log('Click detected on:', target.tagName, target.getAttribute('href'));
-// 		if (target instanceof HTMLAnchorElement && target.getAttribute('href')?.startsWith('/')) {
-// 			e.preventDefault();
-// 			await navigateTo((target as HTMLAnchorElement).getAttribute('href')!);
-// 		 } else {
-//         console.log('Not intercepting this click');
-//    		 }
-// 	});
-
-// 	// 5. Gère le bouton "Retour" du navigateur
-// 	window.addEventListener('popstate', () => {
-// 		renderPage();
-// 	});
-
-// 	// 6. Rendu initial
-// 	await renderPage();
-// });
-
-
 document.addEventListener('DOMContentLoaded', async () => {
 	await initializeLanguage();
 	updateUserProfile();
 	updateUserProfilePong();
 
-			document.addEventListener('DOMContentLoaded', async () => {
-			await initializeLanguage();
-			updateUserProfile();
-			updateUserProfilePong();
-
-			console.log('🔗 Attaching click event listener to body...');
-			document.body.addEventListener('click', async e => {
-				const target = e.target as HTMLElement;
-				console.log('👆 Click detected on:', {
-					tagName: target.tagName,
-					href: target.getAttribute('href'),
-					textContent: target.textContent?.trim().substring(0, 20)
-				});
-
-				if (target instanceof HTMLAnchorElement && target.getAttribute('href')?.startsWith('/')) {
-					console.log('✅ Intercepting link click, using SPA navigation');
-					e.preventDefault();
-					await navigateTo(target.getAttribute('href')!);
-				} else {
-					console.log('❌ Not intercepting this click');
-				}
-			});
-			console.log('✅ Click event listener attached successfully');
-
-			// ... reste de votre code
-		});
+	document.body.addEventListener('click', async e => {
+		const target = e.target as HTMLElement;
+		if (target instanceof HTMLAnchorElement && target.getAttribute('href')?.startsWith('/')) {
+			e.preventDefault();
+			await navigateTo((target as HTMLAnchorElement).getAttribute('href')!);
+		 }
+	});
 
 	// 5. Gère le bouton "Retour" du navigateur
 	window.addEventListener('popstate', () => {
@@ -442,3 +401,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 	// 6. Rendu initial
 	await renderPage();
 });
+
