@@ -14,14 +14,14 @@ import oauth2Options from './auth/oauth2Options.js'
 import { startTournament } from './pong/tournament.js';
 
 export const app = Fastify({
-	logger: true,
+	logger: false,
 	trustProxy: true,
 	ignoreTrailingSlash: true,
 	ignoreDuplicateSlashes: true
 });
 
-// Enregistre les métriques par défaut (CPU, mémoire, etc.) (prometheus)
-await app.register(import('./routes/monitoring.route.js'));
+// Enregistre les métriques /health et /metrics (Prometheus)
+await app.register((await import('./routes/monitoring.route.js')).default);
 
 
 await app.register(cors, {
@@ -44,7 +44,7 @@ await SqliteDataSource.initialize()
 	console.log("Data Source has been initialized!");
 })
 .catch((err) => {
-	console.error("Error during Data Source initialization", err);
+	console.warn("Error during Data Source initialization", err);
 })
 try { await SqliteDataSource.runMigrations(); } catch (err) {console.log(err);}
 

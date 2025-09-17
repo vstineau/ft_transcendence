@@ -30,7 +30,6 @@ function initRoom(socket: Socket, user: User, friend?: string[]) {
     const room = getRoom(friend);
     if (room && user.id != room.game.p1.uid) {
 		if (!friend) {
-			console.log('NORMAL GAME');
 			socket.join(room.name);
         	room.playersNb = 2;
         	room.game.p2.id = socket.id;
@@ -40,7 +39,6 @@ function initRoom(socket: Socket, user: User, friend?: string[]) {
 			return room;
 		}
 		else if (room && friend && user.id != room.game.p1.uid && isInvited(room.game.p1.uid, user.id, friend)) {
-			console.log('CUSTOM GAME');
 			socket.join(room.name);
         	room.playersNb = 2;
         	room.game.p2.id = socket.id;
@@ -57,7 +55,6 @@ function initRoom(socket: Socket, user: User, friend?: string[]) {
 			return newRoom;
 		}
     } else {
-		console.log("0 ROOM ON EN CREE UNE")
         const newRoom = createRoom(socket, user);
 		friend? newRoom.custom = true: newRoom.custom=false;
         socket.join(newRoom.name);
@@ -79,7 +76,6 @@ function createRoom(socket: Socket, user: User): Room {
 
 function handleDisconnect(app: FastifyInstance, socket: Socket) {
     socket.on('disconnect', () => {
-		console.log('SOCKET DISCONNECTED');
         const room = snakeRooms.find(r => r.game.p1.id === socket.id || r.game.p2.id === socket.id);
         if (room) {
             if (room.interval) {
@@ -255,12 +251,12 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
 
 	const user1 = await User.findOneBy({id: game.p1.uid});
     if (!user1) {
-        console.log('cant get user1');
+        // console.log('cant get user1');
         return;
     }
     const user2 = await User.findOneBy({id: game.p2.uid});
     if (!user2) {
-        console.log('cant get user2');
+        // console.log('cant get user2');
         return;
     }
 
@@ -294,7 +290,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2' | 'DRAW') {
     await historyEntry1.save(); 
     await historyEntry2.save();
 
-    console.log('History saved for both players');
+    // console.log('History saved for both players');
 }
 
 
@@ -349,7 +345,6 @@ async function getUser(socket: Socket, cookie: string): Promise<User | undefined
 export async function startSnakeGame(app: FastifyInstance) {
     app.io.of('/snake').on('connection', (socket: Socket) => {
         socket.on('isConnected', async (cookie: string, friend?: string[]) => {
-				console.log("FRIEND = ", friend);
             const user = await getUser(socket, cookie);
             if (!user) return; // non connecté
             const room = initRoom(socket, user, friend);

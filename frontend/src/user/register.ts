@@ -114,7 +114,7 @@ export async function registerUser() {
 			}
 			//JSON.parse;
 		} catch (err) {
-			console.log(err);
+			// console.log(err);
 			navigateTo('/');
 		}
 	});

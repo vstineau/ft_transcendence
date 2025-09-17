@@ -43,7 +43,7 @@ export default {
                         status: message.user.isOnline ? 'online' : 'offline',
                         blocklist: message.user.blocklist || []
                     });
-                    console.log('AVATAR USER: ', message.user.avatar);
+                    // console.log('AVATAR USER: ', message.user.avatar);
                     
                     // if (contactsMap.size >= 3) break;
                 }

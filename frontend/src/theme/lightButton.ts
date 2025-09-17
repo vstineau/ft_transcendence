@@ -22,11 +22,11 @@ export function DarkModeFloatingButton(): string {
 export async function displayDarkModeButton() {
     // Vérifier si le bouton n'existe pas déjà
     if (document.getElementById('darkmode-fab')) {
-        console.log('Bouton dark mode déjà présent');
+        // console.log('Bouton dark mode déjà présent');
         return;
     }
 
-    console.log('✅ Création du bouton dark mode');
+    // console.log('✅ Création du bouton dark mode');
     document.body.insertAdjacentHTML('beforeend', DarkModeFloatingButton());
 
     // Ajouter l'event listener

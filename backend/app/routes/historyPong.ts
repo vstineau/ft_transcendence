@@ -32,7 +32,6 @@ export default {
             const processedHistory = await Promise.all(history.map(async (game) => {
                 if (game.opponent) {
 
-                    console.log("Opponent value:", game.opponent);
                     let opponentUser = await User.findOneBy({ id: game.opponent } );
                     // if (!opponentUser) {
                     //     // Si pas trouvé par ID, chercher par login (anciennes parties)
@@ -46,8 +45,6 @@ export default {
                             type: 'pong'
                         }
                     });
-
-                    console.log("Found opponent user:", opponentUser?.login);
 
                     return {
                         ...game,

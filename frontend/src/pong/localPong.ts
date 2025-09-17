@@ -126,7 +126,7 @@ function checkWin() {
 	if ((p1.score === 3 || p2.score === 3) && ctx) {
 		gameOver = true;
 		const px = (canvas.height * canvas.width) / 35000;
-		console.log(px);
+		// console.log(px);
 		ball.vx = 0;
 		ball.vy = 0;
 		ball.x = win_width / 2 - ball.radius / 2;
@@ -167,7 +167,7 @@ function handlePaddleCollisionP1() {
 
 		const impactPoint = (ball.y - (p1.y + p1.height / 2)) / (p1.height / 2);
 		ball.vy += impactPoint * 3;
-		console.log(ball.vy);
+		// console.log(ball.vy);
 
 		if (Math.abs(ball.vx) < 30) ball.vx += ball.vx > 0 ? 1.5 : -1.5;
 	}
@@ -185,7 +185,7 @@ function handlePaddleCollisionP2() {
 
 		const impactPoint = (ball.y - (p2.y + p2.height / 2)) / (p2.height / 2);
 		ball.vy += impactPoint * 3;
-		console.log(ball.vy);
+		// console.log(ball.vy);
 
 		if (Math.abs(ball.vx) < 30) ball.vx += ball.vx > 0 ? 1.5 : -1.5;
 	}

@@ -48,8 +48,10 @@ services:
     container_name: prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=15d"
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/rules:/etc/prometheus/rules:ro
       - prometheus-data:/prometheus
     ports:
       - "9090:9090"
@@ -57,7 +59,6 @@ services:
       - transcendence
     depends_on:
       - backend
-      - cadvisor
 
   grafana:
     image: grafana/grafana-oss:latest
@@ -65,27 +66,20 @@ services:
     ports:
       - "3001:3000"
     volumes:
-      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/provisioning/alerting:/etc/grafana/provisioning/alerting
+      - ./monitoring/grafana/dashboard:/var/lib/grafana/dashboards
       - grafana-data:/var/lib/grafana
+    env_file: .env
+    environment:
+      - GF_LOG_LEVEL=warn
     networks:
       - transcendence
     depends_on:
       - prometheus
 
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
-    container_name: cadvisor
-    ports:
-      - "8081:8080"
-    networks:
-      - transcendence
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-    restart: unless-stopped
-
+  
 volumes:
   prometheus-data:
   grafana-data:

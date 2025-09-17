@@ -19,7 +19,7 @@ class MessageService {
 
       return recentMessages.reverse().map((msg: any) => this.formatMessage(msg));
     } catch (error) {
-      console.error('Error fetching recent messages:', error);
+      console.warn('Error fetching recent messages:', error);
       return [];
     }
   }
@@ -36,7 +36,7 @@ class MessageService {
 
       return messages.map((msg: any) => this.formatMessage(msg));
     } catch (error) {
-      console.error('Error fetching room messages:', error);
+      console.warn('Error fetching room messages:', error);
       return [];
     }
   }
@@ -58,7 +58,7 @@ class MessageService {
         blockedList: dbUser.blocklist || []
       };
     } catch (error) {
-      console.error('Error saving message:', error);
+      console.warn('Error saving message:', error);
       return null;
     }
   }
@@ -102,9 +102,9 @@ class MessageService {
         .where('timestamp < :cutoffDate', { cutoffDate })
         .execute();
         
-      console.log('Old chat messages cleaned up');
+      // console.log('Old chat messages cleaned up');
     } catch (error) {
-      console.error('Error cleaning old messages:', error);
+      console.warn('Error cleaning old messages:', error);
     }
   }
 
@@ -116,9 +116,9 @@ class MessageService {
         .where('id = :messageId', { messageId })
         .execute();
         
-      console.log(`Message ${messageId} deleted`);
+      // console.log(`Message ${messageId} deleted`);
     } catch (error) {
-      console.error(`Error deleting message ${messageId}:`, error);
+      console.warn(`Error deleting message ${messageId}:`, error);
     }
   }
 }

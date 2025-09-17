@@ -7,22 +7,22 @@ import { analyzeGameTimes, analyzeLengthDistribution, analyzeBallSpeedDistributi
 import { setCurrentGamesPong, showGameDetailsPong, closeGameDetailsPong } from '../graph/popPong';
 
 
-console.log('Snake stats file loaded');
+// console.log('Snake stats file loaded');
 declare var Chart: any;
 
 export function initPongStats(){
-	console.log('=============> initPongStats called');
+	// console.log('=============> initPongStats called');
 	const tryInit = async() => {
-		console.log('tryInit called');
+		// console.log('tryInit called');
 		const scoreCanvas = document.getElementById('scoreDistributionChart');
 		const timeCanvas = document.getElementById('survivalTimeChart');
-		console.log('Canvas found:', scoreCanvas, timeCanvas);
+		// console.log('Canvas found:', scoreCanvas, timeCanvas);
 
 		const lastGamesContainer = document.querySelector('#last-games-content');
-		console.log('Last games container found:', lastGamesContainer);
+		// console.log('Last games container found:', lastGamesContainer);
 
 		if (!scoreCanvas || !timeCanvas) {
-			console.log('Canvas not found, retrying...');
+			// console.log('Canvas not found, retrying...');
 			setTimeout(tryInit, 50);
 			return;
 		}
@@ -30,7 +30,7 @@ export function initPongStats(){
         const urlParams = new URLSearchParams(window.location.search);
         const targetUserId = urlParams.get('user');
 
-		console.log('Creating charts...');
+		// console.log('Creating charts...');
 		const scoreCtx = (scoreCanvas as HTMLCanvasElement).getContext('2d');
         if(scoreCtx) {
             const speedData = await analyzeBallSpeedDistribution(targetUserId || undefined); // Fonction Pong

@@ -235,7 +235,7 @@ export class UIprofileService {
 	}
 
 	private buildStatusBadge(status?: 'online' | 'offline' | 'in-game'): string {
-		console.log('STAAAAAAAAAAAAAATUUUUUUS: ', status);
+		// console.log('STAAAAAAAAAAAAAATUUUUUUS: ', status);
 		// Conserve le style "Disponible", mais adapte couleur/texte selon le statut détecté dans le DOM
 		if (status === 'online') {
 			return '<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 shadow-sm">• Disponible</span>';

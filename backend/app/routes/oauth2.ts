@@ -21,7 +21,7 @@ export default {
 		try {
 			const token: any = await request.server.githubOAuth2.getAccessTokenFromAuthorizationCodeFlow(request);
 			if (!token.token.access_token) {
-				console.log('token pas recupere');
+				// console.log('token pas recupere');
 				return ;
 			}
 			//struct recuperee avec ce fetch ici => https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-the-authenticated-user
@@ -31,7 +31,7 @@ export default {
   			    'User-Agent': 'vsfw ft_transcendence'
   			  }
   			}).then(res => res.json());
-			console.log('USER LOGIN ' + userProfile.login);
+			// console.log('USER LOGIN ' + userProfile.login);
 			//struct recuperee avec ce fetch ici => https://docs.github.com/en/rest/users/emails?apiVersion=2022-11-28#list-email-addresses-for-the-authenticated-user
 			const userEmails: any = await fetch('https://api.github.com/user/emails', { 
 				headers: {
@@ -49,7 +49,7 @@ export default {
 			const user = await User.findOneBy({email: email});
 			//si on trouve un user via mail login classique 
 			if (user) {
-				console.log('ALREADY USER');
+				// console.log('ALREADY USER');
       			const token = reply.server.jwt.sign(
       			  { 
 	  			    login: user.login,
@@ -70,7 +70,7 @@ export default {
       			  })
       			  .redirect(`https://${process.env.POSTE}:8080/dashboard`);
 			} else {
-				console.log('NEWUSER');
+				// console.log('NEWUSER');
 				//sinon faut register un compte avec les infos github
 				//verifier login et nickname sont uniques sinon faire un truc 
 				let login = userProfile.login;
@@ -116,7 +116,7 @@ export default {
       			  .redirect(`https://${process.env.POSTE}:8080/dashboard`);
 			}
 		} catch (error: any) {
-			console.log('ERROR: ' + error);
+			// console.log('ERROR: ' + error);
 		}
 	}
 }

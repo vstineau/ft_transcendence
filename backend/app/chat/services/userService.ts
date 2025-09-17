@@ -55,7 +55,7 @@ class UserService {
         await dbUser.save();
       }
     } catch (error) {
-      console.error(`Error updating user online status:`, error);
+      console.warn(`Error updating user online status:`, error);
     }
   }
 
@@ -70,7 +70,7 @@ class UserService {
           }
         }
       } catch (error: any) {
-      console.error(`Error updating blocked users:`, error);
+      console.warn(`Error updating blocked users:`, error);
     }
   }
 
@@ -83,7 +83,7 @@ class UserService {
         await user.save();
       }
     } catch (error: any) {
-      console.error(`Error updating unblocked users:`, error);
+      console.warn(`Error updating unblocked users:`, error);
     }
   }
 

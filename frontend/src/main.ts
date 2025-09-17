@@ -1,15 +1,3 @@
-// import { register } from 'ts-node';
-
-// declare global {
-//     interface Window {
-//         spaTestCounter: number;
-//     }
-// }
-
-// window.spaTestCounter = (window.spaTestCounter || 0) + 1;
-// console.log(`SPA Counter au chargement: ${window.spaTestCounter}`);
-
-
 import { registerUser } from './user/register';
 import { logUser, initTwoFALogin, TwoFAVerifyView } from './user/login';
 import { rootUser } from './user/root';
@@ -34,10 +22,10 @@ import {
 	WelcomeView,
 	pongTournamentView,
 } from './views/root.views';
-import { pongGame, disconnectSocket, ui, abortUIListeners } from './pong/pong';
+import { pongGame, disconnectSocket, abortUIListeners } from './pong/pong';
 import { initScrollAnimations, cleanupScrollAnimations } from './utils/animations';
 import { initThemeToggle, cleanupThemeToggle } from './theme/darkMode';
-import { snakeGame } from './snake/snake';
+import { snakeGame, disconnectSocketSnake, abortUIListenersSnake } from './snake/snake';
 import { localSnakeGame } from './snake/localSnake';
 import { localpongGame } from './pong/localPong';
 import { initProfilePage } from './utils/avatar';
@@ -122,7 +110,7 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
 	});
 
 	if (response.status == 401) {
-		console.log('Token expired, redirecting to login');
+		// console.log('Token expired, redirecting to login');
 		localStorage.clear();
 		navigateTo('/');
 		throw new Error('Authentification expired');
@@ -146,7 +134,7 @@ function showAuthMessage() {
 export async function renderPage() {
 	const path = window.location.pathname;
 	// console.log('Current path:', path);
-    // console.log('Route exists:', !!routes[path]);
+	// console.log('Route exists:', !!routes[path]);
 
 	const publicPaths = [
 		'/',
@@ -174,6 +162,11 @@ export async function renderPage() {
 				const protocol = window.location.protocol;
 
 				const response = await fetch(`${protocol}//${host}:${port}/api/`);
+				window.addEventListener('popstate', function (event) {
+					// Code à exécuter quand l'utilisateur clique sur "retour en arrière"
+					// console.log("L'utilisateur a utilisé le bouton retour du navigateur");
+					// Tu peux faire une redirection, afficher un message, etc.
+				});
 				if (response.status === 200) {
 					const repBody = await response.json();
 					const favLang = repBody.favLang;
@@ -226,7 +219,7 @@ export async function renderPage() {
 				}
 
 				document.querySelectorAll('[data-navigate]').forEach(element => {
-					element.addEventListener('click', (e) => {
+					element.addEventListener('click', e => {
 						e.preventDefault();
 						const route = (e.currentTarget as HTMLElement).dataset.navigate;
 						if (route) {
@@ -240,7 +233,7 @@ export async function renderPage() {
 					updateUserProfile();
 					updateUserProfilePong();
 				} catch {
-					console.log('Not authenticated, skipping profile update');
+					// console.log('Not authenticated, skipping profile update');
 				}
 			}, 100);
 			break;
@@ -252,7 +245,7 @@ export async function renderPage() {
 			await displayChatButton();
 
 			setTimeout(() => {
-				document.querySelector('[data-navigate="/dashboard"]')?.addEventListener('click', (e) => {
+				document.querySelector('[data-navigate="/dashboard"]')?.addEventListener('click', e => {
 					e.preventDefault();
 					navigateTo('/dashboard');
 				});
@@ -280,6 +273,12 @@ export async function renderPage() {
 			break;
 		case '/snake':
 			await snakeGame();
+			setTimeout(() => {
+				document.querySelector('[data-navigate="/dashboard"]')?.addEventListener('click', e => {
+					e.preventDefault();
+					navigateTo('/dashboard');
+				});
+			}, 100);
 			break;
 		case '/snake/local':
 			await displayDarkModeButton();
@@ -300,7 +299,6 @@ export async function renderPage() {
 				const urlParams = new URLSearchParams(window.location.search);
 				const targetUserId = urlParams.get('user');
 
-
 				if (!targetUserId) {
 					// Seulement pour vos propres stats
 					updateInfos();
@@ -309,7 +307,7 @@ export async function renderPage() {
 						await authenticatedFetch('/api/updateInfos');
 						updateUserProfile();
 					} catch {
-						console.log('Not authenticated, skipping profile update');
+						// console.log('Not authenticated, skipping profile update');
 					}
 				}
 				document.getElementById('pong-stats-btn')?.addEventListener('click', () => {
@@ -327,7 +325,7 @@ export async function renderPage() {
 			break;
 		case '/statisticsPong':
 			setTimeout(async () => {
-				console.log('About to call initPongStats');
+				// console.log('About to call initPongStats');
 				initThemeToggle();
 				await displayDarkModeButton();
 				initPongStats();
@@ -338,7 +336,6 @@ export async function renderPage() {
 				const urlParams = new URLSearchParams(window.location.search);
 				const targetUserId = urlParams.get('user');
 
-
 				if (!targetUserId) {
 					// Seulement pour nos propres stats
 					updateInfos();
@@ -347,7 +344,7 @@ export async function renderPage() {
 						await authenticatedFetch('/api/updateInfos');
 						updateUserProfilePong();
 					} catch {
-						console.log('Not authenticated, skipping profile update');
+						// console.log('Not authenticated, skipping profile update');
 					}
 				}
 
@@ -363,7 +360,6 @@ export async function renderPage() {
 					const userId = params.get('user');
 					navigateTo(`/statisticsPong${userId ? `?user=${userId}` : ''}`);
 				});
-				
 			}, 100);
 			break;
 		case '/pong/tournament':
@@ -400,6 +396,10 @@ function runRouteCleanup() {
 export async function navigateTo(url: string) {
 	// Évite les navigations concurrentes
 	// disconnectSocket();
+	disconnectSocket();
+	disconnectSocketSnake();
+	abortUIListenersSnake();
+	abortUIListeners();
 	if (navigating) return;
 
 	const newPath = new URL(url, window.location.origin).pathname;
@@ -451,6 +451,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	window.addEventListener('popstate', () => {
 		disconnectSocket();
+		disconnectSocketSnake();
+		abortUIListenersSnake();
 		abortUIListeners();
 		// Nettoie aussi quand on revient en arrière
 		runRouteCleanup();
@@ -459,4 +461,3 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	await renderPage();
 });
-

@@ -3,7 +3,7 @@ import { formatGameTime, formatDate } from '../graph/init';
 
 async function fetchSnakeRanking(): Promise<PlayerRanking[]> {
     try {
-        console.log('=== FETCHING SNAKE RANKING ===');
+        // console.log('=== FETCHING SNAKE RANKING ===');
         const host = window.location.hostname;
         const port = window.location.port;
         const protocol = window.location.protocol;
@@ -15,10 +15,10 @@ async function fetchSnakeRanking(): Promise<PlayerRanking[]> {
         }
 
         const data = await response.json();
-        console.log('Ranking data received:', data);
+        // console.log('Ranking data received:', data);
         return data;
     } catch (error) {
-        console.log('Error fetching ranking', error);
+        // console.log('Error fetching ranking', error);
         return [];
     }
 }

@@ -19,8 +19,8 @@ export async function logUser() {
             return;
         }
 
-        console.log('=== LOGIN DEBUG ===');
-        console.log('Login data being sent:', { login, password });
+        // console.log('=== LOGIN DEBUG ===');
+        // console.log('Login data being sent:', { login, password });
 
         try {
             const host = window.location.hostname;
@@ -35,8 +35,8 @@ export async function logUser() {
                 body: JSON.stringify({ login, password }),
             });
 
-            console.log('Response status:', response.status);
-            console.log('Response ok:', response.ok);
+            // console.log('Response status:', response.status);
+            // console.log('Response ok:', response.ok);
 
             // if (!response.ok) {
             //     const errorText = await response.text();
@@ -45,12 +45,12 @@ export async function logUser() {
             // }
 
             const result = await response.json(); // Une seule fois
-            console.log('Login response:', result);
+            // console.log('Login response:', result);
 
             if (result.success) {
-				console.log('=== SUCCESS BRANCH ===');
-				console.log('result.twoFaAuth:', result.twoFaAuth);
-				console.log('result.tmpToken:', result.tmpToken);
+				// console.log('=== SUCCESS BRANCH ===');
+				// console.log('result.twoFaAuth:', result.twoFaAuth);
+				// console.log('result.tmpToken:', result.tmpToken);
                 const queryString = !window.location.search ? '/dashboard' : window.location.search.substring(1);
 
                 if (result.user) {
@@ -60,10 +60,10 @@ export async function logUser() {
                 //     navigateTo('/2fa-verification');
                 // }
 				if (result.twoFaAuth) {
-					console.log('=== 2FA BRANCH ===');
+					// console.log('=== 2FA BRANCH ===');
 					if (result.tmpToken) sessionStorage.setItem('twofa_tmp_token', result.tmpToken);
 					sessionStorage.setItem('login', login); // Ajoutez cette ligne
-					console.log('About to navigate to /2fa-verification');
+					// console.log('About to navigate to /2fa-verification');
 					navigateTo('/2fa-verification');
 					return;
 				}
@@ -83,14 +83,14 @@ export async function logUser() {
 function saveUserData(userData: any): void {
 	try {
 		localStorage.setItem('currentUser', JSON.stringify(userData));
-		console.log('USer data saved:', userData);
+		// console.log('USer data saved:', userData);
 	} catch (error) {
 		console.error('Error saving user data:', error);
 	}
 }
 
 export function initTwoFALogin() {
-	console.log('=== TEST ===');
+	// console.log('=== TEST ===');
     const form = document.getElementById('twofa-form') as HTMLFormElement | null;
     const errorEl = document.getElementById('twofa-error') as HTMLElement | null;
     if (!form) return;
@@ -114,10 +114,10 @@ export function initTwoFALogin() {
             // Récupère le tmpToken stocké lors du login
             const tmpToken = sessionStorage.getItem('twofa_tmp_token');
 
-			console.log('=== 2FA DEBUG ===');
-            console.log('tmpToken from storage:', tmpToken);
-            console.log('token from form:', token);
-            console.log('URL:', `${protocol}//${host}:${port}/api/login2fa`);
+			// console.log('=== 2FA DEBUG ===');
+            // console.log('tmpToken from storage:', tmpToken);
+            // console.log('token from form:', token);
+            // console.log('URL:', `${protocol}//${host}:${port}/api/login2fa`);
 
             if (!tmpToken) {
                 if (errorEl) {
@@ -137,11 +137,11 @@ export function initTwoFALogin() {
 			}),
 		});
 
-			 console.log('Response status:', res.status);
-            console.log('Response ok:', res.ok);
+			//  console.log('Response status:', res.status);
+            // console.log('Response ok:', res.ok);
 
             const data = await res.json();
-			console.log('Response data:', data);
+			// console.log('Response data:', data);
             if (!data.success) {
                 if (errorEl) {
                     errorEl.textContent = data.error || 'Invalid code';

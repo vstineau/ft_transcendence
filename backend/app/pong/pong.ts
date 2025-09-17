@@ -4,6 +4,7 @@ import { FastifyInstance } from 'fastify';
 import { app } from '../app.js';
 import { JwtPayload, UserHistory } from '../types/userTypes.js';
 import { User, History } from '../models.js';
+import { gamesStartedTotal, gamesFinishedTotal, gameDurationHistogram, pongGamesFinishedInfoTotal } from '../monitoring/metrics.js';
 
 const SCORETOWIN = 3;
 let stored: boolean = false;
@@ -105,7 +106,7 @@ export function getRoom(user: User, socket: Socket, arr?: string[]) {
 			socket.join(privateRoom.name);
 			privateRoom.locked = true;
 			getInputs(socket, privateRoom);
-			console.log('Room found ' + privateRoom.private);
+			// console.log('Room found ' + privateRoom.private);
 			return;
 		}
 		if (arr.includes(user.id)) {
@@ -113,7 +114,7 @@ export function getRoom(user: User, socket: Socket, arr?: string[]) {
 			newRoom.game.p1 = initPlayer(socket, user, newRoom);
 			socket.join(newRoom.name);
 			getInputs(socket, newRoom);
-			console.log(newRoom);
+			// console.log(newRoom);
 			app.io.of('/pong').to(newRoom.name).emit('p1Name', newRoom.game.p1);
 			return;
 		}
@@ -185,6 +186,22 @@ function handleDisconnect(app: FastifyInstance, socket: Socket) {
 				sock.off;
 				sock.disconnect();
 			}
+			// Metrics on disconnect: count as finished only if not already over
+			if (!room.game.over) {
+				try {
+					const result = room.game.p1.id === socket.id ? 'p2_win' : 'p1_win';
+					gamesFinishedTotal.inc({ game: 'pong', result });
+					const winnerNick = result === 'p1_win' ? room.game.p1.nickName : room.game.p2.nickName;
+					pongGamesFinishedInfoTotal.inc({ p1_nick: room.game.p1.nickName, p2_nick: room.game.p2.nickName, winner: winnerNick });
+					if (room.game.gameStart) {
+						const durationSeconds = (Date.now() - room.game.gameStart) / 1000;
+						if (durationSeconds >= 0) {
+							gameDurationHistogram.observe({ game: 'pong' }, durationSeconds);
+						}
+					}
+				} catch {}
+				room.game.over = true;
+			}
 			if (socket) {
 				socket.leave(room.name);
 			}
@@ -211,7 +228,10 @@ export function launchGame(rooms: Room[]) {
 		gameInterval = setInterval(() => {
 			for (const room of rooms) {
 				if (room.playersNb === 2 && room.locked && !room.game!.over) {
-					!room.game.gameStart ? (room.game.gameStart = Date.now()) : 0;
+					if (!room.game.gameStart) {
+						room.game.gameStart = Date.now();
+						try { gamesStartedTotal.inc({ game: 'pong' }); } catch {}
+					}
 					if (!room.game.started) {
 						app.io.of('/pong').to(room.name).emit('countdown', room.game);
 						setTimeout(() => {
@@ -239,7 +259,7 @@ export async function startPongGame(app: FastifyInstance) {
 		app.io.of('/pong').on('connection', (socket: Socket) => {
 			handleDisconnect(app, socket);
 			socket.on('initGame', (cookie: string, arr: string[]) => {
-				console.log('New connection to /pong');
+				// console.log('New connection to /pong');
 				initPlayerRoom(socket, cookie, arr);
 				launchGame(rooms);
 			});
@@ -320,7 +340,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
 	const user2 = await User.findOneBy({ id: game.p2.uid });
 
 	if (!user1 || !user2) {
-		console.log('Users not found');
+		// console.log('Users not found');
 		return;
 	}
 
@@ -357,7 +377,7 @@ async function saveDataInHistory(game: Game, winner: 'P1' | 'P2') {
 	await historyEntry1.save();
 	await historyEntry2.save();
 
-	console.log('History saved for both players');
+	// console.log('History saved for both players');
 }
 
 function checkWin(game: Game, app: FastifyInstance) {
@@ -369,6 +389,22 @@ function checkWin(game: Game, app: FastifyInstance) {
 			if (!room.winner) room.winner = room.game.p1.score > room.game.p2.score ? room.game.p1 : room.game.p2;
 			app.io.of('/pong').to(room.name).emit('playerWin', room.winner, game);
 		}
+		// Metrics: record game finished and duration exactly once
+		try {
+			const result = game.p1.score === SCORETOWIN ? 'p1_win' : 'p2_win';
+			gamesFinishedTotal.inc({ game: 'pong', result });
+			// Also record detailed info with player nicknames
+			const winnerNick = result === 'p1_win' ? game.p1.nickName : game.p2.nickName;
+			pongGamesFinishedInfoTotal.inc({ p1_nick: game.p1.nickName, p2_nick: game.p2.nickName, winner: winnerNick });
+			if (game.gameStart) {
+				const durationSeconds = (Date.now() - game.gameStart) / 1000;
+				if (durationSeconds >= 0) {
+					gameDurationHistogram.observe({ game: 'pong' }, durationSeconds);
+				}
+			}
+		} catch {}
+		// Mark game as over to stop loop and avoid duplicate emits
+		game.over = true;
 		game.ball.vx = 0;
 		game.ball.vy = 0;
 		game.ball.x = WIN_WIDTH / 2;

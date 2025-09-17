@@ -6,7 +6,7 @@ export function eventsUsers(this: ChatManager) {
     // ==== CONNECTION USERS - DISCONNECT USER =====
 
 	this.on('userJoined', (user: any) => {
-		console.log('👋 User joined chat:', user);
+		// console.log('👋 User joined chat:', user);
 		// N'ajoute que s'il n'existe pas déjà
 		const exists = (this as any).state.onlineUsers.some((u: any) => u.id === user.id);
 		if (!exists) {
@@ -31,7 +31,7 @@ export function eventsUsers(this: ChatManager) {
 	});
 
     this.on('userLeft', (user: any) => {
-        console.log('👋 User left chat:', user);
+        // console.log('👋 User left chat:', user);
         if ((this as any).state.onlineUsers) {
             // Ne pas supprimer, passer le statut à offline pour conserver les données (avatar, etc.)
             (this as any).state.onlineUsers = (this as any).state.onlineUsers.map((u: any) =>
@@ -48,7 +48,7 @@ export function eventsUsers(this: ChatManager) {
     // ==== SYNC ONLINE USERS =====
 
     this.on('onlineUsersUpdated', (onlineUsers: any[]) => {
-        console.log('🔄 Online users list updated:', onlineUsers);
+        // console.log('🔄 Online users list updated:', onlineUsers);
         const existing: any[] = (this as any).state.onlineUsers || [];
 
         const incomingIds = new Set(onlineUsers.map(u => u.id));
@@ -86,7 +86,7 @@ export function eventsUsers(this: ChatManager) {
     // ==== STATUS CHANGE =====
     
     this.on(CHAT_EVENTS.USER_STATUS_CHANGED, (data: { userId: string; status: 'online' | 'in-game' }) => {
-        console.log('🔄 User status changed:', data);
+        // console.log('🔄 User status changed:', data);
         const updated = (this as any).state.onlineUsers.map((u: any) =>
             u.id === data.userId ? { ...u, status: data.status } : u
         );
@@ -104,7 +104,7 @@ export function eventsUsers(this: ChatManager) {
     // ==== BLOCK / UNBLOCK =====
 
     this.on(CHAT_EVENTS.USER_BLOCKED, (data: { targetUserId: string }) => {
-        console.log('🔒 User blocked:', data.targetUserId);
+        // console.log('🔒 User blocked:', data.targetUserId);
         const currentUser = (this as any).state.currentUserId;
         if (currentUser && !currentUser.blockedList.includes(data.targetUserId)) {
             currentUser.blockedList.push(data.targetUserId);
@@ -114,7 +114,7 @@ export function eventsUsers(this: ChatManager) {
     });
 
     this.on(CHAT_EVENTS.USER_DEBLOCKED, (data: { targetUserId: string }) => {
-        console.log('🔓 User unblocked:', data.targetUserId);
+        // console.log('🔓 User unblocked:', data.targetUserId);
         const currentUser = (this as any).state.currentUserId;
         if (currentUser && currentUser.blockedList.includes(data.targetUserId)) {
             currentUser.blockedList = currentUser.blockedList.filter((id: string) => id !== data.targetUserId);

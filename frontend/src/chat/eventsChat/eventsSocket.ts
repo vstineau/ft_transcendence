@@ -6,12 +6,12 @@ export function eventsSocket(this: ChatManager) {
 
 	// Événement de connexion au serveur
 	this.on('connect', () => {
-		console.log('💬 Chat socket connected');
+		// console.log('💬 Chat socket connected');
 	});
 
 	// Écouter les événements du serveur
 	this.on(CHAT_EVENTS.USER_CONNECTED, (data: any) => {
-		console.log('✅ Chat user connected:', data);
+		// console.log('✅ Chat user connected:', data);
 		(this as any).state.currentUserId.id = data.user.id;
 		(this as any).state.currentUserId.avatar = data.user.avatar || '';
 		(this as any).currentRoom.messages = data.recentMessages || [];
