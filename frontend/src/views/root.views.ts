@@ -1100,37 +1100,52 @@ export async function PongCanvas() {
 	// gameCanvas
 	return /* HTML */ `
 		<!-- Titre FT_TRANSCENDENCE en haut -->
-		<div id="pongGame" class="flex items-center justify-center w-screen h-screen bg-gray-900">
-			<!-- Colonne gauche : Joueur 1 -->
-			<div id="playerOne" class="flex flex-col items-center mr-8">
-				<div id="p1Name" class="font-bold text-center text-xl text-white mb-2"></div>
-				<img id="p1Avatar" class="w-40 h-40 rounded-xl mb-2 border-4 border-gray-700 object-cover" src="" alt="" />
-				<div class="flex flex-col items-end gap-2">
-					<div id="p1keyup" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">
-						W / ↑
+		<div id="page" class="flex items-center justify-center w-screen h-screen bg-gray-900 flex-col">
+			<div id="title" class="text-center text-white text-4xl font-bold" style="margin-top: 60px;">ONLINE PONG GAME</div>
+			<div
+				id="pongGame"
+				class="flex items-center justify-center w-screen h-screen bg-gray-900"
+				style="margin-top: 20px;margin-bottom: 20px;"
+			>
+				<!-- Colonne gauche : Joueur 1 -->
+				<div id="playerOne" class="flex flex-col items-center mr-8">
+					<div id="p1Name" class="font-bold text-center text-xl text-white mb-2"></div>
+					<img id="p1Avatar" class="w-40 h-40 rounded-xl mb-2 border-4 border-gray-700 object-cover" src="" alt="" />
+					<div class="flex flex-col items-end gap-2">
+						<div id="p1keyup" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">
+							W / ↑
+						</div>
+						<div id="p1keydown" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">
+							S / ↓
+						</div>
 					</div>
-					<div id="p1keydown" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">
-						S / ↓
+				</div>
+
+				<!-- Canvas central -->
+				<canvas id="gameCanvas" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"></canvas>
+
+				<!-- Colonne droite : Joueur 2 -->
+				<div id="playerTwo" class="flex flex-col items-center ml-8">
+					<div id="p2Name" class="font-bold text-center text-xl text-white mb-2">...</div>
+					<img id="p2Avatar" class="w-40 h-40 rounded-xl mb-2 border-4 border-gray-700 object-cover" src="" alt="" />
+					<div class="flex flex-col items-start gap-2">
+						<div id="p2keyup" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">
+							W / ↑
+						</div>
+						<div id="p2keydown" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">
+							S / ↓
+						</div>
 					</div>
 				</div>
 			</div>
-
-			<!-- Canvas central -->
-			<canvas id="gameCanvas" class="rounded-xl shadow-lg border-4 border-gray-800 bg-black"></canvas>
-
-			<!-- Colonne droite : Joueur 2 -->
-			<div id="playerTwo" class="flex flex-col items-center ml-8">
-				<div id="p2Name" class="font-bold text-center text-xl text-white mb-2">...</div>
-				<img id="p2Avatar" class="w-40 h-40 rounded-xl mb-2 border-4 border-gray-700 object-cover" src="" alt="" />
-				<div class="flex flex-col items-start gap-2">
-					<div id="p2keyup" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">
-						W / ↑
-					</div>
-					<div id="p2keydown" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono">
-						S / ↓
-					</div>
-				</div>
-			</div>
+			<button
+				id="returnDashboardBtn"
+				class="rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white font-bold mt-(-20)"
+				style="margin-bottom: 80px;padding-top: 10px;padding-bottom: 10px;"
+				hidden="true"
+			>
+				Return to Dashboard
+			</button>
 		</div>
 	`;
 }

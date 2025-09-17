@@ -334,7 +334,27 @@ export async function pongGame() {
 			lastGame = game;
 			winner = player;
 			resetButtons(looser, win);
-			// const title = document.getElementById('title') as HTMLElement;
+			const title = document.getElementById('title') as HTMLElement;
+			const winnerName = document.createElement('span');
+			winnerName.textContent = `${player.nickName} Wins!`;
+			winnerName.className += ' text-yellow-500';
+			title.innerHTML = '';
+			title.appendChild(winnerName);
+			const returnBtn = document.getElementById('returnDashboardBtn') as HTMLButtonElement;
+			returnBtn.hidden = false;
+			returnBtn.addEventListener('click', () => {
+				gameOver = false;
+				winner = null;
+				lastGame = null;
+				canvas = null as any;
+				ctx = null;
+				navigateTo('/dashboard');
+			});
+			// Affiche le titre et le bouton de retour au dashboard
+			// const container = document.getElementById('pongGameEndButtons') as HTMLElement;
+			// container.style.display = 'flex';
+			// Affiche le titre du gagnant
+			// const title = document.createElement('h1') as HTMLElement;
 			// title.textContent = `${player.nickName} Wins!`;
 			// title.className = 'mb-10 text-2xl font-bold text-white';
 			// title.hidden = false;
