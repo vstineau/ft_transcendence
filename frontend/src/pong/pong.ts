@@ -2,7 +2,6 @@ import io, { Socket } from 'socket.io-client';
 import { Game, Player } from '../types/pongTypes';
 import { navigateTo } from '../main';
 import { drawTitle, showCountdown } from './tournament';
-// import { Socket } from 'socket.io';
 
 export function getCookie(name: string) {
 	const value = `; ${document.cookie}`;
@@ -81,7 +80,7 @@ export function drawGame(game: Game) {
 	const scale_x = canvas.width / game.win.width;
 	const scale_y = canvas.height / game.win.height;
 
-	ctx.clearRect(0, 0, canvas.width, canvas.height); // clear full screen
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	// Background (zone de jeu)
 	ctx.fillStyle = 'black';
@@ -115,7 +114,6 @@ export function drawGame(game: Game) {
 	ctx.fillText(game.p2.score.toString(), canvas.width * 0.75, canvas.height * 0.1);
 }
 
-// export let uiController: AbortController | null = null;
 export const ui = {
 	controller: null as AbortController | null,
 };
@@ -162,7 +160,6 @@ function listenUserInputs(socket: Socket) {
 			canvas.height = window.innerHeight * 0.6;
 		}
 		if (gameOver && winner && lastGame) drawWinner(winner, lastGame);
-		// socket.emit('resize');
 	});
 	window.addEventListener('beforeunload', () => {
 		disconnectSocket();
@@ -175,11 +172,8 @@ function listenUserInputs(socket: Socket) {
 	});
 }
 
-// Gestion du clic sur le canvas
-
 function drawWaitingScreen(room: any) {
 	if (!ctx || gameOver) return;
-	// On utilise les mêmes scales que dans drawGame
 	const scale_x = canvas.width / room.game.win.width;
 	const scale_y = canvas.height / room.game.win.height;
 
@@ -202,16 +196,12 @@ function drawWaitingScreen(room: any) {
 
 function drawWinner(winner: Player, game: Game) {
 	if (!ctx) return;
-	// game.over = true;
-	// gameOver = true;
 	let scale_x = canvas.width / game.win.width;
 	let scale_y = canvas.height / game.win.height;
 	ctx.clearRect(0, 0, game.win.width * scale_x, game.win.height * scale_y);
-	// ctx.fillStyle = 'white';
 	ctx.fillStyle = 'gray';
-	// Couleur de la bordure
 	ctx.strokeStyle = 'white';
-	ctx.lineWidth = 4; // épaisseur de la bordure
+	ctx.lineWidth = 4;
 	ctx.fillRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
 	ctx.strokeRect(canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.5, canvas.height * 0.12);
 	ctx.fillStyle = 'red';
@@ -240,23 +230,10 @@ function resetButtons(looser: string, win: string) {
 		lost.className = 'w-40 h-40 rounded-xl mb-2 border-4 border-red-500 object-cover';
 		lost.style.filter = 'brightness(50%)';
 	}
-	if (keyUpP1) {
-		keyUpP1.remove();
-		// keyUpP1.className = 'bg-gray-700 brightness-50 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
-	}
-	if (keyDownP1) {
-		keyDownP1.remove();
-		// keyDownP1.className = 'bg-gray-700 brightness-50 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
-	}
-
-	if (keyUpP2) {
-		keyUpP2.remove();
-		// keyUpP2.className = 'bg-gray-700 brightness-50 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
-	}
-	if (keyDownP2) {
-		keyDownP2.remove();
-		// keyDownP2.className = 'bg-gray-700 brightness-50 text-white px-4 py-2 rounded-lg shadow mb-2 text-lg font-mono';
-	}
+	if (keyUpP1) keyUpP1.remove();
+	if (keyDownP1) keyDownP1.remove();
+	if (keyUpP2) keyUpP2.remove();
+	if (keyDownP2) keyDownP2.remove();
 }
 
 export function keyHandler(socket: Socket) {
@@ -304,21 +281,17 @@ export function keyHandler(socket: Socket) {
 
 export async function pongGame() {
 	let countdown = false;
-	// if(countdown){
-	// 	clearTimeout(countdown)
-	// 	countdown = false
-	// }
+
 	const socket = createPongSocket();
 	listenUserInputs(socket);
 	socket.on('countdown', () => {
 		if (!countdown) {
-			ctx!.clearRect(0, 0, canvas.width, canvas.height); // clear full screen
+			ctx!.clearRect(0, 0, canvas.width, canvas.height);
 			countdown = true;
 			const element = document.getElementById('pongGame') as HTMLElement;
 			if (element) showCountdown(element);
 		}
 	});
-	// socket.onAny((eventName, ...args) => {});
 	socket.on('notLogged', () => {
 		navigateTo('/login?/pong/matchmaking/game');
 	});
@@ -350,32 +323,6 @@ export async function pongGame() {
 				ctx = null;
 				navigateTo('/dashboard');
 			});
-			// Affiche le titre et le bouton de retour au dashboard
-			// const container = document.getElementById('pongGameEndButtons') as HTMLElement;
-			// container.style.display = 'flex';
-			// Affiche le titre du gagnant
-			// const title = document.createElement('h1') as HTMLElement;
-			// title.textContent = `${player.nickName} Wins!`;
-			// title.className = 'mb-10 text-2xl font-bold text-white';
-			// title.hidden = false;
-			// // Crée le bouton de retour au dashboard
-			// const button = document.getElementById('endButton') as HTMLElement;
-			// button.textContent = 'Return to Dashboard';
-			// button.className =
-			// 	'rounded-lg bg-gray-700 hover:bg-gray-500 hover:outline hover:outline-yellow-500 px-4 py-2 text-white mt-4';
-			// button.hidden = false;
-			// button.addEventListener('click', () => {
-			// 	navigateTo('/dashboard');
-			// });
-
-			// Ajoute le titre et le bouton dans le container principal
-			// const page = document.getElementById('pongGame');
-			// if (page) {
-			// 	page.appendChild(title);
-			// 	page.appendChild(button);
-			// }
-			// page?.append(title);
-			// page?.append(button);
 		}
 		gameOver = true;
 		if (gameOver && winner && lastGame) {
@@ -384,7 +331,6 @@ export async function pongGame() {
 			drawWinner(winner, lastGame);
 		}
 	});
-	// Main game loop (frame update)
 	socket.on('gameState', (game: Game) => {
 		drawGame(game);
 	});
