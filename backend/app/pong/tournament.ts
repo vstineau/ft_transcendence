@@ -28,6 +28,9 @@ export async function startTournament(app: FastifyInstance) {
 					}
 					console.log('name is = ' + user.nickName);
 					socket.emit('NameIs', user.nickName);
+					socket.removeAllListeners();
+					socket.disconnect();
+					socket.off;
 				}
 			});
 		});
