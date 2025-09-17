@@ -284,23 +284,10 @@ export function initUserAvatar(): void {
 		updateAvatarDisplay(); // fallback
 		return;
 	}
-		// console.log("User data in initUserAvatar:", userData);
-		// console.log("Has avatar:", !!userData?.avatar);
-		// console.log("Avatar starts with:", userData?.avatar?.substring(0, 20));
 
-  // MAJ nom/email si présents
-	// const userName = document.getElementById('user-name') as HTMLElement | null;
-	// if (userName) userName.textContent = getDisplayName(userData);
+	const userName = document.getElementById('user-name') as HTMLElement | null;
+	if (userName) userName.textContent = getDisplayName(userData);
 
-	// const userEmail = document.getElementById('user-email') as HTMLElement | null;
-	// if (userEmail && userData.email) userEmail.textContent = userData.email;
-
-	// const container = document.getElementById('avatar-container');
-	// if (!container) {
-	// 	// Attendre que la vue soit montée (SPA)
-	// 	setTimeout(initUserAvatar, 100);
-	// 	return;
-	// }
 	updateAvatarDisplay(userData.avatar, 'avatar-container');
 }
 

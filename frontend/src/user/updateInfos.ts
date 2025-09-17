@@ -237,7 +237,7 @@ function showContent(contentKey: string): void {
 
 function getContentHTML(contentKey: string): string {
 	const contents: Record<string, string> = {
-		'change-password': `
+		'change-password':  /* HTML */ `
 			<form id="change-password-form" class="space-y-4">
 				<input
 					autocomplete="off"
@@ -272,7 +272,7 @@ function getContentHTML(contentKey: string): string {
 			</form>
 			`,
 
-		'dual-authentication': `
+		'dual-authentication':  /* HTML */ `
 		<div class="space-y-6">
 			<div class="flex items-start">
 			<input type="checkbox" id="settings-enable2fa" class="w-5 h-5 mt-1 mr-4">
@@ -300,7 +300,7 @@ function getContentHTML(contentKey: string): string {
 		</div>
 		`,
 
-		'profile-picture': `
+		'profile-picture':  /* HTML */ `
 		<div class="w-full h-full flex items-center justify-center">
             <div class="space-y-6 text-center">
 				<!-- Upload area -->
@@ -333,7 +333,7 @@ function getContentHTML(contentKey: string): string {
 		</div>
         `,
 
-		'language': `
+		'language':  /* HTML */ `
 			<div class="space-y-6" style="width: 100%;">
 				<h2 class="font-montserrat font-medium text-black mb-4">Select language</h2>
 
@@ -361,7 +361,7 @@ function getContentHTML(contentKey: string): string {
 				</div>
 		`,
 
-		'privacy-policy': `
+		'privacy-policy':  /* HTML */ `
 			<div class="space-y-6">
 				<h2 class="font-montserrat font-medium text-black mb-4">General Privacy Policy & Terms of Service</h2>
 
@@ -383,19 +383,19 @@ function getContentHTML(contentKey: string): string {
 
 					<div>
 						<h3 class="font-medium text-black mb-2">Contact</h3>
-						<p>For questions regarding privacy or terms, contact: [votre email étudiant]</p>
+						<p>For questions regarding privacy or terms, contact: ft_transcendence@terms.com</p>
 					</div>
 				</div>
 
 				<div class="flex justify-center pt-4">
-					<button class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
+					<button id="agree-terms-btn" class="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg transition-colors">
 						I Agree
 					</button>
 				</div>
 			</div>
 		`,
 
-		'delete': `
+		'delete':  /* HTML */ `
 			<div class="space-y-6">
 				<h2 class="font-montserrat font-medium text-black mb-4">Delete your account</h2>
 				<div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
@@ -468,14 +468,8 @@ function getContentHTML(contentKey: string): string {
 }
 
 function initEditProfileForm(): void {
-	console.log("=== DEBUGGING initEditProfileForm ===");
 
-	// 1. Vérifier les cookies
-	console.log("Document cookies:", document.cookie);
-
-	// 2. Vérifier les données utilisateur
 	const userData = getCurrentUser();
-	console.log("Current user data:", userData);
 
 	const form = document.getElementById('edit-profile-form') as HTMLFormElement;
 	if (!form) {
@@ -484,14 +478,10 @@ function initEditProfileForm(): void {
 	}
 
 	if (userData) {
-		// const firstNameInput = document.getElementById('edit-firstName') as HTMLInputElement;
-		// const lastNameInput = document.getElementById('edit-lastName') as HTMLInputElement;
 		const nickNameInput = document.getElementById('edit-nickName') as HTMLInputElement;
 		const usernameInput = document.getElementById('edit-username') as HTMLInputElement;
 		const emailInput = document.getElementById('edit-email') as HTMLInputElement;
 
-		// if (firstNameInput) firstNameInput.value = userData.firstName || '';
-		// if (lastNameInput) lastNameInput.value = userData.lastName || '';
 		if (nickNameInput) nickNameInput.value = userData.nickName || '';
 		if (emailInput) emailInput.value = userData.email || '';
 		if (usernameInput && userData.login) {
@@ -501,7 +491,6 @@ function initEditProfileForm(): void {
 
 	form.addEventListener('submit', async (e) => {
 		e.preventDefault();
-		console.log("=== FORM SUBMIT DEBUG ===");
 
 		const formData = new FormData(form);
 		const body = {
@@ -515,17 +504,11 @@ function initEditProfileForm(): void {
 			ext: '',
 		};
 
-		console.log("Body being sent:", body);
-		console.log("Cookies before request:", document.cookie);
-
 		try {
 			const host = window.location.hostname;
 			const port = window.location.port;
 			const protocol = window.location.protocol;
 			const url = `${protocol}//${host}:${port}/api/updateInfos`;
-
-			console.log("Request URL:", url);
-			console.log("Request headers will include credentials");
 
 			const response = await authenticatedFetch(`${protocol}//${host}:${port}/api/updateInfos`, {
 				method: 'POST',
@@ -535,9 +518,6 @@ function initEditProfileForm(): void {
 				credentials: 'include',
 				body: JSON.stringify(body),
 			});
-
-			console.log("Response status:", response.status);
-			console.log("Response headers:", [...response.headers.entries()]);
 
 			const result = await response.json();
 			console.log("Full response:", result);
@@ -556,36 +536,11 @@ function initEditProfileForm(): void {
 	});
 }
 
-// Ajoutez cette fonction pour tester l'authentification
-async function testAuth(): Promise<void> {
-	// console.log("=== TESTING AUTHENTICATION ===");
-	// console.log("Cookies:", document.cookie);
-
-	try {
-		const host = window.location.hostname;
-		const port = window.location.port;
-		const protocol = window.location.protocol;
-
-		const response = await fetch(`${protocol}//${host}:${port}/api/updateInfos`, {
-			method: 'GET',
-			credentials: 'include',
-		});
-
-		console.log("Auth test response status:", response.status);
-		const result = await response.json();
-		console.log("Auth test result:", result);
-
-	} catch (error) {
-		console.log("Auth test error:", error);
-	}
-}
 
 export function initLangageForm(): void {
-	console.log('switch case marcheeeeeeeeeeee');
     const form = document.querySelector('#default-language-form') as HTMLFormElement;
     if (!form) return;
 
-	console.log('ya un formmmmm');
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -615,7 +570,7 @@ export function initLangageForm(): void {
                 displayError(result.error || 'Failed to change default language');
             }
         } catch (error) {
-            console.error('default language update error: ', error);
+            console.log('default language update error: ', error);
             displayError('Connection error. Please try again.');
         }
 	});
@@ -643,6 +598,9 @@ function initContentFeatures(contentKey: string): void {
 		case 'language':
 			initLangageForm();
 			break;
+		case 'privacy-policy':
+            initPrivacyPolicyForm();
+            break;
 	}
 }
 
@@ -775,30 +733,30 @@ function initProfilePictureUpload(): void {
 			console.log("Upload response:", reply);
 
 			if (reply.success) {
-				console.log("=== AVATAR UPDATE DEBUG ===");
-				console.log("Full reply:", reply);
-				console.log("reply.user exists:", !!reply.user);
-				console.log("reply.user.avatar exists:", !!reply.user?.avatar);
-				console.log("Avatar data length:", reply.user?.avatar?.length);
+//				console.log("=== AVATAR UPDATE DEBUG ===");
+//				console.log("Full reply:", reply);
+//				console.log("reply.user exists:", !!reply.user);
+//				console.log("reply.user.avatar exists:", !!reply.user?.avatar);
+//				console.log("Avatar data length:", reply.user?.avatar?.length);
 
 				const currentUser = getCurrentUser();
-				console.log("Current user before update:", currentUser);
+//				console.log("Current user before update:", currentUser);
 
 				if (currentUser && reply.user && reply.user.avatar) {
 					currentUser.avatar = reply.user.avatar;
 					localStorage.setItem('currentUser', JSON.stringify(currentUser));
-					console.log("Updated localStorage with new avatar");
+//					console.log("Updated localStorage with new avatar");
 
 					// Vérifier que la sauvegarde a fonctionné
 					const savedUser = getCurrentUser();
-					console.log("Saved user after update:", savedUser);
-					console.log("Saved avatar length:", savedUser?.avatar?.length);
+//					console.log("Saved user after update:", savedUser);
+//					console.log("Saved avatar length:", savedUser?.avatar?.length);
 				} else {
 					console.log("Missing data - reply.user:", !!reply.user, "avatar:", !!reply.user?.avatar);
 				}
 
 				setTimeout(() => {
-					console.log("Calling initUserAvatar...");
+//					console.log("Calling initUserAvatar...");
 					initUserAvatar();
 				}, 100);
 
@@ -886,3 +844,42 @@ function initEditProfileButton(): void {
 	}
 }
 
+function initPrivacyPolicyForm(): void {
+    const agreeBtn = document.getElementById('agree-terms-btn');
+    if (!agreeBtn) return;
+
+    agreeBtn.addEventListener('click', () => {
+        showConfirmationPopup();
+    });
+}
+
+function showConfirmationPopup(): void {
+    const popup = document.createElement('div');
+    popup.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    popup.innerHTML = `
+        <div class="bg-white rounded-xl p-6 max-w-sm mx-4 text-center">
+            <div class="mb-4">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-green-600 text-2xl">✓</span>
+                </div>
+                <h3 class="font-bold text-lg text-black mb-2">Terms Accepted</h3>
+                <p class="text-gray-600 text-sm">Thank you for accepting our Privacy Policy and Terms of Service.</p>
+            </div>
+            <button id="close-popup-btn" class="bg-black hover:bg-gray-800 text-white px-6 py-2 rounded-lg transition-colors">
+                OK
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    document.getElementById('close-popup-btn')?.addEventListener('click', () => {
+        popup.remove();
+    });
+
+    popup.addEventListener('click', (e) => {
+        if (e.target === popup) {
+            popup.remove();
+        }
+    });
+}

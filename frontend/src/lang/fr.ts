@@ -4,7 +4,7 @@ export default {
         "games": "Jeux",
         "settings": "Paramètres",
         "logout": "Déconnexion",
-		"backToDashboard": "← Retour au tableau de bord",
+        "backToDashboard": "← Retour au tableau de bord",
     },
     "dashboard": {
         "title": "FT_TRANSCENDENCE",
@@ -17,9 +17,21 @@ export default {
         "snakeStats": "Stats Snake",
         "pongStats": "Stats Pong",
         "yourMaxSize": "Votre taille max",
+        "yourMaxSpeed": "Votre vitesse max",
         "play": "Jouer",
         "view": "Voir",
         "edit": "Editer"
+    },
+    "game": {
+        "time": "Temps de jeu",
+        "you": "Vous",
+        "opponent": "Adversaire",
+        "length": "Longueur :",
+        "eatenApples": "Pommes mangées :",
+        "finalBallSpeed": "Vitesse finale de la balle :",
+        "averageSpeed": "Vitesse moyenne :",
+        "draw": "ÉGALITÉ",
+        "vs": "VS"
     },
     "games": {
         "pong": {
@@ -30,10 +42,30 @@ export default {
         }
     },
     "snake": {
+        "title": "Snake",
+        "statsTitle": "Statistiques Snake",
+        "classement": "Classement",
+        "maxSize": "Taille max",
+        "averageSize": "Taille moyenne",
+        "eatenApples": "Pommes mangées",
+        "lengthDistribution": "Distribution des longueurs",
+        "mostCommonSizes": "Tailles finales les plus courantes",
+        "timeGame": "Temps de jeu",
+        "survivalTimeAnalysis": "Analyse du temps de survie",
         "local": "Local",
         "online": "En ligne"
     },
     "pong": {
+        "title": "Pong",
+        "statsTitle": "Statistiques Pong",
+        "classement": "Classement",
+        "maxSpeed": "Vitesse max",
+        "averageSpeed": "Vitesse moyenne",
+        "totalGoals": "Buts totaux",
+        "ballSpeedDistribution": "Distribution des vitesses de balle",
+        "mostCommonSpeeds": "Vitesses finales les plus courantes",
+        "matchDuration": "Durée du match",
+        "durationAnalysis": "Analyse de la durée de jeu",
         "local": "Local",
         "online": "En ligne",
         "tournament": "Tournoi"
@@ -72,4 +104,19 @@ export default {
         "deleteAccount": "Supprimer votre compte",
         "backToDashboard": "← Retour au tableau de bord"
     },
+    "stats": {
+        "userProfile": "Profil utilisateur",
+        "myProfile": "Mon profil",
+        "userStats": "Statistiques utilisateur",
+        "myStats": "Mes statistiques",
+        "lastGames": "Dernières parties",
+        "loading": "Chargement...",
+        "globalRanking": "Classement global",
+        "date": "Date",
+        "player": "Joueur",
+        "matchWins": "Victoires",
+        "maxSize": "Taille max",
+        "bestTime": "Meilleur temps",
+        "loadingRankings": "Chargement du classement..."
+    }
 };

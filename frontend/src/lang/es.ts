@@ -1,15 +1,15 @@
 export default {
     "nav": {
-        "dashboard": "Panel de control",
+        "dashboard": "Panel",
         "games": "Juegos",
         "settings": "Configuración",
         "logout": "Cerrar sesión",
-		"backToDashboard": "← Volver al panel",
+        "backToDashboard": "← Volver al panel",
     },
     "dashboard": {
         "title": "FT_TRANSCENDENCE",
-        "welcome": "Bienvenido",
-        "back": "de vuelta",
+        "welcome": "Bienvenido de nuevo",
+        "back": "con nosotros",
         "games": "Juegos",
         "letsTalk": "Hablemos",
         "lightMode": "Modo claro",
@@ -17,27 +17,55 @@ export default {
         "snakeStats": "Estadísticas Snake",
         "pongStats": "Estadísticas Pong",
         "yourMaxSize": "Tu tamaño máximo",
+        "yourMaxSpeed": "Tu velocidad maximal",
         "play": "Jugar",
         "view": "Ver",
-        "edit": "Editar",
-        "settings": "Configuración"
+        "edit": "Editar"
+    },
+    "game": {
+        "time": "Tiempo de juego",
+        "you": "Tú",
+        "opponent": "Oponente",
+        "length": "Longitud:",
+        "eatenApples": "Manzanas comidas:",
+        "finalBallSpeed": "Velocidad final de la bola:",
+        "averageSpeed": "Velocidad media:",
+        "draw": "EMPATE",
+        "vs": "VS"
     },
     "games": {
         "pong": {
-            "description": "Pong es uno de los primeros videojuegos jamás creados, el objetivo es derrotar a tu oponente."
+            "description": "Pong es uno de los primeros juegos informáticos jamás creados, el objetivo es derrotar a tu oponente."
         },
         "snake": {
-            "description": "En Snake debes evitar que la serpiente colisione con obstáculos y consigo misma."
+            "description": "En Snake, debes evitar que la serpiente choque con obstáculos y consigo misma."
         }
     },
-    "errors": {
-        "notFound": "404 No encontrado"
-    },
     "snake": {
+        "title": "Snake",
+        "statsTitle": "Estadísticas Snake",
+        "classement": "Clasificación",
+        "maxSize": "Tamaño máximo",
+        "averageSize": "Tamaño promedio",
+        "eatenApples": "Manzanas comidas",
+        "lengthDistribution": "Distribución de longitudes",
+        "mostCommonSizes": "Tus tamaños finales más comunes",
+        "timeGame": "Tiempo de juego",
+        "survivalTimeAnalysis": "Análisis del tiempo de supervivencia",
         "local": "Local",
         "online": "En línea"
     },
     "pong": {
+        "title": "Pong",
+        "statsTitle": "Estadísticas Pong",
+        "classement": "Clasificación",
+        "maxSpeed": "Velocidad máxima",
+        "averageSpeed": "Velocidad media",
+        "totalGoals": "Goles totales",
+        "ballSpeedDistribution": "Distribución de velocidad de la bola",
+        "mostCommonSpeeds": "Tus velocidades finales más comunes",
+        "matchDuration": "Duración del partido",
+        "durationAnalysis": "Análisis de duración del juego",
         "local": "Local",
         "online": "En línea",
         "tournament": "Torneo"
@@ -50,7 +78,7 @@ export default {
         "signIn": "Iniciar sesión",
         "signUp": "Registrarse",
         "createAccount": "Crear una cuenta",
-        "welcomeBack": "¡Bienvenido de vuelta!",
+        "welcomeBack": "¡Bienvenido de nuevo!",
         "login": "Usuario",
         "password": "Contraseña",
         "nickname": "Apodo",
@@ -76,4 +104,19 @@ export default {
         "deleteAccount": "Eliminar tu cuenta",
         "backToDashboard": "← Volver al panel"
     },
+    "stats": {
+        "userProfile": "Perfil de usuario",
+        "myProfile": "Mi perfil",
+        "userStats": "Estadísticas de usuario",
+        "myStats": "Mis estadísticas",
+        "lastGames": "Últimas partidas",
+        "loading": "Cargando...",
+        "globalRanking": "Clasificación global",
+        "date": "Fecha",
+        "player": "Jugador",
+        "matchWins": "Partidos ganados",
+        "maxSize": "Tamaño máximo",
+        "bestTime": "Mejor tiempo",
+        "loadingRankings": "Cargando clasificaciones..."
+    }
 };
