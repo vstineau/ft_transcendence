@@ -1,4 +1,15 @@
 // import { register } from 'ts-node';
+
+// declare global {
+//     interface Window {
+//         spaTestCounter: number;
+//     }
+// }
+
+// window.spaTestCounter = (window.spaTestCounter || 0) + 1;
+// console.log(`SPA Counter au chargement: ${window.spaTestCounter}`);
+
+
 import { registerUser } from './user/register';
 import { logUser, initTwoFALogin, TwoFAVerifyView } from './user/login';
 import { rootUser } from './user/root';
@@ -73,7 +84,6 @@ const routes: { [key: string]: () => Promise<string> } = {
 	'/register': RegisterView,
 	'/updateInfos': UpdateInfosview,
 	'/2fa-verification': TwoFAVerifyView,
-	// '/statisticsPong': StatsPongView,
 	'/statisticsPong': async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const targetUserId = urlParams.get('user');
@@ -135,8 +145,8 @@ function showAuthMessage() {
 
 export async function renderPage() {
 	const path = window.location.pathname;
-	console.log('Current path:', path);
-    console.log('Route exists:', !!routes[path]);
+	// console.log('Current path:', path);
+    // console.log('Route exists:', !!routes[path]);
 
 
 	const publicPaths = [
@@ -215,6 +225,17 @@ export async function renderPage() {
 				if (viewBtn) {
 					viewBtn.addEventListener('click', showProfileDetails);
 				}
+
+				document.querySelectorAll('[data-navigate]').forEach(element => {
+					element.addEventListener('click', (e) => {
+						e.preventDefault();
+						const route = (e.currentTarget as HTMLElement).dataset.navigate;
+						if (route) {
+							navigateTo(route);
+						}
+					});
+				});
+
 				try {
 					await authenticatedFetch('/api/updateInfos');
 					updateUserProfile();
@@ -230,6 +251,13 @@ export async function renderPage() {
 			initLanguageSelector();
 			await updateInfos();
 			await displayChatButton();
+
+			setTimeout(() => {
+				document.querySelector('[data-navigate="/dashboard"]')?.addEventListener('click', (e) => {
+					e.preventDefault();
+					navigateTo('/dashboard');
+				});
+			}, 100);
 			break;
 		case '/register':
 			await displayDarkModeButton();
@@ -268,10 +296,10 @@ export async function renderPage() {
 				await displayDarkModeButton();
 				initSnakeStats();
 				updateRanking();
-				
+
 				const urlParams = new URLSearchParams(window.location.search);
 				const targetUserId = urlParams.get('user');
-				
+
 				if (!targetUserId) {
 					// Seulement pour vos propres stats
 					updateInfos();
@@ -304,13 +332,13 @@ export async function renderPage() {
 				await displayDarkModeButton();
 				initPongStats();
 				updateRankingPong();
-				
+
 				// Même logique que Snake : ne pas appeler updateInfos/initProfilePage si on regarde un autre utilisateur
 				const urlParams = new URLSearchParams(window.location.search);
 				const targetUserId = urlParams.get('user');
-				
+
 				if (!targetUserId) {
-					// Seulement pour vos propres stats
+					// Seulement pour nos propres stats
 					updateInfos();
 					initProfilePage();
 					try {
@@ -320,7 +348,7 @@ export async function renderPage() {
 						console.log('Not authenticated, skipping profile update');
 					}
 				}
-				
+
 				// Ajouter les event listeners pour les boutons Snake/Pong
 				document.getElementById('snake-stats-btn')?.addEventListener('click', () => {
 					const params = new URLSearchParams(window.location.search);
@@ -333,7 +361,7 @@ export async function renderPage() {
 					const userId = params.get('user');
 					navigateTo(`/statisticsPong${userId ? `?user=${userId}` : ''}`);
 				});
-				
+
 			}, 100);
 			break;
 		case '/pong/tournament':
@@ -424,3 +452,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   await renderPage();
 });
+
