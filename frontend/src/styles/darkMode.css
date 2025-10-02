@@ -281,3 +281,78 @@ dark .bg-black .text-white,
     background-color: #e5e7eb !important;
 }
 
+
+
+/* === EXCLUSION PARTIELLE DU CHAT DU DARK MODE === */
+
+/* Force seulement la zone principale des messages à rester claire */
+.dark #chat-panel #messages-container {
+    background-color: #f9fafb !important;
+    color: black !important;
+}
+
+.dark #chat-panel #messages-container * {
+    color: black !important;
+}
+
+/* Force les inputs à rester clairs */
+.dark #chat-panel input:not(.bg-gray-800) {
+    background-color: white !important;
+    color: black !important;
+    border-color: #d1d5db !important;
+}
+
+/* PRÉSERVE la sidebar sombre */
+.dark #chat-panel .bg-gray-900,
+.dark #chat-panel .bg-gray-900 * {
+    background-color: #111827 !important;
+    color: #d1d5db !important;
+}
+
+/* PRÉSERVE les éléments intentionnellement sombres */
+.dark #chat-panel .bg-gray-800 {
+    background-color: #1f2937 !important;
+    color: #d1d5db !important;
+}
+
+.dark #chat-panel .text-gray-400 {
+    color: #9ca3af !important;
+}
+
+.dark #chat-panel .text-gray-200 {
+    color: #e5e7eb !important;
+}
+
+/* Force TOUS les messages dans le chat à avoir un fond clair et texte noir */
+.dark #chat-panel .message-bubble,
+.dark #chat-panel .chat-message,
+.dark #chat-panel .message {
+    background-color: white !important;
+    color: black !important;
+}
+
+/* Si la bulle utilise bg-black, on la force en blanc */
+.dark #chat-panel .bg-black {
+    background-color: white !important;
+    color: black !important;
+}
+
+/* Force spécifiquement la zone des messages */
+.dark #chat-panel #messages-container .bg-black,
+.dark #chat-panel #messages-container [style*="background-color: black"],
+.dark #chat-panel #messages-container [style*="background: black"] {
+    background-color: white !important;
+    color: black !important;
+}
+
+/* Règle générale pour éviter les fonds noirs dans les messages */
+.dark #chat-panel #messages-container * {
+    background-color: transparent !important;
+    color: black !important;
+}
+
+.dark #chat-panel #messages-container .message-content,
+.dark #chat-panel #messages-container .message-text {
+    background-color: #f3f4f6 !important;
+    color: black !important;
+}
