@@ -49,9 +49,9 @@ Transcendence is a real-time multiplayer Pong game built as the final project of
 
 <p>
   <img src="./assets/stats2.png" alt="Transcendence stats" width="483"/>
-  <img src="./assets/game_view.png" alt="Transcendence stats" width="518"/>
+  <img src="./assets/game_view.png" alt="Transcendence stats" width="500"/>
   <img src="./assets/game_view2.png" alt="Transcendence stats" width="500"/>
-  <img src="./assets/game_view3.png" alt="Transcendence stats" width="518"/>
+  <img src="./assets/game_view3.png" alt="Transcendence stats" width="500"/>
 </p>
 
 ### 🔧 Monitoring & Operations
