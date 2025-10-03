@@ -17,7 +17,7 @@ Transcendence is a real-time multiplayer Pong game built as the final project of
 **Frontend:** TypeScript + Tailwind CSS  
 **Backend:** Fastify (Node.js)  
 **Deployment:** Docker (single command deployment)  
-**Database:** PostgreSQL with hashed passwords  
+**Database:** SQLite with hashed passwords  
 **Security:** HTTPS/WSS connections throughout
 
 ## ✨ Core Features
